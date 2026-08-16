@@ -1505,3 +1505,30 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Custody boundary:** RECORDER appended this provenance entry only and did not edit `state/STATE.md`, specifications, reviews, implementation, tests, or scoring artifacts.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 first scoring retained as INSTRUMENT FAILURE. V4.3 specification amendment CRITIC-CLEARED only. STATE.md reconciled and canonically attested. Scoring BLOCKED; next action is ARCHITECT §2.10 harmonization and complete 26-family closure audit.**
+
+
+---
+
+## Entry 46 — M3 V4.4 B1–B4 CRITIC CLEAR and post-merge custody
+
+**Date:** 2026-08-16 · **Actor:** CRITIC (independent review); Rebecca Mcclintic (merge authorization); MOR-COORDINATOR (authorized merge); RECORDER (artifact custody and attestation)
+
+- **Gate served:** M3 V4.4 B1–B4 Independent Re-Review and post-merge custody.
+- **Reviewed lineage:** prior blocked result `b6accaad3773468d54b2363a1072877554186265`; corrected ARCHITECT result `9fb186263e6aa63919e784bc81fb096907f6af30` on `architect/m3-v4-4-critic-b1-b4`, directly descending from the blocked result.
+- **CRITIC ruling event (before merge):** `reviews/critic_m3_v4_4_b1_b4_independent_rereview.md`, preserved verbatim from the authoritative inter-session courier artifact; canonical LF SHA-256 `afbcf45587575265d09d7b22126ca8a891ed14ad8a2e845392997a540a326d05`. Verdict: **CLEAR**. B1 (L3 stochastic classification and FWFP closure): **RESOLVED**. B2 (raw-artifact sufficiency): **RESOLVED**. B3 (verifier independence): **RESOLVED**. B4 (canonical hashing): **RESOLVED**. No new blocking findings.
+- **NB1 retained:** documentation-only internal `gate` and `schema_version` labels still read “M3 V4.3” / `...-v2` at the V4.4 gate; this is non-blocking and recommended for alignment at a later revision. This custody action does not correct NB1.
+- **CRITIC classification and arithmetic:** final classification 9 stochastic / 17 deterministic; maximum corrected FWFP `48/1001 ≈ 0.047952`. The CLEAR certified pre-scoring specification-framework closure only. At the review event the branch was correctly recorded as unmerged, and implementation and scoring remained blocked.
+- **Later merge event:** Rebecca subsequently accepted the CRITIC CLEAR and explicitly authorized the recommended merge. MOR-COORDINATOR performed that specifically authorized merge on Rebecca’s behalf. PR #13 merged `architect/m3-v4-4-critic-b1-b4` at merge commit `24c0fc85e96c6b82c05d6ecefdebb263e120a498`, which became current `main`; the source branch was retained.
+- **Merged V4.4 canonical LF hashes:**
+  - `specs/m3_e2_spec_amended_v4_4.md` — SHA-256 `6dd1bdbc753bb9963868bbd928600ccc9298be7b7089ca60dcd6b54d4c181360`
+  - `specs/m3_e2_spec_changelog_v4_4.md` — SHA-256 `281ae4bfcd8adff743abe77b8970a64920c869a3e8f04a4d8250d6bdb48c4102`
+  - `verification/m3_control_family_closure_inventory.json` — SHA-256 `a0d91675cd516ba2e703e4e8aad404271f8caf89b20f72d2816a8d7331d4b0e9`
+  - `verification/verify_m3_control_family_closure.py` — SHA-256 `e6ae0e9f6ed85d5c15a5bda18734c241480a6f15f3f90cbb14d20b765b2adf5a`
+  - `verification/m3_control_family_closure_results.json` — SHA-256 `a78461798311fa68ceccaff5feea0c3b3ac5659b7fbcaa3053fa9826b67d6384`
+- **Merged scope:** PR #13 introduced exactly the five files attested above. No implementation, scoring artifact, fresh-seed material, or `state/STATE.md` change was introduced.
+- **Preserved evidence:** the first M3 scoring run remains **INSTRUMENT FAILURE**. Seeds 201–203 are retained and must never be rerun. Prior L3/L5/L6 PASS evidence remains valid. L1 candidate-facing bars passed with no kill condition. Rebecca Entry 43 and its four-part test remain binding. O-14, O-15, D1–D5, L9, L18, L15, unseen-seed protections, supervised-execution boundaries, Phase A / Phase B separation, and all standing protections remain intact. No candidate-facing bar changed and no fresh scoring occurred.
+- **Authorization boundary:** Rebecca’s merge approval authorized only PR #13’s specification-framework merge. It did not authorize implementation, TASK BUILDER work, courier scoring construction, fresh-seed selection or exposure, scoring, or reruns of seeds 201–203. This RECORDER action authorizes none of those actions and does not edit specifications, verification artifacts, implementation, scoring artifacts, or `state/STATE.md`.
+- **Pending reconciliation:** `state/STATE.md` remains unchanged by PR #13 and by RECORDER. Its V4.4 post-merge reconciliation is pending and may be performed only by INTEGRATOR under a fresh authorization.
+- **Exact next authorized role:** **Rebecca**, to decide whether to incorporate this custody-only branch and separately authorize INTEGRATOR STATE.md reconciliation. No implementation or scoring is authorized by this entry.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 first scoring retained as INSTRUMENT FAILURE. V4.4 B1–B4 specification framework CRITIC-CLEARED and merged through Rebecca-authorized PR #13. Custody ruling preserved. Scoring and implementation remain BLOCKED; INTEGRATOR STATE.md reconciliation is pending separate authorization.**
