@@ -1411,3 +1411,34 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **No scientific content, locked bars, M3 specification, task spec, courier architecture, or prior provenance entries altered.** STATE.md updated and this entry appended only.
 
 **M0 COMPLETE. M1 DELIVERED GREEN AND ACCEPTED. M2 (E1) DELIVERED GREEN — SEALED. M3/E2 V4 GO — timebox active. M3 BUILD GO — build authorized; TASK BUILDER may implement against approved task spec. No scoring, courier run, hold-out exposure, or L15-L17 claim authorized. §1.1 growth-bar pending Rebecca.**
+
+
+---
+
+## Entry 42 — Pre-scoring custody update: implementation CRITIC-cleared, courier packet cleared, ready for scoring
+
+**Date:** 2026-08-16 · **Actor:** RECORDER (custody and attestation); TASK BUILDER (implementation); CRITIC (final clearance); Rebecca Mcclintic (L1 permuted-arm amendment authorization)
+
+- **Chain attested from main `24040eaac7c43d989d8a402cf851c09bd17fd213`:**
+  - Entry 41: Rebecca M3 BUILD GO — build authorized (merged at `9a56271`)
+  - Post-Entry-41: TASK BUILDER implemented M3 harness (`src/m3_harness.py`) against approved task spec; V4.1 L3 amendment and V4.2 L1 permuted-arm amendment produced and CRITIC-cleared
+  - Rebecca authorized L1 permuted-arm amendment before scoring
+  - PR #5 merged implementation to main at `7fdf033` (`taskbuilder/m3-e2-implementation`, SHA `8012a7f`)
+  - PR #6 fixed scoring-mode seed routing at `24040ea` (`taskbuilder/m3-critic-b1-scoring-guard`, SHA `84f9973`) — hold-out seeds {201,202,203} now accepted in `--mode scoring`
+  - CRITIC final clearance ruling: **CLEARED FOR SCORING** (`reviews/critic_m3_final_clearance_ruling.md`)
+  - Courier scoring packet CRITIC-cleared (`specs/m3_e2_courier_scoring_packet.md`)
+- **Attested artifact hashes:**
+  - `specs/m3_e2_courier_scoring_packet.md` — SHA-256 `848ce9272491e98cd39fe9a3914c56ec08ee66cf6c89e0871f6cd518b86f4fb0`
+  - `reviews/critic_m3_final_clearance_ruling.md` — SHA-256 `5752f3f0f937cfaa06aa0010815b080f17a8b9c4e1d435bf6aa1b0df69ef1cc6`
+  - `reviews/critic_m3_courier_packet_review.md` — SHA-256 `128ecc74d9cb04cfe0f1f7d944e36e470aa4f136f93c6b2c5430f06b7e3ebe67`
+  - `specs/m3_e2_spec_amended_v4_2.md` — SHA-256 `7936bb9fd83efa71ce7fb446f37aea24588a835bcd180610b3819c9ff0dec704`
+  - `specs/m3_e2_spec_changelog_v4_2.md` — SHA-256 `b8351e90e4a0ef45cc8fe27d6e35167472937f84abb2ec6a774f7d1d3330ef99`
+  - `reviews/critic_m3_v42_amendment_review.md` — SHA-256 `cdd13f4b9f5592d14141bd45de85e0e0a08b78b39964c6ea2479f1e5e5d9b521`
+- **Scoring command (CRITIC-cleared, final):**
+  `python src/m3_harness.py --law all --seeds 201,202,203 --verify-reproducibility --output-dir ./m3_scoring_output`
+- **Hold-out seeds:** {201, 202, 203} — all 3 unseen in development (O-35 satisfied with full margin)
+- **Authorization boundary:** scoring authorized via Rebecca's supervised-executor courier channel. No re-run-on-failure (O-14). No L15-L17 integration claim. §1.1 growth-bar proposal remains diagnostic-only and non-gating pending separate Rebecca ruling.
+- **Standing protections verified present:** O-14, O-15, O-35, D1-D5, L9 hard fence, full L18 battery, no integration claim without L15-L17 evidence, no renaming negative results.
+- **No scientific content, locked bars, code, M3 specification, or prior provenance entries altered.** STATE.md updated and this entry appended only.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3/E2 V4 GO → BUILD GO → CLEARED FOR SCORING. Implementation merged (PR #5). Scoring-mode seed routing fixed (PR #6). CRITIC final clearance: CLEARED FOR SCORING. Courier packet CRITIC-cleared. Ready for Rebecca to execute scoring on supervised executor. §1.1 growth-bar pending Rebecca.**
