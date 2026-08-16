@@ -1,155 +1,394 @@
-# STATE.md — Post-M2 Operational Continuity
+# STATE.md — M1 Build Cell Operational Memory
 
-> **Purpose:** This file is the team's operational continuity record after M2 completion. It supersedes the stale in-checkout `state/STATE.md` status fields for handoff purposes; it does not amend the constitution, locked bars, or Rebecca's rulings.
+> **Label: team-defined operational schema under Rebecca's M0 addendum (Entry 13, O-10).** This is a conservative, minimal contract the team maintains. It is not a constitution law; it is the team's operational memory between sessions.
 >
-> **Label:** team-defined operational schema under Rebecca's M0 addendum (Entry 13, O-10). It is a conservative, minimal contract maintained between sessions, not a constitution law.
->
-> **Ownership:** INTEGRATOR is the sole writer of STATE.md. The RECORDER records the file's hash at every merge. If the RECORDER detects divergence between the provenance record and this file's claims, it escalates immediately to Rebecca; STATE.md never self-authenticates.
+> **Ownership:** INTEGRATOR is the sole writer of STATE.md (BUILD_PHASE_ORG Ruling 1, binding). The RECORDER records STATE.md's hash at every merge, making the file tamper-evident. If the RECORDER ever detects divergence between the provenance log and STATE.md's claims, that is an immediate escalation to Rebecca — STATE.md never self-authenticates.
 
 ```yaml
-# STATE.md — team operational schema
+# STATE.md — team operational schema (under Rebecca's M0 addendum, Entry 13 / O-10)
 # Updated by: INTEGRATOR (sole writer). RECORDER records hash at every merge.
-# Last-updated: 2026-08-15T21:19:00-04:00.
-# Continuity point: M2 complete; M3 has not been authorized to build.
+# Last-updated: 2026-08-15T23:15:00-04:00.
 
-milestone: M3
-milestone_status: "continuation/scope specification cycle pending; no build authorization; no M3 timebox started"
-session_count: 2                 # completed build-cell sessions recorded through M2: M1 Session 1 and M2 Session 1
-milestone_session_budget: null   # no M3 budget is active or authorized
+milestone: M3                       # M1 DELIVERED GREEN (Entry 24); M2 DELIVERED GREEN, SEALED, ACCEPTED (Entry 34 + provenance-cure re-run); M3/E2 spec cycle active — V4 received CRITIC CLEAR (F1-F7 resolved, NF1-NF6 addressed); V4 eligible for Rebecca's M3 Continuation/Scope Gate; no build authorization, no timebox
+session_count: 4                    # completed working sessions (M1: 1 session; M2: 1 session; M3 spec cycle: 2 sessions — V0→V3 reviewed/BLOCKED, V4 reviewed/CLEARED)
+milestone_session_budget: N/A      # M2 delivered within budget (1 of 3 sessions, 1 of 7 days); M3 has no timebox authorized
 
-m2_completion:
-  status: "DELIVERED GREEN — SEALED; M2 acceptance COMPLETE"
-  evidence: "E1-RUN-2 scored GREEN; lineage attestation VERIFIED; provenance-cure run PASS"
-  acceptance: "complete; awaiting Rebecca's M3 Continuation/Scope Gate"
-  scored_properties:
-    correctness: "PASS — oracle_agreement=1.0 on all five seeds (42–46)"
-    operational_distinctness: "PASS — candidate growth 1.0x; fair-naive growth 6.89x in E1-RUN-2; battery valid"
-    load_bearing_coupling: "PASS — mean degradation=0.1076; every seed > 0; >=0.05 floor"
-  kill_conditions: "none fired"
-  holdout_seeds: "45 and 46; consistent with development seeds"
+timebox:
+  m2_status: delivered_green        # M2 DELIVERED GREEN, SEALED, ACCEPTED
+  m2_started: 2026-08-15            # M2 timebox clock started 2026-08-15 (CRITIC cleared Q2/Q3 incorporations)
+  m2_sessions_consumed: 1            # M2 consumed 1 session
+  m2_days_consumed: 1               # M2 consumed 1 day
+  m3_status: no_timebox             # M3/E2 V4 CRITIC CLEAR — eligible for Rebecca's M3 Continuation/Scope Gate; no build authorization; no timebox active
+  m3_note: "M3/E2 spec V4 reviewed by CRITIC (fifth independent re-review): CLEAR — F1-F7 all resolved, NF1-NF6 all addressed, NF7-NF10 non-blocking findings of record. V4 package eligible for presentation to Rebecca at M3 Continuation/Scope Gate. No build cell, task specification, scoring packet, execution, or M3 timebox authorized. §1.1 growth-bar proposal remains pending Rebecca's separate ruling."
 
-m2_timebox:
-  started: 2026-08-15
-  status: delivered_green
-  sessions_consumed: 1
-  days_consumed: 1
-  session_cap: 3
-  day_cap: 7
-  actuals_note: "Entry 36 supports M2 actuals of Session 1/3 and Day 1/7. No later consumption is recorded."
-
-m3_scope_gate:
-  status: "BLOCK — first ARCHITECT scope draft received CRITIC BLOCK with 10 blocking findings"
-  build_authorization: false
-  timebox_started: false
-  continuation_gate: "pending Rebecca's decision after an amended specification clears CRITIC re-review"
-  required_next_review: "ARCHITECT resubmits an amended M3/E2 scope specification with the required matrix, restored/adjudicated bars, execution protocol, controls, and scope fences; CRITIC re-reviews before any packet reaches Rebecca"
-  scope_fence: "No M3 result may be presented as L15, L16, or L17 evidence without the prescribed integration tests. Any L9-triggering channel pauses affected work for Rebecca/CRITIC review."
-
-locked_bars_and_standing_rules:
+locked_bars:                        # only bars active/relevant to current milestone
   M1_discrimination: "oracle >= naive + 0.30 on every metric, 3 seeds"
   L20_drift: "profile pearson_corr(profile_vector, new_profile_vector) < 0.70 => drifted"
   L18_battery: "empty/permuted/shuffled/oracle/naive/frozen, fully enumerated"
-  I3_tolerance: "Rebecca-locked empirical-null method; re-run-on-failure is forbidden"
-  future_scoring: "at least two seeds unseen in development; development runs diagnostic only; scoring uses Rebecca's supervised-executor courier; returned artifacts are raw and complete"
+  I3_tolerance: "empirical-null method (Rebecca-locked, Ruling O-14): per metric, estimate the chance arm's sampling distribution from >=30 seeded null replicates; I3 band = central 99% interval of that empirical null; supersedes the former two-tier tolerance. Low-power flag if empirical band exceeds +/-0.15 (correlation-scale) or +/-0.10 (probability-scale). Re-run-on-failure is FORBIDDEN (result laundering)."
+  E1_degradation_floor: "downstream_degradation > 0 all seeds AND mean >= 0.05 (Rebecca SIGNED, Entry 29)"
+  E1_battery_validity: "fair_naive_latency_growth_10x >= 4.0 (instrument failure if not; NOT a candidate kill)"
+  E1_candidate_scaling: "candidate_latency_growth_10x <= 2.0 (kill (d))"
+  E1_correctness: "oracle_agreement == 1.0 on all 5 seeds (kill (f), SIGNED, PRIMARY)"
 
-watch_items:
+watch_items:                        # CRITIC carry-forward items, with locus
   - id: W1
-    desc: "L1 binning scheme for R^2 fit; coarse binning can manufacture a pass"
+    desc: "L1 binning scheme for R2 fit (coarse binning can manufacture R2)"
     locus: M3
+    m1_relevant: false
+  - id: W2
+    desc: "L4 agreement score reported as continuous statistic"
+    locus: M2
+    m2_resolved: true
+    m1_relevant: false
+  - id: W3
+    desc: "L4 equivalence tolerance 0.90 must not be re-litigated per D2 retry"
+    locus: M2
+    m2_resolved: true
+    m1_relevant: false
   - id: W4
-    desc: "L10 confidence threshold must be pre-registered"
+    desc: "L10 confidence threshold pre-registered at M4"
     locus: M4
+    m1_relevant: false
   - id: W5
-    desc: "L14 correlation bar is the weakest inferential bar; effect size remains primary"
+    desc: "L14 corr >= 0.3 at 3 seeds (weakest inferential bar; d>=0.5 is primary)"
     locus: M4
-  - id: M3-B1-through-B10
-    desc: "CRITIC's ten blocking findings on the first M3 scope draft; all require resolution before build authorization"
-    locus: M3
+    m1_relevant: false
 
 repo:
-  main_commit_hash: "93362dce608c97755402dc3fad2b8a4fd5beda4b"
-  main_commit_subject: "merge: lineage-and-cure — E1 chain SEALED, M2 acceptance complete"
-  import_commit_hash: "a85ec91f22521164abd2604a1c299c74f0dd67ac"
-  pre_migration_scored_commit_hash: "1d13105e8163859d7972705b731ba8c24a272276"
-  lineage_attestation: "VERIFIED — 46 files assessed: 6 byte-identical, 40 CRLF-to-LF normalized, 1 documented relative-path edit, no other discrepancies"
-  provenance_cure: "PASS — fresh checkout of a85ec91; manifest now names a85ec91; non-timing metrics identical to E1-RUN-2"
-  e1_chain: SEALED
-  artifact_policy: "E1-RUN-1 crash artifacts are retained raw and uncurated under Rebecca's private-repository Option B ruling"
+  commit_hash: "1626bb09d9645ccdf2a2126325b2934dc12e2c5d"   # HEAD of GitHub main (darkside73826779-ship-it/moving-origin-research) — VERIFIED via git ls-remote 2026-08-15T22:38Z. Single source of truth per project instructions.
+  github_main_verified: "1626bb09d9645ccdf2a2126325b2934dc12e2c5d"   # GitHub main HEAD, VERIFIED 2026-08-15T22:38Z via git ls-remote https://github.com/darkside73826779-ship-it/moving-origin-research.git refs/heads/main
+  cure_commit_hash: "a85ec91f22521164abd2604a1c299c74f0dd67ac"   # E1 provenance-cure re-run commit (manifest commit hash cured from "pending -- no git repo" to real repository hash a85ec91f; JUDGE scored DELIVERED GREEN from cure artifacts — judge_e1_cure_ruling.md)
+  e1_run2_scored_commit: "1d13105e8163859d7972705b731ba8c24a272276"   # E1-RUN-2 scored commit (timing fix dceb258 + cosmetic/L20 float fix; JUDGE scored DELIVERED GREEN with provenance discrepancy flagged — manifest showed "pending -- no git repo", round-trip log claimed 1d13105; subsequently cured in cure re-run at a85ec91)
+  timing_fix_commit_hash: "dceb2584f495cde06787693d80f8e40f258eb33c"   # TASK BUILDER timing-construction-bug fix commit (perf_counter_ns + batch fallback for Windows timing resolution; _safe_pearson isfinite guard; instrument_failure flag for non-finite latency) — fixes the E1-RUN-1 crash diagnosed in critic_e1_run1_crash_analysis.md; per Rebecca's construction-bug guard, does not consume D2 budget
+  courier_packet_commit_hash: "7db4f69346701d7298a5eeb70bff114be88f4e44"   # INTEGRATOR courier packet commit (e1_courier_packet.md — verbatim command, output schema, scoring criteria, return instructions for Rebecca's 5-seed E1 scoring run)
+  run2_commit_hash: "7aefce893a3c579077d48b5bee386b90a4c1ba21"   # RUN-2 hygiene commit (>=100 null replicates, UTF-8 fix, deviations_logged self-detect, I5 rationale explicit)
+  e1_spec_commit_hash: "1e4a8251ec940d9470627c6af7cecbabaf657637"   # ARCHITECT E1 spec DRAFT commit (moving-origin experiment, L2+L4) — superseded by revised spec
+  e1_spec_revised_commit_hash: "e278b788cfac1e4b4865b0155f8ea9732eded3dd"   # ARCHITECT E1 spec v2 REVISED commit (existence proof via designated_at; 5 blocking + 12 non-blocking CRITIC issues addressed) — superseded by v3
+  e1_spec_v3_commit_hash: "a1f192ad68ce43b47c6a22eb0386ed93bc49e0db"   # ARCHITECT E1 spec v3 commit (three-property test: correctness, operational distinctness, load-bearing coupling; constitution amendment per Rebecca's E1 gate ruling) — superseded by v3+Q2/Q3 incorporations
+  e1_spec_v3_q2q3_commit_hash: "7cb78c453c58b6daa52fc718c5d8fa2c1909b194"   # ARCHITECT incorporates Rebecca E1 v3 GO ruling Q2/Q3 (slope-ratio replaced with battery-validity, timing methodology mandated, downstream consumer fully specified, NB-5 resolved) — specification completions within the approved v3 structure, NOT a new revision cycle
+  e1_task_spec_commit_hash: "3aa26d86293a20faabc9c2ab3258b7ce479515ea"   # INTEGRATOR E1 task spec commit (self-contained implementation brief task_spec_e1.md for TASK BUILDER, extracts all implementable details from e1_spec.md)
+  e1_spec_option_e_commit_hash: "5b5bc957c767d4bd5344fef51bedd5207f81732c"   # ARCHITECT Option E targeted amendment commit (frozen arm = coords at birth never re-resolved; recency-discriminative query battery 40%; per Rebecca's Property (iii) ruling) — superseded by Option E fix
+  e1_spec_option_e_fix_commit_hash: "32cf56a17ffff5a08099427793b84fcbf3c20a56"   # ARCHITECT Option E fix commit (additive relevance + bucketed spike features; CRITIC-verified: CU degradation=0, RD=0.255, aggregate=0.102, all checks pass)
+  e1_experiment_commit_hash: "f9dc658f40291a026769474fe3dd6ff9dfc86fe6"   # TASK BUILDER Option E + R1-R4 implementation commit (e1_experiment.py + e1_experiment_CHANGES.md — frozen arm coords at birth, additive relevance, bucketed spike features, 5-seed support [42,43,44,45,46], component-wise reporting R1-R4; diagnostic PASS seeds 42/43/44: all 3 properties pass, no kill fires, degradation=0.104 > 0.05 floor)
+  m1_harness_file_hash: "6d33349a2d10686f8f2b42709ec43a7da6e175948ebd60b28801b1627bcc8413"   # retroactive SHA-256 of m1_harness.py at git init (anchors RUN-1 integrity, since repo did not exist at RUN-1 time)
+  artifact: "m1_harness.py + requirements.txt + e1_experiment.py + all specs/reviews/runs"
+  m3_e2_spec_v4_project_files: true   # M3/E2 spec V4 (specs/m3_e2_spec_amended_v4.md) + changelog (specs/m3_e2_spec_changelog_v4.md) + CRITIC V4 review (reviews/critic_m3_e2_spec_rereview_v4.md) persisted in Project Files
+  note: "GitHub repository darkside73826779-ship-it/moving-origin-research is the single source of truth (per project instructions). Main HEAD verified at 1626bb09 (2026-08-15T23:15Z via git ls-remote). E1 provenance cure complete: cure re-run at a85ec91 cured the manifest commit-hash defect (manifest now shows real repository hash a85ec91f; JUDGE scored DELIVERED GREEN — judge_e1_cure_ruling.md). Lineage attestation (runs/e1-cure-run/lineage_attestation.md) confirms: 46 files verified (6 byte-identical, 40 matched SHA-256 after CRLF→LF normalization, exit status 0). Pre-migration workspace commit 1d13105e. M3/E2 spec V4 package persisted in Project Files (specs/m3_e2_spec_amended_v4.md + specs/m3_e2_spec_changelog_v4.md); CRITIC fifth independent re-review returned CLEAR (reviews/critic_m3_e2_spec_rereview_v4.md) — F1-F7 all resolved, NF1-NF6 all addressed, NF7-NF10 non-blocking findings of record. V4 eligible for Rebecca's M3 Continuation/Scope Gate."
 
-run_requests_to_rebecca:
+run_requests_to_rebecca:            # courier packets issued (per merge-candidate, batched per BUILD_PHASE_ORG Ruling 2)
   - id: RUN-1
-    status: "returned — GREEN"
-    purpose: "M1 scoring run"
-    seeds: [42, 43, 44]
-    commit_hash: "pending — no git repo at M1 run time"
-    wall_clock_seconds: 0.0419
+    command: "python m1_harness.py --seeds 42,43,44 --output-dir ./m1_output"
+    issued: 2026-08-15               # packaged 2026-08-15 by INTEGRATOR; held for CRITIC code-review clearance before courier dispatch
+    status: returned — GREEN       # pending | packaged | in_flight | returned
+    note: "RUN-1 returned GREEN — scored by JUDGE from returned artifacts (Entry 24). All 3 delivery criteria pass. This was a SCORING run (development runs were diagnostic only, non-scoring per O-15)."
   - id: E1-RUN-1
-    status: "returned — CRASH RETAINED"
-    purpose: "M2/E1 initial scoring attempt"
-    seeds: [42, 43, 44, 45, 46]
-    commit_hash: "pre-fix lineage; timing fix dceb2584 and final scored commit 1d13105"
-    disposition: "Windows clock-resolution construction bug; retained raw; construction-bug guard applies; not a kill or a D2 retry"
+    command: "python e1_experiment.py --seeds 42,43,44,45,46 --output-dir ./e1_scoring_output"
+    issued: 2026-08-15               # packaged 2026-08-15 by INTEGRATOR (this packet); CRITIC already cleared the implementation (critic_e1_implementation_verification.md, VERIFIED) prior to packaging
+    status: returned — CRASHED (construction bug)  # Construction bug: time.monotonic_ns() ~15ms resolution on Windows executor; fixed by TASK BUILDER (perf_counter_ns + batch fallback); does not consume D2 budget
+    note: "E1-RUN-1 dispatched to Rebecca, CRASHED on her Windows executor (ValueError from pearsonr on non-finite profile vector — CRITIC-diagnosed clock-resolution construction bug, critic_e1_run1_crash_analysis.md). Non-latency results survived (Property (i) oracle_agreement=1.0 all 5 seeds, Property (iii) degradation mean=0.1076). TASK BUILDER's timing fix committed (dceb258). Construction-bug guard: fix + re-run does not consume D2 budget."
   - id: E1-RUN-2
-    status: "returned — GREEN; JUDGE DELIVERED GREEN"
-    purpose: "M2/E1 scored run"
-    seeds: [42, 43, 44, 45, 46]
-    commit_hash: "1d13105e8163859d7972705b731ba8c24a272276"
-    wall_clock_seconds: 8.39
-    returned_artifacts: "six output files, raw and complete; hashes verified"
+    command: "python e1_experiment.py --seeds 42,43,44,45,46 --output-dir ./e1_scoring_output"
+    issued: 2026-08-15               # repackaged after timing fix; scored commit 1d13105
+    status: returned — GREEN       # DELIVERED GREEN (JUDGE ruling judge_e1_run2_ruling.md, Entry 34)
+    note: "E1-RUN-2 returned GREEN — all 3 properties pass on all 5 seeds, no kill conditions fire. Property (i) oracle_agreement=1.0 all seeds. Property (ii) candidate 1.0x (<=2.0), fair-naive 6.69-7.13x (>=4.0, battery valid). Property (iii) degradation mean=0.1076 (>=0.05), all seeds > 0. R1-R4 satisfied. R4 arithmetic independently re-verified by JUDGE. One provenance discrepancy flagged: manifest showed 'pending -- no git repo', round-trip log claimed 1d13105; immaterial to scoring but flagged. Cured in subsequent provenance-cure re-run."
   - id: E1-CURE-RUN
-    status: "returned — GREEN (PASS); provenance cured"
-    purpose: "fresh-checkout cure run required after repository import"
-    seeds: [42, 43, 44, 45, 46]
-    commit_hash: "a85ec91f22521164abd2604a1c299c74f0dd67ac"
-    wall_clock_seconds: 8.44
-    returned_artifacts: "six output files plus round-trip log; manifest commit_hash cured to a85ec91"
+    command: "python e1_experiment.py --seeds 42,43,44,45,46 --output-dir ./e1_cure_output"
+    issued: 2026-08-15               # provenance-cure re-run; scored commit a85ec91
+    status: returned — GREEN       # DELIVERED GREEN (JUDGE ruling judge_e1_cure_ruling.md)
+    note: "Provenance-cure re-run. Manifest commit hash cured from 'pending -- no git repo' to real repository hash a85ec91f22521164abd2604a1c299c74f0dd67ac. JUDGE scored DELIVERED GREEN: all 3 properties pass, no kill conditions fire, R1-R4 satisfied, R4 arithmetic exact match. Non-timing metrics identical to E1-RUN-2 (confirms only provenance defect was cured, not the candidate). Lineage attestation: 46 files verified (6 byte-identical, 40 matched SHA-256 after CRLF→LF normalization, exit status 0)."
 
-returned_artifacts:
+returned_artifacts:                 # inventory of what Rebecca returned — RUN-1 GREEN (Entry 24), E1-RUN-2 GREEN (Entry 34), E1-CURE-RUN GREEN (cure ruling)
   - run_id: "m1-20260815T194311Z"
-    result: GREEN
+    files:
+      - "m1_output/m1_invariants.json"
+      - "m1_output/m1_manifest.json"
+      - "m1_output/m1_profile.json"
+      - "m1_output/m1_run.log"
+      - "m1_output/m1_run_results.json"
     commit_hash: "pending — no git repo"
     wall_clock_seconds: 0.0419
-    deviations: ["Python 3.12.10 versus pinned 3.11; non-blocking and logged"]
-  - run_id: "E1-RUN-1"
-    result: "CRASH RETAINED"
-    artifacts: "raw crash stderr and round-trip log retained in runs/e1-run-1/"
-    disposition: "clock-resolution construction bug; fixed and independently verified before E1-RUN-2"
-  - run_id: "E1-RUN-2"
-    result: "DELIVERED GREEN"
-    commit_hash: "1d13105e8163859d7972705b731ba8c24a272276"
+    deviations:
+      - "Python 3.12.10 vs pinned 3.11 (non-blocking)"
+  - run_id: "e1-run-2"
+    files:
+      - "runs/e1-run-2/e1_scoring_output/e1_run.log"
+      - "runs/e1-run-2/e1_scoring_output/e1_invariants.json"
+      - "runs/e1-run-2/e1_scoring_output/e1_run_results.json"
+      - "runs/e1-run-2/e1_scoring_output/e1_manifest.json"
+      - "runs/e1-run-2/e1_scoring_output/e1_profile.json"
+      - "runs/e1-run-2/e1_run_2_roundtrip_log.txt"
+    commit_hash: "1d13105e8163859d7972705b731ba8c24a272276"   # scored commit (round-trip log); manifest discrepancy flagged
     wall_clock_seconds: 8.39
-    artifacts: "six raw returned scoring outputs; hashes verified"
-  - run_id: "E1-CURE-RUN"
-    result: "GREEN (PASS)"
-    commit_hash: "a85ec91f22521164abd2604a1c299c74f0dd67ac"
-    wall_clock_seconds: 8.44
-    artifacts: "fresh-checkout returned artifacts in runs/e1-cure-run/; manifest records the named commit"
+    deviations:
+      - "Python 3.12.10 vs pinned 3.11 (non-blocking)"
+      - "Manifest commit_hash discrepancy: manifest says 'pending -- no git repo', round-trip log says 1d13105 (immaterial to scoring, cured in E1-CURE-RUN)"
+  - run_id: "e1-cure-run"
+    files:
+      - "runs/e1-cure-run/e1_cure_output/e1_run.log"
+      - "runs/e1-cure-run/e1_cure_output/e1_invariants.json"
+      - "runs/e1-cure-run/e1_cure_output/e1_run_results.json"
+      - "runs/e1-cure-run/e1_cure_output/e1_manifest.json"
+      - "runs/e1-cure-run/e1_cure_output/e1_profile.json"
+      - "runs/e1-cure-run/e1_cure_roundtrip_log.txt"
+      - "runs/e1-cure-run/lineage_attestation.md"
+    commit_hash: "a85ec91f22521164abd2604a1c299c74f0dd67ac"   # manifest commit hash CURED (exact match)
+    wall_clock_seconds: null
+    deviations:
+      - "Python 3.12.10 vs pinned 3.11 (non-blocking)"
 
-role_status:
-  JUDGE: "M1 DELIVERED GREEN and M2/E1-RUN-2 DELIVERED GREEN from returned artifacts; no M3 scoring packet exists."
-  CRITIC: "M2 implementation/results reviews complete; first M3 scope draft BLOCKED with 10 blocking findings. Re-review is required after a complete amended specification."
-  RECORDER: "Repository custodian; Entry 36 logged; lineage and cure commits integrated to main 93362dce; E1 chain SEALED and M2 acceptance complete."
-  INTEGRATOR: "Authored this post-M2 continuity state; M2 operational closure recorded. No M3 build-cell action, courier packet, or timebox action is authorized."
-  ARCHITECT: "First M3 scope draft reviewed and BLOCKED. Must prepare the amended continuation/scope specification and required resubmission materials; no implementation task may issue."
-  TASK_BUILDER: "M2 implementation complete. No M3 task is authorized or active."
+## Prerequisites complete
 
-open_blockers:
-  - "M3 continuation/scope specification: CRITIC BLOCK, 10 blocking findings (B1–B10)"
-  - "Rebecca's M3 Continuation/Scope Gate remains pending after CRITIC-cleared resubmission"
+- **PREREQUISITE 2 (I3 null replicates >=100):** DONE — TASK BUILDER raised null-replicate count from 30 to >=100 in m1_harness.py; committed in RUN-2 hygiene batch (commit `7aefce893a3c579077d48b5bee386b90a4c1ba21`, 2026-08-15).
+- **RUN-2 hygiene batch:** DONE — TASK BUILDER applied non-gating code fixes (>=100 null replicates, UTF-8 fix, deviations_logged self-detect, I5 rationale explicit); committed in commit `7aefce893a3c579077d48b5bee386b90a4c1ba21` (2026-08-15).
+- **Git repo initialization:** DONE — repo initialized post-RUN-1 (commit cebfa13); retroactive SHA-256 of m1_harness.py recorded.
+- **GitHub repository migration:** DONE — workspace repo migrated to GitHub (darkside73826779-ship-it/moving-origin-research); lineage attestation verified; main HEAD at 1626bb09 (VERIFIED 2026-08-15T22:38Z).
 
-next_action: "ARCHITECT prepares an amended M3/E2 continuation-scope specification addressing B1–B10; CRITIC independently re-reviews it. Only after CRITIC clearance may a gate packet go to Rebecca. No M3 build, task issuance, courier scoring run, or timebox start is authorized before that gate."
+role_status:                        # latest verdict per role
+  JUDGE:        "M1 DELIVERED GREEN (Entry 24); M2 DELIVERED GREEN — E1-RUN-2 scored GREEN (judge_e1_run2_ruling.md, Entry 34), E1-CURE-RUN scored GREEN (judge_e1_cure_ruling.md); all 3 properties pass on all 5 seeds, no kill conditions fire, R4 arithmetic independently verified"
+  CRITIC:       "M1 complete (CLEARED, Entry 24); M2 complete — verified Option E + R1-R4 implementation (VERIFIED), diagnosed E1-RUN-1 crash (construction bug), cleared E1-RUN-2 results (5 non-blocking notes); M3/E2 V4 — fifth independent re-review returned CLEAR (critic_m3_e2_spec_rereview_v4.md): F1-F7 all resolved (seeded random permutation tie-break F1, i mod 5 within-bin decorrelation F2, ablation bounds specified F3, oracle R²=0.985 verified F4, L5 head-pointer redesign F5, edge count 180 + derangement=0 F6, L6 callable count 4 F7); NF1-NF6 all addressed; NF7-NF10 non-blocking findings of record (R² reproducibility discrepancy NF7, L3 permuted bound NF8, L5 binary walk accuracy NF9, STATE.md staleness NF10)"
+  RECORDER:     "current — provenance log current through Entry 34; STATE.md hash attestation at every merge; GitHub repository darkside73826779-ship-it/moving-origin-research is single source of truth; lineage attestation verified (a85ec91, 46 files); M3/E2 spec V4 + changelog + CRITIC V4 CLEAR review persisted in Project Files; pending repository attestation and publication of complete gate package"
+  INTEGRATOR:   "M1 DELIVERED GREEN; M2 DELIVERED GREEN, SEALED, ACCEPTED — E1-RUN-2 scored GREEN, provenance-cure re-run scored GREEN (manifest commit hash cured); lineage/provenance cure complete; GitHub main verified at 1626bb09; M3/E2 V4 CRITIC CLEAR — F1-F7 resolved, NF1-NF6 addressed, NF7-NF10 non-blocking findings of record; V4 eligible for Rebecca's M3 Continuation/Scope Gate; no build cell, task specification, scoring packet, execution, or M3 timebox authorized; §1.1 growth-bar proposal pending Rebecca's separate ruling; next action: RECORDER repository attestation and publication of complete gate package, then Rebecca's gate ruling"
+  ARCHITECT:    "M1 closed; M2 closed (E1 spec v3 + Q2/Q3 incorporations + Option E fix committed, scored GREEN); M3/E2 spec V4 submitted — CRITIC fifth independent re-review returned CLEAR (F1-F7 resolved, NF1-NF6 addressed); V4 eligible for Rebecca's M3 Continuation/Scope Gate; no build authorization"
+  TASK_BUILDER: "M1 harness complete + RUN-1 GREEN; M2 E1 implementation complete + E1-RUN-2 GREEN; timing-construction-bug fix committed (dceb258); no active M3 build assignment (M3 V4 CRITIC CLEAR but no build authorization yet)"
+
+open_blockers: []                   # M3/E2 V4 CRITIC CLEAR — F1-F7 all resolved, NF1-NF6 all addressed; NF7-NF10 non-blocking findings of record
+
+non_blocking_findings_of_record:    # CRITIC V4 review Part 3 — non-blocking, do not gate
+  - id: NF7
+    desc: "Three printed R² values (frozen, fair-naive, rehearsal-only) not independently reproducible by CRITIC's from-scratch implementation; none affects any branch-defining predicate — documentation/reproducibility issue, not a score-definition defect"
+    source: critic_m3_e2_spec_rereview_v4.md
+    recommended_action: "Next spec/task-spec handoff should include the exact verification script or specify implementation details precisely enough to eliminate convention drift"
+  - id: NF8
+    desc: "L3 permuted arm's exact bound may not be provably exact for all possible fitted weights; very likely correct but not rigorously proven — a false positive would trigger INSTRUMENT FAILURE (not a candidate kill)"
+    source: critic_m3_e2_spec_rereview_v4.md
+  - id: NF9
+    desc: "L5 frozen arm's walk accuracy is binary (0.00 or 1.00), not in open interval (0,1); acceptable because L5 frozen arm is an L18 negative control, not a property (iii)-style continuous degradation measure; the contrast between candidate (1.00) and frozen (0.00) is the measurement"
+    source: critic_m3_e2_spec_rereview_v4.md
+  - id: NF10
+    desc: "STATE.md must be brought current before Rebecca rules (NF3 carried forward) — this STATE.md update fulfills that requirement"
+    source: critic_m3_e2_spec_rereview_v4.md
+    status: resolved_by_this_update
+
+next_action: "RECORDER performs repository attestation and publishes the complete M3 Continuation/Scope Gate package (V4 spec + changelog + CRITIC V4 CLEAR review + current STATE.md). Then Rebecca rules at the M3 Continuation/Scope Gate. No build cell, task specification, scoring packet, execution, or M3 timebox authorized until Rebecca approves."
 ```
 
 ---
 
 ## Conservatism rules (binding)
 
-- The INTEGRATOR is the sole writer of STATE.md; the RECORDER attests its hash at each merge, and any divergence from provenance is escalated to Rebecca.
-- STATE.md records status faithfully. A crash, failure, pending result, or scope block remains explicit; no field is edited to make a result look better.
-- Unmerged work and proposals are not state. Ground truth is repository content at a named commit and Rebecca's binding rulings.
-- The private repository is the single source of truth; the RECORDER commits and maintains provenance, and Rebecca alone merges to `main`.
-- No `AGENT_ORDERS` dependency is active for this continuity update. Any future scoring run must instead carry its own named-commit, run-specific executor order through the supervised-executor courier channel.
+- The INTEGRATOR is the sole writer of STATE.md. The RECORDER records STATE.md's hash at every merge, making the file tamper-evident. If the RECORDER ever detects divergence between the provenance log and STATE.md's claims, that is an immediate escalation to Rebecca — STATE.md never self-authenticates. (BUILD_PHASE_ORG Ruling 1, binding.)
+- STATE.md is updated at every merge and on every run-request / returned-artifact transition.
+- No field is ever edited to make a result look better. A failed or pending result is recorded as such.
+- `repo.commit_hash` always reflects the exact committed artifact that was (or will be) run; if the script changes, a new commit hash and a new RUN id are issued.
+
+---
 
 ## Changelog
 
-- **2026-08-15T21:19:00-04:00 (INTEGRATOR):** Authored the post-M2 corrected operational handoff after reconciling stale `state/STATE.md` against provenance Entry 36, the RECORDER divergence escalation, and the M3 CRITIC scope review. Updated current milestone/status, M2 timebox disposition and supported actuals, repository hashes, E1 run and artifact inventory, lineage/provenance-cure completion, all role statuses, blockers, and next action. Recorded that M3's first scope draft is BLOCKED on ten findings; no build authorization or M3 timebox exists.
+- **2026-08-15 (INTEGRATOR):** STATE.md created. Build cell initialized. `m1_harness_spec.md` updated with Rebecca's I3 two-tier scale-aware tolerance (§0 locked context, §1.2 invariants, §5.2 schema). Cosmetic §5.5 perturbation threshold verified correct (< 0.50). Task spec `task_spec_m1_harness.md` issued to TASK BUILDER. session_count = 0 (no RECORDER log entry yet). RUN-1 pending (awaiting TASK BUILDER output + INTEGRATOR merge).
+- **2026-08-15 (INTEGRATOR) — O-13/O-14 fixes applied to m1_harness.py; RUN-1 packaged:**
+  - TASK BUILDER applied Rebecca's binding rulings to `m1_harness.py`: **O-13** (shuffled arm decoupling — probe now draws a seeded permutation σ and sets `age'_i = age_{σ(i)}` before computing `f1'`, so the deterministic feature `f1` is decoupled between original and shuffled probes; shuffled arm now at chance across seeds) and **O-14** (empirical-null I3 method — naive arm run over 30 null-replicate seeds [100..129]; I3 band = central 99% interval `[0.5th, 99.5th percentile]` per metric; low-power flag when band width exceeds 0.30 corr-scale / 0.20 prob-scale; re-run-on-failure FORBIDDEN).
+  - **Diagnostic verification run (non-scoring per O-15):** `python m1_harness.py --seeds 42,43,44 --output-dir ./m1_output` ⇒ `invariant_suite_green = True`. I1, I2, I3, I4, I5 all PASS; L20 self-test passes (no_drift_corr=1.0, both pinned perturbations corr < 0.50). All 5 output files written to `./m1_output`. Per O-15 this run is diagnostic only and is NOT a scored artifact.
+  - **RUN-1 packaged for courier:** `run_requests_to_rebecca[RUN-1]` status → `packaged`, issued → `2026-08-15`. Courier packet description written to `run1_courier_packet.md` (RUN ID, command, files to deliver [m1_harness.py + requirements.txt], pinned deps [python==3.11, numpy==1.26.4, scipy==1.13.1], expected 5 output files, purpose, bar, Rebecca's courier obligations, scoring-run note, STATE.md hash at packaging time). RUN-1 is a SCORING run — the JUDGE will score only from artifacts Rebecca returns.
+  - `repo.commit_hash` set to "pending — no git repo (artifact is file-based)" — `git rev-parse HEAD` failed (no git repo in workspace). Artifact is file-based: `m1_harness.py` + `requirements.txt`.
+  - role_status updates: TASK_BUILDER → "O-13/O-14 fixes applied; diagnostic run green (non-scoring); awaiting INTEGRATOR merge + RUN-1 packaging"; INTEGRATOR → "packaging RUN-1 for courier"; CRITIC → "M1 spec review COMPLETE; code review in progress". next_action → "RUN-1 packaged; awaiting CRITIC code review clearance; then sent to Rebecca via courier."
+  - RUN-1 NOT yet dispatched to Rebecca — held pending CRITIC code-review clearance.
+- **2026-08-15 (INTEGRATOR):** CRITIC code review CLEARED. RUN-1 dispatched to Rebecca as scoring run. m1_harness.py + requirements.txt + courier packet shared. Awaiting return.
+- **2026-08-15 (INTEGRATOR):** M1 DELIVERED GREEN. JUDGE scored from returned artifacts — all 3 delivery criteria pass. CRITIC results review clean. 6 non-blocking carry-forward items (NC-1 through NC-6). Awaiting Rebecca gate to M2.
+- **2026-08-15 (INTEGRATOR) — git repo initialized; M2 milestone started:**
+  - Git repo initialized in `/home/user/workspace` (`.gitignore` excludes system-managed `memory/knowledge/`). Initial commit: `cebfa1308472dc8daa76a0c2a74628895dc6b873` ("M1 harness delivered green; repo initialized for E1 provenance"). `repo.commit_hash` updated from "pending — no git repo" to the actual HEAD hash.
+  - Retroactive SHA-256 of `m1_harness.py` recorded as `repo.m1_harness_file_hash = 6d33349a2d10686f8f2b42709ec43a7da6e175948ebd60b28801b1627bcc8413`. RUN-1's manifest showed "pending — no git repo" because the repo did not exist at RUN-1 run time; this retroactive file hash anchors RUN-1's integrity post-hoc. Added `repo.note` documenting this.
+  - milestone → M2; session_count → 1 (M1 consumed 1 session / 1 day); timebox.status stays `delivered_green` with note that M1 consumed 1 session / 1 day and M2 timebox will be proposed by ARCHITECT.
+  - role_status updated: all roles reflect M1 complete, M2 beginning (ARCHITECT drafting E1 spec; TASK_BUILDER applying PREREQUISITE 2 + RUN-2 hygiene in parallel).
+  - Prerequisites section added: PREREQUISITE 2 (≥100 null replicates) IN PROGRESS; RUN-2 hygiene batch IN PROGRESS (TASK BUILDER applying in parallel; INTEGRATOR not modifying the harness).
+  - next_action → "ARCHITECT drafting E1 spec; prerequisites in progress (git repo DONE, ≥100 null replicates in progress, RUN-2 hygiene in progress)."
+- **2026-08-15 (INTEGRATOR) — RUN-2 hygiene + E1 spec committed; prerequisites complete:**
+  - TASK BUILDER's RUN-2 hygiene changes committed: `7aefce893a3c579077d48b5bee386b90a4c1ba21` ("RUN-2 hygiene: ≥100 null replicates, UTF-8 fix, deviations_logged self-detect, I5 rationale explicit"). Covers ≥100 null replicates (PREREQUISITE 2), UTF-8 encoding fix, `deviations_logged` self-detection, and explicit I5 rationale. Recorded as `repo.run2_commit_hash`.
+  - ARCHITECT's E1 spec draft committed: `1e4a8251ec940d9470627c6af7cecbabaf657637` ("ARCHITECT E1 spec draft: moving-origin experiment (L2+L4)"). Recorded as `repo.e1_spec_commit_hash`.
+  - `repo.commit_hash` updated to latest HEAD `1e4a8251ec940d9470627c6af7cecbabaf657637` (E1 spec commit, the latest commit).
+  - PREREQUISITE 2 (≥100 null replicates) marked DONE. RUN-2 hygiene batch marked DONE.
+  - role_status updated: all roles reflect M1 complete, M2 prerequisites complete; CRITIC reviewing E1 spec; ARCHITECT E1 spec DRAFTED + committed; TASK_BUILDER both prerequisite batches DONE.
+  - next_action → "CRITIC reviewing E1 spec; all prerequisites complete; awaiting CRITIC review then Rebecca gate."
+- **2026-08-15 (INTEGRATOR) — ARCHITECT E1 spec REVISED + committed (existence proof via designated_at):**
+  - ARCHITECT revised the E1 spec (v1 → v2) in response to CRITIC review (2026-08-15: 5 BLOCKING + 12 NON-BLOCKING + 4 PENDING REBECCA items). Root cause of the two blocking unsatisfiability issues (B1/B5): the candidate's `coord_landmark_relative` was the *same computation* naive recomputation performs (`e.cycle < L.cycle` == `e.created_at < L.created_at` because `created_at == cycle`), so a correct candidate always collapsed (kill (a)) and always scanned (kill (d)) — a foregone conclusion, not a falsification.
+  - **Revision — landmark designation as a deferred event:** Landmark designation is now a separate `designate_landmark()` operation (§1.2.1, §1.2.2 operation 6), recorded in the append-only history, distinct from append. The candidate's `coord_landmark_relative(e, L) = BEFORE_L if e.cycle < L.designated_at` (the designation event); naive uses `L.created_at` (the append position — the only timestamp a `created_at` column has). When designation is deferred (`L.designated_at > L.cycle`), entries in `[L.cycle, L.designated_at)` are BEFORE_L for candidate/oracle but AFTER_L for naive → candidate is correct (matches oracle) AND distinguishable from naive. The "coherent" state is now reachable.
+  - **Existence proof (§6.5):** Concrete instance — L appended at cycle 10, designated at cycle 15; entry f appended at cycle 12. Query "entries before L": oracle includes f (12 < 15), candidate includes f (12 < 15, MATCHES ORACLE), naive excludes f (12 > 10, DIFFERS). `candidate == oracle` (correct) AND `candidate != naive` (distinguishable). Verified by simulation (`verify_existence_proof.py`, `verify_existence_proof_v2.py`): with 8 immediate + 2 deferred landmarks, `equivalence_agreement ≈ 0.80` (below 0.90 bar, not trivially 0.0), `oracle_agreement = 1.0` across seeds 42/43/44.
+  - **5 BLOCKING issues fixed:** B1 (equivalence test unsatisfiable → existence proof in §6.5), B2 (latency test unsatisfiable, answer-set grows ~10× → latency bar now on bounded-output queries §4.1; raw sizes reported but not barred §4.2), B3 (shuffled-cadence arm ambiguous "OR" → exactly one implementation specified §3 arm 2), B4 ("broken" state had no verdict → kill condition (f) added §0.5/§5f/§6.4/§6.6), B5 (candidate coords identical to naive → designated_at deferred event, as above).
+  - **12 NON-BLOCKING issues addressed** (documented in `e1_spec_CHANGES.md`).
+  - **Locked numeric bars (§0.2) carried forward UNCHANGED** — no bar flipped, softened, raised, lowered, renamed, or redefined.
+  - Files committed: `e1_spec.md` (revised), `e1_spec_CHANGES.md` (v1→v2 changelog), `existence_proof_analysis.md` (analysis), `verify_existence_proof.py` + `verify_existence_proof_v2.py` (existence-proof simulations). Commit: `e278b788cfac1e4b4865b0155f8ea9732eded3dd` ("ARCHITECT E1 spec revised: existence proof (designated_at), 5 blocking + 12 non-blocking issues addressed"). 5 files changed, 1124 insertions(+), 168 deletions(-).
+  - `repo.commit_hash` updated to new HEAD `e278b788cfac1e4b4865b0155f8ea9732eded3dd`. Added `repo.e1_spec_revised_commit_hash` = same hash; `repo.e1_spec_commit_hash` retained as the superseded DRAFT hash. `repo.note` updated.
+  - role_status updated: CRITIC → re-reviewing REVISED E1 spec; RECORDER → E1 spec REVISED committed; INTEGRATOR → HEAD e278b78, awaiting CRITIC re-review then Rebecca gate; ARCHITECT → E1 spec REVISED + committed.
+  - next_action → "CRITIC re-reviewing revised E1 spec; awaiting verdict then Rebecca gate."
+  - STATE.md itself NOT committed in this round (per task scope; INTEGRATOR updates STATE.md as operational memory; RECORDER records its hash at merge). STATE.md remains modified/unstaged in the working tree.
+- **2026-08-15 (INTEGRATOR) — ARCHITECT E1 spec v3 committed (three-property test; constitution amendment per Rebecca's E1 gate ruling):**
+  - ARCHITECT revised the E1 spec (v2 → v3) in response to Rebecca's binding E1 gate ruling dated 2026-08-15. The ruling was NO-GO AS CONSTITUTED: the v2 existence proof held only against a HANDICAPPED naive arm (the naive arm did not receive designation events). Rebecca's **THEOREM (binding):** for ANY deterministic candidate whose coordinates are functions of logged events, fair-naive ≡ oracle (the oracle is a log replay). The pair {naive_agreement ≤ 0.90, oracle_agreement = 1.0} is jointly unsatisfiable — for this candidate, for every D2 retry, for anything. The answer-equivalence collapse test (old kill (a)) is a criterion nothing can pass, and a criterion nothing can pass is a broken criterion, not a hard one.
+  - **PROGRAM FINDING (E1's first real finding, produced at spec-time for zero compute):** Self-location cannot be defined informationally over logged events. It must be defined operationally and integratively.
+  - **v3 revision — the three-property test (constitution amendment, §12):** The single-axis informational collapse test is REPLACED by THREE PROPERTIES, jointly: **(i) Correctness** — `oracle_agreement = 1.0` on the full query battery including deferred-designation landmark queries (kill (f), SIGNED and PROMOTED to primary correctness kill). **(ii) Operational distinctness** — the FAIR naive arm (full event-log access including designation events, recompute-by-scan at query time, no maintained index state) MATCHES the candidate on ANSWERS (expected, no longer a kill) and DIFFERS in COST SCALING; kill (d) (latency bar ≤ 2.0, UNCHANGED) is PROMOTED to the operational-distinctness discriminator, EXTENDED with a state-dependent query battery (per-query latency at 5 history-size points: 100/250/500/750/1000) on which fair-naive's per-query cost provably scales with history length while the candidate answers from maintained, incrementally re-resolved state. **(iii) Load-bearing coupling** — a minimal downstream consumer (toy recency-weighted retrieval implementing L1's access physics over the index's coordinates) measurably degrades when re-resolution is ablated (frozen-origin arm), effect direction consistent across seeds (NEW, a miniature of the L15 test).
+  - **Old kill (a) RETIRED** (not softened — removed from the kill set because it is unsatisfiable by construction per Rebecca's theorem). The metric `equivalence_agreement` is retained as a REPORTED diagnostic (§4.2), expected ≈ 1.0 (confirming the theorem holds and the fair naive is not handicapped), carrying NO kill and NO distinctness claim.
+  - **Naive arm STRENGTHENED to fair naive** (§0.4 arm 4, §3 arm 4): reads the SAME event log the candidate and oracle read (including designation events), recomputes coordinates by scanning at query time, has NO maintained index state. This is the strongest honest timestamps-and-scan implementation — controls are the strongest honest version of themselves, or they are strawmen.
+  - **Candidate 1.1 is NOT charged as a death** — the mechanism remains legitimate under the revised test.
+  - **Locked numeric bars (§0.2) carried forward UNCHANGED** — no bar flipped, softened, raised, lowered, renamed, or redefined. The ≤ 2.0 latency bar, N = 10 shift bar, = 1.0 chain-integrity bar, and 3-seed policy are all verbatim from M0. The revision changes the TEST STRUCTURE (three-property test replaces equivalence test) and the CONTROL ARM (fair naive replaces handicapped naive), NOT the locked numeric values.
+  - Files committed: `e1_spec.md` (v3), `e1_spec_CHANGES.md` (v1→v2→v3 changelog). Commit: `a1f192ad68ce43b47c6a22eb0386ed93bc49e0db` ("ARCHITECT E1 spec v3: three-property test (constitution amendment — correctness, operational distinctness, load-bearing coupling)"). 2 files changed, 569 insertions(+), 390 deletions(-).
+  - `repo.commit_hash` updated to new HEAD `a1f192ad68ce43b47c6a22eb0386ed93bc49e0db`. Added `repo.e1_spec_v3_commit_hash` = same hash; `repo.e1_spec_revised_commit_hash` (v2) retained and annotated as superseded by v3; `repo.e1_spec_commit_hash` (v1 DRAFT) retained as the superseded DRAFT hash. `repo.note` updated.
+  - role_status updated: CRITIC → re-reviewing E1 spec v3 (constitution amendment); RECORDER → E1 spec v3 committed; INTEGRATOR → HEAD a1f192, awaiting CRITIC re-review then Rebecca gate; ARCHITECT → E1 spec v3 + committed.
+  - next_action → "CRITIC re-reviewing E1 spec v3 (constitution amendment); center of gravity: fair-naive definition + state-dependent battery. Awaiting CRITIC verdict then Rebecca gate."
+  - STATE.md itself NOT committed in this round (per task scope; INTEGRATOR updates STATE.md as operational memory; RECORDER records its hash at merge). STATE.md remains modified/unstaged in the working tree.
+- **2026-08-15 (INTEGRATOR) — ARCHITECT incorporates Rebecca E1 v3 GO ruling (Q2/Q3); committed:**
+  - ARCHITECT folded Rebecca's binding E1 v3 GO ruling dated 2026-08-15 into the v3 spec as **Q2/Q3 incorporations** — specification completions WITHIN the approved v3 structure, NOT a new revision cycle. Rebecca ruled GO on the v3 spec with one replacement (Q2) and three completions (Q3), plus an unprompted NB-5 resolution and a standing NB-4 note. No third full review cycle is required; the CRITIC verifies the incorporations.
+  - **Q2-1 (slope-ratio collapse trigger REPLACED):** The 0.5 slope-ratio collapse trigger (which Rebecca did NOT sign) is replaced by a four-component criterion (§4.1 E1-M2b, §5(d), §6.ii): (1) candidate's 10×-history latency growth on the state-dependent battery must be ≤ 2.0× (the SAME locked bar as d1, UNCHANGED in value); (2) battery-validity requirement — fair-naive on the SAME battery must show 10×-history latency growth ≥ 4.0×, else the battery is too easy to expose scan cost and the run is an INSTRUMENT failure (battery revised, no kill condition or retry budget touched); (3) collapse = candidate failing bar (1) on a battery validated by (2); (4) timing methodology mandated — median over ≥100 repetitions per point, warm-up excluded (first 10% discarded), monotonic clock (`time.monotonic_ns()`), dispersion (IQR) reported alongside every latency figure. The slope ratio is RETAINED as a reported diagnostic ONLY, never a trigger.
+  - **Q2-2 (NB-6 resolved — timing methodology):** The mandated timing methodology (median, warm-up excluded, monotonic clock, dispersion reported) is specified in §5(d) and §6.ii. The collapse trigger now uses a ratio of two medians at well-separated history sizes (100 vs 1000) rather than a fitted slope, robust to noise. **NB-6 resolved.**
+  - **Q3-1 (downstream consumer FULLY SPECIFIED):** The consumer is now fully specified in §6.iii (no "e.g.", no unspecified query items): 32-dim synthetic feature vector `v(e) = rng.standard_normal(32)`; dot-product similarity (NOT cosine); 50 query items per seed (fresh synthetic vectors, NOT autobiography entries); coordinate usage `coord_cycle_relative(e) = now - e.cycle` only (C1.1); relevance `exp(-coord_cycle_relative(e)/τ) * dot(v(e), q_item)` with τ=50, k=10; degradation measured as recall@k against oracle's top-k over candidate's re-resolved index AND frozen-origin index. Parameters added to §2.2.
+  - **Q3-2 (report observed degradation magnitude):** The spec now REQUIRES reporting the observed degradation magnitude (§6.iii, §7.3.1, §7.3.2). Per-seed degradation, quality_candidate, quality_frozen, and the mean ship in the artifact. "The floor is a floor, not a finding." A degradation that barely clears the floor is a weaker finding than one that clears it by a wide margin — the CRITIC notes this, feeding the L19 base-rate interpretation.
+  - **Q3-3 (NB-5 resolved — unprompted completion):** Added to §6.ii: at each history size, the query battery includes only landmarks designated by that point in the run; deferred-designation queries against not-yet-designated landmarks are ill-posed and excluded by construction. At history size 100, only the 8 immediate landmarks are in the battery (the 2 deferred enter at 250+). The pre-designation window is explicitly the shift-measurement material. **NB-5 resolved.**
+  - **Q3-4 (NB-4 standing note — accepted for E1 scope):** The consumer exercises `coord_cycle_relative` (C1.1) only; full landmark-relative coupling (C1.4) belongs to the L15 matrix at M5. `coord_landmark_relative` is tested by property (i) (correctness on deferred-designation queries) and property (ii) (state-dependent battery material). A more complete consumer at M5 would use both coordinates.
+  - **Q3-5 (output schema updated):** JSON schemas (§7.3.1, §7.3.2) updated — `candidate_latency_growth_10x`, `fair_naive_latency_growth_10x`, `battery_valid`, `instrument_failure` added to candidate/fair-naive results and kill_conditions.(d); `candidate_latency_iqr_per_point`, `fair_naive_latency_iqr_per_point` added (timing dispersion); `scaling_collapse_ratio` retained but marked diagnostic; `downstream_degradation_magnitude_note`, `consumer_spec` added to property_iii; `timing_methodology` field added to property_ii; config fields added; §7.3.5 profile vector updated; manifest purpose/bars strings updated.
+  - **Q3-6 (amendment log and scope fence updated):** §12.1 amendment log rows for kill (d) and property (iii) updated; §12.2 property (ii) description updated; §12.3 authority extended with specification-completion authority; §8 scope fence updated with Q2 restructure, Q3 completions, NB-4/5/6 resolutions; §9 sequencing step 2 updated; §10.3 delivery criteria updated; §11.2 base-rates updated; spec header updated.
+  - **Constraints honored:** The three-property test structure is UNCHANGED (already approved). No locked bar is changed (latency ≤ 2.0, N=10, chain_integrity = 1.0, 3 seeds). The fair-naive definition is UNCHANGED (already approved). No new revision cycle is introduced. The slope ratio is RETAINED as a diagnostic, not removed — just no longer a trigger.
+  - Files committed: `e1_spec.md` (v3+Q2/Q3), `e1_spec_CHANGES.md` (v1→v2→v3→v3+Q2/Q3 changelog). Commit: `7cb78c453c58b6daa52fc718c5d8fa2c1909b194` ("ARCHITECT incorporates Rebecca E1 v3 GO ruling: slope-ratio replaced with battery-validity, timing methodology mandated, downstream consumer fully specified, NB-5 resolved"). 2 files changed, 249 insertions(+), 68 deletions(-).
+  - `repo.commit_hash` updated to new HEAD `7cb78c453c58b6daa52fc718c5d8fa2c1909b194`. Added `repo.e1_spec_v3_q2q3_commit_hash` = same hash; `repo.e1_spec_v3_commit_hash` (v3) retained and annotated as superseded by v3+Q2/Q3 incorporations. `repo.note` updated.
+  - `timebox.status` → `clock_pending_crific_verification` — the M2 timebox clock does NOT start until the CRITIC clears the incorporations (per Rebecca's ruling: the timebox clock starts when the CRITIC clears them).
+  - role_status updated: RECORDER → E1 spec v3+Q2/Q3 incorporations committed; INTEGRATOR → HEAD 7cb78c4, awaiting CRITIC verification of incorporations then timebox clock start + build cell; ARCHITECT → E1 spec v3 + Q2/Q3 incorporations committed.
+  - next_action → "CRITIC verifying ruling incorporations. If cleared, timebox clock starts and build cell begins."
+  - STATE.md itself NOT committed in this round (per task scope; INTEGRATOR updates STATE.md as operational memory; RECORDER records its hash at merge). STATE.md remains modified/unstaged in the working tree.
+- **2026-08-15 (INTEGRATOR) — M2 timebox clock started; E1 task spec issued to TASK BUILDER:**
+  - CRITIC cleared Rebecca E1 v3 GO ruling Q2/Q3 incorporations → M2 timebox clock STARTED 2026-08-15 per ruling §4 item 6 (clock starts when CRITIC clears the incorporations, not before).
+  - `timebox.status` → `active`; `timebox.start_date` → `2026-08-15`; `timebox.sessions_consumed` → 1 (M1 consumed 1 session / 1 day); `timebox.days_consumed` → 1 (M1 consumed 1 session / 1 day). M2 session 2 in progress (INTEGRATOR issuing task spec).
+  - `session_count` → 2 (M1 consumed 1 session; M2 session 2 in progress).
+  - INTEGRATOR created E1 task spec at `/home/user/workspace/task_spec_e1.md` — a self-contained implementation brief (764 lines) that extracts ALL implementable details from `e1_spec.md` (1137 lines) for the TASK BUILDER: data structures (autobiography entry fields/types, hash chain, landmark designation event with `designated_at` vs `cycle`, synthetic autobiography generation 100→1000 with 10 landmarks [8 immediate + 2 deferred], 32-d feature vectors deterministic per seed), Candidate 1.1 mechanism (C1.1 offset counter, C1.2 categorical landmark coords, C1.3a SHA-256 chain, C1.3b integer cycle counter, C1.4 designate_landmark), all 8 operations (append, re_resolve_index, query_landmark_relative, query_landmark_relative_bounded, query_membership, designate_landmark, query_cycle_relative, verify_chain), all 6 control arms (frozen origin, shuffled cadence, oracle index, fair naive, empty, wall-clock-injection) with exact implementations, the 3 properties (correctness oracle_agreement=1.0 kill f; operational distinctness latency ≤ 2.0× d1 + candidate_latency_growth_10x ≤ 2.0× on battery validated by fair_naive ≥ 4.0× d2, timing methodology median ≥100 reps/warm-up excluded/monotonic clock/IQR; load-bearing coupling downstream_degradation > 0 all seeds AND mean ≥ 0.05), all 5 active kill conditions (b-f) with construction-bug guard, output schema (5 files), courier packet, constraints (no bar invention/lowering/raising, no re-run-on-failure O-14, development runs diagnostic-only O-15).
+  - role_status updated: CRITIC → cleared incorporations (clock started); INTEGRATOR → M2 active, task spec issued; TASK_BUILDER → receiving E1 task spec, implementing e1_experiment.py.
+  - next_action → "TASK BUILDER implementing e1_experiment.py from task spec".
+  - STATE.md itself NOT committed in this round (per task scope; INTEGRATOR updates STATE.md as operational memory; RECORDER records its hash at merge). STATE.md remains modified/unstaged in the working tree.
+- **2026-08-15 (INTEGRATOR) — E1 task spec committed to git:**
+  - INTEGRATOR committed the E1 task spec (`task_spec_e1.md`) to the workspace git repo. Commit: `3aa26d86293a20faabc9c2ab3258b7ce479515ea` ("INTEGRATOR E1 task spec: self-contained implementation brief for TASK BUILDER"). 1 file changed, 763 insertions(+). The task spec is a self-contained implementation brief that extracts ALL implementable details from `e1_spec.md` for the TASK BUILDER (data structures, Candidate 1.1 mechanism, all 8 operations, all 6 control arms, the 3 properties + 5 kill conditions, output schema, courier packet, constraints).
+  - `repo.commit_hash` updated to new HEAD `3aa26d86293a20faabc9c2ab3258b7ce479515ea`. Added `repo.e1_task_spec_commit_hash` = same hash. `repo.note` updated to record the task spec commit. `role_status.INTEGRATOR` updated to reflect task spec issued + committed.
+  - next_action → "TASK BUILDER implementing e1_experiment.py".
+  - STATE.md itself NOT committed in this round (per task scope; INTEGRATOR updates STATE.md as operational memory; RECORDER records its hash at merge). STATE.md remains modified/unstaged in the working tree.
+- **2026-08-15 (INTEGRATOR) — ARCHITECT Option E targeted amendment committed:**
+  - ARCHITECT issued a **targeted amendment** (Option E) to the v3+Q2/Q3 spec, per Rebecca's binding Property (iii) ruling (§Q1). This is a targeted amendment to §3 Arm 1 (frozen origin) and §6.iii (downstream consumer) only — NOT a new revision cycle; the three-property test structure and all locked numeric bars are UNCHANGED.
+  - **Option E — frozen arm = coordinates computed at birth, never re-resolved:** The frozen-origin arm (§3 Arm 1) is re-specified. Per Option E, the frozen arm retains ALL entries and ALL content (identical to the candidate's autobiography — all 1000 entries, same payloads, same feature vectors). Each entry's coordinates are computed ONCE, at its own append: `coord_cycle_relative(e) = now_at_birth − e.cycle = e.cycle − e.cycle = 0`; `coord_landmark_relative` per the landmark registry state at that moment. These coordinates are NEVER re-resolved thereafter — re-resolution is disabled; nothing else is. The index accumulates all 1000 entries as appended (append-aware) but does not re-resolve coordinates on subsequent appends or designations. This replaces the prior frozen-arm definition (built once at `now=99`, frozen at `now=99` values, with negative `coord_cycle_relative` for entries > 99). Under Option E, `coord_cycle_relative(e) = 0` for ALL entries regardless of age — the recency gradient is destroyed while memory remains complete. This is the honest meaning of a frozen origin: content intact, temporal self-location gone.
+  - **Recency-discriminative query battery (40% — Rebecca's companion requirement, ruling §Q1):** Coupling is only measurable on a task where the coordinate carries information. A battery of content-unique queries would read degradation ≈ 0 for reasons having nothing to do with the mechanism. The spec now PRE-REGISTERS a 40% fraction (20 of 50 consumer queries) of near-duplicate-content queries at different ages, where content similarity alone ties or near-ties and the coordinate breaks the tie. 20 pairs of entries among the 1000 have near-identical feature vectors (`v(e_new_p) = v(e_old_p) + σ_nd·noise`, `σ_nd = 0.05`) but very different cycles (`e_old_p` at cycle `p` ∈ [0,19]; `e_new_p` at cycle `900+p`). Each recency-discriminative query `j` (paired with pair `p = j`) aligns with the pair's shared feature direction. The remaining 60% (30 of 50) are content-unique queries. The candidate/oracle (re-resolved coordinate) breaks the content tie decisively in favor of the recent entry; the frozen arm (recency weight = `exp(0) = 1.0` for all) ranks purely by content → cannot distinguish recent from old by recency → recall@k degrades on these queries. This makes the 0.05 degradation floor meaningfully clearable by a working mechanism.
+  - **Constraints honored:** The three-property test structure is UNCHANGED (already approved). No locked numeric bar is changed (latency ≤ 2.0, N=10, chain_integrity = 1.0, 3 seeds, degradation floor ≥ 0.05). The fair-naive definition is UNCHANGED. The 40% recency-discriminative fraction is PRE-REGISTERED here (a new specification value, not a modification of an existing locked bar). The frozen-arm re-specification is a targeted amendment within Rebecca's Property (iii) ruling scope.
+  - Files committed: `e1_spec.md` (v3+Q2/Q3+Option E), `e1_spec_CHANGES.md` (changelog extended with Option E). Commit: `5b5bc957c767d4bd5344fef51bedd5207f81732c` ("ARCHITECT Option E amendment: frozen arm = coords at birth never re-resolved + recency-discriminative query battery (40%)"). 2 files changed, 100 insertions(+), 17 deletions(-).
+  - `repo.commit_hash` updated to new HEAD `5b5bc957c767d4bd5344fef51bedd5207f81732c`. Added `repo.e1_spec_option_e_commit_hash` = same hash. `repo.note` updated. `role_status.INTEGRATOR` and `role_status.ARCHITECT` updated.
+  - next_action → "CRITIC reviewing Option E amendment (targeted). Awaiting CRITIC verdict then Rebecca sign-off."
+  - STATE.md itself NOT committed in this round (per task scope; INTEGRATOR updates STATE.md as operational memory; RECORDER records its hash at merge). STATE.md remains modified/unstaged in the working tree.
+- **2026-08-15 (INTEGRATOR) — ARCHITECT Option E fix committed (CRITIC-verified):**
+  - ARCHITECT issued a **fix** to the Option E targeted amendment, addressing CRITIC findings on the Option E amendment. The fix revises the downstream consumer's relevance computation and the recency-discriminative query battery's feature construction — NOT a new revision cycle; the three-property test structure and all locked numeric bars are UNCHANGED.
+  - **Fix — additive relevance (replaces multiplicative):** The downstream consumer's relevance score is re-specified from a multiplicative form to an **additive** form: `relevance(e, q) = A_sig · dot(v(e), q_item) + exp(-coord_cycle_relative(e)/τ)`. Under the additive form, the recency term contributes a bounded additive shift rather than a multiplicative rescaling of the content-similarity term, so content-unique queries (CU) no longer inherit spurious degradation from the recency weight — the CU degradation floor drops to 0 as expected (the coordinate carries no information on content-unique queries). The recency-discriminative (RD) queries still degrade because the additive recency shift breaks content ties in favor of the recent entry. This separates the two query classes cleanly: CU measures the floor (degradation = 0), RD measures the signal (degradation > floor).
+  - **Fix — bucketed spike features (replaces near-duplicate content pairs):** The recency-discriminative query battery's feature construction is re-specified from near-duplicate-content pairs (`v(e_new_p) = v(e_old_p) + σ_nd·noise`, `σ_nd = 0.05`) to **bucketed spike features**: each RD query targets a content-unique spike in a distinct bucket, where the bucket assignment is age-correlated. This removes the artificial near-duplicate construction (which the CRITIC flagged as a contrived tie) while preserving the property that the coordinate breaks content ties in favor of the recent entry. The 40% RD fraction (20 of 50 queries) is UNCHANGED (pre-registered value, not a locked bar modification).
+  - **CRITIC verification (CRITIC-verified):** The fix was independently verified by the CRITIC via `verify_option_e_fix.py` (simulation over seeds 42/43/44). Results in `verify_option_e_fix_results.json`: per-seed CU degradation = 0.0 (all seeds), per-seed RD degradation = 0.30 / 0.235 / 0.23, mean RD = 0.255, mean CU = 0.0, mean aggregate = 0.102. All checks pass: `all_seeds_positive` = true, `all_seeds_above_floor` = true, `cu_below_0.1_all_seeds` = true, `rd_positive_all_seeds` = true, `aggregate_in_open_interval` = true. The CU degradation = 0 confirms the additive form removes the spurious content-unique degradation; the RD degradation = 0.255 (> 0.05 floor) confirms the recency-discriminative battery still meaningfully clears the floor. Baseline (multiplicative form, for reference): RD = 0.827, CU = 0.927, ALL = 0.887 — the multiplicative form's CU = 0.927 was the spurious content-unique degradation the fix eliminates.
+  - **Constraints honored:** The three-property test structure is UNCHANGED (already approved). No locked numeric bar is changed (latency ≤ 2.0, N=10, chain_integrity = 1.0, 3 seeds, degradation floor ≥ 0.05). The fair-naive definition is UNCHANGED. The 40% recency-discriminative fraction is UNCHANGED (pre-registered). The fix changes the relevance FUNCTION (multiplicative → additive) and the RD feature CONSTRUCTION (near-duplicate pairs → bucketed spikes), both within the Option E amendment scope — NOT locked bars.
+  - Files committed: `e1_spec.md` (v3+Q2/Q3+Option E fix), `e1_spec_CHANGES.md` (changelog extended with Option E fix), `verify_option_e_fix.py` (CRITIC verification simulation), `verify_option_e_fix_results.json` (verification results). Commit: `32cf56a17ffff5a08099427793b84fcbf3c20a56` ("ARCHITECT Option E fix: additive relevance + bucketed spike features; CU degradation=0, RD=0.255, aggregate=0.102 (CRITIC-verified)"). 4 files changed, 510 insertions(+), 24 deletions(-).
+  - `repo.commit_hash` updated to new HEAD `32cf56a17ffff5a08099427793b84fcbf3c20a56`. Added `repo.e1_spec_option_e_fix_commit_hash` = same hash; `repo.e1_spec_option_e_commit_hash` (Option E amendment) retained and annotated as superseded by the fix. `repo.note` updated. `role_status.INTEGRATOR` and `role_status.ARCHITECT` updated.
+  - next_action → "Option E fix CRITIC-cleared. Awaiting Rebecca sign-off on revised frozen-arm + query-battery sections."
+  - STATE.md itself NOT committed in this round (per task scope; INTEGRATOR updates STATE.md as operational memory; RECORDER records its hash at merge). STATE.md remains modified/unstaged in the working tree.
+- **2026-08-15 (INTEGRATOR) — TASK BUILDER Option E + R1-R4 implementation committed:**
+  - TASK BUILDER's implementation of `e1_experiment.py` (the E1 moving-origin experiment harness) committed to the workspace git repo, implementing **Option E** (Rebecca's binding frozen-arm specification) + the **additive relevance + bucketed spike features** consumer battery + Rebecca's **R1-R4** binding requirements. Commit: `f9dc658f40291a026769474fe3dd6ff9dfc86fe6` ("TASK BUILDER implements Option E + R1-R4: frozen arm coords at birth, additive relevance, bucketed features, 5-seed support, component-wise reporting"). 2 files changed, 3061 insertions(+) — `e1_experiment.py` (150681 bytes) + `e1_experiment_CHANGES.md` (20109 bytes).
+  - **Option E frozen arm (§3 Arm 1):** `FrozenOriginIndex` rewritten — retains ALL 1000 entries + ALL content (identical autobiography to candidate); each entry's coordinates computed ONCE at its own append (`coord_cycle_relative(e) = now_at_birth − e.cycle = 0` for ALL entries), NEVER re-resolved. Replaces the prior implementation (which excluded entries 100–999 and froze at stale `now=99`). Content intact, temporal self-location gone — the honest meaning of a frozen origin.
+  - **Consumer battery (additive relevance + bucketed spike features, §6.iii):** `run_downstream_consumer` rewritten. Relevance is ADDITIVE: `relevance(e,q) = dot(v(e),q) + λ·exp(-coord_cycle_relative(e)/τ)` with `λ=16`, `τ=50` (replaces the multiplicative form whose 9-orders-of-magnitude gradient overwhelmed content signal — CRITIC BLOCKING ISSUE 1). Features are BUCKETED SPIKES: 50 content buckets (20 RD size `K_rd=30`, 30 CU size exactly `k=10`, 100 fillers); each bucket `b` gets a seeded random unit direction `u_b`; entries in bucket `b` have `v(e) = A·u_b + σ_f·noise` (`A=10`, `σ_f=0.10`). Member cycles spread across 0..999 by a seeded permutation. 50 queries: 30 content-unique (CU) + 20 recency-discriminative (RD) = 40% RD fraction (pre-registered, UNCHANGED). New helpers: `build_bucket_assignment`, `build_bucket_directions`, `feature_vector`, `consumer_query_vector`, `consumer_query_type`.
+  - **R1 (component-wise reporting):** Every scoring artifact now reports CU degradation, RD degradation, and aggregate SEPARATELY, plus each arm's ABSOLUTE recall per query type (candidate/frozen/oracle × CU/RD). The aggregate alone is NOT a reportable result. New fields per seed + property_iii_load_bearing_coupling block.
+  - **R2 (honest ceiling + CU as specificity control):** Artifacts state CU degradation = 0.000 BY CONSTRUCTION (bucket size = `k`: recency reorders within top-k but cannot change it; recall@k is set-based); aggregate's true ceiling = 0.4 (RD fraction = 20/50); frozen's CU recall reported as SPECIFICITY CONTROL (L8 pattern) — pre-registered expectation: frozen CU recall should remain HIGH, demonstrating degradation is SPECIFIC to destroyed temporal organization, not general consumer breakage.
+  - **R3 (hold-out scoring seeds):** Scoring seeds = [42, 43, 44, 45, 46] (FIVE). Seeds 45 and 46 are HOLD-OUT — NEVER used in development. All floors and kill conditions apply to all FIVE seeds jointly. Diagnostic run uses only 42/43/44. `main()` has an R3 hold-out guard that warns if 45/46 appear in a non-scoring run. New constants: `SCORING_SEEDS`, `HOLDOUT_SEEDS`, `SEEDS_DEFAULT`.
+  - **R4 (auditable arithmetic):** Per-query recall tables shipped (`per_query_recall_table` per seed + `per_query_recall_tables` in property_iii) so the JUDGE can recompute the aggregate from raw values alone: `aggregate = mean over all 50 queries of (1 − recall_frozen)`; `CU = mean over 30 CU queries`; `RD = mean over 20 RD queries`. `critic_independent_rerderivation.py` copied to the output directory by `_copy_critic_rerderivation()` for the JUDGE.
+  - **Diagnostic run (seeds 42,43,44 — non-scoring per O-15):** `e1_verdict = PASS` — all three properties pass, no kill condition fires, battery valid, L20 self-test passes, reproducibility bit-identical. Property (i) correctness: `oracle_agreement = 1.0000`. Property (ii) operational distinctness: `candidate_latency_growth_10x = 1.010` (≤ 2.0), `fair_naive_latency_growth_10x = 6.793` (≥ 4.0, battery valid). Property (iii) load-bearing coupling: `downstream_degradation = 0.104` mean (CU=0.003, RD=0.255, aggregate=0.104; per-seed 0.122/0.098/0.092; all > 0.05 floor), consistent with CRITIC's independent re-derivation (CU=0.000, RD=0.255, aggregate=0.102). Frozen CU recall (specificity control) = 0.997 (HIGH — degradation specific to RD). This replaces the prior `NOT_GREEN` verdict (degradation = 0.0 under the old multiplicative consumer with random Gaussian features).
+  - **Output schema updated** (5 files + R4 script): `e1_run_results.json` (R1-R4 fields in config/results/mean_over_seeds/property_iii), `e1_invariants.json` (R1-R4 fields in property_iii), `e1_manifest.json` (5-seed scoring command + diagnostic command + scoring_seeds/holdout_seeds/r3_note + artifact_package_includes), `e1_profile.json` (downstream_degradation element = 0.104), `e1_run.log` (R1 component-wise lines), `critic_independent_rerderivation.py` (R4, copied to output dir).
+  - **Constraints honored:** No locked numeric bar changed (latency ≤ 2.0, N=10, chain_integrity = 1.0, 3-seed policy for diagnostic, degradation floor ≥ 0.05). The 40% RD fraction is UNCHANGED (pre-registered). The three-property test structure is UNCHANGED. The fair-naive definition is UNCHANGED. Environment deviations self-detected (python 3.14.3 vs pinned 3.11, numpy 2.5.2 vs 1.26.4, scipy 1.18.0 vs 1.13.1 — all non-blocking).
+  - `repo.commit_hash` updated to new HEAD `f9dc658f40291a026769474fe3dd6ff9dfc86fe6`. Added `repo.e1_experiment_commit_hash` = same hash. `repo.note` updated. `role_status.TASK_BUILDER` and `role_status.INTEGRATOR` updated.
+  - next_action → "CRITIC verifying Option E implementation. If cleared, INTEGRATOR packages courier run (5 seeds: 42,43,44,45,46)."
+  - STATE.md itself NOT committed in this round (per task scope; INTEGRATOR updates STATE.md as operational memory; RECORDER records its hash at merge). STATE.md remains modified/unstaged in the working tree.
+- **2026-08-15 (INTEGRATOR) — E1 courier scoring run packaged and committed:**
+  - CRITIC verified the Option E + R1-R4 implementation (`critic_e1_implementation_verification.md`, VERDICT: VERIFIED) — all checklist items pass; the diagnostic run (seeds 42,43,44, non-scoring per O-15) returns `e1_verdict = PASS`; seeds 45/46 confirmed to have no development history. Sequence per `REBECCA_OPTION_E_SIGNOFF.md` reached step 3: INTEGRATOR packages the courier run.
+  - **INTEGRATOR pre-flight smoke test:** ran `python e1_experiment.py --seeds 42,43,44 --output-dir ./e1_smoke_test` (development-permitted seeds only — NOT 45/46, forbidden in development per R3). Result: **PASS**, wall-clock 11.14s, no crashes. All 6 expected files written (`critic_independent_rerderivation.py`, `e1_invariants.json`, `e1_manifest.json`, `e1_profile.json`, `e1_run.log`, `e1_run_results.json`). Verified `e1_verdict = "PASS"`, no kill condition fires (b/c/d/e/f all `fires: False`), `oracle_agreement = 1.0`, property (iii) mean degradation = 0.104 (> 0.05 floor), reproducibility bit-identical. `./e1_smoke_test/` deleted after verification (non-scoring per O-15; must not be confused with scoring output).
+  - **Courier packet written:** `/home/user/workspace/e1_courier_packet.md` — the verbatim command for Rebecca (`python e1_experiment.py --seeds 42,43,44,45,46 --output-dir ./e1_scoring_output`), the actual 6-file output schema as verified by execution (correcting informal shorthand "e1_verdict.json"/"e1_timing.json" — the verdict lives in `e1_invariants.json`'s `e1_verdict` field and timing-methodology results live inside `e1_run_results.json`'s `property_ii_operational_distinctness` block), the full scoring criteria (properties i/ii/iii, kill conditions b-f, battery validity, R3 five-seeds-jointly, R4 auditable arithmetic), Rebecca's return obligations (entire `./e1_scoring_output/` directory, raw and complete), the git commit hash being scored (`f9dc658f40291a026769474fe3dd6ff9dfc86fe6`), pinned dependencies (python==3.11, numpy==1.26.4, scipy==1.13.1), and the Python-version deviation note (M1 RUN-1 logged Python 3.12.10 vs pinned 3.11, non-blocking; Rebecca reports her actual runtime version, self-detected by the script).
+  - Files committed: `e1_courier_packet.md`. Commit: `7db4f69346701d7298a5eeb70bff114be88f4e44` ("INTEGRATOR packages E1 courier scoring run (5 seeds: 42,43,44,45,46 — 45/46 hold-out)"). 1 file changed, 98 insertions(+).
+  - `repo.commit_hash` updated to new HEAD `7db4f69346701d7298a5eeb70bff114be88f4e44`. Added `repo.courier_packet_commit_hash` = same hash. `run_requests_to_rebecca` gained `E1-RUN-1` entry (status `packaged`, command, note). `role_status.CRITIC` and `role_status.INTEGRATOR` updated to reflect verification-then-packaging.
+  - next_action → "Courier scoring run packaged. Awaiting Rebecca to execute: python e1_experiment.py --seeds 42,43,44,45,46 --output-dir ./e1_scoring_output"
+  - This is the packaging step only — the E1-RUN-1 packet has NOT yet been dispatched to Rebecca. Per O-15, no scoring evidence exists yet; the smoke test above is diagnostic-only and does not count.
+- **2026-08-15 (INTEGRATOR) — TASK BUILDER timing/construction-bug fix committed:**
+  - **Trigger:** E1-RUN-1 was dispatched to Rebecca and returned CRASHED on her Windows executor — `ValueError: array must not contain infs or NaNs` raised from `scipy.stats.pearsonr` inside `l20_self_test`. CRITIC diagnosed the root cause (`critic_e1_run1_crash_analysis.md`, line-for-line confirmed against the code): `time.monotonic_ns()` has ~15ms tick resolution on the Windows executor, while the timed operations (membership lookup, bounded-k lookup) are sub-microsecond, so nearly all single-call measurements landed on `t1 - t0 == 0`, producing `inf` via the `> 0 else inf` ratio/growth guards; `_safe_pearson`'s zero-variance guard did not cover non-finite input, so the `inf`-contaminated profile vector fell through to `pearsonr`, which raised. CRITIC classified this as a clock-resolution/timing-methodology **construction bug** (instrument defect, not an algorithmic or correctness defect — Property (i) oracle_agreement = 1.0 independently confirms the candidate index itself is correct), qualifying for the construction-bug guard (fix + re-run does not consume D2 budget).
+  - **TASK BUILDER's fix** (documented in the crash-fix addendum to `e1_experiment_CHANGES.md`, §"Addendum — E1-RUN-1 crash fix (timing construction bug)"):
+    - **Timing methodology:** Replaced `time.monotonic_ns()` with `time.perf_counter_ns()` (backed by `QueryPerformanceCounter` on Windows, ~100ns resolution) in `measure_latency_median_iqr()`. Added a new **batch fallback** helper `_timed_batch_median_iqr(query_fn, batch_n, n_reps)`: starts at `batch_n=1`, and if the median batch time is still `<= 0.0`, doubles `batch_n` and re-measures (up to `max_batch_n=2**20`), then divides the recovered median/IQR by `batch_n` to get per-call latency. Makes the methodology robust on any hardware/clock combination. Updated the `timing_methodology` strings reported in `e1_run_results.json`/`e1_invariants.json` to match.
+    - **`_safe_pearson` hardening:** Added an `np.isfinite()` check on both input arrays before the existing zero-variance check; returns `0.0` (no correlation) instead of falling through to `pearsonr` if either array contains `inf`/`NaN`. Defensive guard per CRITIC's recommendation (§6 option 3 of the crash analysis) — the timing fix should prevent non-finite values from recurring, but this ensures `l20_self_test` cannot crash even if a future regression reintroduces them.
+    - **`instrument_failure` mislabeling fix (CRITIC-flagged minor issue, §7):** Property (ii)'s `instrument_failure` flag previously stayed `False` even when latency/growth values were `inf` (exactly the E1-RUN-1 scenario). Added a `non_finite_latency` check (`not np.all(np.isfinite([lat_ratio_mem, lat_ratio_bk, cand_growth, fn_growth]))`); `instrument_failure` is now `True` if `non_finite_latency` OR the pre-existing battery-invalidity condition holds. Added `instrument_failure_reason` (string) in `prop_ii`, `e1_invariants.json`, and kill condition (d)'s block. Kill condition (d) now reuses `prop_ii["instrument_failure"]` directly so the two flags can never disagree.
+  - **Verification:** Re-run on this sandbox (seeds 42,43,44) after the fix: `e1_verdict=PASS`, property (ii) `latency_passes=True state_dependent_passes=True battery_valid=True instrument_failure=False`, kill conditions (b)-(f) all `False` with real finite values (`d1_lat_mem≈1.04 d1_lat_bk≈1.10 d2_cand_growth≈1.00 d2_fn_growth≈6.42`). `measure_latency_median_iqr` additionally tested against a monkeypatched 15ms-resolution clock replicating the Windows tick issue: the batch fallback engaged (batched over 26M calls across 90 measured reps) and returned a finite, strictly positive per-call latency (`1.14e-7` s), confirming the fix generalizes beyond this sandbox's own clock. No changes to R1-R4 reporting content — only diagnostic/labeling fields (`instrument_failure`, `instrument_failure_reason`, `timing_methodology` strings) were touched.
+  - Files committed: `e1_experiment.py`, `e1_experiment_CHANGES.md`. Commit: `dceb2584f495cde06787693d80f8e40f258eb33c` ("TASK BUILDER fixes construction bug: perf_counter_ns + batch fallback for Windows timing resolution; _safe_pearson isfinite guard; instrument_failure flag for non-finite latency"). 2 files changed, 153 insertions(+), 21 deletions(-).
+  - `repo.commit_hash` updated to new HEAD `dceb2584f495cde06787693d80f8e40f258eb33c`. Added `repo.timing_fix_commit_hash` = same hash. `repo.note` updated. `role_status.TASK_BUILDER`, `role_status.INTEGRATOR`, and `role_status.CRITIC` updated.
+  - next_action → "CRITIC verifying timing fix. If cleared, INTEGRATOR repackages courier run (E1-RUN-2)."
+  - Per the construction-bug guard, this fix + the eventual re-run (E1-RUN-2) does not consume additional D2 budget.
+- **2026-08-15 (INTEGRATOR) — E1-RUN-2 DELIVERED GREEN (Entry 34):**
+  - E1-RUN-2 dispatched to Rebecca after CRITIC cleared the timing fix. Rebecca executed: `python e1_experiment.py --seeds 42,43,44,45,46 --output-dir ./e1_scoring_output`. Scored commit: `1d13105e8163859d7972705b731ba8c24a272276` (timing fix `dceb258` + cosmetic/L20 float fix). Exit status: 0. Wall clock: 8.39s. Python 3.12.10, numpy 1.26.4, scipy 1.13.1.
+  - **JUDGE ruling: DELIVERED GREEN** (judge_e1_run2_ruling.md, Entry 34). Scored from returned artifacts ONLY.
+    - Property (i) Correctness: PASS — oracle_agreement = 1.0 on all 5 seeds.
+    - Property (ii) Operational distinctness: PASS — d1 all latency ratios ≤ 2.0; d2 candidate growth 1.0× (≤ 2.0×), fair-naive growth 6.69-7.13× (≥ 4.0×, battery valid). Kill (d) does not fire. instrument_failure = False.
+    - Property (iii) Load-bearing coupling: PASS — degradation > 0 on all 5 seeds, mean 0.1076 (≥ 0.05 floor). R1 component-wise reporting satisfied. R2 ceiling (0.4) stated, CU specificity control (frozen CU recall 0.997 HIGH). R3 all 5 seeds scored jointly (hold-out 45/46 consistent). R4 arithmetic independently re-verified by JUDGE — exact match on all 5 seeds.
+    - Kill conditions (b-f): NONE fire.
+    - Reproducibility: bit-identical on scored metrics. I3: all arms in-band, 100 replicates. L20: passes.
+  - **Provenance discrepancy flagged (non-blocking):** `e1_manifest.json` showed `commit_hash: "pending -- no git repo"` while the round-trip log claimed `1d13105...`. Immaterial to scoring (no metric depends on commit hash) but flagged. SHA-256 hashes of all 6 output files independently verified by JUDGE — match exactly.
+  - CRITIC results review: 5 non-blocking issues (bit_identical scoping, candidate latency curve flatness, CU over-claim, I3 documentation wording, manifest commit_hash placeholder). None affect any scored metric or bar.
+  - This is the first scored evidence about the moving origin in this program's history.
+  - `run_requests_to_rebecca` updated: E1-RUN-1 status → `returned — CRASHED (construction bug)`, E1-RUN-2 added (status `returned — GREEN`).
+  - STATE.md itself NOT committed in this round (INTEGRATOR updates STATE.md as operational memory; RECORDER records its hash at merge).
+- **2026-08-15 (INTEGRATOR) — E1 provenance-cure re-run DELIVERED GREEN; lineage/provenance cure complete:**
+  - To cure the manifest commit-hash defect flagged in E1-RUN-2, a provenance-cure re-run was executed on Rebecca's supervised executor. Scored commit: `a85ec91f22521164abd2604a1c299c74f0dd67ac`.
+  - **JUDGE ruling: DELIVERED GREEN** (judge_e1_cure_ruling.md). Scored from six specified cure artifacts ONLY.
+    - **Manifest commit hash CURED:** `e1_manifest.json` now shows `commit_hash: "a85ec91f22521164abd2604a1c299c74f0dd67ac"` — EXACT MATCH to the required value. Corroborated by round-trip log: "Fresh checkout: a85ec91f... Manifest commit: a85ec91f... Repository: darkside73826779-ship-it/moving-origin-research, 46 files verified (6 byte-identical, 40 matched SHA-256 after CRLF→LF normalization), exit status 0." The manifest no longer shows "no git repo."
+    - All 3 properties pass on all 5 seeds, no kill conditions fire, R1-R4 satisfied, R4 arithmetic exact match.
+    - Non-timing metrics identical to E1-RUN-2 — confirms only the provenance defect was cured, not the candidate.
+  - **Lineage attestation** (runs/e1-cure-run/lineage_attestation.md): Repository `darkside73826779-ship-it/moving-origin-research`, commit `a85ec91f22521164abd2604a1c299c74f0dd67ac` verified. Pre-migration workspace commit `1d13105e8163859d7972705b731ba8c24a272276`. 46 files verified (6 byte-identical, 40 matched SHA-256 after CRLF→LF normalization, exit status 0). Two documented exceptions: (1) 40 text files had CRLF instead of LF (normalized, all match); (2) `e1_spec.md` rewrites changelog reference from absolute path to relative path. No other discrepancies.
+  - Added `repo.cure_commit_hash` = `a85ec91f22521164abd2604a1c299c74f0dd67ac`. Added `repo.e1_run2_scored_commit` = `1d13105e8163859d7972705b731ba8c24a272276`. `run_requests_to_rebecca` updated: E1-CURE-RUN added (status `returned — GREEN`).
+  - STATE.md itself NOT committed in this round (INTEGRATOR updates STATE.md as operational memory; RECORDER records its hash at merge).
+- **2026-08-15 (INTEGRATOR) — M2 SEALED and ACCEPTED; GitHub repository is single source of truth:**
+  - M2 (E1 moving-origin experiment) is SEALED and ACCEPTED. The E1-RUN-2 DELIVERED GREEN (Entry 34) and the provenance-cure re-run DELIVERED GREEN (judge_e1_cure_ruling.md) together constitute the first scored evidence about the moving origin. No kill conditions fire. All three properties pass on all 5 seeds. R1-R4 satisfied. Provenance cured.
+  - GitHub repository `darkside73826779-ship-it/moving-origin-research` is the single source of truth (per project instructions). Main HEAD verified at `1626bb09d9645ccdf2a2126325b2934dc12e2c5d` via `git ls-remote` (2026-08-15T22:38Z).
+  - `repo.commit_hash` updated to `1626bb09d9645ccdf2a2126325b2934dc12e2c5d` (VERIFIED GitHub main HEAD). Added `repo.github_main_verified` = same hash. `repo.note` updated.
+  - `milestone` → M3 (M2 DELIVERED GREEN, SEALED, ACCEPTED; M3/E2 spec cycle active). `timebox.m2_status` → `delivered_green`. `timebox.m3_status` → `no_timebox`.
+  - STATE.md itself NOT committed in this round (INTEGRATOR updates STATE.md as operational memory; RECORDER records its hash at merge).
+- **2026-08-15 (INTEGRATOR) — M3/E2 spec cycle: V0→V3 reviewed, all BLOCKED; V3 BLOCK on F1-F7:**
+  - M3/E2 specification cycle produced four rounds of ARCHITECT specification + independent CRITIC review:
+    - V0 (m3_scope_proposal.md): CRITIC review BLOCK, B1-B10 + NB1-NB5.
+    - V1 (m3_e2_spec_amended.md): CRITIC re-review BLOCK, RB1-RB8 + 5 non-blocking notes.
+    - V2 (m3_e2_spec_amended_v2.md): CRITIC third independent re-review BLOCK, C1-C8 + NB1-NB3.
+    - V3 (m3_e2_spec_amended_v3.md + m3_e2_spec_changelog_v3.md): CRITIC fourth independent re-review BLOCK, F1-F7 (blocking) + NF1-NF6 (non-blocking) — reviews/critic_m3_e2_spec_rereview_v3.md.
+  - **V3 BLOCK findings (F1-F7):**
+    - F1: L1's frozen and fair-naive controls are corners — tie-break key is a perfect age proxy, both arms fire INSTRUMENT FAILURE by construction. Control redesign, full re-review required.
+    - F2: L1's within-bin assignment perfectly confounds rehearsal level with age — the gating rehearsal-effect test cannot fail. Fixture redesign, full re-review required.
+    - F3: PASS branch gates on §2.9 bounds that §2.9 never defines for recency-only and rehearsal-only ablation arms. Full specification of both arms' exact bounds required.
+    - F4: L1's score-defining accessibility quantity not fully defined; R² bar satisfiability on rank-derived data asserted, not derived. Full re-review required.
+    - F5: L5's frozen arm's chain-fixture expectation does not follow from its own definition; no freeze point or append timeline pre-registered. Control redesign, full re-review required.
+    - F6: L5's shuffled-chain null derivation contradicts the pre-registered graph (180 vs 190 edges) and its own probability model (derangement expectation = 0, not 1/189). Mechanical correction, verification required.
+    - F7: L6's closed-world enumeration contradicts its own count: 4 callables enumerated, 5 claimed. Mechanical correction, verification required.
+  - **CRITIC authorization statement (Part 5):** "No M3 build authorization may be granted, and no M3 timebox may begin, on this specification. No build cell, task specification, courier scoring packet, or integration characterization is cleared."
+  - **NF3 (non-blocking but material to this STATE.md update):** "STATE.md is stale relative to the governing state the spec cites, and cannot attest it. STATE.md still shows milestone M2 active, E1-RUN-1 'packaged,' and HEAD dceb2584...; it contains neither the M2 GREEN/SEALED/ACCEPTED status nor the main commit 1626bb09... that the v3 header cites as governing state. STATE.md must be brought current, and the 1626bb09... governing commit attested, before Rebecca rules at this gate."
+  - **Part 4 (required resubmission action):** "Not eligible for CLEAR WITH REQUIRED AMENDMENTS. F1, F2, F3, F4, and F5 redesign controls, fixtures, or score definitions and require a revised specification, a companion changelog, and another full independent CRITIC review. F6 and F7 are mechanical corrections that may be folded into the same resubmission and verified without separate cycles."
+  - `open_blockers` updated with F1-F7 (each with description, source, required_action).
+  - STATE.md itself NOT committed in this round (INTEGRATOR updates STATE.md as operational memory; RECORDER records its hash at merge).
+- **2026-08-15 (INTEGRATOR) — STATE.md reconciled; V4 amendment assigned to ARCHITECT:**
+  - **This entry.** INTEGRATOR reconciled STATE.md against: Project Files provenance (docs/rulings/provenance_log.md, Entries 1-34); M2 completion record (Entry 34: E1-RUN-2 DELIVERED GREEN; judge_e1_run2_ruling.md); provenance-cure re-run (judge_e1_cure_ruling.md: DELIVERED GREEN, manifest commit hash cured to a85ec91f); lineage attestation (runs/e1-cure-run/lineage_attestation.md: 46 files verified); state/ROLE_SESSIONS.md (M2 complete, green, sealed, accepted; M3 specification work blocked); reviews/critic_m3_e2_spec_rereview_v3.md (BLOCK on F1-F7); and GitHub main (verified at 1626bb09 via git ls-remote, 2026-08-15T22:38Z).
+  - STATE.md updated to record: M2 GREEN, SEALED, ACCEPTED; lineage/provenance cure complete; current repository commit 1626bb09d9645ccdf2a2126325b2934dc12e2c5d (VERIFIED); M3/E2 V3 BLOCK on F1-F7; V4 amendment assigned to ARCHITECT; no M3 build authorization or timebox; next action = ARCHITECT V4 amendment then independent CRITIC re-review.
+  - All retained crash history (E1-RUN-1 crash, construction-bug diagnosis, timing fix) and scoring history (M1 RUN-1 GREEN, E1-RUN-2 GREEN, E1-CURE-RUN GREEN) preserved verbatim in the changelog above.
+  - No specifications, scientific findings, locked bars, provenance logs, or GitHub main altered. Only state/STATE.md changed.
+  - `next_action` → "ARCHITECT issues V4 amendment (revised M3/E2 specification addressing F1-F7 + companion changelog). Then independent CRITIC re-review of V4. No M3 build authorization or timebox until V4 clears CRITIC and Rebecca approves at M3 Continuation/Scope Gate."
+  - STATE.md itself NOT committed in this round (INTEGRATOR updates STATE.md as operational memory; RECORDER records its hash at merge).
+- **2026-08-15 (INTEGRATOR) — ARCHITECT M3/E2 spec V4 submitted; CRITIC fifth independent re-review: CLEAR:**
+  - ARCHITECT issued M3/E2 specification V4 (specs/m3_e2_spec_amended_v4.md + specs/m3_e2_spec_changelog_v4.md), resolving all seven blocking findings (F1-F7) from the V3 review and addressing all six non-blocking findings (NF1-NF6). Persisted in Project Files.
+  - **F1 RESOLVED:** L1 tie-break replaced with seeded random permutation (seed=42, M1 B2 precedent); fair-naive ranking replaced with separate seeded random permutation (seed=43); frozen R²=0.236, fair-naive R²=0.320 — both well below null 95th percentile (0.749). Both negative controls are now valid, not corners.
+  - **F2 RESOLVED:** Within-bin rehearsal assignment changed from `⌊i/8⌋` (perfect age lockstep, Spearman=±1.0) to `i mod 5` (interleaved, Spearman=−0.1225). Factor-inert candidate now correctly fails rehearsal-isolation test (ρ<0.6 all bins); oracle correctly passes (ρ≥0.6 all bins).
+  - **F3 RESOLVED:** §2.9 adds exact bounds for recency-only (R²≥0.85, β_age<0, all ρ<0.6) and rehearsal-only (β_age≥0, all ρ≥0.6) ablation arms. §2.10 adds both to L18 checklist. §2.11 PASS branch no longer references non-existent bounds.
+  - **F4 RESOLVED:** §2.4 pre-registers exactly 100 candidate sets, exactly 5 appearances per entry, aggregation rule (mean of log-transformed per-set accessibilities). Oracle R²=0.985 (≥0.85), β_age=−0.00150 (<0) — verified by direct computation.
+  - **F5 RESOLVED:** L5 frozen arm re-specified with head/current-belief pointer (genuine mutation on supersession, not write-once backward pointer). Chain-append timeline pre-registered (pre-freeze cycles 0-99, freeze at cycle 100, post-freeze cycles 100-199). All 40 queries post-freeze. Frozen walk accuracy=0.00 by construction; candidate walk accuracy=1.00. Head pointer update is genuinely load-bearing.
+  - **F6 RESOLVED:** L5 edge count corrected to 180 (20×9). Derangement expectation stated as exactly 0. Bound fixed to single criterion: walk accuracy ≤ 0.05.
+  - **F7 RESOLVED:** L6 callable count reconciled to 4 everywhere (2+0+2=4). All references to "five"/"5 rows" corrected to "four"/"4 rows".
+  - **NF1-NF6 addressed:** L3 frozen-floor scope harmonized (NF1); seed ledger completeness claim narrowed (NF2); STATE.md staleness noted as INTEGRATOR responsibility (NF3, addressed by this update); batch-fallback timing language added (NF4); fair-naive artifact field scoped to world-validity (NF5); chain-fixture log separation stated explicitly (NF6).
+  - **CRITIC fifth independent re-review: CLEAR** (reviews/critic_m3_e2_spec_rereview_v4.md). Every branch-defining predicate independently verified by from-scratch Python verification script. No new blocking finding.
+  - **NF7-NF10 (new, non-blocking findings of record):** NF7 (three printed R² values not independently reproducible — documentation/reproducibility issue, none affects any pass/fail criterion); NF8 (L3 permuted arm's exact bound may not be provably exact for all possible fitted weights — very likely correct, false positive triggers INSTRUMENT FAILURE not candidate kill); NF9 (L5 frozen arm's binary walk accuracy is a corner by Option E lesson's letter but acceptable for L18 negative control); NF10 (STATE.md must be brought current before Rebecca rules — NF3 carried forward, addressed by this update).
+  - **CRITIC authorization statement (Part 6):** "This CLEAR authorizes Rebecca to rule at the M3 Continuation/Scope Gate. It does not authorize a build cell, task specification, courier scoring packet, or any execution. Build/task-spec clearance is a separate, later ARCHITECT/INTEGRATOR deliverable."
+  - **§1.1 growth-bar proposal:** remains correctly isolated and rulable by Rebecca independently of this CLEAR.
+  - STATE.md itself NOT committed in this round (INTEGRATOR updates STATE.md as operational memory; RECORDER records its hash at merge).
+- **2026-08-15 (INTEGRATOR) — STATE.md updated to record V4 CRITIC CLEAR:**
+  - **This entry.** INTEGRATOR updated STATE.md to record: M3/E2 specification V4 received independent CRITIC CLEAR; all F1-F7 resolved and NF1-NF6 addressed; NF7-NF10 remain non-blocking findings of record; V4 package eligible for presentation to Rebecca at M3 Continuation/Scope Gate; no build cell, task specification, scoring packet, execution, or M3 timebox authorized; §1.1 growth-bar proposal remains pending Rebecca's separate ruling; next action = RECORDER repository attestation and publication of complete gate package, then Rebecca's gate ruling.
+  - Reconciled against: specs/m3_e2_spec_amended_v4.md (governing state: main 1626bb09; M2 GREEN/SEALED/ACCEPTED); specs/m3_e2_spec_changelog_v4.md; reviews/critic_m3_e2_spec_rereview_v4.md (CLEAR); state/ROLE_SESSIONS.md; docs/rulings/provenance_log.md (Entries 1-34); and GitHub main (verified at 1626bb09 via git ls-remote, 2026-08-15T23:15Z).
+  - `open_blockers` cleared (was F1-F7, now empty). Added `non_blocking_findings_of_record` section for NF7-NF10. Updated `role_status`, `timebox.m3_status`, `next_action`. M2 GREEN/SEALED/ACCEPTED, E1-RUN-1 crash, E1-RUN-2 GREEN, lineage/provenance-cure, and M2 completion history all retained unchanged.
+  - No specifications, scientific findings, locked bars, provenance logs, or GitHub main altered. Only state/STATE.md changed.
+  - STATE.md itself NOT committed in this round (INTEGRATOR updates STATE.md as operational memory; RECORDER records its hash at merge).
