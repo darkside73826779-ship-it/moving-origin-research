@@ -1442,3 +1442,34 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **No scientific content, locked bars, code, M3 specification, or prior provenance entries altered.** STATE.md updated and this entry appended only.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3/E2 V4 GO → BUILD GO → CLEARED FOR SCORING. Implementation merged (PR #5). Scoring-mode seed routing fixed (PR #6). CRITIC final clearance: CLEARED FOR SCORING. Courier packet CRITIC-cleared. Ready for Rebecca to execute scoring on supervised executor. §1.1 growth-bar pending Rebecca.**
+
+
+---
+
+## Entry 43 — M3 scoring return custody: INSTRUMENT FAILURE
+
+**Date:** 2026-08-16 · **Actor:** Rebecca Mcclintic (scoring execution); JUDGE (scoring ruling); RECORDER (custody and attestation)
+
+- **Scoring run:** Rebecca executed `python src/m3_harness.py --law all --seeds 201,202,203 --verify-reproducibility --output-dir ./m3_scoring_output` on her supervised executor at attested commit `3a4e636f5ec753bfadca08d1bf3be17d79dbee72`.
+- **Package SHA-256:** `d5a5bc12daadf7007ea277bc20a03047bb41c74f3a955fed9bf0dcbf07db87d3` (VERIFIED by JUDGE — matches Rebecca's attestation).
+- **JUDGE ruling:** `reviews/judge_m3_scoring_ruling.md`, SHA-256 `6a07afbcc8596a0bee3bc0263d3a1306c1b6d44f9a9f4489b90a87b7b2339fb9`.
+- **VERDICT: INSTRUMENT FAILURE.**
+  - L1 INSTRUMENT_FAILURE on seeds 201 and 203 — shuffled arm conditional rho values fall outside the empirical-null band (3 bin-level violations across 2 seeds, all below lower bound). Pre-registered instrument-failure trigger per spec §2.9/§2.11.
+  - L1 PASS on seed 202 (all shuffled rho within band).
+  - L1 candidate bars PASS on all 3 seeds — R²=0.9857 (≥0.85), β_age=−0.00150 (<0), all 5 conditional ρ≥0.6. No kill conditions fire. Per §5.2, INSTRUMENT FAILURE means test apparatus broken, not candidate failed.
+  - L3 PASS on all 3 seeds — all reductions ≥5% (8.8%–22.7%); all L18 control arms pass.
+  - L5 PASS on all 3 seeds — accuracy=1.0, chain-walk=1.00, all L18 controls pass. §1.1 growth timing reported (non-gating): candidate 1.0×, fair-naive 3.6–3.9× (below 4.0× proposed threshold).
+  - L6 PASS on all 3 seeds — 8/8 attacks caught, 4/4 audit rows, 6/6 L18 arms.
+  - Reproducibility: bit_identical=True. L20 drift self-test: PASS. Interface invariants: PASS.
+- **Non-blocking provenance/labeling deviations:**
+  1. Terminal round-trip log missing (required return file absent; Rebecca attests inadvertent).
+  2. Commit hash `3a4e636f` differs from courier packet's `7fdf033e` (repo advanced 3 CRITIC-cleared commits post-packet; final commit: "CLEARED FOR SCORING").
+  3. STATE.md hash `7bc8963c` (CRLF on Windows) differs from courier packet's `f257c1f3` (LF on Linux) — internally consistent (CRLF normalization explains mismatch; same pattern as E1 cure run).
+  4. Seed ledger labels "M3 development" despite `run_type=scoring` (labeling bug; `run_type` field correct).
+  5. Manifest r3_note/scoring_seed_pool use stale "development" boilerplate in scoring mode.
+- **O-14: no rerun authorized** without Rebecca's fresh signoff and a CRITIC-confirmed construction-bug diagnosis. Per §5.2, L3/L5/L6 results are valid scored evidence. L1 is unscoreable on seeds 201 and 203.
+- **§1.1 growth-bar proposal:** remains diagnostic-only and non-gating pending separate Rebecca ruling.
+- **Standing protections verified:** O-14 (no re-run-on-failure), O-15 (scoring through supervised executor), O-35 (3 hold-out seeds unseen in development), D1–D5, L9 hard fence, full L18 battery, no integration claim without L15–L17 evidence, no renaming negative results.
+- **No scientific content, locked bars, code, specifications, or prior provenance entries altered.** JUDGE ruling archived unchanged, STATE.md updated, this entry appended only.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 scoring run: INSTRUMENT FAILURE — L1 shuffled arm null-band violations on seeds 201/203; L1 candidate bars PASS (no kills); L3/L5/L6 PASS all seeds; O-14 no rerun. Awaiting CRITIC results review and Rebecca's delivery gate ruling. §1.1 growth-bar pending Rebecca.**
