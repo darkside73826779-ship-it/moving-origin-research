@@ -7,9 +7,9 @@
 ```yaml
 # STATE.md — team operational schema (under Rebecca's M0 addendum, Entry 13 / O-10)
 # Updated by: INTEGRATOR (sole writer). RECORDER records hash at every merge.
-# Last-updated: 2026-08-16T14:33:00-04:00.
+# Last-updated: 2026-08-16T14:52:00-04:00.
 
-milestone: M3                       # First M3 scoring run retained as INSTRUMENT FAILURE (Entry 43); L3/L5/L6 PASS evidence and L1 candidate-facing PASS evidence on seeds 201–203 remain valid, with no kill conditions; Rebecca authorized a post-scoring specification correction under the Entry 43 four-part test; V4.3 is CRITIC-CLEARED as a targeted specification amendment only (Entry 44); V4.4 B1–B4 specification-framework closure is CRITIC-CLEAR (verdict CLEAR; B1–B4 resolved; no new blockers) and merged through Rebecca-authorized PR #13, with CRITIC ruling and merge custody preserved in Entry 46 and merged via PR #14 (Entry 46); scoring BLOCKED and fresh scoring not authorized; V4.4 is not claimed implemented
+milestone: M3                       # First M3 scoring run retained as INSTRUMENT FAILURE (Entry 43); L3/L5/L6 PASS evidence and L1 candidate-facing PASS evidence on seeds 201–203 remain valid, with no kill conditions; Rebecca authorized a post-scoring specification correction under the Entry 43 four-part test; V4.3 is CRITIC-CLEARED as a targeted specification amendment only (Entry 44); V4.4 B1–B4 specification-framework closure is CRITIC-CLEAR (verdict CLEAR; B1–B4 resolved; no new blockers) and merged through Rebecca-authorized PR #13, with CRITIC ruling and merge custody preserved in Entry 46 and merged via PR #14 (Entry 46); per Rebecca ruling 2026-08-16, V4.4 completed §2.10 harmonization, the complete 26-family pre-scoring closure audit, and framework-level FWFP corrections (max 48/1001 ≤ 5%), so those prerequisites are RETIRED and the next implementation role is TASK BUILDER (cleared V4.4 amendments only); scoring BLOCKED and fresh scoring not authorized; V4.4 is not claimed implemented
 session_count: 5                    # completed working sessions (M1: 1; M2: 1; M3 spec cycle: 2 — V0→V3 BLOCKED, V4 CLEARED; M3 GO + task spec: 1 — GO ruling, task spec/courier arch prepared, CRITIC narrow BLOCK)
 milestone_session_budget: 4        # M3 timebox: 4 sessions / 8 calendar days (Rebecca M3 GO ruling, active starting 2026-08-15)
 
@@ -18,7 +18,7 @@ timebox:
   m2_started: 2026-08-15            # M2 timebox clock started 2026-08-15 (CRITIC cleared Q2/Q3 incorporations)
   m2_sessions_consumed: 1            # M2 consumed 1 session
   m2_days_consumed: 1               # M2 consumed 1 day
-  m3_status: scoring_blocked         # Entry 44: V4.3 CRITIC-CLEARED as targeted specification amendment only; not implementation clearance and not fresh-scoring authorization. Entry 46: V4.4 B1–B4 specification-framework closure CRITIC-CLEAR and merged (PR #13; custody PR #14); still not implementation clearance and not fresh-scoring authorization
+  m3_status: scoring_blocked         # Entry 44: V4.3 CRITIC-CLEARED as targeted specification amendment only. Entry 46: V4.4 B1–B4 specification-framework closure CRITIC-CLEAR and merged (PR #13; custody PR #14). Rebecca ruling 2026-08-16: §2.10 harmonization + complete 26-family closure audit + framework-level FWFP corrections COMPLETE; next implementation role is TASK BUILDER (cleared V4.4 amendments only). Still not implementation clearance and not fresh-scoring authorization; scoring remains BLOCKED
   m3_sessions_consumed: 1            # M3 timebox: 1 session consumed (INTEGRATOR prepared task spec + courier architecture; CRITIC reviewed)
   m3_days_consumed: 1               # M3 timebox: 1 day consumed
   m3_session_cap: 4
@@ -161,18 +161,23 @@ returned_artifacts:                 # inventory of what Rebecca returned — RUN
 role_status:                        # latest verdict per role
   JUDGE:        "M1 DELIVERED GREEN; M2 DELIVERED GREEN. First M3 scoring verdict retained as INSTRUMENT FAILURE; L3/L5/L6 PASS evidence and L1 candidate-facing PASS evidence on seeds 201–203 remain valid; no kill condition fired"
   CRITIC:       "V4.4 B1–B4 specification-framework closure CRITIC-CLEAR (Entry 46: verdict CLEAR; B1–B4 resolved; no new blockers). This certifies pre-scoring specification-framework closure only; it is not implementation clearance and not fresh-scoring authorization. Independent CRITIC implementation clearance remains required after final cleared amendments are implemented. (Prior: V4.3 CRITIC-CLEARED as a targeted specification amendment only, Entry 44.)"
-  RECORDER:     "Provenance current through Entry 46; V4.4 CRITIC CLEAR ruling and merge custody preserved (Entry 46, custody result 169d962). RECORDER custody/hash attestation is required before this V4.4 STATE.md reconciliation may merge"
-  INTEGRATOR:   "M3 operational state reconciled to Entries 43–44 and Entry 46: first scoring retained as INSTRUMENT FAILURE; V4.4 B1–B4 spec-framework closure CRITIC-CLEAR and merged (PR #13; custody PR #14, main 07001593); scoring BLOCKED; implementation and scoring not retroactively authorized; no fresh scoring authorized; seeds 201–203 never rerun; V4.3 and V4.4 not claimed implemented"
-  ARCHITECT:    "Next authorized role: locally complete §2.10 harmonization and the complete pre-scoring 26-family closure audit, including correction of every control family whose FWFP exceeds 5%"
-  TASK_BUILDER: "No implementation action authorized yet. Implement only the final cleared amendments after ARCHITECT closure work and applicable clearance"
+  RECORDER:     "Provenance current through Entry 47; V4.4 CRITIC CLEAR ruling and merge custody preserved (Entry 46) and V4.4 STATE reconciliation attested (Entry 47, main 9192cf1). RECORDER custody/hash attestation is required before this V4.4 routing-correction STATE.md may merge"
+  INTEGRATOR:   "M3 operational state corrected per Rebecca ruling 2026-08-16: §2.10 harmonization, complete 26-family closure audit, and framework-level FWFP corrections COMPLETE under V4.4 (Entry 46); Entry 47's ARCHITECT re-routing superseded as stale; next implementation role is TASK BUILDER (cleared V4.4 amendments only). First scoring retained as INSTRUMENT FAILURE; scoring BLOCKED; implementation and scoring not retroactively authorized; no fresh scoring authorized; seeds 201–203 never rerun; V4.3 and V4.4 not claimed implemented"
+  ARCHITECT:    "V4.4 closure work COMPLETE and CRITIC-cleared (§2.10 harmonization; complete 26-family closure audit; framework-level FWFP corrections, max 48/1001 ≤ 5%; Entry 46). No further ARCHITECT action authorized for this milestone unless a new specification defect is found."
+  TASK_BUILDER: "NEXT IMPLEMENTATION ROLE (after RECORDER custody/incorporation of this corrected STATE.md), per Rebecca ruling 2026-08-16. Authorized only to implement the exact CRITIC-cleared V4.4 amendments. No scoring, scoring-packet construction, fresh-seed selection/exposure, or rerun. Independent CRITIC implementation clearance required afterward."
 
-open_blockers:
-  - "§2.10 harmonization"
-  - "Complete pre-scoring 26-family closure audit"
-  - "Correction of every control family whose full-battery FWFP exceeds 5%"
-  - "Implementation of the final cleared amendments"
+open_blockers:                      # Rebecca ruling 2026-08-16: §2.10 harmonization, the complete 26-family closure audit, and framework-level FWFP corrections are COMPLETE under V4.4 (Entry 46 CRITIC CLEAR); retired below to completed_prerequisites
+  - "Implementation of the final cleared V4.4 amendments (next: TASK BUILDER)"
   - "Independent CRITIC implementation clearance"
   - "Rebecca's separate fresh-seed supervised scoring authorization"
+
+completed_prerequisites:            # retired from open_blockers per Rebecca ruling 2026-08-16 (see changelog); completed and CRITIC-cleared under V4.4 (Entry 46)
+  - id: PRQ_2_10_harmonization
+    desc: "§2.10 harmonization — COMPLETE. V4.4 companion changelog: consolidated spec §2.10 now uses the same one-sided shuffled null-of-the-max plus-one rule as §§2.9 and 2.11. (Distinct from the final CRITIC NB1, which is a harmless internal V4.3/schema-version label lag, not the §2.10 harmonization finding.)"
+  - id: PRQ_26_family_closure_audit
+    desc: "Complete pre-scoring 26-family closure audit — COMPLETE. Governing inventory contains all 26 families exactly once; CRITIC independently reproduced 9 stochastic / 17 deterministic (Entry 46, verify_m3_control_family_closure.py PASS)."
+  - id: PRQ_fwfp_family_corrections
+    desc: "Framework-level correction of every control family whose full-battery FWFP exceeds 5% — COMPLETE. Maximum corrected full-family FWFP = 48/1001 ≈ 0.047952 ≤ 5% (Entry 46, CRITIC-verified)."
 
 non_blocking_findings_of_record:    # CRITIC V4 review Part 3 — non-blocking, do not gate
   - id: NF7
@@ -190,7 +195,7 @@ non_blocking_findings_of_record:    # CRITIC V4 review Part 3 — non-blocking, 
     source: critic_m3_e2_spec_rereview_v4.md
     status: resolved  # STATE.md reconciled through Entries 43–44 and Entry 46 (V4.4 post-custody); new STATE.md hash requires RECORDER custody attestation before merge
 
-next_action: "Local ARCHITECT completion of §2.10 harmonization and the complete 26-family pre-scoring closure audit, including framework-level correction of every control family whose full-battery FWFP exceeds 5%. Then finalize cleared amendments for implementation and independent CRITIC implementation clearance. Fresh scoring remains blocked until Rebecca separately authorizes a supervised run on fresh seeds. Seeds 201–203 must never be rerun. O-14, O-15, D1–D5, L9, L18, and all standing protections remain binding."
+next_action: "Per Rebecca ruling 2026-08-16: §2.10 harmonization, the complete 26-family pre-scoring closure audit, and framework-level FWFP corrections are COMPLETE under V4.4 (Entry 46 CRITIC CLEAR); Entry 47's routing of that work back to ARCHITECT is stale and superseded. After this corrected STATE.md receives RECORDER custody and is incorporated, the next implementation role is TASK BUILDER, authorized only to implement the exact CRITIC-cleared V4.4 amendments — no scoring, scoring-packet construction, fresh-seed selection/exposure, or rerun. Implementation is then followed by independent CRITIC implementation clearance. Fresh scoring remains blocked until Rebecca separately authorizes a supervised run on fresh seeds. Seeds 201–203 remain INSTRUMENT FAILURE evidence and must never be rerun. O-14, O-15, D1–D5, L9, L18, and all standing protections remain binding."
 ```
 
 ---
@@ -438,3 +443,8 @@ next_action: "Local ARCHITECT completion of §2.10 harmonization and the complet
   - Attested hashes: courier scoring packet (specs/m3_e2_courier_scoring_packet.md) SHA-256 848ce927; CRITIC final clearance (reviews/critic_m3_final_clearance_ruling.md) SHA-256 5752f3f0; STATE.md updated in this entry.
   - Scoring command: python src/m3_harness.py --law all --seeds 201,202,203 --verify-reproducibility --output-dir ./m3_scoring_output
   - No scientific content, locked bars, code, or prior provenance entries altered. Only state/STATE.md changed and this entry appended.
+- **2026-08-16 (INTEGRATOR) — M3 V4.4 STATE.md routing correction (Rebecca ruling; narrow active-state fix):**
+  - **This entry.** Rebecca resolved on the record the Entry 46 vs Entry 47 conflict flagged in the prior INTEGRATOR BLOCK handoff. Ruling (2026-08-16): (1) V4.4 completed the full 26-family pre-scoring closure audit — governing inventory contains all 26 families exactly once; CRITIC independently reproduced 9 stochastic / 17 deterministic and maximum corrected full-family FWFP 48/1001 ≤ 5%. (2) §2.10 harmonization is COMPLETE — V4.4 companion changelog: "NB1 / stale §2.10 — Consolidated spec §2.10 now uses the same one-sided shuffled null-of-the-max plus-one rule as §§2.9 and 2.11." (3) The final CRITIC NB1 is a different, harmless internal V4.3/schema-version label lag, not the earlier §2.10 harmonization finding. (4) Entry 47's routing of §2.10 harmonization and the 26-family audit back to ARCHITECT is stale and incorrect. (5) After corrected STATE.md custody/incorporation, TASK BUILDER is the next implementation role, authorized only to implement the exact CRITIC-cleared V4.4 amendments. (6) No scoring, scoring-packet construction, fresh-seed selection/exposure, or rerun authorized; seeds 201–203 remain INSTRUMENT FAILURE evidence and must never be rerun.
+  - Corrected active-state routing/status only: retired §2.10 harmonization, the complete 26-family closure audit, and framework-level FWFP corrections from `open_blockers` into a new `completed_prerequisites` block; preserved as pending: implementation of cleared V4.4 amendments, independent CRITIC implementation clearance, and Rebecca's separate fresh-seed supervised-scoring authorization. Updated: `Last-updated`, `milestone`, `timebox.m3_status`, `role_status` (RECORDER, INTEGRATOR, ARCHITECT, TASK_BUILDER), `open_blockers`, added `completed_prerequisites`, `next_action`.
+  - Entry 47's historical text is preserved verbatim in provenance (not edited here); this correction supersedes only the stale *active routing*, and records the superseding Rebecca ruling. First-run INSTRUMENT FAILURE label, seeds 201–203 rerun prohibition, prior valid L3/L5/L6 PASS and L1 no-kill evidence, timebox/tripwires, scientific bars, Entry 43 four-part test, O-14/O-15, and all standing protections preserved unchanged.
+  - No specification, verifier, code, provenance, review, or scoring artifact altered. Only state/STATE.md changed. Implementation and scoring remain BLOCKED. STATE.md hash requires RECORDER custody attestation before merge; no merge performed by INTEGRATOR.
