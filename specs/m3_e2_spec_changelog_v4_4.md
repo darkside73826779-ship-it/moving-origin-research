@@ -1,6 +1,8 @@
 # M3/E2 V4.4 Systemic Closure — Companion Changelog
 
-**Base:** `8259e01a1dfac6a09074027d9a48f034bf51d9b9`
+**Named base:** `8259e01a1dfac6a09074027d9a48f034bf51d9b9`
+
+**CRITIC B1–B4 revision base:** `b6accaad3773468d54b2363a1072877554186265`
 
 **Gate:** M3 V4.3 Systemic Pre-Scoring Closure Gate
 
@@ -18,8 +20,13 @@
 | Known L1 permuted failure | §2.9 retains V4.2's 200-entry rho but calibrates `abs(rho)` by plus-one randomization and Bonferroni; p95≤0.15 remains a single power check. |
 | Known L1 recency-only concern | §2.9 classifies it as a fixed-fixture exact family, proves scoring seed non-entry, requires seven-value satisfiability and cross-slot identity, and does not invent a 5% per-check rate. |
 | Other multi-check failure: L3 permuted | §3 retires the unproved exact probability claim, preserving the direction and transform while applying upper null-of-max plus-one control. |
+| CRITIC B1 / L3 frozen | §3.1 recognizes noisy sequence, fit, and loss variability; replaces unproved exact classification with upper null-of-max calibration. |
+| CRITIC B1 / L3 oracle | §3.2 preserves both 0.05/0.95 directions in a worst interval-violation statistic and calibrates it. |
+| CRITIC B1 / L3 shuffled | §3.4 preserves the paired comparator and +0.01 tolerance inside an upper max statistic and calibrates it. |
 | Other multi-check failure: L5 permuted | §4 replaces three independent 95% bands with a symmetric two-sided randomization rank plus Bonferroni. |
-| Required artifacts | Inventory freezes independent-verification fields for all 26 families; stochastic rows include raw nulls, ranks, p-values, and RNG records. |
+| CRITIC B2 / raw artifacts | §6.1 and inventory `raw_artifact_schemas` freeze raw inputs, transforms, paired observations, predictions, truths, and component losses sufficient to recompute every underlying statistic. |
+| CRITIC B3 / circular verifier | §8 and verifier derive classification from per-family variability-source evidence; no family-ID classification whitelist or rationale keyword search remains. |
+| CRITIC B4 / platform hashes | §8 and verifier define UTF-8/LF/one-trailing-LF canonicalization before SHA-256. |
 
 ## Corrections and numerical closure
 
@@ -30,9 +37,12 @@
 | L1.permuted | `0.142625` | two-sided magnitude plus-one p, Bonferroni | `0.047952...` |
 | L1.shuffled | `1-.95^15=0.536708...` | upper null-of-max plus-one p, Bonferroni | `0.047952...` |
 | L3.permuted | unproved/unbounded (`1.0` conservative) | upper five-horizon null-of-max plus-one p, Bonferroni | `0.047952...` |
+| L3.frozen | unproved/unbounded (`1.0` conservative) | upper five-horizon full-pipeline null-of-max plus-one p, Bonferroni | `0.047952...` |
+| L3.oracle | unproved/unbounded (`1.0` conservative) | two-sided interval-violation max plus-one p, Bonferroni | `0.047952...` |
+| L3.shuffled | unproved/unbounded (`1.0` conservative) | paired difference-minus-tolerance max plus-one p, Bonferroni | `0.047952...` |
 | L5.permuted | `0.142625` for stochastic combo check | symmetric two-sided departure rank, Bonferroni | `0.047952...` |
 
-All other 20 families are exact deterministic predicates, not level-alpha tests. Their inventory rows give the finite/algebraic/paired/schema rationale and required proof artifacts. Their stochastic FWFP is inapplicable and audit value is zero.
+All other 17 families are exact deterministic predicates, not level-alpha tests. Their classification evidence shows that scoring seeds, random generation, fitted models, and sampled observations do not enter; each has a named finite/algebraic/interface basis. Their stochastic FWFP is inapplicable and audit value is zero.
 
 ## No-change audit
 

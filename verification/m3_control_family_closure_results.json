@@ -3,13 +3,15 @@
   "command": "python verification/verify_m3_control_family_closure.py",
   "errors": [],
   "gate": "M3 V4.3 Systemic Pre-Scoring Closure Gate",
-  "inventory_sha256": "e47f253788f3fb1307d214a1a25120f1e1d67f25221693c36477fdf5b7b4beed",
+  "hash_canonicalization": "UTF-8 without BOM; CRLF/CR->LF; strip trailing LF; append exactly one LF; SHA-256",
+  "inventory_sha256": "a0d91675cd516ba2e703e4e8aad404271f8caf89b20f72d2816a8d7331d4b0e9",
+  "revision_base_commit": "b6accaad3773468d54b2363a1072877554186265",
   "schema_version": "m3-control-family-closure-results-v1",
   "scope": "specification_only",
-  "spec_sha256": "acef52f6af9763f0e250d147617445fbeebbfda61fdfd068d4aa0ad24d93defe",
+  "spec_sha256": "d8930baebbf493c5f042fe194cc3a42bdf4dd1e7b7f95c5d8497c3f39ccb0c2c",
   "summary": {
     "all_corrected_stochastic_fwfp_le_0_05": true,
-    "correction_count": 6,
+    "correction_count": 9,
     "corrections": [
       {
         "corrected_fwfp": 0.04795204795204795,
@@ -37,8 +39,26 @@
       },
       {
         "corrected_fwfp": 0.04795204795204795,
+        "family_id": "L3.frozen",
+        "method": "Upper-only five-horizon null-of-the-max plus-one randomization p-value with 1000 full-pipeline null draws per seed and Bonferroni alpha_seed=0.05/3.",
+        "pre_correction_fwfp": 1.0
+      },
+      {
+        "corrected_fwfp": 0.04795204795204795,
+        "family_id": "L3.oracle",
+        "method": "Two-sided interval-violation null-of-the-max plus-one randomization p-value over five horizons, 1000 full-pipeline null draws per seed, Bonferroni alpha_seed=0.05/3. The 0.05 and 0.95 anchors and both failure directions are retained in v_h.",
+        "pre_correction_fwfp": 1.0
+      },
+      {
+        "corrected_fwfp": 0.04795204795204795,
         "family_id": "L3.permuted",
         "method": "Replace the unproved exact bound with upper-only null-of-the-max randomization p-value over five horizons, 1000 derangement null draws per seed, and Bonferroni alpha_seed=0.05/3.",
+        "pre_correction_fwfp": 1.0
+      },
+      {
+        "corrected_fwfp": 0.04795204795204795,
+        "family_id": "L3.shuffled",
+        "method": "Upper-only five-horizon null-of-the-max plus-one randomization p-value over 1000 exchangeable cycle shuffles per seed and Bonferroni alpha_seed=0.05/3; retain +0.01 inside the statistic.",
         "pre_correction_fwfp": 1.0
       },
       {
@@ -48,7 +68,7 @@
         "pre_correction_fwfp": 0.142625
       }
     ],
-    "deterministic_family_count": 20,
+    "deterministic_family_count": 17,
     "family_count": 26,
     "fresh_scoring_values_used": false,
     "law_counts": {
@@ -59,7 +79,7 @@
     },
     "m3_harness_run": false,
     "max_corrected_stochastic_fwfp": 0.04795204795204795,
-    "stochastic_family_count": 6
+    "stochastic_family_count": 9
   },
   "verdict": "PASS"
 }

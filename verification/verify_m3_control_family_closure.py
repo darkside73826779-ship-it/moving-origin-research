@@ -39,10 +39,6 @@ REQUIRED_RNG_KEYS = {
     "permutation", "derangement", "rng_reuse_prohibited",
     "cross_platform_rule", "exchangeability", "required_artifact_fields",
 }
-STOCHASTIC_IDS = {
-    "L1.frozen", "L1.fair_naive", "L1.permuted", "L1.shuffled",
-    "L3.permuted", "L5.permuted",
-}
 SPEC_MARKERS = [
     "### 2.9 Exact expected statistic, multiplicity control, and artifacts",
     "### 2.10 Full L18 battery checklist for L1 — harmonized",
@@ -58,11 +54,24 @@ SPEC_MARKERS = [
     "Fisher–Yates",
     "reuse is an instrument failure",
     "Seeds 201–203 and their first-run `INSTRUMENT FAILURE` verdict remain retained",
+    "Only empty is deterministic. Frozen, oracle, permuted, and shuffled all consume a scoring-seed-specific noisy AR(3) sequence",
+    "Raw returned-artifact schemas for complete JUDGE recomputation",
+    "contains no hard-coded set of stochastic family IDs",
+    "replace CRLF and lone CR with LF",
 ]
 
 
-def sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+def canonical_text_bytes(path: Path) -> bytes:
+    """Canonical UTF-8/LF bytes, independent of checkout newline policy."""
+    raw = path.read_bytes()
+    text = raw.decode("utf-8-sig")
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
+    text = text.rstrip("\n") + "\n"
+    return text.encode("utf-8")
+
+
+def canonical_sha256(path: Path) -> str:
+    return hashlib.sha256(canonical_text_bytes(path)).hexdigest()
 
 
 def fail(errors: list[str], message: str) -> None:
@@ -85,6 +94,46 @@ def validate(inventory: dict[str, Any], spec_text: str) -> tuple[list[str], dict
     if dict(law_counts) != EXPECTED_COUNTS:
         fail(errors, f"law counts mismatch: {dict(law_counts)}")
 
+    classification_evidence = inventory.get("classification_evidence", {})
+    if set(classification_evidence) != EXPECTED_IDS:
+        fail(errors, "classification evidence must cover exactly all 26 families")
+    variability_flags = {
+        "scoring_seed_enters", "random_generator_enters", "fitted_model_enters",
+        "sampled_observations_enter",
+    }
+    derived_types: dict[str, str] = {}
+    for family_id, evidence in classification_evidence.items():
+        if not variability_flags <= set(evidence) or "exact_basis" not in evidence:
+            fail(errors, f"{family_id}: classification evidence incomplete")
+            continue
+        values = [evidence[key] for key in sorted(variability_flags)]
+        if not all(isinstance(value, bool) for value in values):
+            fail(errors, f"{family_id}: variability flags must be booleans")
+            continue
+        has_variability = any(values)
+        exact_basis = evidence["exact_basis"]
+        if has_variability:
+            if exact_basis is not None:
+                fail(errors, f"{family_id}: variable family cannot assert exact_basis without a universal proof schema")
+            derived_types[family_id] = "stochastic_empirical"
+        else:
+            if not isinstance(exact_basis, str) or len(exact_basis.strip()) < 8:
+                fail(errors, f"{family_id}: deterministic family needs a concrete exact_basis")
+            derived_types[family_id] = "deterministic"
+
+    raw_schemas = inventory.get("raw_artifact_schemas", {})
+    common_raw_contract = inventory.get("raw_artifact_common_contract", {})
+    required_common_raw = {
+        "manifest_encoding", "numeric_array_encoding", "array_manifest_fields",
+        "string_encoding", "finite_check", "judge_rule",
+    }
+    if required_common_raw - set(common_raw_contract):
+        fail(errors, "raw artifact common binary contract incomplete")
+    else:
+        contract_blob = json.dumps(common_raw_contract, sort_keys=True).lower()
+        for token in ("little-endian", "binary64", "int64", "uint8", "shape", "sha256", "finite", "row-major"):
+            if token not in contract_blob:
+                fail(errors, f"raw artifact common contract missing {token}")
     stochastic_count = 0
     deterministic_count = 0
     corrections: list[dict[str, Any]] = []
@@ -108,12 +157,13 @@ def validate(inventory: dict[str, Any], spec_text: str) -> tuple[list[str], dict
             fail(errors, f"{family_id}: corrective method undefined")
 
         reference_type = row["reference_type"]
+        derived_type = derived_types.get(family_id)
+        if reference_type != derived_type:
+            fail(errors, f"{family_id}: declared {reference_type}, independently derived {derived_type}")
         pre = row["pre_correction_fwfp"]
         corrected = row["corrected_fwfp"]
         if reference_type == "stochastic_empirical":
             stochastic_count += 1
-            if family_id not in STOCHASTIC_IDS:
-                fail(errors, f"{family_id}: unexpected stochastic classification")
             if row["current_per_check_error_rate"] is None:
                 fail(errors, f"{family_id}: stochastic per-check error rate missing")
             if not pre.get("applicable") or not corrected.get("applicable"):
@@ -127,6 +177,15 @@ def validate(inventory: dict[str, Any], spec_text: str) -> tuple[list[str], dict
             for token in ("plus_one_p_value", "rng_derivation_records"):
                 if token not in joined_fields:
                     fail(errors, f"{family_id}: stochastic artifact missing {token}")
+            schema = raw_schemas.get(family_id)
+            if not isinstance(schema, dict):
+                fail(errors, f"{family_id}: raw recomputation schema missing")
+            else:
+                raw_fields = schema.get("per_draw_required", [])
+                if len(raw_fields) < 5 or not schema.get("judge_recomputes"):
+                    fail(errors, f"{family_id}: raw schema insufficient")
+                if f"raw_schema_id:{family_id}" not in row["artifact_fields"]:
+                    fail(errors, f"{family_id}: artifact does not bind its raw schema")
             if pre.get("value", 0) > 0.05:
                 corrections.append({
                     "family_id": family_id,
@@ -136,20 +195,16 @@ def validate(inventory: dict[str, Any], spec_text: str) -> tuple[list[str], dict
                 })
         elif reference_type == "deterministic":
             deterministic_count += 1
-            if family_id in STOCHASTIC_IDS:
-                fail(errors, f"{family_id}: required stochastic family classified deterministic")
             if pre.get("applicable") or corrected.get("applicable"):
                 fail(errors, f"{family_id}: deterministic stochastic FWFP must be inapplicable")
             if pre.get("value") != 0.0 or corrected.get("value") != 0.0:
                 fail(errors, f"{family_id}: deterministic audit FWFP value must be zero")
-            rationale = (row["reference"] + " " + pre.get("derivation", "")).lower()
-            if not any(word in rationale for word in ("exact", "fixed", "finite", "paired", "combinatorial", "contract", "oracle")):
-                fail(errors, f"{family_id}: deterministic exactness rationale missing")
         else:
             fail(errors, f"{family_id}: invalid reference_type {reference_type!r}")
 
-    if STOCHASTIC_IDS != {row["family_id"] for row in families if row.get("reference_type") == "stochastic_empirical"}:
-        fail(errors, "stochastic family set mismatch")
+    derived_stochastic_ids = {key for key, value in derived_types.items() if value == "stochastic_empirical"}
+    if set(raw_schemas) != derived_stochastic_ids:
+        fail(errors, "raw schema IDs must exactly equal independently derived stochastic families")
 
     rng = inventory.get("rng_protocol", {})
     missing_rng = REQUIRED_RNG_KEYS - set(rng)
@@ -217,10 +272,12 @@ def main() -> int:
         "schema_version": "m3-control-family-closure-results-v1",
         "gate": "M3 V4.3 Systemic Pre-Scoring Closure Gate",
         "base_commit": "8259e01a1dfac6a09074027d9a48f034bf51d9b9",
+        "revision_base_commit": "b6accaad3773468d54b2363a1072877554186265",
         "command": "python verification/verify_m3_control_family_closure.py",
         "scope": "specification_only",
-        "inventory_sha256": sha256(inventory_path),
-        "spec_sha256": sha256(spec_path),
+        "hash_canonicalization": "UTF-8 without BOM; CRLF/CR->LF; strip trailing LF; append exactly one LF; SHA-256",
+        "inventory_sha256": canonical_sha256(inventory_path),
+        "spec_sha256": canonical_sha256(spec_path),
         "summary": summary,
         "errors": errors,
         "verdict": "PASS" if not errors else "FAIL",

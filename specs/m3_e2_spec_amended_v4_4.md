@@ -8,7 +8,9 @@
 
 **Gate served:** M3 V4.3 Systemic Pre-Scoring Closure Gate under Rebecca Entry 43
 
-**Exact base:** `8259e01a1dfac6a09074027d9a48f034bf51d9b9`
+**Named base:** `8259e01a1dfac6a09074027d9a48f034bf51d9b9`
+
+**CRITIC B1–B4 revision base:** `b6accaad3773468d54b2363a1072877554186265`
 
 ## 0. Consolidation, precedence, and no-change boundary
 
@@ -78,12 +80,37 @@ This table, §2.9, and §2.11 use the same names, direction, p-value, alpha allo
 
 ## 3. L3 systemic correction
 
-The V4.1 candidate and other control definitions remain unchanged. The five families are frozen, oracle, permuted, shuffled, and empty.
+The V4.1 candidate definition and candidate-facing reduction bars remain unchanged. The five control families are frozen, oracle, permuted, shuffled, and empty. Only empty is deterministic. Frozen, oracle, permuted, and shuffled all consume a scoring-seed-specific noisy AR(3) sequence, fitted finite-sample models, and held-out losses; therefore all four are stochastic. Pairing and a numeric tolerance reduce variance but do not prove an inequality for every possible sequence.
 
-- Frozen, oracle, shuffled, and empty retain their exact paired/fixture/interface predicates and deterministic classification in the inventory.
-- The V4/V4.1 claim `permuted reduction_h<=0` was explicitly unproved (NF8), so it is not eligible for deterministic classification. Replace only that control criterion: for each seed, the observed channel derangement and 1000 null channel derangements are exchangeable draws from the uniform set of eight-channel derangements. Each yields five reductions; define `S=max_h reduction_h`. Apply the upper-tail plus-one p-value and `alpha_seed=0.05/3`. Positive benefit is the only meaningful failure direction; more-negative values are stronger destruction. This changes no candidate reduction bar.
+For every stochastic L3 draw, the complete pipeline is rerun: innovations → 1,010×8 sequence → registered windows → design matrices and targets → fits → predictions → per-example component losses → five horizon reductions. Observed and null draws use the same pipeline and differ only in the frozen RNG domain described in §6.
 
-Required L3-permuted artifact fields are the five observed reductions, 1000×5 null reductions, 1000 maxima, observed maximum, exceed/tie count, p-value, alpha, verdict, accepted derangements, and RNG derivation records.
+### 3.1 Frozen
+
+Retain the negative-control direction: positive state benefit is failure-relevant and smaller/negative reduction is stronger destruction. Each observed/null draw yields five `reduction_h`; define `S=max_h reduction_h`. Use 1000 exchangeable full-pipeline AR(3) null draws per seed, the upper-tail plus-one p-value, and `alpha_seed=0.05/3`. This replaces the unproved finite-sample `reduction_h<=0` instrument trigger; it does not alter any candidate bar.
+
+### 3.2 Oracle
+
+Retain both adopted validity anchors and directions. For every horizon define
+
+`v_h = max(0.05 - oracle_reduction_h, oracle_reduction_h - 0.95)`.
+
+Low reduction remains an ineffective-oracle direction; high reduction remains a ceiling/corner direction. Define `S=max_h v_h`. Use 1000 exchangeable full-pipeline oracle null draws per seed, the upper-tail plus-one rank of the two-sided interval-violation score, and `alpha_seed=0.05/3`. The anchors 0.05 and 0.95 are not moved or renamed; they define the score. The calibrated family asks whether the observed worst anchor violation is unusually large under the exact specified oracle apparatus.
+
+### 3.3 Permuted
+
+The V4/V4.1 claim `permuted reduction_h<=0` was explicitly unproved (NF8). For each seed, observed and 1000 null channel derangements are exchangeable draws from the uniform set of eight-channel derangements. Each yields five reductions; define `S=max_h reduction_h`. Apply the upper-tail plus-one p-value and `alpha_seed=0.05/3`. Positive benefit is the only meaningful failure direction; more-negative values are stronger destruction.
+
+### 3.4 Shuffled
+
+Retain the paired same-sequence frozen comparator and `+0.01` tolerance. For every horizon define
+
+`d_h = shuffled_reduction_h - paired_shuffled_frozen_reduction_h - 0.01`.
+
+Only large positive `d_h` undermines destruction; smaller values are stronger destruction. Observed and 1000 null cycle-order permutations are exchangeable draws using the identical shuffled/frozen fitting pipeline. Define `S=max_h d_h`; apply the upper-tail plus-one p-value and `alpha_seed=0.05/3`.
+
+### 3.5 L3 family closure
+
+For frozen, oracle, permuted, and shuffled the conservative pre-correction FWFP is 1 because no universal finite-sample proof or calibrated error rate existed. Each corrected family has per-seed size at most `16/1001` and three-seed FWFP at most `48/1001`. Empty remains an exact interface contract.
 
 ## 4. L5 systemic correction
 
@@ -117,6 +144,18 @@ The six families—empty, permuted, shuffled, oracle, frozen, and fair-naive—a
 
 No fresh seed identity is present in this specification or pre-scoring evidence.
 
+## 6.1 Raw returned-artifact schemas for complete JUDGE recomputation
+
+Summary statistics are never sufficient evidence for a stochastic family. For each observed and null draw, the returned artifact must contain the raw inputs, transform, intermediate observations, and component outputs named in `verification/m3_control_family_closure_inventory.json.raw_artifact_schemas`. The schema is binding and includes:
+
+- **L1 frozen/fair-naive:** all 200 entry factor rows, all 100 candidate sets and 500 ranked occurrences, ranking permutation where applicable, per-entry accessibility contributions and aggregates, bin membership/means/age representatives, and reported R². JUDGE recomputes ranks, aggregation, OLS, and R².
+- **L1 permuted:** all 200 entry IDs, original factor vectors, mapping permutation, accessibility vector, and complete 200 paired age/accessibility rows. JUDGE recomputes tied ranks and Spearman rho.
+- **L1 shuffled:** all entry/bin rows, 1,200 priming queries and assignment, realized counts, candidate sets/ranks/accessibilities, and every within-bin rehearsal/accessibility pair for every observed/null draw. JUDGE recomputes all five rhos.
+- **Every stochastic L3 family:** innovations, complete sequence, registered train/validation/evaluation indices, design matrices, targets, fitted weights, baseline/control predictions, per-example squared-error components, aggregate losses, reductions, and family-specific violation/difference scores for all five horizons and all 1001 draws. JUDGE can reproduce the generator, fits, predictions, losses, reductions, maxima, and p-values without trusting a supplied summary.
+- **L5 permuted:** all 200 facts and truth labels, field derangement, every query prediction/correctness row, chain nodes/content derangement, returned and expected chain content. JUDGE recomputes accuracy, pooled departures, mismatch rate, and p-value.
+
+Each raw artifact also carries the RNG derivation record and SHA-256 digest for every array. Numeric arrays use raw C-row-major little-endian two's-complement `int64`, IEEE-754 binary64, or boolean `uint8` restricted to 0/1, with no padding. The manifest supplies field name, relative path, shape, dtype, byte order, row key, ordering rule, byte length, and SHA-256. Strings are Unicode NFC/UTF-8. Every binary64 must be finite. Missing raw data, a mismatch between raw recomputation and a summary, or inability to reproduce any statistic is `INSTRUMENT FAILURE`.
+
 ## 7. Two-phase closure and custody
 
 ### 7.1 Phase A — pre-scoring specification closure (this gate)
@@ -131,7 +170,9 @@ Only after implementation clearance and Rebecca's fresh-seed supervised run, JUD
 
 ## 8. Machine-readable inventory and closure result
 
-`verification/m3_control_family_closure_inventory.json` is binding for the 26-family audit details and artifact fields. `verification/verify_m3_control_family_closure.py` must fail unless all requirements in the task prompt and this specification are satisfied. Its checked-in result is specification evidence only.
+`verification/m3_control_family_closure_inventory.json` is binding for the 26-family audit details, classification evidence, and raw artifact schemas. `verification/verify_m3_control_family_closure.py` independently derives classification from explicit variability-source flags; it contains no hard-coded set of stochastic family IDs. It must fail unless all requirements in the task prompt and this specification are satisfied. Its checked-in result is specification evidence only.
+
+Verifier custody hashes use canonical text bytes: decode UTF-8 (accept and remove one leading BOM), replace CRLF and lone CR with LF, remove all trailing LF bytes, append exactly one LF, re-encode UTF-8, then SHA-256. Raw working-tree newline representation is never hashed.
 
 ## 9. Verdict branches and remaining authorization blockers
 
