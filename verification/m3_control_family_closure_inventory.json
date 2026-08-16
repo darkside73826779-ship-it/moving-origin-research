@@ -1,0 +1,311 @@
+{
+  "schema_version": "m3-control-family-closure-v2",
+  "gate": "M3 V4.3 Systemic Pre-Scoring Closure Gate",
+  "base_commit": "8259e01a1dfac6a09074027d9a48f034bf51d9b9",
+  "revision_base_commit": "b6accaad3773468d54b2363a1072877554186265",
+  "alpha_family": 0.05,
+  "scoring_seed_count": 3,
+  "phase": "pre_scoring_specification_only",
+  "fresh_scoring_values_used": false,
+  "classification_rule": "A family is stochastic iff any classification_evidence variability flag is true and no universal proof covers that source. A family is deterministic only when every variability flag is false and exact_basis names a finite/algebraic/interface construction. reference_type must equal this independently derived result.",
+  "classification_evidence": {
+    "L1.frozen": {"scoring_seed_enters": true, "random_generator_enters": true, "fitted_model_enters": false, "sampled_observations_enter": true, "exact_basis": null},
+    "L1.fair_naive": {"scoring_seed_enters": true, "random_generator_enters": true, "fitted_model_enters": false, "sampled_observations_enter": true, "exact_basis": null},
+    "L1.recency_only": {"scoring_seed_enters": false, "random_generator_enters": false, "fitted_model_enters": false, "sampled_observations_enter": false, "exact_basis": "fixed structural fixture and schedule"},
+    "L1.rehearsal_only": {"scoring_seed_enters": false, "random_generator_enters": false, "fitted_model_enters": false, "sampled_observations_enter": false, "exact_basis": "fixed structural fixture and schedule"},
+    "L1.permuted": {"scoring_seed_enters": true, "random_generator_enters": true, "fitted_model_enters": false, "sampled_observations_enter": true, "exact_basis": null},
+    "L1.shuffled": {"scoring_seed_enters": true, "random_generator_enters": true, "fitted_model_enters": false, "sampled_observations_enter": true, "exact_basis": null},
+    "L1.oracle": {"scoring_seed_enters": false, "random_generator_enters": false, "fitted_model_enters": false, "sampled_observations_enter": false, "exact_basis": "fixed oracle fixture"},
+    "L1.empty": {"scoring_seed_enters": false, "random_generator_enters": false, "fitted_model_enters": false, "sampled_observations_enter": false, "exact_basis": "empty interface contract"},
+    "L3.frozen": {"scoring_seed_enters": true, "random_generator_enters": true, "fitted_model_enters": true, "sampled_observations_enter": true, "exact_basis": null},
+    "L3.oracle": {"scoring_seed_enters": true, "random_generator_enters": true, "fitted_model_enters": true, "sampled_observations_enter": true, "exact_basis": null},
+    "L3.permuted": {"scoring_seed_enters": true, "random_generator_enters": true, "fitted_model_enters": true, "sampled_observations_enter": true, "exact_basis": null},
+    "L3.shuffled": {"scoring_seed_enters": true, "random_generator_enters": true, "fitted_model_enters": true, "sampled_observations_enter": true, "exact_basis": null},
+    "L3.empty": {"scoring_seed_enters": false, "random_generator_enters": false, "fitted_model_enters": false, "sampled_observations_enter": false, "exact_basis": "empty interface contract"},
+    "L5.single_axis": {"scoring_seed_enters": false, "random_generator_enters": false, "fitted_model_enters": false, "sampled_observations_enter": false, "exact_basis": "enumerated 150 of 200 combinatorial count"},
+    "L5.full_scan": {"scoring_seed_enters": false, "random_generator_enters": false, "fitted_model_enters": false, "sampled_observations_enter": false, "exact_basis": "finite 200-fact access count"},
+    "L5.oracle": {"scoring_seed_enters": false, "random_generator_enters": false, "fitted_model_enters": false, "sampled_observations_enter": false, "exact_basis": "ground-truth equality and exact access count"},
+    "L5.frozen": {"scoring_seed_enters": false, "random_generator_enters": false, "fitted_model_enters": false, "sampled_observations_enter": false, "exact_basis": "finite frozen-head graph proof"},
+    "L5.permuted": {"scoring_seed_enters": true, "random_generator_enters": true, "fitted_model_enters": false, "sampled_observations_enter": true, "exact_basis": null},
+    "L5.shuffled": {"scoring_seed_enters": false, "random_generator_enters": false, "fitted_model_enters": false, "sampled_observations_enter": false, "exact_basis": "finite order invariance and fixed-point-free edge proof"},
+    "L5.empty": {"scoring_seed_enters": false, "random_generator_enters": false, "fitted_model_enters": false, "sampled_observations_enter": false, "exact_basis": "empty interface contracts"},
+    "L6.empty": {"scoring_seed_enters": false, "random_generator_enters": false, "fitted_model_enters": false, "sampled_observations_enter": false, "exact_basis": "tagged rejection schema"},
+    "L6.permuted": {"scoring_seed_enters": false, "random_generator_enters": false, "fitted_model_enters": false, "sampled_observations_enter": false, "exact_basis": "finite four-field schema"},
+    "L6.shuffled": {"scoring_seed_enters": false, "random_generator_enters": false, "fitted_model_enters": false, "sampled_observations_enter": false, "exact_basis": "exact by-query-ID equality"},
+    "L6.oracle": {"scoring_seed_enters": false, "random_generator_enters": false, "fitted_model_enters": false, "sampled_observations_enter": false, "exact_basis": "trusted-zone field equality"},
+    "L6.frozen": {"scoring_seed_enters": false, "random_generator_enters": false, "fitted_model_enters": false, "sampled_observations_enter": false, "exact_basis": "frozen schema validation"},
+    "L6.fair_naive": {"scoring_seed_enters": false, "random_generator_enters": false, "fitted_model_enters": false, "sampled_observations_enter": false, "exact_basis": "exhaustive finite namespace enumeration"}
+  },
+  "raw_artifact_common_contract": {
+    "manifest_encoding": "UTF-8 JSON, object keys sorted lexicographically, no NaN or Infinity",
+    "numeric_array_encoding": "raw C-row-major little-endian two's-complement int64 or IEEE-754 binary64; booleans uint8 restricted to 0 or 1; no padding",
+    "array_manifest_fields": ["field_name", "relative_path", "shape", "dtype", "byte_order", "row_key", "ordering_rule", "byte_length", "sha256"],
+    "string_encoding": "Unicode NFC encoded UTF-8 with byte length in manifest",
+    "finite_check": "every binary64 element must be finite",
+    "judge_rule": "JUDGE reads raw arrays, verifies shape/dtype/order/length/hash, and recomputes every summary without importing producer summaries"
+  },
+  "raw_artifact_schemas": {
+    "L1.frozen": {"per_draw_required": ["draw_role", "replicate_index", "entries_200[{entry_id,age,rehearsal}]", "candidate_sets_100[{set_id,entry_occurrences}]", "ranked_occurrences_500[{set_id,entry_id,rank}]", "log_accessibility_200[{entry_id,value}]", "bin_memberships_200", "bin_means_5", "bin_age_representatives_5", "r_squared"], "judge_recomputes": "entry aggregation, bin means, OLS R2, null ranks, p-value"},
+    "L1.fair_naive": {"per_draw_required": ["draw_role", "replicate_index", "entries_200[{entry_id,age,rehearsal}]", "candidate_sets_100[{set_id,entry_occurrences}]", "ranking_permutation_200", "ranked_occurrences_500", "log_accessibility_200", "bin_memberships_200", "bin_means_5", "bin_age_representatives_5", "r_squared"], "judge_recomputes": "ranks, accessibility, bin means, OLS R2, null ranks, p-value"},
+    "L1.permuted": {"per_draw_required": ["draw_role", "replicate_index", "entry_ids_200", "age_values_200", "rehearsal_values_200", "mapping_permutation_200", "log_accessibility_200", "paired_age_accessibility_200[{entry_id,age,accessibility}]", "spearman_rho"], "judge_recomputes": "mapped pairs, tied ranks, Spearman rho, absolute statistic, p-value"},
+    "L1.shuffled": {"per_draw_required": ["draw_role", "replicate_index", "entries_200[{entry_id,age,bin}]", "priming_queries_1200", "query_to_entry_assignment_1200", "realized_rehearsal_counts_200", "candidate_sets_100", "ranked_occurrences_500", "log_accessibility_200", "within_bin_pairs_5[{bin,rows[{entry_id,rehearsal,accessibility}]}]", "conditional_rho_5"], "judge_recomputes": "realized counts, ranks, accessibility, five tied Spearman rhos, maxima, p-value"},
+    "L3.frozen": {"per_draw_required": ["draw_role", "replicate_index", "innovations_1010x8", "sequence_1010x8", "train_validation_evaluation_indices", "design_matrices_by_horizon", "targets_by_horizon", "fitted_baseline_weights_by_horizon", "baseline_predictions_by_horizon", "frozen_predictions_by_horizon", "per_example_baseline_squared_errors_by_horizon", "per_example_frozen_squared_errors_by_horizon", "baseline_loss_5", "frozen_loss_5", "reduction_5"], "judge_recomputes": "sequence, fits, predictions, component losses, reductions, max statistic, p-value"},
+    "L3.oracle": {"per_draw_required": ["draw_role", "replicate_index", "innovations_1010x8", "sequence_1010x8", "train_validation_evaluation_indices", "design_matrices_by_horizon", "targets_by_horizon", "fitted_baseline_weights_by_horizon", "oracle_predictions_by_horizon", "baseline_predictions_by_horizon", "per_example_baseline_squared_errors_by_horizon", "per_example_oracle_squared_errors_by_horizon", "baseline_loss_5", "oracle_loss_5", "reduction_5", "violation_score_5"], "judge_recomputes": "sequence, fits, predictions, component losses, reductions, two-sided violation maximum, p-value"},
+    "L3.permuted": {"per_draw_required": ["draw_role", "replicate_index", "innovations_1010x8", "sequence_1010x8", "train_validation_evaluation_indices", "design_matrices_by_horizon", "targets_by_horizon", "channel_derangement", "fitted_weights_by_horizon", "baseline_predictions_by_horizon", "permuted_predictions_by_horizon", "per_example_baseline_squared_errors_by_horizon", "per_example_permuted_squared_errors_by_horizon", "baseline_loss_5", "permuted_loss_5", "reduction_5"], "judge_recomputes": "sequence, fit, transform, predictions, losses, reductions, max statistic, p-value"},
+    "L3.shuffled": {"per_draw_required": ["draw_role", "replicate_index", "innovations_1010x8", "unshuffled_sequence_1010x8", "cycle_order_permutation", "shuffled_sequence_1010x8", "train_validation_evaluation_indices", "targets_by_horizon", "fitted_weights_by_horizon", "shuffled_predictions_by_horizon", "paired_shuffled_frozen_predictions_by_horizon", "per_example_shuffled_squared_errors_by_horizon", "per_example_paired_frozen_squared_errors_by_horizon", "shuffled_loss_5", "paired_frozen_loss_5", "reduction_difference_minus_tolerance_5"], "judge_recomputes": "sequence shuffle, fit, predictions, paired component losses, five differences, max statistic, p-value"},
+    "L5.permuted": {"per_draw_required": ["draw_role", "replicate_index", "facts_200[{fact_id,acquired_at,valid_from,valid_until}]", "truth_labels_200", "field_mapping_derangement_200", "predictions_200", "query_results_200[{query_id,prediction,truth,correct}]", "combo_accuracy", "chain_nodes_200", "chain_content_derangement_200", "returned_chain_content_40", "expected_chain_content_40", "chain_content_mismatch_rate"], "judge_recomputes": "all correctness indicators, accuracy, pooled departures, mismatch rate, p-value"}
+  },
+  "rng_protocol": {
+    "id": "M3-V4.4-SHA256-CTR-FY-v1",
+    "hash": "SHA-256",
+    "root_domain_ascii": "MOVING-ORIGIN/M3/V4.4/CONTROL-RNG/v1",
+    "root_domain_hex": "4d4f56494e472d4f524947494e2f4d332f56342e342f434f4e54524f4c2d524e472f7631",
+    "integer_encoding": "unsigned big-endian: scoring seed uint64, replicate index uint32, subdraw index uint32, counter uint64",
+    "component_encoding": "UTF-8 NFC preceded by uint16 big-endian byte length",
+    "key_formula": "SHA256(root_domain || 0x00 || enc(law) || enc(arm) || enc(draw_role) || u64be(scoring_seed) || u32be(replicate_index) || u32be(subdraw_index))",
+    "observed_role": "OBSERVED; replicate_index=0; subdraw_index identifies the statistic component",
+    "null_role": "NULL; replicate_index=0..999; subdraw_index identifies the statistic component",
+    "stream_formula": "block_c = SHA256(key || u64be(c)), c=0,1,...; concatenate blocks",
+    "uniform_integer": "consume non-overlapping uint64 big-endian words; for modulus m reject x >= floor(2^64/m)*m, otherwise return x mod m",
+    "permutation": "Fisher-Yates for i=n-1..1 using uniform_integer(i+1)",
+    "derangement": "generate consecutive Fisher-Yates permutations from the same stream and accept the first with no fixed point",
+    "rng_reuse_prohibited": true,
+    "cross_platform_rule": "No platform RNG, language hash, native-endian conversion, floating draw, or percentile interpolation is permitted",
+    "exchangeability": "OBSERVED and NULL use the same finite sample space, SHA-256 counter stream, rejection sampler, and transform; only the domain role and replicate index differ. Hence every assignment is generated by the same uniform algorithm, with disjoint deterministic streams. The plus-one randomization rank is valid under the specified pseudorandom-exchangeability model.",
+    "required_artifact_fields": [
+      "rng_protocol_id", "hash", "root_domain_hex", "law", "arm",
+      "draw_role", "replicate_index", "subdraw_index", "derived_key_hex",
+      "accepted_permutation", "rejection_count", "stream_block_count"
+    ]
+  },
+  "families": [
+    {
+      "family_id": "L1.frozen", "law": "L1", "arm": "frozen",
+      "checks": ["R2_observed <= calibrated upper null bound"],
+      "seeds": 3, "comparisons_per_seed": 1, "simultaneous_comparisons": 3,
+      "meaningful_failure_direction": "upper", "direction_justification": "Large R2 means the constant-priority/tie-break control leaks age structure; smaller R2 is stronger destruction.",
+      "reference_type": "stochastic_empirical", "reference": "1000 exchangeable random tie-break permutations per scoring seed; statistic R2",
+      "current_per_check_error_rate": 0.05,
+      "pre_correction_fwfp": {"applicable": true, "derivation": "1-(1-0.05)^3", "value": 0.142625, "le_0_05": false},
+      "corrective_method": "Upper-tail plus-one randomization p-value per seed, p=(1+#{R2_null>=R2_obs})/1001; Bonferroni alpha_seed=0.05/3; order statistic 985 is reporting shorthand only.",
+      "corrected_fwfp": {"applicable": true, "derivation": "3*(16/1001)", "value": 0.04795204795204795, "le_0_05": true},
+      "artifact_fields": ["raw_schema_id:L1.frozen", "r_squared_observed", "r_squared_null_1000", "null_upper_order_statistic_985", "exceed_or_tie_count", "plus_one_p_value", "alpha_seed", "per_seed_pass", "rng_derivation_records"]
+    },
+    {
+      "family_id": "L1.fair_naive", "law": "L1", "arm": "fair_naive",
+      "checks": ["R2_observed <= calibrated upper null bound"],
+      "seeds": 3, "comparisons_per_seed": 1, "simultaneous_comparisons": 3,
+      "meaningful_failure_direction": "upper", "direction_justification": "Large R2 means an allegedly unrelated ranking leaks age structure; smaller R2 is stronger destruction.",
+      "reference_type": "stochastic_empirical", "reference": "1000 exchangeable unrelated identifier permutations per scoring seed; statistic R2",
+      "current_per_check_error_rate": 0.05,
+      "pre_correction_fwfp": {"applicable": true, "derivation": "1-(1-0.05)^3", "value": 0.142625, "le_0_05": false},
+      "corrective_method": "Upper-tail plus-one randomization p-value per seed with Bonferroni alpha_seed=0.05/3; order statistic 985 is nonbinding shorthand.",
+      "corrected_fwfp": {"applicable": true, "derivation": "3*(16/1001)", "value": 0.04795204795204795, "le_0_05": true},
+      "artifact_fields": ["raw_schema_id:L1.fair_naive", "r_squared_observed", "r_squared_null_1000", "null_upper_order_statistic_985", "exceed_or_tie_count", "plus_one_p_value", "alpha_seed", "per_seed_pass", "rng_derivation_records"]
+    },
+    {
+      "family_id": "L1.recency_only", "law": "L1", "arm": "recency_only",
+      "checks": ["R2>=0.85", "beta_age<0", "rho_bin_0<0.6", "rho_bin_1<0.6", "rho_bin_2<0.6", "rho_bin_3<0.6", "rho_bin_4<0.6"],
+      "seeds": 3, "comparisons_per_seed": 7, "simultaneous_comparisons": 21,
+      "meaningful_failure_direction": "mixed_exact", "direction_justification": "Age fit must remain present while every rehearsal association must remain below its absence bar; each direction follows the factor-isolation claim.",
+      "reference_type": "deterministic", "reference": "Fixed structural fixture, candidate-set schedule, priority equation, and tie-break; scoring seed does not enter this arm.",
+      "current_per_check_error_rate": null,
+      "pre_correction_fwfp": {"applicable": false, "derivation": "Exact fixed-fixture predicates are not level-alpha hypothesis tests; duplicated reporting under three scoring seeds adds no random comparisons.", "value": 0.0, "le_0_05": true},
+      "corrective_method": "None. Pre-scoring exact satisfiability must recompute all seven values once and verify byte-identical replication across seed slots; any mismatch is construction failure, not sampling rejection.",
+      "corrected_fwfp": {"applicable": false, "derivation": "stochastic FWFP inapplicable", "value": 0.0, "le_0_05": true},
+      "artifact_fields": ["r_squared", "beta_age", "conditional_rho_5", "structural_fixture_hash", "candidate_set_schedule_hash", "deterministic_reproduction_equal_across_seed_slots", "all_exact_checks_pass"]
+    },
+    {
+      "family_id": "L1.rehearsal_only", "law": "L1", "arm": "rehearsal_only",
+      "checks": ["beta_age>=0", "rho_bin_0>=0.6", "rho_bin_1>=0.6", "rho_bin_2>=0.6", "rho_bin_3>=0.6", "rho_bin_4>=0.6"],
+      "seeds": 3, "comparisons_per_seed": 6, "simultaneous_comparisons": 18,
+      "meaningful_failure_direction": "mixed_exact", "direction_justification": "The removed age factor must not retain negative direction and rehearsal must remain present in every bin.",
+      "reference_type": "deterministic", "reference": "Fixed structural fixture, candidate-set schedule, priority equation, and tie-break; scoring seed does not enter this arm.",
+      "current_per_check_error_rate": null,
+      "pre_correction_fwfp": {"applicable": false, "derivation": "Exact fixed-fixture predicates, not level-alpha tests.", "value": 0.0, "le_0_05": true},
+      "corrective_method": "None; exact pre-scoring satisfiability and cross-slot identity verification.",
+      "corrected_fwfp": {"applicable": false, "derivation": "stochastic FWFP inapplicable", "value": 0.0, "le_0_05": true},
+      "artifact_fields": ["beta_age", "conditional_rho_5", "structural_fixture_hash", "candidate_set_schedule_hash", "deterministic_reproduction_equal_across_seed_slots", "all_exact_checks_pass"]
+    },
+    {
+      "family_id": "L1.permuted", "law": "L1", "arm": "permuted",
+      "checks": ["abs(Spearman_rho_age_accessibility_200) is not unusually large under mapping permutation", "null_abs_rho_p95<=0.15 power check"],
+      "seeds": 3, "comparisons_per_seed": 1, "simultaneous_comparisons": 3,
+      "meaningful_failure_direction": "two_sided_magnitude", "direction_justification": "Either strong positive or strong negative association means permutation retained systematic predictor-label correspondence; sign is immaterial.",
+      "reference_type": "stochastic_empirical", "reference": "V4.2 200-entry Spearman statistic; 1000 exchangeable age/rehearsal mapping permutations per seed; test statistic abs(rho)",
+      "current_per_check_error_rate": 0.05,
+      "pre_correction_fwfp": {"applicable": true, "derivation": "1-(1-0.05)^3", "value": 0.142625, "le_0_05": false},
+      "corrective_method": "Plus-one randomization p-value on abs(rho), p=(1+#{abs(rho_null)>=abs(rho_obs)})/1001, Bonferroni alpha_seed=0.05/3. Retain null p95<=0.15 as a single pre-scoring deterministic power check, not three stochastic tests.",
+      "corrected_fwfp": {"applicable": true, "derivation": "3*(16/1001)", "value": 0.04795204795204795, "le_0_05": true},
+      "artifact_fields": ["raw_schema_id:L1.permuted", "spearman_rho_200entry", "abs_rho_null_1000", "null_abs_rho_p95", "null_p95_le_0_15", "exceed_or_tie_count", "plus_one_p_value", "alpha_seed", "per_seed_pass", "rng_derivation_records"]
+    },
+    {
+      "family_id": "L1.shuffled", "law": "L1", "arm": "shuffled",
+      "checks": ["rho_bin_0 upper", "rho_bin_1 upper", "rho_bin_2 upper", "rho_bin_3 upper", "rho_bin_4 upper"],
+      "seeds": 3, "comparisons_per_seed": 5, "simultaneous_comparisons": 15,
+      "meaningful_failure_direction": "upper", "direction_justification": "Excess positive rho means shuffle retained rehearsal signal; lower rho means stronger destruction and is informational only.",
+      "reference_type": "stochastic_empirical", "reference": "1000 exchangeable priming-query reassignments per seed; within-replicate statistic max of five bin rhos",
+      "current_per_check_error_rate": 0.05,
+      "pre_correction_fwfp": {"applicable": true, "derivation": "1-(1-0.05)^15", "value": 0.536708769840247, "le_0_05": false},
+      "corrective_method": "V4.3 upper-only null-of-the-max within seed; plus-one p-value; Bonferroni alpha_seed=0.05/3 across seeds; binding p-value and order statistic 985 shorthand.",
+      "corrected_fwfp": {"applicable": true, "derivation": "3*(16/1001)", "value": 0.04795204795204795, "le_0_05": true},
+      "artifact_fields": ["raw_schema_id:L1.shuffled", "conditional_rho_values_5", "rho_null_1000x5", "null_max_1000", "observed_max", "null_upper_order_statistic_985", "exceed_or_tie_count", "plus_one_p_value", "below_threshold_labels", "age_tests_pass", "rng_derivation_records"]
+    },
+    {
+      "family_id": "L1.oracle", "law": "L1", "arm": "oracle",
+      "checks": ["R2>=0.85", "beta_age<0", "five conditional tests pass", "five rho>=0.6"],
+      "seeds": 3, "comparisons_per_seed": 12, "simultaneous_comparisons": 36,
+      "meaningful_failure_direction": "mixed_exact", "direction_justification": "Each exact oracle predicate follows the positive fixture definition; any violation identifies construction failure.",
+      "reference_type": "deterministic", "reference": "Oracle uses fixed ground-truth priority on the fixed structural fixture.",
+      "current_per_check_error_rate": null,
+      "pre_correction_fwfp": {"applicable": false, "derivation": "Exact oracle construction checks, not stochastic tests.", "value": 0.0, "le_0_05": true},
+      "corrective_method": "None; exact satisfiability and cross-slot identity verification.",
+      "corrected_fwfp": {"applicable": false, "derivation": "stochastic FWFP inapplicable", "value": 0.0, "le_0_05": true},
+      "artifact_fields": ["r_squared", "beta_age", "conditional_pass_5", "rho_values_5", "fixture_hash", "all_exact_checks_pass"]
+    },
+    {
+      "family_id": "L1.empty", "law": "L1", "arm": "empty",
+      "checks": ["defined error returned and no numeric statistic"],
+      "seeds": 3, "comparisons_per_seed": 1, "simultaneous_comparisons": 3,
+      "meaningful_failure_direction": "exact_mismatch", "direction_justification": "Any numeric result on an empty fixture violates the defined interface.",
+      "reference_type": "deterministic", "reference": "Empty fixture contract.", "current_per_check_error_rate": null,
+      "pre_correction_fwfp": {"applicable": false, "derivation": "Exact interface predicate.", "value": 0.0, "le_0_05": true}, "corrective_method": "None.",
+      "corrected_fwfp": {"applicable": false, "derivation": "stochastic FWFP inapplicable", "value": 0.0, "le_0_05": true},
+      "artifact_fields": ["returned_defined_error", "numeric_result_absent", "error_tag"]
+    },
+
+    {
+      "family_id": "L3.frozen", "law": "L3", "arm": "frozen",
+      "checks": ["reduction_h shows no unusually large positive frozen-state benefit for h=1..5"], "seeds": 3, "comparisons_per_seed": 5, "simultaneous_comparisons": 15,
+      "meaningful_failure_direction": "upper", "direction_justification": "Positive frozen-state benefit undermines the negative control; smaller or negative reduction is stronger destruction.",
+      "reference_type": "stochastic_empirical", "reference": "1000 exchangeable AR(3) innovation draws per seed with the identical frozen-state and baseline fitting pipeline; statistic max_h reduction_h.", "current_per_check_error_rate": 1.0,
+      "pre_correction_fwfp": {"applicable": true, "derivation": "The former <=0 finite-sample claim had no universal proof; conservative bound is unbounded=1.", "value": 1.0, "le_0_05": false},
+      "corrective_method": "Upper-only five-horizon null-of-the-max plus-one randomization p-value with 1000 full-pipeline null draws per seed and Bonferroni alpha_seed=0.05/3.",
+      "corrected_fwfp": {"applicable": true, "derivation": "3*(16/1001)", "value": 0.04795204795204795, "le_0_05": true},
+      "artifact_fields": ["raw_schema_id:L3.frozen", "reduction_by_horizon_5", "null_reduction_1000x5", "null_max_1000", "observed_max", "exceed_or_tie_count", "plus_one_p_value", "alpha_seed", "per_seed_pass", "rng_derivation_records"]
+    },
+    {
+      "family_id": "L3.oracle", "law": "L3", "arm": "oracle",
+      "checks": ["oracle reduction is not unusually outside the adopted 0.05..0.95 validity interval over h=1..5"], "seeds": 3, "comparisons_per_seed": 10, "simultaneous_comparisons": 30,
+      "meaningful_failure_direction": "two_sided_violation", "direction_justification": "Reduction below 0.05 indicates an ineffective oracle and above 0.95 indicates a ceiling/corner; both directions are fixture failures.",
+      "reference_type": "stochastic_empirical", "reference": "1000 exchangeable AR(3) innovation draws per seed with identical fitting; per horizon violation v_h=max(0.05-reduction_h,reduction_h-0.95), statistic max_h v_h.", "current_per_check_error_rate": 1.0,
+      "pre_correction_fwfp": {"applicable": true, "derivation": "The former interval was applied to random finite-sample fits without a universal proof; conservative bound is 1.", "value": 1.0, "le_0_05": false},
+      "corrective_method": "Two-sided interval-violation null-of-the-max plus-one randomization p-value over five horizons, 1000 full-pipeline null draws per seed, Bonferroni alpha_seed=0.05/3. The 0.05 and 0.95 anchors and both failure directions are retained in v_h.",
+      "corrected_fwfp": {"applicable": true, "derivation": "3*(16/1001)", "value": 0.04795204795204795, "le_0_05": true},
+      "artifact_fields": ["raw_schema_id:L3.oracle", "oracle_reduction_by_horizon_5", "violation_score_5", "null_violation_1000x5", "null_max_1000", "observed_max", "exceed_or_tie_count", "plus_one_p_value", "alpha_seed", "per_seed_pass", "rng_derivation_records"]
+    },
+    {
+      "family_id": "L3.permuted", "law": "L3", "arm": "permuted",
+      "checks": ["reduction_h does not show excessive positive benefit for h=1..5"], "seeds": 3, "comparisons_per_seed": 5, "simultaneous_comparisons": 15,
+      "meaningful_failure_direction": "upper", "direction_justification": "Only positive predictive benefit after channel derangement undermines the negative control; more-negative reduction is stronger destruction.",
+      "reference_type": "stochastic_empirical", "reference": "1000 exchangeable uniformly sampled 8-channel derangements per seed; within-replicate statistic max_h reduction_h",
+      "current_per_check_error_rate": 1.0,
+      "pre_correction_fwfp": {"applicable": true, "derivation": "The old <=0 claim was explicitly unproved (NF8); conservative pre-closure bound is unbounded=1.", "value": 1.0, "le_0_05": false},
+      "corrective_method": "Replace the unproved exact bound with upper-only null-of-the-max randomization p-value over five horizons, 1000 derangement null draws per seed, and Bonferroni alpha_seed=0.05/3.",
+      "corrected_fwfp": {"applicable": true, "derivation": "3*(16/1001)", "value": 0.04795204795204795, "le_0_05": true},
+      "artifact_fields": ["raw_schema_id:L3.permuted", "permuted_reduction_by_horizon_5", "null_reduction_1000x5", "null_max_1000", "observed_max", "exceed_or_tie_count", "plus_one_p_value", "alpha_seed", "per_seed_pass", "rng_derivation_records"]
+    },
+    {
+      "family_id": "L3.shuffled", "law": "L3", "arm": "shuffled",
+      "checks": ["shuffled benefit relative to paired same-sequence frozen comparator does not unusually exceed the retained +0.01 tolerance for h=1..5"], "seeds": 3, "comparisons_per_seed": 5, "simultaneous_comparisons": 15,
+      "meaningful_failure_direction": "upper", "direction_justification": "Only excess benefit above the paired frozen comparator plus retained tolerance undermines destruction; lower differences are stronger destruction.",
+      "reference_type": "stochastic_empirical", "reference": "1000 exchangeable cycle-order permutations per scoring-seed sequence; d_h=shuffled_reduction_h-paired_frozen_reduction_h-0.01; statistic max_h d_h.", "current_per_check_error_rate": 1.0,
+      "pre_correction_fwfp": {"applicable": true, "derivation": "Pairing reduces variance but does not prove the random five-horizon inequality; conservative bound is 1.", "value": 1.0, "le_0_05": false},
+      "corrective_method": "Upper-only five-horizon null-of-the-max plus-one randomization p-value over 1000 exchangeable cycle shuffles per seed and Bonferroni alpha_seed=0.05/3; retain +0.01 inside the statistic.",
+      "corrected_fwfp": {"applicable": true, "derivation": "3*(16/1001)", "value": 0.04795204795204795, "le_0_05": true},
+      "artifact_fields": ["raw_schema_id:L3.shuffled", "shuffled_reduction_by_horizon_5", "paired_shuffled_frozen_reduction_by_horizon_5", "difference_minus_tolerance_5", "null_difference_1000x5", "null_max_1000", "observed_max", "exceed_or_tie_count", "plus_one_p_value", "alpha_seed", "per_seed_pass", "rng_derivation_records"]
+    },
+    {
+      "family_id": "L3.empty", "law": "L3", "arm": "empty",
+      "checks": ["defined error returned"], "seeds": 3, "comparisons_per_seed": 1, "simultaneous_comparisons": 3,
+      "meaningful_failure_direction": "exact_mismatch", "direction_justification": "Any forecast statistic without a sequence violates the interface.", "reference_type": "deterministic", "reference": "Empty-sequence contract.", "current_per_check_error_rate": null,
+      "pre_correction_fwfp": {"applicable": false, "derivation": "Exact interface predicate.", "value": 0.0, "le_0_05": true}, "corrective_method": "None.",
+      "corrected_fwfp": {"applicable": false, "derivation": "stochastic FWFP inapplicable", "value": 0.0, "le_0_05": true}, "artifact_fields": ["returned_defined_error", "error_tag"]
+    },
+
+    {
+      "family_id": "L5.single_axis", "law": "L5", "arm": "single_axis",
+      "checks": ["world-validity accuracy==0.75"], "seeds": 3, "comparisons_per_seed": 1, "simultaneous_comparisons": 3,
+      "meaningful_failure_direction": "exact_mismatch", "direction_justification": "Either deviation means the four-combination fixture or single-axis rule is not the specified control.", "reference_type": "deterministic", "reference": "Exactly 150/200 correct by enumerated combination fixture.", "current_per_check_error_rate": null,
+      "pre_correction_fwfp": {"applicable": false, "derivation": "Exact combinatorial count.", "value": 0.0, "le_0_05": true}, "corrective_method": "None.",
+      "corrected_fwfp": {"applicable": false, "derivation": "stochastic FWFP inapplicable", "value": 0.0, "le_0_05": true}, "artifact_fields": ["combo_accuracy_world_validity", "correct_count", "query_count", "exact_match"]
+    },
+    {
+      "family_id": "L5.full_scan", "law": "L5", "arm": "full_scan",
+      "checks": ["chain_walk_accuracy==1", "access_count_delta==200 for each of 40 walks"], "seeds": 3, "comparisons_per_seed": 41, "simultaneous_comparisons": 123,
+      "meaningful_failure_direction": "exact_mismatch", "direction_justification": "Any accuracy or count mismatch means the scan control or sealed counter is malformed.", "reference_type": "deterministic", "reference": "Separate chain log has exactly 200 facts; exhaustive scan count is exact.", "current_per_check_error_rate": null,
+      "pre_correction_fwfp": {"applicable": false, "derivation": "Exact access-count and path predicates.", "value": 0.0, "le_0_05": true}, "corrective_method": "None.",
+      "corrected_fwfp": {"applicable": false, "derivation": "stochastic FWFP inapplicable", "value": 0.0, "le_0_05": true}, "artifact_fields": ["chain_walk_accuracy", "access_count_deltas_40", "expected_delta", "chain_log_size", "all_exact_checks_pass"]
+    },
+    {
+      "family_id": "L5.oracle", "law": "L5", "arm": "oracle",
+      "checks": ["two combo accuracies==1", "40 chain paths exact", "40 access deltas==k"], "seeds": 3, "comparisons_per_seed": 82, "simultaneous_comparisons": 246,
+      "meaningful_failure_direction": "exact_mismatch", "direction_justification": "Any oracle mismatch is a fixture or counter construction defect.", "reference_type": "deterministic", "reference": "Ground-truth labels, paths, and exact k counts.", "current_per_check_error_rate": null,
+      "pre_correction_fwfp": {"applicable": false, "derivation": "Exact oracle predicates.", "value": 0.0, "le_0_05": true}, "corrective_method": "None.",
+      "corrected_fwfp": {"applicable": false, "derivation": "stochastic FWFP inapplicable", "value": 0.0, "le_0_05": true}, "artifact_fields": ["combo_accuracy_by_type", "chain_paths_40", "expected_paths_40", "access_count_deltas_40", "k_expected_40", "all_exact_checks_pass"]
+    },
+    {
+      "family_id": "L5.frozen", "law": "L5", "arm": "frozen",
+      "checks": ["post-freeze chain-walk accuracy==0 for all 40 queries"], "seeds": 3, "comparisons_per_seed": 40, "simultaneous_comparisons": 120,
+      "meaningful_failure_direction": "upper_exact", "direction_justification": "Any correct post-freeze path means the frozen head leaked updates; zero is required by construction.", "reference_type": "deterministic", "reference": "Head fixed at (c,4), expected paths start at (c,9); exact path equality gives zero.", "current_per_check_error_rate": null,
+      "pre_correction_fwfp": {"applicable": false, "derivation": "Exact graph/path predicate.", "value": 0.0, "le_0_05": true}, "corrective_method": "None.",
+      "corrected_fwfp": {"applicable": false, "derivation": "stochastic FWFP inapplicable", "value": 0.0, "le_0_05": true}, "artifact_fields": ["freeze_cycle", "frozen_head_nodes_20", "query_paths_40", "expected_paths_40", "chain_walk_accuracy", "all_exact_checks_pass"]
+    },
+    {
+      "family_id": "L5.permuted", "law": "L5", "arm": "permuted",
+      "checks": ["combination accuracy is not unusually far from its permutation-null center", "chain content mismatch rate==1"], "seeds": 3, "comparisons_per_seed": 2, "simultaneous_comparisons": 6,
+      "meaningful_failure_direction": "mixed", "direction_justification": "Combination accuracy is a two-sided chance-calibration check; chain mismatch below one means the derangement retained true content.",
+      "reference_type": "stochastic_empirical", "reference": "1000 exchangeable combination-field derangements per seed plus exact deranged-content mismatch check; combo departure statistic is absolute deviation from the pooled 1001-draw mean, computed symmetrically after return.",
+      "current_per_check_error_rate": 0.05,
+      "pre_correction_fwfp": {"applicable": true, "derivation": "stochastic combo check: 1-(1-0.05)^3; chain check exact", "value": 0.142625, "le_0_05": false},
+      "corrective_method": "For the combo check, combine observed+1000 null accuracies, compute their common mean and each absolute departure, then a tie-conservative plus-one rank p-value; Bonferroni alpha_seed=0.05/3. Chain mismatch remains exact.",
+      "corrected_fwfp": {"applicable": true, "derivation": "3*(16/1001)", "value": 0.04795204795204795, "le_0_05": true},
+      "artifact_fields": ["raw_schema_id:L5.permuted", "combo_accuracy_observed", "combo_accuracy_null_1000", "pooled_center_1001", "absolute_departure_observed", "absolute_departure_null_1000", "exceed_or_tie_count", "plus_one_p_value", "chain_content_mismatch_rate", "alpha_seed", "per_seed_pass", "rng_derivation_records"]
+    },
+    {
+      "family_id": "L5.shuffled", "law": "L5", "arm": "shuffled",
+      "checks": ["combo query-order accuracy unchanged", "chain walk accuracy<=0.05"], "seeds": 3, "comparisons_per_seed": 2, "simultaneous_comparisons": 6,
+      "meaningful_failure_direction": "mixed_exact", "direction_justification": "Order accuracy must match exactly; chain accuracy above 0.05 means broken connectivity survived.", "reference_type": "deterministic", "reference": "Query-order invariance and a fixed-point-free edge-target derangement with exact expected chain accuracy zero.", "current_per_check_error_rate": null,
+      "pre_correction_fwfp": {"applicable": false, "derivation": "Exact invariance/graph predicates.", "value": 0.0, "le_0_05": true}, "corrective_method": "None.",
+      "corrected_fwfp": {"applicable": false, "derivation": "stochastic FWFP inapplicable", "value": 0.0, "le_0_05": true}, "artifact_fields": ["combo_accuracy_original_order", "combo_accuracy_shuffled_order", "chain_walk_accuracy", "edge_count", "derangement_no_fixed_points", "all_exact_checks_pass"]
+    },
+    {
+      "family_id": "L5.empty", "law": "L5", "arm": "empty",
+      "checks": ["defined errors for both fixtures"], "seeds": 3, "comparisons_per_seed": 2, "simultaneous_comparisons": 6,
+      "meaningful_failure_direction": "exact_mismatch", "direction_justification": "Any numeric response on either empty fixture violates the interface.", "reference_type": "deterministic", "reference": "Empty-fixture contracts.", "current_per_check_error_rate": null,
+      "pre_correction_fwfp": {"applicable": false, "derivation": "Exact interface predicates.", "value": 0.0, "le_0_05": true}, "corrective_method": "None.",
+      "corrected_fwfp": {"applicable": false, "derivation": "stochastic FWFP inapplicable", "value": 0.0, "le_0_05": true}, "artifact_fields": ["combo_returned_defined_error", "chain_returned_defined_error", "error_tags"]
+    },
+
+    {
+      "family_id": "L6.empty", "law": "L6", "arm": "empty", "checks": ["Rejected(not_found) tagged union"], "seeds": 3, "comparisons_per_seed": 1, "simultaneous_comparisons": 3,
+      "meaningful_failure_direction": "exact_mismatch", "direction_justification": "Any other return violates the frozen union schema.", "reference_type": "deterministic", "reference": "Exact tagged-rejection contract.", "current_per_check_error_rate": null,
+      "pre_correction_fwfp": {"applicable": false, "derivation": "Exact schema predicate.", "value": 0.0, "le_0_05": true}, "corrective_method": "None.", "corrected_fwfp": {"applicable": false, "derivation": "stochastic FWFP inapplicable", "value": 0.0, "le_0_05": true}, "artifact_fields": ["return_tag", "reason", "schema_valid"]
+    },
+    {
+      "family_id": "L6.permuted", "law": "L6", "arm": "permuted", "checks": ["all returned values retain four-field tagged structure"], "seeds": 3, "comparisons_per_seed": 4, "simultaneous_comparisons": 12,
+      "meaningful_failure_direction": "exact_mismatch", "direction_justification": "Any missing tag/field is structural incompleteness; content correctness is intentionally not gated.", "reference_type": "deterministic", "reference": "Frozen four-field schema under fixed content derangement.", "current_per_check_error_rate": null,
+      "pre_correction_fwfp": {"applicable": false, "derivation": "Exact schema predicates.", "value": 0.0, "le_0_05": true}, "corrective_method": "None.", "corrected_fwfp": {"applicable": false, "derivation": "stochastic FWFP inapplicable", "value": 0.0, "le_0_05": true}, "artifact_fields": ["rows", "return_tags", "field_presence_matrix", "all_exact_checks_pass"]
+    },
+    {
+      "family_id": "L6.shuffled", "law": "L6", "arm": "shuffled", "checks": ["batch results identical by query ID after order shuffle"], "seeds": 3, "comparisons_per_seed": 1, "simultaneous_comparisons": 3,
+      "meaningful_failure_direction": "exact_mismatch", "direction_justification": "Any by-ID difference is an order-dependent wrapper defect.", "reference_type": "deterministic", "reference": "Exact permutation invariance by query ID.", "current_per_check_error_rate": null,
+      "pre_correction_fwfp": {"applicable": false, "derivation": "Exact equality predicate.", "value": 0.0, "le_0_05": true}, "corrective_method": "None.", "corrected_fwfp": {"applicable": false, "derivation": "stochastic FWFP inapplicable", "value": 0.0, "le_0_05": true}, "artifact_fields": ["original_results_by_query_id", "shuffled_results_by_query_id", "identical"]
+    },
+    {
+      "family_id": "L6.oracle", "law": "L6", "arm": "oracle", "checks": ["content matches", "source matches", "context matches"], "seeds": 3, "comparisons_per_seed": 3, "simultaneous_comparisons": 9,
+      "meaningful_failure_direction": "exact_mismatch", "direction_justification": "Any mismatch against trusted fields is an oracle or wrapper defect.", "reference_type": "deterministic", "reference": "Trusted-zone exact field equality.", "current_per_check_error_rate": null,
+      "pre_correction_fwfp": {"applicable": false, "derivation": "Exact equality predicates.", "value": 0.0, "le_0_05": true}, "corrective_method": "None.", "corrected_fwfp": {"applicable": false, "derivation": "stochastic FWFP inapplicable", "value": 0.0, "le_0_05": true}, "artifact_fields": ["trusted_fields", "returned_fields", "field_equalities", "all_exact_checks_pass"]
+    },
+    {
+      "family_id": "L6.frozen", "law": "L6", "arm": "frozen", "checks": ["serialized replay validates current tagged schema"], "seeds": 3, "comparisons_per_seed": 1, "simultaneous_comparisons": 3,
+      "meaningful_failure_direction": "exact_mismatch", "direction_justification": "Failure to validate is schema drift; success is exact.", "reference_type": "deterministic", "reference": "Frozen serialized union and current frozen schema.", "current_per_check_error_rate": null,
+      "pre_correction_fwfp": {"applicable": false, "derivation": "Exact schema predicate.", "value": 0.0, "le_0_05": true}, "corrective_method": "None.", "corrected_fwfp": {"applicable": false, "derivation": "stochastic FWFP inapplicable", "value": 0.0, "le_0_05": true}, "artifact_fields": ["captured_schema_version", "replay_schema_version", "validation_pass"]
+    },
+    {
+      "family_id": "L6.fair_naive", "law": "L6", "arm": "fair_naive", "checks": ["finite path-reachability probe finds no bare-content bypass"], "seeds": 3, "comparisons_per_seed": 4, "simultaneous_comparisons": 12,
+      "meaningful_failure_direction": "exact_mismatch", "direction_justification": "Any reachable bare-content path violates completeness.", "reference_type": "deterministic", "reference": "Frozen three-module/four-callable closed-world namespace.", "current_per_check_error_rate": null,
+      "pre_correction_fwfp": {"applicable": false, "derivation": "Exhaustive finite enumeration, not sampling.", "value": 0.0, "le_0_05": true}, "corrective_method": "None.", "corrected_fwfp": {"applicable": false, "derivation": "stochastic FWFP inapplicable", "value": 0.0, "le_0_05": true}, "artifact_fields": ["enumerated_modules", "enumerated_callables", "audit_rows_4", "bare_content_paths_found", "complete"]
+    }
+  ]
+}

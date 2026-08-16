@@ -1,0 +1,85 @@
+{
+  "base_commit": "8259e01a1dfac6a09074027d9a48f034bf51d9b9",
+  "command": "python verification/verify_m3_control_family_closure.py",
+  "errors": [],
+  "gate": "M3 V4.3 Systemic Pre-Scoring Closure Gate",
+  "hash_canonicalization": "UTF-8 without BOM; CRLF/CR->LF; strip trailing LF; append exactly one LF; SHA-256",
+  "inventory_sha256": "a0d91675cd516ba2e703e4e8aad404271f8caf89b20f72d2816a8d7331d4b0e9",
+  "revision_base_commit": "b6accaad3773468d54b2363a1072877554186265",
+  "schema_version": "m3-control-family-closure-results-v1",
+  "scope": "specification_only",
+  "spec_sha256": "d8930baebbf493c5f042fe194cc3a42bdf4dd1e7b7f95c5d8497c3f39ccb0c2c",
+  "summary": {
+    "all_corrected_stochastic_fwfp_le_0_05": true,
+    "correction_count": 9,
+    "corrections": [
+      {
+        "corrected_fwfp": 0.04795204795204795,
+        "family_id": "L1.frozen",
+        "method": "Upper-tail plus-one randomization p-value per seed, p=(1+#{R2_null>=R2_obs})/1001; Bonferroni alpha_seed=0.05/3; order statistic 985 is reporting shorthand only.",
+        "pre_correction_fwfp": 0.142625
+      },
+      {
+        "corrected_fwfp": 0.04795204795204795,
+        "family_id": "L1.fair_naive",
+        "method": "Upper-tail plus-one randomization p-value per seed with Bonferroni alpha_seed=0.05/3; order statistic 985 is nonbinding shorthand.",
+        "pre_correction_fwfp": 0.142625
+      },
+      {
+        "corrected_fwfp": 0.04795204795204795,
+        "family_id": "L1.permuted",
+        "method": "Plus-one randomization p-value on abs(rho), p=(1+#{abs(rho_null)>=abs(rho_obs)})/1001, Bonferroni alpha_seed=0.05/3. Retain null p95<=0.15 as a single pre-scoring deterministic power check, not three stochastic tests.",
+        "pre_correction_fwfp": 0.142625
+      },
+      {
+        "corrected_fwfp": 0.04795204795204795,
+        "family_id": "L1.shuffled",
+        "method": "V4.3 upper-only null-of-the-max within seed; plus-one p-value; Bonferroni alpha_seed=0.05/3 across seeds; binding p-value and order statistic 985 shorthand.",
+        "pre_correction_fwfp": 0.536708769840247
+      },
+      {
+        "corrected_fwfp": 0.04795204795204795,
+        "family_id": "L3.frozen",
+        "method": "Upper-only five-horizon null-of-the-max plus-one randomization p-value with 1000 full-pipeline null draws per seed and Bonferroni alpha_seed=0.05/3.",
+        "pre_correction_fwfp": 1.0
+      },
+      {
+        "corrected_fwfp": 0.04795204795204795,
+        "family_id": "L3.oracle",
+        "method": "Two-sided interval-violation null-of-the-max plus-one randomization p-value over five horizons, 1000 full-pipeline null draws per seed, Bonferroni alpha_seed=0.05/3. The 0.05 and 0.95 anchors and both failure directions are retained in v_h.",
+        "pre_correction_fwfp": 1.0
+      },
+      {
+        "corrected_fwfp": 0.04795204795204795,
+        "family_id": "L3.permuted",
+        "method": "Replace the unproved exact bound with upper-only null-of-the-max randomization p-value over five horizons, 1000 derangement null draws per seed, and Bonferroni alpha_seed=0.05/3.",
+        "pre_correction_fwfp": 1.0
+      },
+      {
+        "corrected_fwfp": 0.04795204795204795,
+        "family_id": "L3.shuffled",
+        "method": "Upper-only five-horizon null-of-the-max plus-one randomization p-value over 1000 exchangeable cycle shuffles per seed and Bonferroni alpha_seed=0.05/3; retain +0.01 inside the statistic.",
+        "pre_correction_fwfp": 1.0
+      },
+      {
+        "corrected_fwfp": 0.04795204795204795,
+        "family_id": "L5.permuted",
+        "method": "For the combo check, combine observed+1000 null accuracies, compute their common mean and each absolute departure, then a tie-conservative plus-one rank p-value; Bonferroni alpha_seed=0.05/3. Chain mismatch remains exact.",
+        "pre_correction_fwfp": 0.142625
+      }
+    ],
+    "deterministic_family_count": 17,
+    "family_count": 26,
+    "fresh_scoring_values_used": false,
+    "law_counts": {
+      "L1": 8,
+      "L3": 5,
+      "L5": 7,
+      "L6": 6
+    },
+    "m3_harness_run": false,
+    "max_corrected_stochastic_fwfp": 0.04795204795204795,
+    "stochastic_family_count": 9
+  },
+  "verdict": "PASS"
+}
