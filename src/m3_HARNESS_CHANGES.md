@@ -1,10 +1,10 @@
-# M3/E2 L3 v4.1 Repair Record
-- v4 diagnostic retained: old generator failed oracle ceiling on all seeds 101–105.
-- Applied cleared AR(0.3,-0.2,0.1), period-7 sinusoid, variance 0.05, burn-in 100.
-- Provenance now resolves real HEAD and STATE.md SHA-256 or aborts; no placeholders.
-- Aligned oracle fit with verifier by excluding undefined 3-lag origins 0–1.
-- Seed 101 failed: candidate h1/h3/h4; permuted h2/h5; shuffled h1/h3/h4/h5.
-- Seed 102 failed: candidate h1/h3/h4; permuted h2/h5; shuffled h1/h3/h4.
-- Seed 103 failed: candidate h1/h3/h4; permuted h2/h5; shuffled h1–h5.
-- Seed 104 failed: candidate h1/h3/h4; permuted h2/h5; shuffled h1/h3/h4/h5.
-- Seed 105 failed: candidate h1/h3/h4; permuted h2/h5; shuffled h1–h5; SPEC BLOCK.
+# M3/E2 L3 Repair Proposal for CRITIC Review
+- Preserved v4/v4.1 failures at SHAs ec457fc, 6ef3cce, and 76a8dd6.
+- Disclosed 0.05–1.00 phase sweep; 0.20–0.30 grid region passed development.
+- Fixed linear phase rule c*pi/16 was separately tested and is pending CRITIC.
+- Kept 16 dimensions; state blocks now store [x_i[t], x_i[t-1]] with fixed A/B.
+- Permuted channel weights now destroy channel-specific phase correspondence.
+- Shuffled bound remains +0.01 but uses its same-fixture frozen comparator.
+- Added five-seed predicate regression; locked bars/verdicts/other laws unchanged.
+- Runtime HEAD/STATE hashes remain mandatory; no placeholders or scoring execution.
+- Pending CRITIC review; hold-outs remain unexposed and no courier packet exists.

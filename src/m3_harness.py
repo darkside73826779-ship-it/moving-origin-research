@@ -967,10 +967,10 @@ def run_l1(seed, log_lines=None):
 # ---------------------------------------------------------------------------
 
 def _l3_generate_sequence(seed):
-    """Generate the CRITIC-cleared v4.1 AR(3) fixture exactly.
+    """Generate Rebecca's L3 repair proposal for subsequent CRITIC review.
 
-    x[t] = 0.3*x[t-1] - 0.2*x[t-2] + 0.1*x[t-3]
-           + 0.5*sin(2*pi*t/7) + eps[t]
+    x_c[t] = 0.3*x_c[t-1] - 0.2*x_c[t-2] + 0.1*x_c[t-3]
+             + 0.5*sin(2*pi*t/7 + c*pi/16) + eps_c[t]
     eps ~ N(0, 0.05 variance); 100 generated cycles are discarded.
     """
     rng = np.random.RandomState(seed)
@@ -978,8 +978,10 @@ def _l3_generate_sequence(seed):
     n = L3_SEQUENCE_LENGTH + burn_in
     d = L3_INPUT_DIM
     x = np.zeros((n, d))
+    channel_phases = np.arange(d, dtype=float) * (np.pi / 16.0)
     for t in range(3, n):
-        sinusoid = 0.5 * np.sin(2.0 * np.pi * t / 7.0)
+        sinusoid = 0.5 * np.sin(
+            2.0 * np.pi * t / 7.0 + channel_phases)
         noise = rng.normal(0, np.sqrt(0.05), size=d)
         x[t] = (
             0.3 * x[t-1]
@@ -992,25 +994,18 @@ def _l3_generate_sequence(seed):
 
 
 def _l3_compute_state(x):
-    """Compute state: s[t] = clip(A*s[t-1] + B*x[t], -C, C).
-    A = blkdiag(8x[[0.9,0.1],[0,0.5]]), B[2i,i]=1.0, C=10.0, s[0]=0."""
+    """Compute a fixed 16-dimensional two-lag state.
+
+    Per channel i, block [2i,2i+1] stores [x_i[t], x_i[t-1]].
+    This is the linear update A_i=[[0,0],[1,0]], B[2i,i]=1,
+    with no learned parameters.
+    """
     n = len(x)
     s = np.zeros((n, L3_STATE_DIM))
-
-    # Build A
-    A = np.zeros((L3_STATE_DIM, L3_STATE_DIM))
-    for i in range(L3_INPUT_DIM):
-        A[2*i, 2*i] = 0.9
-        A[2*i, 2*i+1] = 0.1
-        A[2*i+1, 2*i+1] = 0.5
-
-    # Build B
-    B = np.zeros((L3_STATE_DIM, L3_INPUT_DIM))
-    for i in range(L3_INPUT_DIM):
-        B[2*i, i] = 1.0
-
+    s[0, 0::2] = x[0]
     for t in range(1, n):
-        s[t] = np.clip(A @ s[t-1] + B @ x[t], -L3_C_CLIP, L3_C_CLIP)
+        s[t, 0::2] = x[t]
+        s[t, 1::2] = s[t-1, 0::2]
 
     return s
 
@@ -1181,14 +1176,29 @@ def run_l3(seed, log_lines=None):
         x_shuf_fit, shuf_fit_targets, x_shuf_eval)
     mse_shuf_state = _l3_compute_mse(shuf_state_preds, shuf_eval_targets)
     mse_shuf_raw = _l3_compute_mse(shuf_raw_preds, shuf_eval_targets)
+    # Frozen comparator must use the same shuffled fixture; comparing across
+    # different target distributions made the original control infeasible.
+    s_shuf_frozen = np.zeros(
+        (L3_SEQUENCE_LENGTH, L3_STATE_DIM))
+    shuf_frozen_preds = _l3_fit_predict(
+        s_shuf_frozen[fit_origins],
+        shuf_fit_targets,
+        s_shuf_frozen[eval_origins])
+    mse_shuf_frozen = _l3_compute_mse(
+        shuf_frozen_preds, shuf_eval_targets)
     shuffled_reductions = {}
+    shuffled_frozen_reductions = {}
     for h in range(L3_HORIZON):
         h_idx = h
         if mse_shuf_raw[h_idx] == 0:
             shuffled_reductions[h+1] = None
+            shuffled_frozen_reductions[h+1] = None
         else:
             shuffled_reductions[h+1] = float(
                 (mse_shuf_raw[h_idx] - mse_shuf_state[h_idx]) / mse_shuf_raw[h_idx])
+            shuffled_frozen_reductions[h+1] = float(
+                (mse_shuf_raw[h_idx] - mse_shuf_frozen[h_idx])
+                / mse_shuf_raw[h_idx])
 
     # Empty arm
     _tee(f"  [L3] Running empty arm...", log_lines)
@@ -1227,13 +1237,14 @@ def run_l3(seed, log_lines=None):
             instrument_failure_reasons.append(
                 f"permuted reduction_h={h}={r:.6f} > 0 (NF8: INSTRUMENT FAILURE, not KILL)")
 
-    # Shuffled: reduction <= frozen + 0.01
+    # Shuffled: reduction <= frozen-on-the-same-shuffled-fixture + 0.01
     for h in range(1, L3_HORIZON + 1):
         sr = shuffled_reductions.get(h)
-        fr = frozen_reductions.get(h)
+        fr = shuffled_frozen_reductions.get(h)
         if sr is not None and fr is not None and sr > fr + 0.01:
             instrument_failure_reasons.append(
-                f"shuffled reduction_h={h}={sr:.6f} > frozen+0.01={fr+0.01:.6f}")
+                f"shuffled reduction_h={h}={sr:.6f} > "
+                f"same-fixture-frozen+0.01={fr+0.01:.6f}")
 
     if instrument_failure_reasons:
         verdict = 'INSTRUMENT_FAILURE'
@@ -1244,10 +1255,18 @@ def run_l3(seed, log_lines=None):
             'ar_coefficients': [0.3, -0.2, 0.1],
             'sinusoid_amplitude': 0.5,
             'sinusoid_period': 7,
+            'channel_phase_rule': 'phase_c = c*pi/16',
+            'channel_phases_radians': (
+                np.arange(L3_INPUT_DIM) * (np.pi / 16.0)
+            ).tolist(),
             'noise_variance': 0.05,
             'noise_standard_deviation': float(np.sqrt(0.05)),
             'burn_in_cycles': 100,
             'post_burn_sequence_length': L3_SEQUENCE_LENGTH,
+            'state_rule': (
+                'per-channel block [x_i[t], x_i[t-1]]; '
+                'A_i=[[0,0],[1,0]], B[2i,i]=1'
+            ),
         },
         'mse_state': mse_state.tolist(),
         'mse_raw': mse_raw.tolist(),
@@ -1256,11 +1275,15 @@ def run_l3(seed, log_lines=None):
         'mse_permuted': mse_permuted.tolist(),
         'mse_shuffled_state': mse_shuf_state.tolist(),
         'mse_shuffled_raw': mse_shuf_raw.tolist(),
+        'mse_shuffled_frozen': mse_shuf_frozen.tolist(),
         'reductions': {str(k): v for k, v in reductions.items()},
         'oracle_reductions': {str(k): v for k, v in oracle_reductions.items()},
         'frozen_reductions': {str(k): v for k, v in frozen_reductions.items()},
         'permuted_reductions': {str(k): v for k, v in permuted_reductions.items()},
         'shuffled_reductions': {str(k): v for k, v in shuffled_reductions.items()},
+        'shuffled_frozen_reductions': {
+            str(k): v for k, v in shuffled_frozen_reductions.items()
+        },
         'empty': results_empty,
         'verdict': verdict,
         'kill_reasons': kill_reasons,

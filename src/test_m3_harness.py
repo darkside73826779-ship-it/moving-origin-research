@@ -30,6 +30,35 @@ class M3HarnessTests(unittest.TestCase):
         self.assertFalse(fit_used & eval_used)
         self.assertEqual(fit_used | eval_used, set(range(1010)))
 
+    def test_l3_repair_passes_all_development_predicates(self):
+        for seed in m3.DEVELOPMENT_SEEDS:
+            result = m3.run_l3(seed)
+            self.assertEqual(result["verdict"], "PASS")
+            candidate = [
+                result["reductions"][str(h)] for h in range(1, 6)]
+            oracle = [
+                result["oracle_reductions"][str(h)] for h in range(1, 6)]
+            permuted = [
+                result["permuted_reductions"][str(h)]
+                for h in range(1, 6)
+            ]
+            shuffled = [
+                result["shuffled_reductions"][str(h)]
+                for h in range(1, 6)
+            ]
+            shuffled_frozen = [
+                result["shuffled_frozen_reductions"][str(h)]
+                for h in range(1, 6)
+            ]
+            self.assertTrue(all(value >= 0.05 for value in candidate))
+            self.assertTrue(
+                all(0.05 < value < 0.95 for value in oracle))
+            self.assertTrue(all(value <= 0.0 for value in permuted))
+            self.assertTrue(all(
+                observed <= frozen + 0.01
+                for observed, frozen in zip(shuffled, shuffled_frozen)
+            ))
+
     def test_l5_chain_closure_and_counting(self):
         combo = m3._l5_build_combination_fixture(101)
         facts, chains = m3._l5_build_chain_fixture(101)
