@@ -31,6 +31,7 @@ import platform
 from datetime import datetime, timezone
 
 import numpy as np
+import scipy
 from scipy.stats import spearmanr, pearsonr
 
 import episodic_cache as _episodic_cache
@@ -2387,7 +2388,7 @@ def main():
     _tee(f"Output: {output_dir}", log_lines)
     _tee(f"Python: {platform.python_version()}", log_lines)
     _tee(f"NumPy: {np.__version__}", log_lines)
-    _tee(f"SciPy: {spearmanr.__module__.split('.')[0]}", log_lines)
+    _tee(f"SciPy: {scipy.__version__}", log_lines)
     _tee("", log_lines)
 
     all_results = {}
@@ -2600,6 +2601,12 @@ def main():
     deviations = []
     if platform.python_version() != '3.11':
         deviations.append(f"Python {platform.python_version()} vs pinned 3.11 (non-blocking)")
+    if np.__version__ != '1.26.4':
+        deviations.append(
+            f"NumPy {np.__version__} vs pinned 1.26.4 (non-blocking)")
+    if scipy.__version__ != '1.13.1':
+        deviations.append(
+            f"SciPy {scipy.__version__} vs pinned 1.13.1 (non-blocking)")
     manifest_out = {
         'commit_hash': git_hash,
         'seeds': seeds,
@@ -2608,7 +2615,7 @@ def main():
         'python_version_runtime': platform.python_version(),
         'python_version_pinned': '3.11',
         'numpy_version': np.__version__,
-        'scipy_version': spearmanr.__module__.split('.')[0],
+        'scipy_version': scipy.__version__,
         'deviations_logged': deviations,
         'wall_clock_seconds': None,  # filled below
         'output_files': [
