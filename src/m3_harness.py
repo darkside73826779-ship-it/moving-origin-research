@@ -1097,9 +1097,16 @@ def run_l3(seed, log_lines=None):
             feats.append(feat)
         return np.array(feats)
 
-    oracle_fit = build_3lag(x, fit_origins)
+    # Match the CRITIC-cleared verifier exactly: a 3-lag oracle is undefined
+    # for origins 0 and 1, so those two fit rows are excluded rather than
+    # zero-padded. Evaluation origins are all >=2.
+    oracle_fit_origins = [t for t in fit_origins if t >= 2]
+    oracle_fit = build_3lag(x, oracle_fit_origins)
     oracle_eval = build_3lag(x, eval_origins)
-    oracle_preds = _l3_fit_predict(oracle_fit, fit_targets, oracle_eval)
+    oracle_fit_targets = _l3_build_targets(
+        x, oracle_fit_origins, L3_HORIZON)
+    oracle_preds = _l3_fit_predict(
+        oracle_fit, oracle_fit_targets, oracle_eval)
     mse_oracle = _l3_compute_mse(oracle_preds, eval_targets)
 
     # Frozen state: s[t]=0 for all t
@@ -1233,6 +1240,15 @@ def run_l3(seed, log_lines=None):
 
     results = {
         'seed': seed, 'law': 'L3',
+        'generator': {
+            'ar_coefficients': [0.3, -0.2, 0.1],
+            'sinusoid_amplitude': 0.5,
+            'sinusoid_period': 7,
+            'noise_variance': 0.05,
+            'noise_standard_deviation': float(np.sqrt(0.05)),
+            'burn_in_cycles': 100,
+            'post_burn_sequence_length': L3_SEQUENCE_LENGTH,
+        },
         'mse_state': mse_state.tolist(),
         'mse_raw': mse_raw.tolist(),
         'mse_oracle': mse_oracle.tolist(),
