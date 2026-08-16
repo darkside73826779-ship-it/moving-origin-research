@@ -1554,3 +1554,24 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Exact next authorized role:** **Rebecca**, to decide whether to incorporate this custody-only branch. No implementation or scoring action is authorized by this entry.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 first scoring retained as INSTRUMENT FAILURE. V4.4 specification-framework closure CRITIC-CLEAR and merged. STATE.md reconciled and canonically attested. Implementation and scoring remain BLOCKED; seeds 201–203 must never be rerun.**
+
+
+---
+
+## Entry 48 — M3 V4.4 STATE.md routing-correction custody and hash attestation
+
+**Date:** 2026-08-16 · **Actor:** Rebecca Mcclintic (routing ruling); INTEGRATOR (sole STATE.md writer); RECORDER (custody and hash attestation)
+
+- **Gate served:** M3 V4.4 STATE.md Routing-Correction Custody, resolving Entry 47's stale active routing against Entry 46 and Rebecca's superseding ruling.
+- **Named base:** `9192cf1193b6c0df8d4b8a0c6ce9ffed1f05c6f4` (GitHub `main`, independently verified before incorporation).
+- **INTEGRATOR source:** `8ccfa4f8dc1babc1d67c2057d64a742d6d2f794a` on `integrator/m3-v4-4-routing-correction`; direct parent is the named base and the branch is exactly one commit ahead. The source changes only `state/STATE.md` (23 insertions, 13 deletions).
+- **STATE.md committed Git blob:** `2f5af3a98c3eb6d11fa19de506140f877a4d2320`.
+- **STATE.md canonical Git-blob/LF SHA-256:** `b161a2e56c94b577181216827ab3f4d8879a43b01075730dbb2e2c0551930dc8`.
+- **Rebecca ruling represented:** V4.4 completed §2.10 harmonization, the complete 26-family pre-scoring closure audit, and framework-level correction of every control family whose full-battery FWFP exceeded 5% (maximum corrected FWFP `48/1001 ≤ 5%`). Entry 47's contrary active routing is stale and superseded. The final CRITIC NB1 remains the distinct, non-blocking internal V4.3/schema-version documentation-label lag.
+- **Corrected active state:** those three completed prerequisites are retired from `open_blockers` and preserved in `completed_prerequisites`. The only remaining blockers are implementation of the exact CRITIC-cleared V4.4 amendments, independent CRITIC implementation clearance, and Rebecca's separate fresh-seed supervised-scoring authorization.
+- **Next implementation role:** after RECORDER custody incorporation, **TASK BUILDER**, authorized only to implement the exact CRITIC-cleared V4.4 amendments. This does not authorize scoring, scoring-packet construction, fresh-seed selection or exposure, or reruns.
+- **Preserved evidence and protections:** all historical provenance entries remain unchanged. The first M3 scoring run remains **INSTRUMENT FAILURE**; seeds 201–203 are retained and must never be rerun; prior L3/L5/L6 PASS evidence and L1 candidate-facing PASS/no-kill evidence remain valid. Timebox counters, caps, dates, and tripwires; candidate-facing bars; Rebecca Entry 43 and its four-part test; O-14, O-15, D1–D5, L9, L18, L15, unseen-seed protections, supervised-execution boundaries, Phase A / Phase B separation, and all standing protections remain intact.
+- **Scope and authorization boundary:** the INTEGRATOR result changes only active routing/status in `state/STATE.md`; it alters no scientific standard, verdict, specification, verifier, implementation, scoring artifact, review, or provenance content. RECORDER incorporated the exact INTEGRATOR commit without altering `state/STATE.md` and appended this entry only. Implementation and scoring remain **BLOCKED** pending the three remaining prerequisites.
+- **Exact next authorized role:** **Rebecca**, to decide whether to incorporate this custody-only branch. Only after incorporation does TASK BUILDER become next for the narrowly bounded V4.4 implementation.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 first scoring retained as INSTRUMENT FAILURE. V4.4 closure prerequisites completed and retired by Rebecca ruling. STATE.md routing corrected and canonically attested. Implementation and scoring remain BLOCKED; seeds 201–203 must never be rerun.**
