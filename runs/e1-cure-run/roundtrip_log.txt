@@ -1,0 +1,31 @@
+E1 Provenance-Cure Round-Trip Log
+=================================
+Date:             2026-08-15 20:36:01 -04:00
+Repository:       darkside73826779-ship-it/moving-origin-research
+Fresh checkout:   a85ec91f22521164abd2604a1c299c74f0dd67ac
+Command run:      cd src && python e1_experiment.py --seeds 42,43,44,45,46 --output-dir ../e1_cure_output
+Execution count:  1
+Exit status:      0
+Python version:   Python 3.12.10
+numpy version:    1.26.4
+scipy version:    1.13.1
+Wall clock:       8.435980000002019 seconds (from e1_manifest.json)
+Manifest commit:  a85ec91f22521164abd2604a1c299c74f0dd67ac
+Seeds:            42, 43, 44, 45, 46
+e1_verdict:       PASS
+Deviation:        Python 3.12.10 used because Python 3.11 was unavailable. Pinned numpy/scipy versions were used.
+
+Lineage method:
+- 46 files verified.
+- 6 matched byte-for-byte.
+- 40 matched their expected SHA-256 exactly after CRLF-to-LF normalization.
+- The documented e1_spec.md path-reference edit remains recorded separately.
+- No other discrepancies were found.
+
+Output file sizes and SHA-256 hashes:
+critic_independent_rerderivation.py    4825 bytes  4DE65E9AA0654AD4F8EBC75A9D5357102F96A9F1E268C70210098C27BE8BD0D9
+e1_invariants.json                    65498 bytes  94BC5F7D2D1ED2AF0D87B7E233CF601F8070A4A8F355A3C349C06F9D79427B48
+e1_manifest.json                       2726 bytes  27A2F4C85347C88FC63CB70A43273CF21E5AC202A82C6513979F1FE51E9A1E79
+e1_profile.json                        1581 bytes  E9569721CE069131287EE449978C954BAA38256D8E4590D5E9562D8B28329563
+e1_run.log                             9112 bytes  7C6E4B6DD728559BA237127F95BF30BCFCF278B5C9658BFE335E8C602CF5FD27
+e1_run_results.json                  158688 bytes  127E6F9051D21ED283FA33DC875C906773B1BD243EBE32605BB0951B920508E3

@@ -1279,3 +1279,21 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - Weekly repo report to Rebecca (five lines: committed / awaiting merge / excluded+why / STATE.md hash / flip-readiness) not yet due; first report will cover this entry.
 
 **M0 COMPLETE. M1 DELIVERED GREEN AND ACCEPTED. M2 (E1) DELIVERED GREEN. Repository custody transferred to RECORDER; clean import to `darkside73826779-ship-it/moving-origin-research` complete at commit `a85ec91f22521164abd2604a1c299c74f0dd67ac`. Lineage attestation and provenance-cure re-run pending at the local agent. M2 acceptance and E1-chain sealing await both.**
+
+---
+
+## Entry 36 — Lineage attestation and provenance-cure re-run complete. E1 chain SEALED. M2 acceptance completes.
+
+- Lineage attestation: VERIFIED. 46 files, 6 byte-identical, 40 CRLF-to-LF normalized, 1 documented spec path edit. No other discrepancies.
+- Provenance-cure re-run: Fresh checkout of a85ec91, 5 seeds (42-46), PASS. Manifest commit_hash = a85ec91f22521164abd2604a1c299c74f0dd67ac (cured from "pending -- no git repo"). Non-timing metrics identical to E1-RUN-2. Wall clock 8.44s.
+  - Property (i): oracle_agreement=1.0 on all 5 seeds
+  - Property (ii): candidate 1.0×, fair-naive 7.12×, battery valid
+  - Property (iii): degradation mean=0.1076, all seeds > 0, ≥ 0.05 floor
+  - No kill conditions fire
+  - L20 self-test passes
+  - Reproducibility: bit-identical (non-timing)
+- E1 chain: SEALED. Both lineage attestation and provenance-cure re-run committed.
+- M2 acceptance: COMPLETE. Awaiting Rebecca's continuation gate to M3.
+- Open items: O-36 CLOSED (lineage attestation), O-37 CLOSED (provenance-cure re-run)
+
+**M0 COMPLETE. M1 DELIVERED GREEN AND ACCEPTED. M2 (E1) DELIVERED GREEN — SEALED. Lineage attested, provenance cured, manifest shows real commit hash. First scored evidence about the moving origin. Awaiting Rebecca's continuation gate to M3. Timebox: Session 1/3, Day 1/7.**
