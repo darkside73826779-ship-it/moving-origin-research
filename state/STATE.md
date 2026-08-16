@@ -7,9 +7,9 @@
 ```yaml
 # STATE.md — team operational schema (under Rebecca's M0 addendum, Entry 13 / O-10)
 # Updated by: INTEGRATOR (sole writer). RECORDER records hash at every merge.
-# Last-updated: 2026-08-16T14:21:48-04:00.
+# Last-updated: 2026-08-16T14:33:00-04:00.
 
-milestone: M3                       # First M3 scoring run retained as INSTRUMENT FAILURE (Entry 43); L3/L5/L6 PASS evidence and L1 candidate-facing PASS evidence on seeds 201–203 remain valid, with no kill conditions; Rebecca authorized a post-scoring specification correction under the Entry 43 four-part test; V4.3 is CRITIC-CLEARED as a targeted specification amendment only (Entry 44); scoring BLOCKED and fresh scoring not authorized
+milestone: M3                       # First M3 scoring run retained as INSTRUMENT FAILURE (Entry 43); L3/L5/L6 PASS evidence and L1 candidate-facing PASS evidence on seeds 201–203 remain valid, with no kill conditions; Rebecca authorized a post-scoring specification correction under the Entry 43 four-part test; V4.3 is CRITIC-CLEARED as a targeted specification amendment only (Entry 44); V4.4 B1–B4 specification-framework closure is CRITIC-CLEAR (verdict CLEAR; B1–B4 resolved; no new blockers) and merged through Rebecca-authorized PR #13, with CRITIC ruling and merge custody preserved in Entry 46 and merged via PR #14 (Entry 46); scoring BLOCKED and fresh scoring not authorized; V4.4 is not claimed implemented
 session_count: 5                    # completed working sessions (M1: 1; M2: 1; M3 spec cycle: 2 — V0→V3 BLOCKED, V4 CLEARED; M3 GO + task spec: 1 — GO ruling, task spec/courier arch prepared, CRITIC narrow BLOCK)
 milestone_session_budget: 4        # M3 timebox: 4 sessions / 8 calendar days (Rebecca M3 GO ruling, active starting 2026-08-15)
 
@@ -18,7 +18,7 @@ timebox:
   m2_started: 2026-08-15            # M2 timebox clock started 2026-08-15 (CRITIC cleared Q2/Q3 incorporations)
   m2_sessions_consumed: 1            # M2 consumed 1 session
   m2_days_consumed: 1               # M2 consumed 1 day
-  m3_status: scoring_blocked         # Entry 44: V4.3 CRITIC-CLEARED as targeted specification amendment only; not implementation clearance and not fresh-scoring authorization
+  m3_status: scoring_blocked         # Entry 44: V4.3 CRITIC-CLEARED as targeted specification amendment only; not implementation clearance and not fresh-scoring authorization. Entry 46: V4.4 B1–B4 specification-framework closure CRITIC-CLEAR and merged (PR #13; custody PR #14); still not implementation clearance and not fresh-scoring authorization
   m3_sessions_consumed: 1            # M3 timebox: 1 session consumed (INTEGRATOR prepared task spec + courier architecture; CRITIC reviewed)
   m3_days_consumed: 1               # M3 timebox: 1 day consumed
   m3_session_cap: 4
@@ -27,7 +27,7 @@ timebox:
   m3_tripwire_after_session: 2
   m3_tripwire_after_day: 4
   m3_tripwire_calendar: 2026-08-19   # started + 4 days
-  m3_note: "First M3 scoring on seeds 201–203 is retained in full under its original INSTRUMENT FAILURE label. L3, L5, and L6 PASS evidence remains valid; L1 candidate-facing bars passed on all three seeds (R²=0.9857, beta_age=-0.00150, all conditional rho>=0.6), and no kill condition fired. Rebecca authorized a post-scoring specification correction under the Entry 43 four-part test. V4.3 is CRITIC-CLEARED only as a targeted specification amendment; it is not implemented and supplies no fresh-scoring authorization. Scoring is BLOCKED pending §2.10 harmonization, a complete pre-scoring 26-family closure audit, correction of every control family whose full-battery FWFP exceeds 5%, implementation of the final cleared amendments, independent CRITIC implementation clearance, and Rebecca's separate fresh-seed supervised scoring authorization. Seeds 201–203 must never be rerun. O-14, O-15, D1–D5, L9, L18, and all standing protections remain binding."
+  m3_note: "First M3 scoring on seeds 201–203 is retained in full under its original INSTRUMENT FAILURE label. L3, L5, and L6 PASS evidence remains valid; L1 candidate-facing bars passed on all three seeds (R²=0.9857, beta_age=-0.00150, all conditional rho>=0.6), and no kill condition fired. Rebecca authorized a post-scoring specification correction under the Entry 43 four-part test. V4.3 is CRITIC-CLEARED only as a targeted specification amendment; it is not implemented and supplies no fresh-scoring authorization. V4.4 B1–B4 specification-framework closure is CRITIC-CLEAR (Entry 46: verdict CLEAR; B1, B2, B3, B4 resolved; no new blockers; final classification 9 stochastic / 17 deterministic; maximum corrected FWFP 48/1001 ≈ 0.047952) and merged through Rebecca-authorized PR #13 (spec-framework merge commit 24c0fc85e96c6b82c05d6ecefdebb263e120a498), with the CRITIC ruling and merge custody preserved in Entry 46 and merged via PR #14 at current main 07001593a823f6418c7fbf87b10c93fa19642c3c; V4.4 certifies pre-scoring specification-framework closure only and is not implemented. Scoring is BLOCKED pending §2.10 harmonization, a complete pre-scoring 26-family closure audit, correction of every control family whose full-battery FWFP exceeds 5%, implementation of the final cleared amendments, independent CRITIC implementation clearance, and Rebecca's separate fresh-seed supervised scoring authorization. Seeds 201–203 must never be rerun. O-14, O-15, D1–D5, L9, L18, and all standing protections remain binding."
 
 locked_bars:                        # only bars active/relevant to current milestone
   M1_discrimination: "oracle >= naive + 0.30 on every metric, 3 seeds"
@@ -64,8 +64,8 @@ watch_items:                        # CRITIC carry-forward items, with locus
     m1_relevant: false
 
 repo:
-  commit_hash: "4168c539781bd4610c04530e9c061f1167e51f1b"   # Named base and GitHub main for this reconciliation gate; single source of truth
-  github_main_verified: "4168c539781bd4610c04530e9c061f1167e51f1b"   # GitHub main HEAD, VERIFIED 2026-08-16
+  commit_hash: "07001593a823f6418c7fbf87b10c93fa19642c3c"   # GitHub main for this V4.4 post-custody reconciliation gate; single source of truth. Incorporates PR #13 (V4.4 spec-framework merge, 24c0fc8) and PR #14 (custody merge, current main), custody result 169d962e4122e2865e9d72a4d63a4567ef5e985c
+  github_main_verified: "07001593a823f6418c7fbf87b10c93fa19642c3c"   # GitHub main HEAD, VERIFIED 2026-08-16 from a fresh clone
   cure_commit_hash: "a85ec91f22521164abd2604a1c299c74f0dd67ac"   # E1 provenance-cure re-run commit (manifest commit hash cured from "pending -- no git repo" to real repository hash a85ec91f; JUDGE scored DELIVERED GREEN from cure artifacts — judge_e1_cure_ruling.md)
   e1_run2_scored_commit: "1d13105e8163859d7972705b731ba8c24a272276"   # E1-RUN-2 scored commit (timing fix dceb258 + cosmetic/L20 float fix; JUDGE scored DELIVERED GREEN with provenance discrepancy flagged — manifest showed "pending -- no git repo", round-trip log claimed 1d13105; subsequently cured in cure re-run at a85ec91)
   timing_fix_commit_hash: "dceb2584f495cde06787693d80f8e40f258eb33c"   # TASK BUILDER timing-construction-bug fix commit (perf_counter_ns + batch fallback for Windows timing resolution; _safe_pearson isfinite guard; instrument_failure flag for non-finite latency) — fixes the E1-RUN-1 crash diagnosed in critic_e1_run1_crash_analysis.md; per Rebecca's construction-bug guard, does not consume D2 budget
@@ -82,7 +82,7 @@ repo:
   m1_harness_file_hash: "6d33349a2d10686f8f2b42709ec43a7da6e175948ebd60b28801b1627bcc8413"   # retroactive SHA-256 of m1_harness.py at git init (anchors RUN-1 integrity, since repo did not exist at RUN-1 time)
   artifact: "m1_harness.py + requirements.txt + e1_experiment.py + all specs/reviews/runs"
   m3_e2_spec_v4_project_files: true   # M3/E2 spec V4 (specs/m3_e2_spec_amended_v4.md) + changelog (specs/m3_e2_spec_changelog_v4.md) + CRITIC V4 review (reviews/critic_m3_e2_spec_rereview_v4.md) persisted in Project Files
-  note: "GitHub repository darkside73826779-ship-it/moving-origin-research is the single source of truth. Main and named reconciliation base verified at 4168c539781bd4610c04530e9c061f1167e51f1b. Entry 43 retains the first M3 scoring run as INSTRUMENT FAILURE and authorizes a post-scoring specification correction only under its four-part test. Entry 44 records V4.3 CRITIC clearance as a targeted specification amendment only; V4.3 is not claimed implemented. Scoring remains BLOCKED; no fresh scoring is authorized."
+  note: "GitHub repository darkside73826779-ship-it/moving-origin-research is the single source of truth. Main verified at 07001593a823f6418c7fbf87b10c93fa19642c3c from a fresh clone. Entry 43 retains the first M3 scoring run as INSTRUMENT FAILURE and authorizes a post-scoring specification correction only under its four-part test. Entry 44 records V4.3 CRITIC clearance as a targeted specification amendment only; V4.3 is not claimed implemented. Entry 46 records V4.4 B1–B4 specification-framework closure as CRITIC-CLEAR (verdict CLEAR; B1–B4 resolved; no new blockers), merged through Rebecca-authorized PR #13 (spec-framework merge 24c0fc8), with the CRITIC ruling and merge custody preserved and merged via PR #14 (custody result 169d962, current main 07001593). PR #13 introduced only the five attested specification/verification files; no implementation, scoring artifact, fresh-seed material, or STATE.md change was introduced by PR #13 or PR #14. V4.4 is not claimed implemented. Scoring remains BLOCKED; no fresh scoring is authorized."
 
 run_requests_to_rebecca:            # courier packets issued (per merge-candidate, batched per BUILD_PHASE_ORG Ruling 2)
   - id: RUN-1
@@ -160,9 +160,9 @@ returned_artifacts:                 # inventory of what Rebecca returned — RUN
 
 role_status:                        # latest verdict per role
   JUDGE:        "M1 DELIVERED GREEN; M2 DELIVERED GREEN. First M3 scoring verdict retained as INSTRUMENT FAILURE; L3/L5/L6 PASS evidence and L1 candidate-facing PASS evidence on seeds 201–203 remain valid; no kill condition fired"
-  CRITIC:       "V4.3 CRITIC-CLEARED as a targeted specification amendment only (Entry 44). This is not implementation clearance and not fresh-scoring authorization. Independent implementation clearance remains required after final cleared amendments are implemented"
-  RECORDER:     "Provenance current through Entry 44. RECORDER custody/hash attestation is required before this STATE.md reconciliation may merge"
-  INTEGRATOR:   "M3 operational state reconciled to Entries 43–44: first scoring retained as INSTRUMENT FAILURE; scoring BLOCKED; no fresh scoring authorized; seeds 201–203 never rerun; V4.3 not claimed implemented"
+  CRITIC:       "V4.4 B1–B4 specification-framework closure CRITIC-CLEAR (Entry 46: verdict CLEAR; B1–B4 resolved; no new blockers). This certifies pre-scoring specification-framework closure only; it is not implementation clearance and not fresh-scoring authorization. Independent CRITIC implementation clearance remains required after final cleared amendments are implemented. (Prior: V4.3 CRITIC-CLEARED as a targeted specification amendment only, Entry 44.)"
+  RECORDER:     "Provenance current through Entry 46; V4.4 CRITIC CLEAR ruling and merge custody preserved (Entry 46, custody result 169d962). RECORDER custody/hash attestation is required before this V4.4 STATE.md reconciliation may merge"
+  INTEGRATOR:   "M3 operational state reconciled to Entries 43–44 and Entry 46: first scoring retained as INSTRUMENT FAILURE; V4.4 B1–B4 spec-framework closure CRITIC-CLEAR and merged (PR #13; custody PR #14, main 07001593); scoring BLOCKED; implementation and scoring not retroactively authorized; no fresh scoring authorized; seeds 201–203 never rerun; V4.3 and V4.4 not claimed implemented"
   ARCHITECT:    "Next authorized role: locally complete §2.10 harmonization and the complete pre-scoring 26-family closure audit, including correction of every control family whose FWFP exceeds 5%"
   TASK_BUILDER: "No implementation action authorized yet. Implement only the final cleared amendments after ARCHITECT closure work and applicable clearance"
 
@@ -188,7 +188,7 @@ non_blocking_findings_of_record:    # CRITIC V4 review Part 3 — non-blocking, 
   - id: NF10
     desc: "STATE.md must be brought current before Rebecca rules (NF3 carried forward)"
     source: critic_m3_e2_spec_rereview_v4.md
-    status: resolved  # STATE.md reconciled through Entries 43–44; new STATE.md hash requires RECORDER custody attestation before merge
+    status: resolved  # STATE.md reconciled through Entries 43–44 and Entry 46 (V4.4 post-custody); new STATE.md hash requires RECORDER custody attestation before merge
 
 next_action: "Local ARCHITECT completion of §2.10 harmonization and the complete 26-family pre-scoring closure audit, including framework-level correction of every control family whose full-battery FWFP exceeds 5%. Then finalize cleared amendments for implementation and independent CRITIC implementation clearance. Fresh scoring remains blocked until Rebecca separately authorizes a supervised run on fresh seeds. Seeds 201–203 must never be rerun. O-14, O-15, D1–D5, L9, L18, and all standing protections remain binding."
 ```
