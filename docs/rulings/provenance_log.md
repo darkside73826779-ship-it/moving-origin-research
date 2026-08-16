@@ -1532,3 +1532,25 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Exact next authorized role:** **Rebecca**, to decide whether to incorporate this custody-only branch and separately authorize INTEGRATOR STATE.md reconciliation. No implementation or scoring is authorized by this entry.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 first scoring retained as INSTRUMENT FAILURE. V4.4 B1–B4 specification framework CRITIC-CLEARED and merged through Rebecca-authorized PR #13. Custody ruling preserved. Scoring and implementation remain BLOCKED; INTEGRATOR STATE.md reconciliation is pending separate authorization.**
+
+
+---
+
+## Entry 47 — M3 V4.4 STATE.md reconciliation and hash attestation
+
+**Date:** 2026-08-16 · **Actor:** INTEGRATOR (sole STATE.md writer); RECORDER (custody and hash attestation)
+
+- **Gate served:** M3 V4.4 STATE.md Reconciliation Custody following Entry 46 and the preserved M3 V4.4 CRITIC CLEAR ruling.
+- **Named base:** `07001593a823f6418c7fbf87b10c93fa19642c3c` (GitHub `main`, independently verified before incorporation).
+- **INTEGRATOR source:** `7b6db9ff98b93fe2853b298157773ef5d0783745` on `integrator/m3-v4-4-state-reconciliation`; direct parent is the named base and the branch is exactly one commit ahead. The source changes only `state/STATE.md` (11 insertions, 11 deletions).
+- **STATE.md committed Git blob:** `7fef1a50b17e7c1117ce389fec9e7304dce656fd`.
+- **STATE.md canonical Git-blob/LF SHA-256:** `36609859fed573a96894458509964f14a18923bbafb7132e316aafa5c5f8f518`.
+- **Reconciliation verification:** the state accurately records Entry 46, the preserved M3 V4.4 B1–B4 CRITIC verdict **CLEAR**, B1–B4 resolved, no new blocking findings, Rebecca-authorized PR #13 specification-framework merge, and PR #14 custody incorporation. V4.4 is specification-framework closure only and is not claimed implemented.
+- **Preserved evidence:** the first M3 scoring run remains **INSTRUMENT FAILURE**. Seeds 201–203 remain retained and must never be rerun. Prior L3/L5/L6 PASS evidence remains valid. L1 candidate-facing bars remain valid and no kill condition fired. Rebecca Entry 43 and its four-part test remain binding.
+- **Preserved operational constraints:** all timebox counts, caps, dates, and tripwire fields are unchanged. O-14, O-15, D1–D5, L9, L18, L15, unseen-seed protections, supervised-execution boundaries, Phase A / Phase B separation, and all standing protections remain intact.
+- **Authorization boundary:** implementation and scoring remain **BLOCKED**. No TASK BUILDER work, implementation, courier scoring construction, fresh-seed selection or exposure, scoring, or rerun of seeds 201–203 is authorized by the INTEGRATOR reconciliation or this custody entry.
+- **Scope attestation:** the INTEGRATOR result changes no scientific standard, verdict, specification, implementation, scoring artifact, review, or provenance content. RECORDER incorporated the already-reviewed INTEGRATOR commit without altering `state/STATE.md` and appended this provenance entry only.
+- **Next action remains:** local ARCHITECT completion of §2.10 harmonization and the complete 26-family pre-scoring closure audit, followed by final cleared amendments and independent CRITIC implementation clearance. Fresh scoring requires Rebecca’s separate supervised-run authorization on fresh seeds.
+- **Exact next authorized role:** **Rebecca**, to decide whether to incorporate this custody-only branch. No implementation or scoring action is authorized by this entry.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 first scoring retained as INSTRUMENT FAILURE. V4.4 specification-framework closure CRITIC-CLEAR and merged. STATE.md reconciled and canonically attested. Implementation and scoring remain BLOCKED; seeds 201–203 must never be rerun.**
