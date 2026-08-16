@@ -1297,3 +1297,16 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - Open items: O-36 CLOSED (lineage attestation), O-37 CLOSED (provenance-cure re-run)
 
 **M0 COMPLETE. M1 DELIVERED GREEN AND ACCEPTED. M2 (E1) DELIVERED GREEN — SEALED. Lineage attested, provenance cured, manifest shows real commit hash. First scored evidence about the moving origin. Awaiting Rebecca's continuation gate to M3. Timebox: Session 1/3, Day 1/7.**
+
+
+---
+
+## Entry 37 — STATE.md divergence corrected; M2 completion state attested
+
+**Date:** 2026-08-15 · **Actor:** RECORDER (custody and provenance); INTEGRATOR (sole STATE.md author)
+
+- **Prior divergence detected:** the RECORDER compared `state/STATE.md` at import commit `a85ec91f22521164abd2604a1c299c74f0dd67ac` with this provenance record at main `93362dce608c97755402dc3fad2b8a4fd5beda4b`. The state file retained pre-E1-RUN-2 operational status while Entry 36 recorded M2 completion. Escalated to Rebecca under BUILD_PHASE_ORG Ruling 1.
+- **INTEGRATOR correction:** Rebecca directed the update; the INTEGRATOR authored the replacement `STATE.md`. The RECORDER copied that file verbatim and did not rewrite its content.
+- **M2 status:** E1 is DELIVERED GREEN, its chain is SEALED, and M2 acceptance is COMPLETE. Lineage attestation is VERIFIED; the fresh-checkout provenance-cure run PASSed. Rebecca's continuation gate to M3 remains pending.
+- **M3 guard:** the first M3 scope specification is currently CRITIC BLOCKED (10 blocking findings). No M3 build authorization, build task, courier scoring run, or timebox is active.
+- **STATE.md SHA-256:** f8692c7a5d27029cb5bdb24a1be52fdbf6380774215958726720ed5887adbedc
