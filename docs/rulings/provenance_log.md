@@ -1310,3 +1310,35 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **M2 status:** E1 is DELIVERED GREEN, its chain is SEALED, and M2 acceptance is COMPLETE. Lineage attestation is VERIFIED; the fresh-checkout provenance-cure run PASSed. Rebecca's continuation gate to M3 remains pending.
 - **M3 guard:** the first M3 scope specification is currently CRITIC BLOCKED (10 blocking findings). No M3 build authorization, build task, courier scoring run, or timebox is active.
 - **STATE.md SHA-256:** f8692c7a5d27029cb5bdb24a1be52fdbf6380774215958726720ed5887adbedc
+
+
+---
+
+## Entry 38 — M3/E2 V4 gate package published; CRITIC fifth independent review: CLEAR
+
+**Date:** 2026-08-15 · **Actor:** RECORDER (repository custody and gate-package publication); ARCHITECT (V4 specification author); CRITIC (fifth independent reviewer); INTEGRATOR (STATE.md sole author)
+
+- **Base:** verified GitHub main `1626bb09d9645ccdf2a2126325b2934dc12e2c5d` (no advancement from last verified main). Prior out-of-sequence state-attestation branch (`recorder/state-correction-m3-gate-20260815`) ignored and not merged per tasking.
+- **ARCHITECT V4 package published to repository:**
+  - `specs/m3_e2_spec_amended_v4.md` — SHA-256 `5dff6d730154b0594f88450811cc95947fdc71805d73201e2ece31e24c3a592b`
+  - `specs/m3_e2_spec_changelog_v4.md` — SHA-256 `5fe805463379720338cc73a0ad28f9a1f8df232906d9133ec8cdbc3d6ae52180`
+  - `reviews/critic_m3_e2_spec_rereview_v4.md` — SHA-256 `ba3ada867e45a15f517f5cc201070497de3cc7472ec53debeb7b00517af6462f`
+  - `state/STATE.md` — SHA-256 `ea659571f1e556d11f0563213af3907e2694d1909d32860b0f58568b66bd0822` (INTEGRATOR-authored, replaced byte-for-byte; supersedes Entry 37 version `f8692c7a5d27029cb5bdb24a1be52fdbf6380774215958726720ed5887adbedc`)
+- **CRITIC fifth independent re-review: CLEAR.** All seven blocking findings (F1–F7) from the v3 review resolved; all six non-blocking findings (NF1–NF6) addressed. Every branch-defining predicate independently verified by from-scratch Python verification script implementing §2.1–§2.6, §2.8–§2.9. No new blocking finding.
+  - **F1 RESOLVED:** L1 tie-break replaced with seeded random permutation (seed=42, M1 B2 precedent); fair-naive ranking replaced with separate seeded permutation (seed=43). Both R² values below null 95th percentile — valid negative controls, not corners.
+  - **F2 RESOLVED:** Within-bin rehearsal assignment changed from `⌊i/8⌋` (Spearman=±1.0) to `i mod 5` (Spearman=−0.1225). Factor-inert candidate correctly fails; oracle correctly passes.
+  - **F3 RESOLVED:** Exact bounds specified for recency-only (R²≥0.85, β_age<0, all ρ<0.6) and rehearsal-only (β_age≥0, all ρ≥0.6) ablation arms. PASS branch no longer references non-existent bounds.
+  - **F4 RESOLVED:** Candidate-set count (100), per-entry appearance (exactly 5), and aggregation rule pre-registered. Oracle R²=0.985 (≥0.85), β_age=−0.00150 (<0) — verified by direct computation.
+  - **F5 RESOLVED:** L5 frozen arm re-specified with head/current-belief pointer (genuine mutation on supersession). Chain-append timeline and post-freeze query subset pre-registered. Frozen walk accuracy=0.00 by construction; candidate=1.00.
+  - **F6 RESOLVED:** Edge count corrected to 180 (20×9). Derangement expectation stated as exactly 0. Bound fixed to single criterion.
+  - **F7 RESOLVED:** Callable count reconciled to 4 everywhere (2+0+2=4).
+  - **NF1–NF6 addressed:** L3 frozen-floor scope harmonized (NF1); seed ledger claim narrowed (NF2); STATE.md staleness noted as INTEGRATOR responsibility — addressed by INTEGRATOR's corrected STATE.md in this package (NF3/NF10); batch-fallback timing language added (NF4); fair-naive artifact scoped to world-validity (NF5); chain-fixture log separation stated (NF6).
+- **NF7–NF10 retained as non-blocking findings of record:** NF7 (three printed R² values not independently reproducible — documentation/reproducibility issue, none affects any pass/fail criterion); NF8 (L3 permuted arm's exact bound very likely correct but not rigorously proven for all possible fitted weights — false positive triggers INSTRUMENT FAILURE, not candidate kill); NF9 (L5 frozen arm's binary walk accuracy is a corner by Option E lesson's letter but acceptable for L18 negative control); NF10 (STATE.md staleness — carried forward from NF3, addressed by INTEGRATOR's corrected STATE.md in this package).
+- **INTEGRATOR state correction:** STATE.md updated to record V4 CRITIC CLEAR, M2 GREEN/SEALED/ACCEPTED, GitHub main verified at `1626bb09`, F1-F7 resolved, NF7-NF10 non-blocking findings of record, V4 eligible for Rebecca's M3 Continuation/Scope Gate. `open_blockers` cleared (was F1-F7). SHA-256: `ea659571f1e556d11f0563213af3907e2694d1909d32860b0f58568b66bd0822`.
+- **V4 eligibility:** the V4 package is an executable, falsifiable, non-cornered, scoreable contract under the locked M0 bars and L18/L19. The CRITIC's CLEAR authorizes Rebecca to rule at the M3 Continuation/Scope Gate.
+- **§1.1 growth-bar proposal:** remains correctly isolated and rulable by Rebecca independently of this CLEAR. Nothing in this gate package prejudges that ruling.
+- **No build authorization:** no build cell, task specification, courier scoring packet, execution, or M3 timebox is authorized. Build/task-spec clearance is a separate, later ARCHITECT/INTEGRATOR deliverable. Scoring-protocol protections (O-14, O-15, courier-only scoring, ≥2-unseen hold-out seeds, D1–D5) correctly restated and not violated.
+- **Branch:** `recorder/gate-package-m3-v4-clear` (created from verified main `1626bb09d9645ccdf2a2126325b2934dc12e2c5d`). Not merged; submitted for Rebecca's review.
+- **No scientific findings, locked bars, prior provenance entries, or GitHub main altered.** Four artifacts added/replaced and this entry appended only.
+
+**M0 COMPLETE. M1 DELIVERED GREEN AND ACCEPTED. M2 (E1) DELIVERED GREEN — SEALED. M3/E2 spec V4 CRITIC CLEAR — F1–F7 resolved, NF1–NF6 addressed, NF7–NF10 non-blocking findings of record. V4 package eligible for Rebecca's M3 Continuation/Scope Gate. No build cell, task specification, scoring packet, execution, or M3 timebox authorized. §1.1 growth-bar proposal pending Rebecca.**
