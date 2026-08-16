@@ -1,0 +1,5958 @@
+{
+  "run_id": "e1-20260816T003548Z",
+  "schema_version": "3.0",
+  "config": {
+    "n_cycles": 10,
+    "n_entries_initial": 100,
+    "n_entries_final": 1000,
+    "n_landmarks": 10,
+    "n_landmarks_immediate": 8,
+    "n_landmarks_deferred": 2,
+    "n_queries": 200,
+    "n_state_dependent_query_points": 5,
+    "state_dependent_history_sizes": [
+      100,
+      250,
+      500,
+      750,
+      1000
+    ],
+    "n_consumer_queries": 50,
+    "consumer_feature_dim": 32,
+    "consumer_tau": 50,
+    "consumer_k": 10,
+    "consumer_relevance_form": "additive (dot + lambda * exp(-coord/tau))",
+    "consumer_recency_coupling_lambda": 16.0,
+    "consumer_content_signal_amplitude": 10.0,
+    "consumer_feature_noise_sigma": 0.1,
+    "consumer_query_noise_sigma": 0.1,
+    "n_recency_discriminative_queries": 20,
+    "recency_discriminative_fraction": 0.4,
+    "n_rd_content_buckets": 20,
+    "rd_content_bucket_size": 30,
+    "n_content_unique_queries": 30,
+    "n_cu_content_buckets": 30,
+    "cu_content_bucket_size": 10,
+    "n_content_buckets_total": 50,
+    "aggregate_true_ceiling": 0.4,
+    "frozen_arm_spec": "Option E (REBECCA_OPTION_E_SIGNOFF.md): all entries retained, coord_cycle_relative=0 at birth for all, never re-resolved; consumer identical across arms",
+    "consumer_relevance_note": "additive form decouples content from recency; tau=50 unchanged (pinned Q3-1); the multiplicative form was replaced because its 9-orders-of-magnitude recency gradient overwhelmed the content signal on all queries (CRITIC BLOCKING ISSUE 1)",
+    "r1_component_wise_reporting": "CU degradation, RD degradation, aggregate reported SEPARATELY; each arm's ABSOLUTE recall per query type (candidate, frozen, oracle, on CU and RD). Aggregate alone NOT reportable.",
+    "r2_honest_ceiling": "CU degradation = 0.000 BY CONSTRUCTION (bucket size = k); aggregate true ceiling = 0.4 (RD fraction); frozen's CU recall = SPECIFICITY CONTROL (L8 pattern).",
+    "r3_holdout_seeds": "Scoring seeds: 42,43,44,45,46 (FIVE). 45,46 are HOLD-OUT (never in development). All floors/kill conditions apply to all FIVE jointly.",
+    "r4_auditable_arithmetic": "Per-query recall tables in artifacts; JUDGE can recompute aggregate from raw values; CRITIC's independent re-derivation script included in artifact package.",
+    "timing_repetitions": 100,
+    "timing_methodology": "median, warm-up excluded, perf_counter_ns high-resolution monotonic clock with batch fallback, IQR reported",
+    "seeds": [
+      42,
+      43,
+      44,
+      45,
+      46
+    ],
+    "scoring_seeds": [
+      42,
+      43,
+      44,
+      45,
+      46
+    ],
+    "holdout_seeds": [
+      45,
+      46
+    ],
+    "control_arms": [
+      "frozen_origin",
+      "shuffled_cadence",
+      "oracle_index",
+      "fair_naive",
+      "empty",
+      "wall_clock_injection"
+    ],
+    "candidate": "candidate_1_1"
+  },
+  "results": {
+    "42": {
+      "candidate": {
+        "oracle_agreement": 1.0,
+        "equivalence_agreement_vs_fair_naive": 1.0,
+        "latency_1x_seconds_membership": 2e-07,
+        "latency_10x_seconds_membership": 2e-07,
+        "latency_ratio_membership": 1.0,
+        "latency_1x_seconds_bounded_k": 6e-07,
+        "latency_10x_seconds_bounded_k": 6e-07,
+        "latency_ratio_bounded_k": 1.0,
+        "raw_answer_size_1x": 48.89,
+        "raw_answer_size_10x": 466.46,
+        "raw_answer_size_ratio": 9.5410104315811,
+        "candidate_scaling_curve": [
+          2e-07,
+          2e-07,
+          2e-07,
+          2e-07,
+          2e-07
+        ],
+        "candidate_latency_iqr_per_point": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "candidate_slope": 0.0,
+        "candidate_intercept": 2e-07,
+        "candidate_latency_growth_10x": 1.0,
+        "chain_integrity_after_initial_build": true,
+        "chain_integrity_after_shift_probe": true,
+        "chain_integrity_after_10x_growth": true,
+        "chain_integrity_final": true,
+        "shift_per_append": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "coordinate_shift": true,
+        "wall_clock_shift_detected": false,
+        "downstream_quality_candidate": 1.0,
+        "downstream_quality_frozen": 0.8780000000000001,
+        "downstream_degradation": 0.12199999999999989,
+        "downstream_degradation_magnitude_reported": 0.12199999999999989,
+        "downstream_degradation_cu": 0.0033333333333334103,
+        "downstream_degradation_rd": 0.30000000000000004,
+        "downstream_degradation_aggregate": 0.12199999999999989,
+        "downstream_quality_candidate_cu": 1.0,
+        "downstream_quality_candidate_rd": 1.0,
+        "downstream_quality_frozen_cu": 0.9966666666666666,
+        "downstream_quality_frozen_rd": 0.7,
+        "downstream_quality_oracle_cu": 1.0,
+        "downstream_quality_oracle_rd": 1.0,
+        "downstream_quality_candidate_aggregate": 1.0,
+        "downstream_quality_frozen_aggregate": 0.8780000000000001,
+        "downstream_quality_oracle_aggregate": 1.0,
+        "cu_degradation_by_construction": 0.0,
+        "aggregate_true_ceiling": 0.4,
+        "per_query_recall_table": [
+          {
+            "query_idx": 0,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 1,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.6,
+            "recall_oracle": 1.0,
+            "degradation": 0.4
+          },
+          {
+            "query_idx": 2,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.6,
+            "recall_oracle": 1.0,
+            "degradation": 0.4
+          },
+          {
+            "query_idx": 3,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.7,
+            "recall_oracle": 1.0,
+            "degradation": 0.30000000000000004
+          },
+          {
+            "query_idx": 4,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.7,
+            "recall_oracle": 1.0,
+            "degradation": 0.30000000000000004
+          },
+          {
+            "query_idx": 5,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.6,
+            "recall_oracle": 1.0,
+            "degradation": 0.4
+          },
+          {
+            "query_idx": 6,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 7,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 8,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 9,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.9,
+            "recall_oracle": 1.0,
+            "degradation": 0.09999999999999998
+          },
+          {
+            "query_idx": 10,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.7,
+            "recall_oracle": 1.0,
+            "degradation": 0.30000000000000004
+          },
+          {
+            "query_idx": 11,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.6,
+            "recall_oracle": 1.0,
+            "degradation": 0.4
+          },
+          {
+            "query_idx": 12,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 13,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.5,
+            "recall_oracle": 1.0,
+            "degradation": 0.5
+          },
+          {
+            "query_idx": 14,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.6,
+            "recall_oracle": 1.0,
+            "degradation": 0.4
+          },
+          {
+            "query_idx": 15,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.5,
+            "recall_oracle": 1.0,
+            "degradation": 0.5
+          },
+          {
+            "query_idx": 16,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 17,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.6,
+            "recall_oracle": 1.0,
+            "degradation": 0.4
+          },
+          {
+            "query_idx": 18,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.7,
+            "recall_oracle": 1.0,
+            "degradation": 0.30000000000000004
+          },
+          {
+            "query_idx": 19,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.7,
+            "recall_oracle": 1.0,
+            "degradation": 0.30000000000000004
+          },
+          {
+            "query_idx": 20,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 21,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 22,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 23,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 24,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 25,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.9,
+            "recall_oracle": 1.0,
+            "degradation": 0.09999999999999998
+          },
+          {
+            "query_idx": 26,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 27,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 28,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 29,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 30,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 31,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 32,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 33,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 34,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 35,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 36,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 37,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 38,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 39,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 40,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 41,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 42,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 43,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 44,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 45,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 46,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 47,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 48,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 49,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          }
+        ],
+        "n_cu_queries": 30,
+        "n_rd_queries": 20,
+        "n_total_consumer_queries": 50
+      },
+      "frozen_origin": {
+        "oracle_agreement": 0.465,
+        "downstream_quality_frozen": 0.8780000000000001,
+        "downstream_quality_frozen_cu": 0.9966666666666666,
+        "downstream_quality_frozen_rd": 0.7,
+        "downstream_quality_frozen_aggregate": 0.8780000000000001
+      },
+      "shuffled_cadence": {
+        "oracle_agreement": 0.0,
+        "chain_integrity": false
+      },
+      "oracle_index": {
+        "oracle_agreement": 1.0
+      },
+      "fair_naive": {
+        "oracle_agreement": 1.0,
+        "equivalence_agreement_vs_candidate": 1.0,
+        "fair_naive_scaling_curve": [
+          1.5e-06,
+          3.2e-06,
+          5.7e-06,
+          8.2e-06,
+          1.07e-05
+        ],
+        "fair_naive_latency_iqr_per_point": [
+          1e-07,
+          1e-07,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "fair_naive_slope": 1.0157598499061916e-08,
+        "fair_naive_intercept": 5.780487804878059e-07,
+        "fair_naive_latency_growth_10x": 7.133333333333333
+      },
+      "empty": {
+        "oracle_agreement": 0.0
+      },
+      "wall_clock_injection": {
+        "shift_vs_candidate": false
+      }
+    },
+    "43": {
+      "candidate": {
+        "oracle_agreement": 1.0,
+        "equivalence_agreement_vs_fair_naive": 1.0,
+        "latency_1x_seconds_membership": 2e-07,
+        "latency_10x_seconds_membership": 2e-07,
+        "latency_ratio_membership": 1.0,
+        "latency_1x_seconds_bounded_k": 1.1e-06,
+        "latency_10x_seconds_bounded_k": 1.5e-06,
+        "latency_ratio_bounded_k": 1.3636363636363635,
+        "raw_answer_size_1x": 47.265,
+        "raw_answer_size_10x": 469.325,
+        "raw_answer_size_ratio": 9.929651962339998,
+        "candidate_scaling_curve": [
+          2e-07,
+          2e-07,
+          2e-07,
+          2e-07,
+          2e-07
+        ],
+        "candidate_latency_iqr_per_point": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "candidate_slope": 0.0,
+        "candidate_intercept": 2e-07,
+        "candidate_latency_growth_10x": 1.0,
+        "chain_integrity_after_initial_build": true,
+        "chain_integrity_after_shift_probe": true,
+        "chain_integrity_after_10x_growth": true,
+        "chain_integrity_final": true,
+        "shift_per_append": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "coordinate_shift": true,
+        "wall_clock_shift_detected": false,
+        "downstream_quality_candidate": 1.0,
+        "downstream_quality_frozen": 0.9019999999999999,
+        "downstream_degradation": 0.09800000000000009,
+        "downstream_degradation_magnitude_reported": 0.09800000000000009,
+        "downstream_degradation_cu": 0.006666666666666599,
+        "downstream_degradation_rd": 0.23499999999999988,
+        "downstream_degradation_aggregate": 0.09800000000000009,
+        "downstream_quality_candidate_cu": 1.0,
+        "downstream_quality_candidate_rd": 1.0,
+        "downstream_quality_frozen_cu": 0.9933333333333334,
+        "downstream_quality_frozen_rd": 0.7650000000000001,
+        "downstream_quality_oracle_cu": 1.0,
+        "downstream_quality_oracle_rd": 1.0,
+        "downstream_quality_candidate_aggregate": 1.0,
+        "downstream_quality_frozen_aggregate": 0.9019999999999999,
+        "downstream_quality_oracle_aggregate": 1.0,
+        "cu_degradation_by_construction": 0.0,
+        "aggregate_true_ceiling": 0.4,
+        "per_query_recall_table": [
+          {
+            "query_idx": 0,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 1,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.9,
+            "recall_oracle": 1.0,
+            "degradation": 0.09999999999999998
+          },
+          {
+            "query_idx": 2,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.7,
+            "recall_oracle": 1.0,
+            "degradation": 0.30000000000000004
+          },
+          {
+            "query_idx": 3,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.7,
+            "recall_oracle": 1.0,
+            "degradation": 0.30000000000000004
+          },
+          {
+            "query_idx": 4,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.6,
+            "recall_oracle": 1.0,
+            "degradation": 0.4
+          },
+          {
+            "query_idx": 5,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.7,
+            "recall_oracle": 1.0,
+            "degradation": 0.30000000000000004
+          },
+          {
+            "query_idx": 6,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.9,
+            "recall_oracle": 1.0,
+            "degradation": 0.09999999999999998
+          },
+          {
+            "query_idx": 7,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.9,
+            "recall_oracle": 1.0,
+            "degradation": 0.09999999999999998
+          },
+          {
+            "query_idx": 8,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.9,
+            "recall_oracle": 1.0,
+            "degradation": 0.09999999999999998
+          },
+          {
+            "query_idx": 9,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.9,
+            "recall_oracle": 1.0,
+            "degradation": 0.09999999999999998
+          },
+          {
+            "query_idx": 10,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 11,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 12,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.7,
+            "recall_oracle": 1.0,
+            "degradation": 0.30000000000000004
+          },
+          {
+            "query_idx": 13,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 14,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.7,
+            "recall_oracle": 1.0,
+            "degradation": 0.30000000000000004
+          },
+          {
+            "query_idx": 15,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.5,
+            "recall_oracle": 1.0,
+            "degradation": 0.5
+          },
+          {
+            "query_idx": 16,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.6,
+            "recall_oracle": 1.0,
+            "degradation": 0.4
+          },
+          {
+            "query_idx": 17,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 18,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 19,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 20,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 21,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 22,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.9,
+            "recall_oracle": 1.0,
+            "degradation": 0.09999999999999998
+          },
+          {
+            "query_idx": 23,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 24,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 25,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 26,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 27,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 28,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 29,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 30,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 31,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 32,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 33,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 34,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 35,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 36,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.9,
+            "recall_oracle": 1.0,
+            "degradation": 0.09999999999999998
+          },
+          {
+            "query_idx": 37,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 38,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 39,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 40,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 41,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 42,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 43,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 44,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 45,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 46,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 47,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 48,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 49,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          }
+        ],
+        "n_cu_queries": 30,
+        "n_rd_queries": 20,
+        "n_total_consumer_queries": 50
+      },
+      "frozen_origin": {
+        "oracle_agreement": 0.47,
+        "downstream_quality_frozen": 0.9019999999999999,
+        "downstream_quality_frozen_cu": 0.9933333333333334,
+        "downstream_quality_frozen_rd": 0.7650000000000001,
+        "downstream_quality_frozen_aggregate": 0.9019999999999999
+      },
+      "shuffled_cadence": {
+        "oracle_agreement": 0.0,
+        "chain_integrity": false
+      },
+      "oracle_index": {
+        "oracle_agreement": 1.0
+      },
+      "fair_naive": {
+        "oracle_agreement": 1.0,
+        "equivalence_agreement_vs_candidate": 1.0,
+        "fair_naive_scaling_curve": [
+          1.5e-06,
+          3.2e-06,
+          5.7e-06,
+          8.2e-06,
+          1.07e-05
+        ],
+        "fair_naive_latency_iqr_per_point": [
+          1e-07,
+          1e-07,
+          1e-07,
+          7.5e-08,
+          0.0
+        ],
+        "fair_naive_slope": 1.0157598499061916e-08,
+        "fair_naive_intercept": 5.780487804878059e-07,
+        "fair_naive_latency_growth_10x": 7.133333333333333
+      },
+      "empty": {
+        "oracle_agreement": 0.0
+      },
+      "wall_clock_injection": {
+        "shift_vs_candidate": false
+      }
+    },
+    "44": {
+      "candidate": {
+        "oracle_agreement": 1.0,
+        "equivalence_agreement_vs_fair_naive": 1.0,
+        "latency_1x_seconds_membership": 2e-07,
+        "latency_10x_seconds_membership": 2e-07,
+        "latency_ratio_membership": 1.0,
+        "latency_1x_seconds_bounded_k": 6e-07,
+        "latency_10x_seconds_bounded_k": 6e-07,
+        "latency_ratio_bounded_k": 1.0,
+        "raw_answer_size_1x": 47.755,
+        "raw_answer_size_10x": 433.895,
+        "raw_answer_size_ratio": 9.085854884305308,
+        "candidate_scaling_curve": [
+          2e-07,
+          2e-07,
+          2e-07,
+          2e-07,
+          2e-07
+        ],
+        "candidate_latency_iqr_per_point": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "candidate_slope": 0.0,
+        "candidate_intercept": 2e-07,
+        "candidate_latency_growth_10x": 1.0,
+        "chain_integrity_after_initial_build": true,
+        "chain_integrity_after_shift_probe": true,
+        "chain_integrity_after_10x_growth": true,
+        "chain_integrity_final": true,
+        "shift_per_append": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "coordinate_shift": true,
+        "wall_clock_shift_detected": false,
+        "downstream_quality_candidate": 1.0,
+        "downstream_quality_frozen": 0.9079999999999999,
+        "downstream_degradation": 0.09200000000000008,
+        "downstream_degradation_magnitude_reported": 0.09200000000000008,
+        "downstream_degradation_cu": 0.0,
+        "downstream_degradation_rd": 0.22999999999999998,
+        "downstream_degradation_aggregate": 0.09200000000000008,
+        "downstream_quality_candidate_cu": 1.0,
+        "downstream_quality_candidate_rd": 1.0,
+        "downstream_quality_frozen_cu": 1.0,
+        "downstream_quality_frozen_rd": 0.77,
+        "downstream_quality_oracle_cu": 1.0,
+        "downstream_quality_oracle_rd": 1.0,
+        "downstream_quality_candidate_aggregate": 1.0,
+        "downstream_quality_frozen_aggregate": 0.9079999999999999,
+        "downstream_quality_oracle_aggregate": 1.0,
+        "cu_degradation_by_construction": 0.0,
+        "aggregate_true_ceiling": 0.4,
+        "per_query_recall_table": [
+          {
+            "query_idx": 0,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.7,
+            "recall_oracle": 1.0,
+            "degradation": 0.30000000000000004
+          },
+          {
+            "query_idx": 1,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.4,
+            "recall_oracle": 1.0,
+            "degradation": 0.6
+          },
+          {
+            "query_idx": 2,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.6,
+            "recall_oracle": 1.0,
+            "degradation": 0.4
+          },
+          {
+            "query_idx": 3,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.9,
+            "recall_oracle": 1.0,
+            "degradation": 0.09999999999999998
+          },
+          {
+            "query_idx": 4,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.9,
+            "recall_oracle": 1.0,
+            "degradation": 0.09999999999999998
+          },
+          {
+            "query_idx": 5,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 6,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.9,
+            "recall_oracle": 1.0,
+            "degradation": 0.09999999999999998
+          },
+          {
+            "query_idx": 7,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.5,
+            "recall_oracle": 1.0,
+            "degradation": 0.5
+          },
+          {
+            "query_idx": 8,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.9,
+            "recall_oracle": 1.0,
+            "degradation": 0.09999999999999998
+          },
+          {
+            "query_idx": 9,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 10,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.6,
+            "recall_oracle": 1.0,
+            "degradation": 0.4
+          },
+          {
+            "query_idx": 11,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 12,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.9,
+            "recall_oracle": 1.0,
+            "degradation": 0.09999999999999998
+          },
+          {
+            "query_idx": 13,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.9,
+            "recall_oracle": 1.0,
+            "degradation": 0.09999999999999998
+          },
+          {
+            "query_idx": 14,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.7,
+            "recall_oracle": 1.0,
+            "degradation": 0.30000000000000004
+          },
+          {
+            "query_idx": 15,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.9,
+            "recall_oracle": 1.0,
+            "degradation": 0.09999999999999998
+          },
+          {
+            "query_idx": 16,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.7,
+            "recall_oracle": 1.0,
+            "degradation": 0.30000000000000004
+          },
+          {
+            "query_idx": 17,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.6,
+            "recall_oracle": 1.0,
+            "degradation": 0.4
+          },
+          {
+            "query_idx": 18,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 19,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.9,
+            "recall_oracle": 1.0,
+            "degradation": 0.09999999999999998
+          },
+          {
+            "query_idx": 20,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 21,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 22,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 23,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 24,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 25,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 26,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 27,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 28,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 29,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 30,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 31,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 32,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 33,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 34,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 35,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 36,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 37,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 38,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 39,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 40,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 41,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 42,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 43,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 44,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 45,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 46,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 47,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 48,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 49,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          }
+        ],
+        "n_cu_queries": 30,
+        "n_rd_queries": 20,
+        "n_total_consumer_queries": 50
+      },
+      "frozen_origin": {
+        "oracle_agreement": 0.43,
+        "downstream_quality_frozen": 0.9079999999999999,
+        "downstream_quality_frozen_cu": 1.0,
+        "downstream_quality_frozen_rd": 0.77,
+        "downstream_quality_frozen_aggregate": 0.9079999999999999
+      },
+      "shuffled_cadence": {
+        "oracle_agreement": 0.0,
+        "chain_integrity": false
+      },
+      "oracle_index": {
+        "oracle_agreement": 1.0
+      },
+      "fair_naive": {
+        "oracle_agreement": 1.0,
+        "equivalence_agreement_vs_candidate": 1.0,
+        "fair_naive_scaling_curve": [
+          1.5e-06,
+          3.2e-06,
+          5.7e-06,
+          8.3e-06,
+          1.08e-05
+        ],
+        "fair_naive_latency_iqr_per_point": [
+          1e-07,
+          0.0,
+          0.0,
+          1e-07,
+          0.0
+        ],
+        "fair_naive_slope": 1.0290806754221392e-08,
+        "fair_naive_intercept": 5.487804878048781e-07,
+        "fair_naive_latency_growth_10x": 7.2
+      },
+      "empty": {
+        "oracle_agreement": 0.0
+      },
+      "wall_clock_injection": {
+        "shift_vs_candidate": false
+      }
+    },
+    "45": {
+      "candidate": {
+        "oracle_agreement": 1.0,
+        "equivalence_agreement_vs_fair_naive": 1.0,
+        "latency_1x_seconds_membership": 2e-07,
+        "latency_10x_seconds_membership": 2e-07,
+        "latency_ratio_membership": 1.0,
+        "latency_1x_seconds_bounded_k": 1.3e-06,
+        "latency_10x_seconds_bounded_k": 1.3e-06,
+        "latency_ratio_bounded_k": 1.0,
+        "raw_answer_size_1x": 47.53,
+        "raw_answer_size_10x": 541.43,
+        "raw_answer_size_ratio": 11.391331790448136,
+        "candidate_scaling_curve": [
+          2e-07,
+          2e-07,
+          2e-07,
+          2e-07,
+          2e-07
+        ],
+        "candidate_latency_iqr_per_point": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "candidate_slope": 0.0,
+        "candidate_intercept": 2e-07,
+        "candidate_latency_growth_10x": 1.0,
+        "chain_integrity_after_initial_build": true,
+        "chain_integrity_after_shift_probe": true,
+        "chain_integrity_after_10x_growth": true,
+        "chain_integrity_final": true,
+        "shift_per_append": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "coordinate_shift": true,
+        "wall_clock_shift_detected": false,
+        "downstream_quality_candidate": 1.0,
+        "downstream_quality_frozen": 0.88,
+        "downstream_degradation": 0.12,
+        "downstream_degradation_magnitude_reported": 0.12,
+        "downstream_degradation_cu": 0.0,
+        "downstream_degradation_rd": 0.30000000000000004,
+        "downstream_degradation_aggregate": 0.12,
+        "downstream_quality_candidate_cu": 1.0,
+        "downstream_quality_candidate_rd": 1.0,
+        "downstream_quality_frozen_cu": 1.0,
+        "downstream_quality_frozen_rd": 0.7,
+        "downstream_quality_oracle_cu": 1.0,
+        "downstream_quality_oracle_rd": 1.0,
+        "downstream_quality_candidate_aggregate": 1.0,
+        "downstream_quality_frozen_aggregate": 0.88,
+        "downstream_quality_oracle_aggregate": 1.0,
+        "cu_degradation_by_construction": 0.0,
+        "aggregate_true_ceiling": 0.4,
+        "per_query_recall_table": [
+          {
+            "query_idx": 0,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.7,
+            "recall_oracle": 1.0,
+            "degradation": 0.30000000000000004
+          },
+          {
+            "query_idx": 1,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 2,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.6,
+            "recall_oracle": 1.0,
+            "degradation": 0.4
+          },
+          {
+            "query_idx": 3,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 4,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.7,
+            "recall_oracle": 1.0,
+            "degradation": 0.30000000000000004
+          },
+          {
+            "query_idx": 5,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.5,
+            "recall_oracle": 1.0,
+            "degradation": 0.5
+          },
+          {
+            "query_idx": 6,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.6,
+            "recall_oracle": 1.0,
+            "degradation": 0.4
+          },
+          {
+            "query_idx": 7,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 8,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.6,
+            "recall_oracle": 1.0,
+            "degradation": 0.4
+          },
+          {
+            "query_idx": 9,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 10,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 11,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 12,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.7,
+            "recall_oracle": 1.0,
+            "degradation": 0.30000000000000004
+          },
+          {
+            "query_idx": 13,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.6,
+            "recall_oracle": 1.0,
+            "degradation": 0.4
+          },
+          {
+            "query_idx": 14,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 15,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.6,
+            "recall_oracle": 1.0,
+            "degradation": 0.4
+          },
+          {
+            "query_idx": 16,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.7,
+            "recall_oracle": 1.0,
+            "degradation": 0.30000000000000004
+          },
+          {
+            "query_idx": 17,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.5,
+            "recall_oracle": 1.0,
+            "degradation": 0.5
+          },
+          {
+            "query_idx": 18,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.7,
+            "recall_oracle": 1.0,
+            "degradation": 0.30000000000000004
+          },
+          {
+            "query_idx": 19,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.9,
+            "recall_oracle": 1.0,
+            "degradation": 0.09999999999999998
+          },
+          {
+            "query_idx": 20,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 21,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 22,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 23,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 24,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 25,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 26,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 27,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 28,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 29,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 30,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 31,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 32,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 33,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 34,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 35,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 36,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 37,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 38,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 39,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 40,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 41,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 42,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 43,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 44,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 45,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 46,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 47,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 48,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 49,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          }
+        ],
+        "n_cu_queries": 30,
+        "n_rd_queries": 20,
+        "n_total_consumer_queries": 50
+      },
+      "frozen_origin": {
+        "oracle_agreement": 0.55,
+        "downstream_quality_frozen": 0.88,
+        "downstream_quality_frozen_cu": 1.0,
+        "downstream_quality_frozen_rd": 0.7,
+        "downstream_quality_frozen_aggregate": 0.88
+      },
+      "shuffled_cadence": {
+        "oracle_agreement": 0.0,
+        "chain_integrity": false
+      },
+      "oracle_index": {
+        "oracle_agreement": 1.0
+      },
+      "fair_naive": {
+        "oracle_agreement": 1.0,
+        "equivalence_agreement_vs_candidate": 1.0,
+        "fair_naive_scaling_curve": [
+          1.5e-06,
+          3e-06,
+          5.6e-06,
+          8.1e-06,
+          1.06e-05
+        ],
+        "fair_naive_latency_iqr_per_point": [
+          0.0,
+          0.0,
+          1e-07,
+          0.0,
+          0.0
+        ],
+        "fair_naive_slope": 1.0129455909943719e-08,
+        "fair_naive_intercept": 4.926829268292707e-07,
+        "fair_naive_latency_growth_10x": 7.066666666666666
+      },
+      "empty": {
+        "oracle_agreement": 0.0
+      },
+      "wall_clock_injection": {
+        "shift_vs_candidate": false
+      }
+    },
+    "46": {
+      "candidate": {
+        "oracle_agreement": 1.0,
+        "equivalence_agreement_vs_fair_naive": 1.0,
+        "latency_1x_seconds_membership": 2e-07,
+        "latency_10x_seconds_membership": 2e-07,
+        "latency_ratio_membership": 1.0,
+        "latency_1x_seconds_bounded_k": 1.2e-06,
+        "latency_10x_seconds_bounded_k": 1.2e-06,
+        "latency_ratio_bounded_k": 1.0,
+        "raw_answer_size_1x": 51.775,
+        "raw_answer_size_10x": 491.795,
+        "raw_answer_size_ratio": 9.498696281989378,
+        "candidate_scaling_curve": [
+          2e-07,
+          2e-07,
+          2e-07,
+          2e-07,
+          2e-07
+        ],
+        "candidate_latency_iqr_per_point": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "candidate_slope": 0.0,
+        "candidate_intercept": 2e-07,
+        "candidate_latency_growth_10x": 1.0,
+        "chain_integrity_after_initial_build": true,
+        "chain_integrity_after_shift_probe": true,
+        "chain_integrity_after_10x_growth": true,
+        "chain_integrity_final": true,
+        "shift_per_append": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "coordinate_shift": true,
+        "wall_clock_shift_detected": false,
+        "downstream_quality_candidate": 1.0,
+        "downstream_quality_frozen": 0.8939999999999999,
+        "downstream_degradation": 0.1060000000000001,
+        "downstream_degradation_magnitude_reported": 0.1060000000000001,
+        "downstream_degradation_cu": 0.0033333333333334103,
+        "downstream_degradation_rd": 0.26,
+        "downstream_degradation_aggregate": 0.1060000000000001,
+        "downstream_quality_candidate_cu": 1.0,
+        "downstream_quality_candidate_rd": 1.0,
+        "downstream_quality_frozen_cu": 0.9966666666666666,
+        "downstream_quality_frozen_rd": 0.74,
+        "downstream_quality_oracle_cu": 1.0,
+        "downstream_quality_oracle_rd": 1.0,
+        "downstream_quality_candidate_aggregate": 1.0,
+        "downstream_quality_frozen_aggregate": 0.8939999999999999,
+        "downstream_quality_oracle_aggregate": 1.0,
+        "cu_degradation_by_construction": 0.0,
+        "aggregate_true_ceiling": 0.4,
+        "per_query_recall_table": [
+          {
+            "query_idx": 0,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.6,
+            "recall_oracle": 1.0,
+            "degradation": 0.4
+          },
+          {
+            "query_idx": 1,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.5,
+            "recall_oracle": 1.0,
+            "degradation": 0.5
+          },
+          {
+            "query_idx": 2,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 3,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.6,
+            "recall_oracle": 1.0,
+            "degradation": 0.4
+          },
+          {
+            "query_idx": 4,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 5,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 6,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 7,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 8,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.7,
+            "recall_oracle": 1.0,
+            "degradation": 0.30000000000000004
+          },
+          {
+            "query_idx": 9,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 10,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.6,
+            "recall_oracle": 1.0,
+            "degradation": 0.4
+          },
+          {
+            "query_idx": 11,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 12,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.5,
+            "recall_oracle": 1.0,
+            "degradation": 0.5
+          },
+          {
+            "query_idx": 13,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.6,
+            "recall_oracle": 1.0,
+            "degradation": 0.4
+          },
+          {
+            "query_idx": 14,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 15,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 16,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.9,
+            "recall_oracle": 1.0,
+            "degradation": 0.09999999999999998
+          },
+          {
+            "query_idx": 17,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.7,
+            "recall_oracle": 1.0,
+            "degradation": 0.30000000000000004
+          },
+          {
+            "query_idx": 18,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.8,
+            "recall_oracle": 1.0,
+            "degradation": 0.19999999999999996
+          },
+          {
+            "query_idx": 19,
+            "query_type": "rd",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.9,
+            "recall_oracle": 1.0,
+            "degradation": 0.09999999999999998
+          },
+          {
+            "query_idx": 20,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 21,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 22,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 23,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 24,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 25,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 26,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 27,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 28,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 29,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 30,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 31,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 32,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 33,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 34,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 35,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 0.9,
+            "recall_oracle": 1.0,
+            "degradation": 0.09999999999999998
+          },
+          {
+            "query_idx": 36,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 37,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 38,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 39,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 40,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 41,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 42,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 43,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 44,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 45,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 46,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 47,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 48,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          },
+          {
+            "query_idx": 49,
+            "query_type": "cu",
+            "recall_candidate": 1.0,
+            "recall_frozen": 1.0,
+            "recall_oracle": 1.0,
+            "degradation": 0.0
+          }
+        ],
+        "n_cu_queries": 30,
+        "n_rd_queries": 20,
+        "n_total_consumer_queries": 50
+      },
+      "frozen_origin": {
+        "oracle_agreement": 0.49,
+        "downstream_quality_frozen": 0.8939999999999999,
+        "downstream_quality_frozen_cu": 0.9966666666666666,
+        "downstream_quality_frozen_rd": 0.74,
+        "downstream_quality_frozen_aggregate": 0.8939999999999999
+      },
+      "shuffled_cadence": {
+        "oracle_agreement": 0.0,
+        "chain_integrity": false
+      },
+      "oracle_index": {
+        "oracle_agreement": 1.0
+      },
+      "fair_naive": {
+        "oracle_agreement": 1.0,
+        "equivalence_agreement_vs_candidate": 1.0,
+        "fair_naive_scaling_curve": [
+          1.5e-06,
+          3.1e-06,
+          5.6e-06,
+          8.1e-06,
+          1.06e-05
+        ],
+        "fair_naive_latency_iqr_per_point": [
+          0.0,
+          0.0,
+          0.0,
+          1e-07,
+          0.0
+        ],
+        "fair_naive_slope": 1.007879924953096e-08,
+        "fair_naive_intercept": 5.390243902439038e-07,
+        "fair_naive_latency_growth_10x": 7.066666666666666
+      },
+      "empty": {
+        "oracle_agreement": 0.0
+      },
+      "wall_clock_injection": {
+        "shift_vs_candidate": false
+      }
+    }
+  },
+  "mean_over_seeds": {
+    "candidate": {
+      "oracle_agreement": 1.0,
+      "equivalence_agreement_vs_fair_naive": 1.0,
+      "latency_ratio_membership": 1.0,
+      "latency_ratio_bounded_k": 1.0727272727272728,
+      "raw_answer_size_1x": 48.643,
+      "raw_answer_size_10x": 480.58099999999996,
+      "raw_answer_size_ratio": 9.889309070132782,
+      "candidate_slope": 0.0,
+      "fair_naive_slope": 1.0162851782363982e-08,
+      "scaling_collapse_ratio": 0.0,
+      "candidate_latency_growth_10x": 1.0,
+      "fair_naive_latency_growth_10x": 7.119999999999999,
+      "battery_valid": true,
+      "chain_integrity_final": 1.0,
+      "coordinate_shift": 1.0,
+      "wall_clock_shift_detected": 0.0,
+      "downstream_quality_candidate": 1.0,
+      "downstream_quality_frozen": 0.8924,
+      "downstream_degradation": 0.10760000000000003,
+      "downstream_degradation_floor": 0.05,
+      "downstream_degradation_consistent": true,
+      "downstream_degradation_cu": 0.002666666666666684,
+      "downstream_degradation_rd": 0.265,
+      "downstream_degradation_aggregate": 0.10760000000000003,
+      "downstream_quality_candidate_cu": 1.0,
+      "downstream_quality_candidate_rd": 1.0,
+      "downstream_quality_frozen_cu": 0.9973333333333333,
+      "downstream_quality_frozen_rd": 0.7350000000000001,
+      "downstream_quality_oracle_cu": 1.0,
+      "downstream_quality_oracle_rd": 1.0,
+      "cu_degradation_by_construction": 0.0,
+      "aggregate_true_ceiling": 0.4
+    },
+    "frozen_origin": {
+      "oracle_agreement": 0.48100000000000004,
+      "downstream_quality_frozen": 0.8924,
+      "downstream_quality_frozen_cu": 0.9973333333333333,
+      "downstream_quality_frozen_rd": 0.7350000000000001,
+      "downstream_quality_frozen_aggregate": 0.8924
+    },
+    "shuffled_cadence": {
+      "oracle_agreement": 0.0,
+      "chain_integrity": 0.0
+    },
+    "oracle_index": {
+      "oracle_agreement": 1.0
+    },
+    "fair_naive": {
+      "oracle_agreement": 1.0,
+      "equivalence_agreement_vs_candidate": 1.0,
+      "fair_naive_slope": 1.0162851782363982e-08,
+      "fair_naive_latency_growth_10x": 7.119999999999999
+    },
+    "empty": {
+      "oracle_agreement": 0.0
+    },
+    "wall_clock_injection": {
+      "shift_vs_candidate": 0.0
+    }
+  },
+  "property_i_correctness": {
+    "oracle_agreement": 1.0,
+    "bar": 1.0,
+    "passes": true,
+    "per_query_agreement_vs_oracle": {
+      "42": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "43": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "44": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "45": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "46": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    }
+  },
+  "property_ii_operational_distinctness": {
+    "latency_ratio_membership": 1.0,
+    "latency_ratio_bounded_k": 1.0727272727272728,
+    "latency_bar": 2.0,
+    "latency_passes": true,
+    "candidate_latency_growth_10x": 1.0,
+    "fair_naive_latency_growth_10x": 7.119999999999999,
+    "battery_valid": true,
+    "battery_validity_bar": 4.0,
+    "state_dependent_collapse_bar": 2.0,
+    "state_dependent_passes": true,
+    "instrument_failure": false,
+    "instrument_failure_reason": "n/a",
+    "candidate_slope": 0.0,
+    "fair_naive_slope": 1.0162851782363982e-08,
+    "scaling_collapse_ratio": 0.0,
+    "scaling_collapse_note": "REPORTED diagnostic ONLY (slope ratio); never a trigger per Rebecca Q2 ruling",
+    "candidate_scaling_curve_mean": [
+      2e-07,
+      2e-07,
+      2e-07,
+      2e-07,
+      2e-07
+    ],
+    "fair_naive_scaling_curve_mean": [
+      1.5e-06,
+      3.1399999999999996e-06,
+      5.66e-06,
+      8.18e-06,
+      1.068e-05
+    ],
+    "candidate_latency_iqr_per_point_mean": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "fair_naive_latency_iqr_per_point_mean": [
+      6e-08,
+      4e-08,
+      4e-08,
+      5.5e-08,
+      0.0
+    ],
+    "timing_methodology": "median over >=100 reps, warm-up excluded, perf_counter_ns high-resolution monotonic clock with batch fallback for sub-clock-resolution operations, IQR reported",
+    "equivalence_agreement_vs_fair_naive": 1.0,
+    "equivalence_note": "REPORTED diagnostic; expected ~1.0 (fair-naive == oracle on answers per Rebecca's theorem); carries NO kill and NO distinctness claim"
+  },
+  "property_iii_load_bearing_coupling": {
+    "downstream_degradation_per_seed": {
+      "42": 0.12199999999999989,
+      "43": 0.09800000000000009,
+      "44": 0.09200000000000008,
+      "45": 0.12,
+      "46": 0.1060000000000001
+    },
+    "downstream_degradation_mean": 0.10760000000000003,
+    "downstream_degradation_floor": 0.05,
+    "downstream_degradation_magnitude_note": "the floor is a floor, not a finding \u2014 observed magnitude reported (Q3 attachment 2)",
+    "downstream_degradation_consistent": true,
+    "passes": true,
+    "downstream_quality_candidate_per_seed": {
+      "42": 1.0,
+      "43": 1.0,
+      "44": 1.0,
+      "45": 1.0,
+      "46": 1.0
+    },
+    "downstream_quality_frozen_per_seed": {
+      "42": 0.8780000000000001,
+      "43": 0.9019999999999999,
+      "44": 0.9079999999999999,
+      "45": 0.88,
+      "46": 0.8939999999999999
+    },
+    "downstream_degradation_cu_per_seed": {
+      "42": 0.0033333333333334103,
+      "43": 0.006666666666666599,
+      "44": 0.0,
+      "45": 0.0,
+      "46": 0.0033333333333334103
+    },
+    "downstream_degradation_rd_per_seed": {
+      "42": 0.30000000000000004,
+      "43": 0.23499999999999988,
+      "44": 0.22999999999999998,
+      "45": 0.30000000000000004,
+      "46": 0.26
+    },
+    "downstream_degradation_aggregate_per_seed": {
+      "42": 0.12199999999999989,
+      "43": 0.09800000000000009,
+      "44": 0.09200000000000008,
+      "45": 0.12,
+      "46": 0.1060000000000001
+    },
+    "downstream_degradation_cu_mean": 0.002666666666666684,
+    "downstream_degradation_rd_mean": 0.265,
+    "downstream_degradation_aggregate_mean": 0.10760000000000003,
+    "downstream_quality_candidate_cu_per_seed": {
+      "42": 1.0,
+      "43": 1.0,
+      "44": 1.0,
+      "45": 1.0,
+      "46": 1.0
+    },
+    "downstream_quality_candidate_rd_per_seed": {
+      "42": 1.0,
+      "43": 1.0,
+      "44": 1.0,
+      "45": 1.0,
+      "46": 1.0
+    },
+    "downstream_quality_frozen_cu_per_seed": {
+      "42": 0.9966666666666666,
+      "43": 0.9933333333333334,
+      "44": 1.0,
+      "45": 1.0,
+      "46": 0.9966666666666666
+    },
+    "downstream_quality_frozen_rd_per_seed": {
+      "42": 0.7,
+      "43": 0.7650000000000001,
+      "44": 0.77,
+      "45": 0.7,
+      "46": 0.74
+    },
+    "downstream_quality_oracle_cu_per_seed": {
+      "42": 1.0,
+      "43": 1.0,
+      "44": 1.0,
+      "45": 1.0,
+      "46": 1.0
+    },
+    "downstream_quality_oracle_rd_per_seed": {
+      "42": 1.0,
+      "43": 1.0,
+      "44": 1.0,
+      "45": 1.0,
+      "46": 1.0
+    },
+    "downstream_quality_candidate_cu_mean": 1.0,
+    "downstream_quality_candidate_rd_mean": 1.0,
+    "downstream_quality_frozen_cu_mean": 0.9973333333333333,
+    "downstream_quality_frozen_rd_mean": 0.7350000000000001,
+    "downstream_quality_oracle_cu_mean": 1.0,
+    "downstream_quality_oracle_rd_mean": 1.0,
+    "cu_degradation_by_construction": 0.0,
+    "cu_degradation_by_construction_note": "R2: CU degradation is 0.000 BY CONSTRUCTION (bucket size = k: recency reorders within the top-k set but cannot change it; recall@k is set-based). The aggregate's true ceiling is 0.4 (RD fraction).",
+    "aggregate_true_ceiling": 0.4,
+    "aggregate_true_ceiling_note": "R2: the aggregate's true ceiling is 0.4 (RD fraction = 20/50). 0.102 is read as ~26% degradation on recency-capable queries, NOT as a small global effect.",
+    "frozen_cu_recall_specificity_control": 0.9973333333333333,
+    "frozen_cu_recall_specificity_control_note": "R2: frozen's CU recall reported as SPECIFICITY CONTROL (L8 pattern). Pre-registered expectation: frozen's CU recall should remain HIGH, demonstrating degradation is SPECIFIC to destroyed temporal organization, not general consumer breakage.",
+    "frozen_cu_recall_expectation": "PRE-REGISTERED EXPECTATION (R2, L8 pattern): frozen's CU recall should remain HIGH, demonstrating that the measured degradation is SPECIFIC to the destroyed temporal organization (recency gradient collapsed to a constant under Option E), NOT general consumer breakage. CU degradation is 0.000 BY CONSTRUCTION (bucket size = k: recency reorders within the top-k set but cannot change it; recall@k is set-based).",
+    "per_query_recall_tables": {
+      "42": [
+        {
+          "query_idx": 0,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 1,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.6,
+          "recall_oracle": 1.0,
+          "degradation": 0.4
+        },
+        {
+          "query_idx": 2,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.6,
+          "recall_oracle": 1.0,
+          "degradation": 0.4
+        },
+        {
+          "query_idx": 3,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.7,
+          "recall_oracle": 1.0,
+          "degradation": 0.30000000000000004
+        },
+        {
+          "query_idx": 4,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.7,
+          "recall_oracle": 1.0,
+          "degradation": 0.30000000000000004
+        },
+        {
+          "query_idx": 5,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.6,
+          "recall_oracle": 1.0,
+          "degradation": 0.4
+        },
+        {
+          "query_idx": 6,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 7,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 8,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 9,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.9,
+          "recall_oracle": 1.0,
+          "degradation": 0.09999999999999998
+        },
+        {
+          "query_idx": 10,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.7,
+          "recall_oracle": 1.0,
+          "degradation": 0.30000000000000004
+        },
+        {
+          "query_idx": 11,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.6,
+          "recall_oracle": 1.0,
+          "degradation": 0.4
+        },
+        {
+          "query_idx": 12,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 13,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.5,
+          "recall_oracle": 1.0,
+          "degradation": 0.5
+        },
+        {
+          "query_idx": 14,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.6,
+          "recall_oracle": 1.0,
+          "degradation": 0.4
+        },
+        {
+          "query_idx": 15,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.5,
+          "recall_oracle": 1.0,
+          "degradation": 0.5
+        },
+        {
+          "query_idx": 16,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 17,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.6,
+          "recall_oracle": 1.0,
+          "degradation": 0.4
+        },
+        {
+          "query_idx": 18,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.7,
+          "recall_oracle": 1.0,
+          "degradation": 0.30000000000000004
+        },
+        {
+          "query_idx": 19,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.7,
+          "recall_oracle": 1.0,
+          "degradation": 0.30000000000000004
+        },
+        {
+          "query_idx": 20,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 21,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 22,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 23,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 24,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 25,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.9,
+          "recall_oracle": 1.0,
+          "degradation": 0.09999999999999998
+        },
+        {
+          "query_idx": 26,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 27,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 28,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 29,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 30,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 31,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 32,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 33,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 34,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 35,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 36,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 37,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 38,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 39,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 40,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 41,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 42,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 43,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 44,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 45,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 46,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 47,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 48,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 49,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        }
+      ],
+      "43": [
+        {
+          "query_idx": 0,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 1,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.9,
+          "recall_oracle": 1.0,
+          "degradation": 0.09999999999999998
+        },
+        {
+          "query_idx": 2,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.7,
+          "recall_oracle": 1.0,
+          "degradation": 0.30000000000000004
+        },
+        {
+          "query_idx": 3,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.7,
+          "recall_oracle": 1.0,
+          "degradation": 0.30000000000000004
+        },
+        {
+          "query_idx": 4,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.6,
+          "recall_oracle": 1.0,
+          "degradation": 0.4
+        },
+        {
+          "query_idx": 5,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.7,
+          "recall_oracle": 1.0,
+          "degradation": 0.30000000000000004
+        },
+        {
+          "query_idx": 6,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.9,
+          "recall_oracle": 1.0,
+          "degradation": 0.09999999999999998
+        },
+        {
+          "query_idx": 7,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.9,
+          "recall_oracle": 1.0,
+          "degradation": 0.09999999999999998
+        },
+        {
+          "query_idx": 8,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.9,
+          "recall_oracle": 1.0,
+          "degradation": 0.09999999999999998
+        },
+        {
+          "query_idx": 9,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.9,
+          "recall_oracle": 1.0,
+          "degradation": 0.09999999999999998
+        },
+        {
+          "query_idx": 10,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 11,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 12,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.7,
+          "recall_oracle": 1.0,
+          "degradation": 0.30000000000000004
+        },
+        {
+          "query_idx": 13,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 14,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.7,
+          "recall_oracle": 1.0,
+          "degradation": 0.30000000000000004
+        },
+        {
+          "query_idx": 15,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.5,
+          "recall_oracle": 1.0,
+          "degradation": 0.5
+        },
+        {
+          "query_idx": 16,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.6,
+          "recall_oracle": 1.0,
+          "degradation": 0.4
+        },
+        {
+          "query_idx": 17,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 18,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 19,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 20,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 21,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 22,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.9,
+          "recall_oracle": 1.0,
+          "degradation": 0.09999999999999998
+        },
+        {
+          "query_idx": 23,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 24,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 25,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 26,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 27,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 28,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 29,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 30,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 31,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 32,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 33,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 34,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 35,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 36,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.9,
+          "recall_oracle": 1.0,
+          "degradation": 0.09999999999999998
+        },
+        {
+          "query_idx": 37,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 38,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 39,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 40,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 41,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 42,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 43,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 44,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 45,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 46,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 47,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 48,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 49,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        }
+      ],
+      "44": [
+        {
+          "query_idx": 0,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.7,
+          "recall_oracle": 1.0,
+          "degradation": 0.30000000000000004
+        },
+        {
+          "query_idx": 1,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.4,
+          "recall_oracle": 1.0,
+          "degradation": 0.6
+        },
+        {
+          "query_idx": 2,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.6,
+          "recall_oracle": 1.0,
+          "degradation": 0.4
+        },
+        {
+          "query_idx": 3,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.9,
+          "recall_oracle": 1.0,
+          "degradation": 0.09999999999999998
+        },
+        {
+          "query_idx": 4,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.9,
+          "recall_oracle": 1.0,
+          "degradation": 0.09999999999999998
+        },
+        {
+          "query_idx": 5,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 6,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.9,
+          "recall_oracle": 1.0,
+          "degradation": 0.09999999999999998
+        },
+        {
+          "query_idx": 7,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.5,
+          "recall_oracle": 1.0,
+          "degradation": 0.5
+        },
+        {
+          "query_idx": 8,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.9,
+          "recall_oracle": 1.0,
+          "degradation": 0.09999999999999998
+        },
+        {
+          "query_idx": 9,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 10,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.6,
+          "recall_oracle": 1.0,
+          "degradation": 0.4
+        },
+        {
+          "query_idx": 11,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 12,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.9,
+          "recall_oracle": 1.0,
+          "degradation": 0.09999999999999998
+        },
+        {
+          "query_idx": 13,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.9,
+          "recall_oracle": 1.0,
+          "degradation": 0.09999999999999998
+        },
+        {
+          "query_idx": 14,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.7,
+          "recall_oracle": 1.0,
+          "degradation": 0.30000000000000004
+        },
+        {
+          "query_idx": 15,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.9,
+          "recall_oracle": 1.0,
+          "degradation": 0.09999999999999998
+        },
+        {
+          "query_idx": 16,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.7,
+          "recall_oracle": 1.0,
+          "degradation": 0.30000000000000004
+        },
+        {
+          "query_idx": 17,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.6,
+          "recall_oracle": 1.0,
+          "degradation": 0.4
+        },
+        {
+          "query_idx": 18,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 19,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.9,
+          "recall_oracle": 1.0,
+          "degradation": 0.09999999999999998
+        },
+        {
+          "query_idx": 20,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 21,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 22,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 23,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 24,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 25,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 26,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 27,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 28,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 29,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 30,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 31,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 32,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 33,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 34,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 35,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 36,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 37,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 38,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 39,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 40,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 41,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 42,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 43,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 44,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 45,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 46,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 47,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 48,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 49,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        }
+      ],
+      "45": [
+        {
+          "query_idx": 0,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.7,
+          "recall_oracle": 1.0,
+          "degradation": 0.30000000000000004
+        },
+        {
+          "query_idx": 1,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 2,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.6,
+          "recall_oracle": 1.0,
+          "degradation": 0.4
+        },
+        {
+          "query_idx": 3,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 4,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.7,
+          "recall_oracle": 1.0,
+          "degradation": 0.30000000000000004
+        },
+        {
+          "query_idx": 5,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.5,
+          "recall_oracle": 1.0,
+          "degradation": 0.5
+        },
+        {
+          "query_idx": 6,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.6,
+          "recall_oracle": 1.0,
+          "degradation": 0.4
+        },
+        {
+          "query_idx": 7,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 8,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.6,
+          "recall_oracle": 1.0,
+          "degradation": 0.4
+        },
+        {
+          "query_idx": 9,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 10,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 11,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 12,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.7,
+          "recall_oracle": 1.0,
+          "degradation": 0.30000000000000004
+        },
+        {
+          "query_idx": 13,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.6,
+          "recall_oracle": 1.0,
+          "degradation": 0.4
+        },
+        {
+          "query_idx": 14,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 15,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.6,
+          "recall_oracle": 1.0,
+          "degradation": 0.4
+        },
+        {
+          "query_idx": 16,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.7,
+          "recall_oracle": 1.0,
+          "degradation": 0.30000000000000004
+        },
+        {
+          "query_idx": 17,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.5,
+          "recall_oracle": 1.0,
+          "degradation": 0.5
+        },
+        {
+          "query_idx": 18,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.7,
+          "recall_oracle": 1.0,
+          "degradation": 0.30000000000000004
+        },
+        {
+          "query_idx": 19,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.9,
+          "recall_oracle": 1.0,
+          "degradation": 0.09999999999999998
+        },
+        {
+          "query_idx": 20,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 21,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 22,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 23,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 24,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 25,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 26,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 27,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 28,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 29,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 30,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 31,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 32,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 33,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 34,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 35,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 36,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 37,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 38,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 39,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 40,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 41,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 42,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 43,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 44,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 45,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 46,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 47,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 48,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 49,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        }
+      ],
+      "46": [
+        {
+          "query_idx": 0,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.6,
+          "recall_oracle": 1.0,
+          "degradation": 0.4
+        },
+        {
+          "query_idx": 1,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.5,
+          "recall_oracle": 1.0,
+          "degradation": 0.5
+        },
+        {
+          "query_idx": 2,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 3,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.6,
+          "recall_oracle": 1.0,
+          "degradation": 0.4
+        },
+        {
+          "query_idx": 4,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 5,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 6,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 7,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 8,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.7,
+          "recall_oracle": 1.0,
+          "degradation": 0.30000000000000004
+        },
+        {
+          "query_idx": 9,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 10,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.6,
+          "recall_oracle": 1.0,
+          "degradation": 0.4
+        },
+        {
+          "query_idx": 11,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 12,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.5,
+          "recall_oracle": 1.0,
+          "degradation": 0.5
+        },
+        {
+          "query_idx": 13,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.6,
+          "recall_oracle": 1.0,
+          "degradation": 0.4
+        },
+        {
+          "query_idx": 14,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 15,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 16,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.9,
+          "recall_oracle": 1.0,
+          "degradation": 0.09999999999999998
+        },
+        {
+          "query_idx": 17,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.7,
+          "recall_oracle": 1.0,
+          "degradation": 0.30000000000000004
+        },
+        {
+          "query_idx": 18,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.8,
+          "recall_oracle": 1.0,
+          "degradation": 0.19999999999999996
+        },
+        {
+          "query_idx": 19,
+          "query_type": "rd",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.9,
+          "recall_oracle": 1.0,
+          "degradation": 0.09999999999999998
+        },
+        {
+          "query_idx": 20,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 21,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 22,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 23,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 24,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 25,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 26,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 27,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 28,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 29,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 30,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 31,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 32,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 33,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 34,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 35,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 0.9,
+          "recall_oracle": 1.0,
+          "degradation": 0.09999999999999998
+        },
+        {
+          "query_idx": 36,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 37,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 38,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 39,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 40,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 41,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 42,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 43,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 44,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 45,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 46,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 47,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 48,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        },
+        {
+          "query_idx": 49,
+          "query_type": "cu",
+          "recall_candidate": 1.0,
+          "recall_frozen": 1.0,
+          "recall_oracle": 1.0,
+          "degradation": 0.0
+        }
+      ]
+    },
+    "r4_auditable_arithmetic_note": "R4: per-query recall tables shipped so the JUDGE can recompute the aggregate from raw values alone (M1 standard: no agent's characterization is evidence). aggregate = mean over all 50 queries of (1 - recall_frozen); CU = mean over 30 CU queries; RD = mean over 20 RD queries.",
+    "n_cu_queries": 30,
+    "n_rd_queries": 20,
+    "n_total_consumer_queries": 50,
+    "recency_discriminative_fraction": 0.4,
+    "consumer_spec": "additive relevance: dot(v(e),q) + lambda*exp(-coord_cycle_relative/tau) on 32-d bucketed spike feature vectors, 50 queries/seed (20 RD targeting 20 RD content-buckets of size K_rd=30 > k, + 30 CU targeting 30 CU content-buckets of size exactly k=10), tau=50 (pinned Q3-1), lambda=16.0, A=10.0, sigma_f=sigma_q=0.10, k=10, coord_cycle_relative only (NB-4 accepted for E1); frozen-origin ablation = Option E (coord_cycle_relative=0 at birth for all entries -> recency bonus collapses to constant lambda -> frozen ranks purely by content; never re-resolved); recency-discriminative fraction = 40%; R1-R4 reporting per REBECCA_OPTION_E_SIGNOFF.md"
+  },
+  "kill_conditions": {
+    "(b)_chain_breaks": {
+      "fires": false,
+      "metric": "chain_integrity_final",
+      "value": 1.0,
+      "bar": 1.0,
+      "trigger": "value < 1.0",
+      "construction_break": false,
+      "re_resolution_break": false
+    },
+    "(c)_no_shift": {
+      "fires": false,
+      "metric": "coordinate_shift",
+      "value": 1.0,
+      "bar": 1.0,
+      "trigger": "value < 1.0",
+      "wiring_defect": false,
+      "partial_failure": false
+    },
+    "(d)_scanning_or_collapse": {
+      "fires": false,
+      "metric": "latency_ratio AND state_dependent_collapse",
+      "value_latency_membership": 1.0,
+      "value_latency_bounded_k": 1.0727272727272728,
+      "value_candidate_latency_growth_10x": 1.0,
+      "value_fair_naive_latency_growth_10x": 7.119999999999999,
+      "value_battery_valid": true,
+      "bar_latency": 2.0,
+      "bar_state_dependent_collapse": 2.0,
+      "bar_battery_validity": 4.0,
+      "trigger": "either latency > 2.0 [d1] OR (battery_valid AND candidate_growth_10x > 2.0) [d2]; if battery invalid -> instrument failure (not a kill)",
+      "instrument_failure": false
+    },
+    "(e)_wall_clock_shift": {
+      "fires": false,
+      "metric": "wall_clock_shift_detected",
+      "value": 0.0,
+      "bar": 0.0,
+      "trigger": "value > 0.0"
+    },
+    "(f)_incorrect": {
+      "fires": false,
+      "metric": "oracle_agreement",
+      "value": 1.0,
+      "bar": 1.0,
+      "trigger": "value < 1.0",
+      "signed": true
+    },
+    "retired": {
+      "(a)_collapse_to_naive": {
+        "status": "RETIRED per Rebecca E1 gate ruling",
+        "rationale": "unsatisfiable by construction (fair-naive == oracle on answers; the pair {naive_agreement <= 0.90, oracle_agreement = 1.0} is jointly unsatisfiable)",
+        "metric_reported_as_diagnostic": "equivalence_agreement_vs_fair_naive"
+      }
+    },
+    "any_fires": false,
+    "candidate_dead": false
+  },
+  "reproducibility": {
+    "method": "re-run all 5 seeds a second time within the same process; verify bit-identical results",
+    "max_abs_diff_per_seed": {
+      "42": 0.0,
+      "43": 0.0,
+      "44": 0.0,
+      "45": 0.0,
+      "46": 0.0
+    },
+    "bit_identical": true
+  }
+}
