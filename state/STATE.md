@@ -7,9 +7,9 @@
 ```yaml
 # STATE.md — team operational schema (under Rebecca's M0 addendum, Entry 13 / O-10)
 # Updated by: INTEGRATOR (sole writer). RECORDER records hash at every merge.
-# Last-updated: 2026-08-16T12:12:00-04:00.
+# Last-updated: 2026-08-16T12:53:00-04:00.
 
-milestone: M3                       # M1 GREEN (Entry 24); M2 GREEN/SEALED/ACCEPTED (Entry 34); M3/E2 V4 CRITIC CLEAR (Entry 38); Rebecca M3 GO — timebox ACTIVE (Entry 39); BUILD GO (Entry 41); TASK BUILDER implemented; V4.1/V4.2 amendments CRITIC-cleared; PR #5 merged implementation; PR #6 fixed scoring-mode seed routing; CRITIC final clearance: CLEARED FOR SCORING; courier packet CRITIC-cleared; Rebecca authorized L1 permuted-arm amendment before scoring; ready for scoring via supervised executor
+milestone: M3                       # M1 GREEN (Entry 24); M2 GREEN/SEALED/ACCEPTED (Entry 34); M3/E2 V4 CRITIC CLEAR (Entry 38); Rebecca M3 GO — timebox ACTIVE (Entry 39); BUILD GO (Entry 41); CLEARED FOR SCORING (Entry 42); M3 scoring run returned: INSTRUMENT FAILURE — L1 shuffled arm null-band violations on seeds 201/203; L1 candidate bars PASS all seeds (no kills); L3/L5/L6 PASS all seeds; O-14 no rerun; awaiting CRITIC results review and Rebecca's delivery gate ruling
 session_count: 5                    # completed working sessions (M1: 1; M2: 1; M3 spec cycle: 2 — V0→V3 BLOCKED, V4 CLEARED; M3 GO + task spec: 1 — GO ruling, task spec/courier arch prepared, CRITIC narrow BLOCK)
 milestone_session_budget: 4        # M3 timebox: 4 sessions / 8 calendar days (Rebecca M3 GO ruling, active starting 2026-08-15)
 
@@ -18,7 +18,7 @@ timebox:
   m2_started: 2026-08-15            # M2 timebox clock started 2026-08-15 (CRITIC cleared Q2/Q3 incorporations)
   m2_sessions_consumed: 1            # M2 consumed 1 session
   m2_days_consumed: 1               # M2 consumed 1 day
-  m3_status: cleared_for_scoring     # CRITIC final clearance: CLEARED FOR SCORING; implementation merged (PR #5 at 7fdf033); scoring-mode seed routing fixed (PR #6 at 24040ea); courier packet CRITIC-cleared; Rebecca authorized L1 permuted-arm amendment before scoring; V4.2 amendment and implementation CRITIC-cleared; ready for scoring via Rebecca's supervised executor
+  m3_status: instrument_failure     # M3 scoring run returned INSTRUMENT FAILURE — L1 shuffled arm null-band violations on seeds 201 and 203; L1 PASS on seed 202; L1 candidate bars PASS all seeds (no kills); L3/L5/L6 PASS all seeds; O-14 no rerun authorized; terminal round-trip log missing; seed ledger labeling bug; manifest stale wording; awaiting CRITIC review and Rebecca's delivery gate ruling
   m3_sessions_consumed: 1            # M3 timebox: 1 session consumed (INTEGRATOR prepared task spec + courier architecture; CRITIC reviewed)
   m3_days_consumed: 1               # M3 timebox: 1 day consumed
   m3_session_cap: 4
@@ -27,7 +27,7 @@ timebox:
   m3_tripwire_after_session: 2
   m3_tripwire_after_day: 4
   m3_tripwire_calendar: 2026-08-19   # started + 4 days
-  m3_note: "CRITIC final clearance ruling: CLEARED FOR SCORING (reviews/critic_m3_final_clearance_ruling.md). TASK BUILDER implemented M3 harness (src/m3_harness.py) against approved task spec; V4.1 L3 amendment and V4.2 L1 permuted-arm amendment CRITIC-cleared; Rebecca authorized L1 permuted-arm amendment before scoring. PR #5 merged implementation to main at 7fdf033. PR #6 fixed scoring-mode seed routing (hold-out seeds 201,202,203 accepted in scoring mode) at 24040ea. Courier scoring packet CRITIC-cleared (specs/m3_e2_courier_scoring_packet.md). Scoring command: python src/m3_harness.py --law all --seeds 201,202,203 --verify-reproducibility --output-dir ./m3_scoring_output. Hold-out seeds {201,202,203} — all 3 unseen in development (O-35 satisfied). No re-run-on-failure (O-14). No L15-L17 integration claim. §1.1 growth-bar proposal remains diagnostic-only and non-gating pending separate Rebecca ruling."
+  m3_note: "M3 scoring run returned INSTRUMENT FAILURE (reviews/judge_m3_scoring_ruling.md). Scoring command: python src/m3_harness.py --law all --seeds 201,202,203 --verify-reproducibility --output-dir ./m3_scoring_output. Attested commit: 3a4e636f (Rebecca's attestation). Package SHA-256: d5a5bc12daadf7007ea277bc20a03047bb41c74f3a955fed9bf0dcbf07db87d3 (VERIFIED by JUDGE). L1 INSTRUMENT_FAILURE on seeds 201 and 203 (shuffled arm conditional rho outside null band — 3 bin-level violations across 2 seeds). L1 PASS on seed 202. L1 candidate bars PASS all seeds (no kills). L3/L5/L6 PASS all seeds with all bars and controls independently verified by JUDGE. Reproducibility: bit_identical=True. L20: PASS. Non-blocking deviations: terminal round-trip log missing (Rebecca attests inadvertent), commit hash 3a4e636f differs from courier packet 7fdf033e (repo advanced 3 CRITIC-cleared commits post-packet), STATE.md hash CRLF/LF discrepancy (internally consistent), seed ledger labels stale development wording, manifest r3_note stale wording. O-14: no rerun authorized without Rebecca's fresh signoff and CRITIC-confirmed construction-bug diagnosis. §1.1 growth-bar pending Rebecca."
 
 locked_bars:                        # only bars active/relevant to current milestone
   M1_discrimination: "oracle >= naive + 0.30 on every metric, 3 seeds"
@@ -153,14 +153,19 @@ returned_artifacts:                 # inventory of what Rebecca returned — RUN
 - **GitHub repository migration:** DONE — workspace repo migrated to GitHub (darkside73826779-ship-it/moving-origin-research); lineage attestation verified; main HEAD at 856c1868 (VERIFIED 2026-08-15T23:53Z).
 
 role_status:                        # latest verdict per role
-  JUDGE:        "M1 DELIVERED GREEN (Entry 24); M2 DELIVERED GREEN — E1-RUN-2 scored GREEN (judge_e1_run2_ruling.md, Entry 34), E1-CURE-RUN scored GREEN (judge_e1_cure_ruling.md); all 3 properties pass on all 5 seeds, no kill conditions fire, R4 arithmetic independently verified"
-  CRITIC:       "M1 complete (CLEARED); M2 complete (VERIFIED); M3/E2 V4 CLEAR; M3 implementation CLEARED FOR SCORING — all gates passed (V4 spec F1-F7, V4.1 L3 amendment, V4.2 L1 permuted arm, implementation, controls, seed isolation, L9 fence). Courier packet CRITIC-cleared. Scoring command authorized: python src/m3_harness.py --law all --seeds 201,202,203 --verify-reproducibility --output-dir ./m3_scoring_output"
-  RECORDER:     "current — provenance log current through Entry 41; pre-scoring custody update (Entry 42); main at 24040ea; implementation merged (PR #5); scoring-mode seed routing fixed (PR #6); CRITIC final clearance: CLEARED FOR SCORING; courier packet CRITIC-cleared; ready for scoring via Rebecca's supervised executor"
-  INTEGRATOR:   "M1 GREEN; M2 GREEN/SEALED/ACCEPTED; M3 BUILD GO; TASK BUILDER implemented; V4.1/V4.2 amendments CRITIC-cleared; implementation merged (PR #5); scoring-mode seed routing fixed (PR #6); courier packet CRITIC-cleared; ready for scoring — Rebecca executes on supervised executor; §1.1 growth-bar pending Rebecca"
+  JUDGE:        "M1 GREEN (Entry 24); M2 GREEN (Entry 34); M3 scoring run: INSTRUMENT FAILURE — L1 shuffled arm null-band violations on seeds 201/203; L1 candidate bars PASS all seeds (no kills); L3/L5/L6 PASS all seeds; bit_identical=True; L20 PASS; non-blocking deviations flagged (missing terminal log, stale labels, commit hash advancement). Per O-14, no rerun. Per §5.2, INSTRUMENT FAILURE means test apparatus broken, not candidate failed."
+  CRITIC:       "M1 complete (CLEARED); M2 complete (VERIFIED); M3/E2 V4 CLEAR; M3 implementation CLEARED FOR SCORING; M3 scoring returned INSTRUMENT FAILURE — pending CRITIC results review of returned artifacts"
+  RECORDER:     "current — provenance log current through Entry 42; scoring return custody (Entry 43); main at 3a4e636f; M3 scoring INSTRUMENT FAILURE; JUDGE ruling archived; O-14 no rerun; awaiting CRITIC results review and Rebecca's delivery gate ruling"
+  INTEGRATOR:   "M1 GREEN; M2 GREEN/SEALED/ACCEPTED; M3 BUILD GO; scoring run returned INSTRUMENT FAILURE; no rerun authorized (O-14); awaiting CRITIC review and Rebecca's ruling; §1.1 growth-bar pending Rebecca"
   ARCHITECT:    "M1 closed; M2 closed (E1 spec v3 + Q2/Q3 incorporations + Option E fix committed, scored GREEN); M3/E2 spec V4 submitted — CRITIC fifth independent re-review returned CLEAR (F1-F7 resolved, NF1-NF6 addressed); V4 eligible for Rebecca's M3 Continuation/Scope Gate; no build authorization"
-  TASK_BUILDER: "M1 GREEN; M2 GREEN; M3 implementation complete (src/m3_harness.py); V4.2 L1 permuted-arm amendment implemented and CRITIC-cleared; scoring-mode seed routing fixed (PR #6); implementation merged to main at 7fdf033 (PR #5); CRITIC final clearance: CLEARED FOR SCORING; no further code changes authorized unless INSTRUMENT_FAILURE reveals construction bug"
+  TASK_BUILDER: "M1 GREEN; M2 GREEN; M3 implementation complete; scoring run returned INSTRUMENT FAILURE (L1 shuffled arm, not candidate); no code changes authorized unless INSTRUMENT_FAILURE reveals construction bug (O-14)"
 
-open_blockers: []                   # CLEARED FOR SCORING — all gates passed; implementation merged; courier packet cleared
+open_blockers:                       # M3 scoring INSTRUMENT FAILURE — L1 shuffled arm null-band violations on seeds 201/203
+  - id: M3-IF
+    desc: "L1 INSTRUMENT FAILURE on seeds 201 and 203 — shuffled arm conditional rho outside empirical-null band (3 bin-level violations across 2 seeds); L1 PASS on seed 202; L1 candidate bars PASS all seeds (no kills); L3/L5/L6 PASS all seeds"
+    source: judge_m3_scoring_ruling.md
+    status: instrument_failure
+    required_action: "O-14: no rerun authorized without Rebecca's fresh signoff and CRITIC-confirmed construction-bug diagnosis. Awaiting CRITIC results review and Rebecca's delivery gate ruling."
 
 non_blocking_findings_of_record:    # CRITIC V4 review Part 3 — non-blocking, do not gate
   - id: NF7
@@ -178,7 +183,7 @@ non_blocking_findings_of_record:    # CRITIC V4 review Part 3 — non-blocking, 
     source: critic_m3_e2_spec_rereview_v4.md
     status: resolved  # STATE.md current through M3 BUILD GO; provenance attested through Entry 41; NF10 fulfilled
 
-next_action: "Rebecca executes scoring command on supervised executor: python src/m3_harness.py --law all --seeds 201,202,203 --verify-reproducibility --output-dir ./m3_scoring_output. Returns raw ./m3_scoring_output/ directory. JUDGE scores from returned artifacts. CRITIC reviews results. Rebecca rules at M3 delivery gate. No re-run-on-failure (O-14). No L15-L17 integration claim. §1.1 growth-bar pending Rebecca."
+next_action: "CRITIC reviews M3 scoring results from returned artifacts. Rebecca rules at M3 delivery gate. O-14: no rerun authorized without Rebecca's fresh signoff and CRITIC-confirmed construction-bug diagnosis. Per §5.2, INSTRUMENT FAILURE means test apparatus broken, not candidate failed. L3/L5/L6 results are valid scored evidence. No L15-L17 integration claim. §1.1 growth-bar pending Rebecca."
 ```
 
 ---
@@ -426,3 +431,10 @@ next_action: "Rebecca executes scoring command on supervised executor: python sr
   - Attested hashes: courier scoring packet (specs/m3_e2_courier_scoring_packet.md) SHA-256 848ce927; CRITIC final clearance (reviews/critic_m3_final_clearance_ruling.md) SHA-256 5752f3f0; STATE.md updated in this entry.
   - Scoring command: python src/m3_harness.py --law all --seeds 201,202,203 --verify-reproducibility --output-dir ./m3_scoring_output
   - No scientific content, locked bars, code, or prior provenance entries altered. Only state/STATE.md changed and this entry appended.
+- **2026-08-16 (RECORDER) — M3 scoring return custody: INSTRUMENT FAILURE recorded:**
+  - **This entry.** RECORDER archived the JUDGE ruling (reviews/judge_m3_scoring_ruling.md, SHA-256 6a07afbc) and updated STATE.md to record: M3 scoring run returned INSTRUMENT FAILURE. L1 INSTRUMENT_FAILURE on seeds 201 and 203 (shuffled arm conditional rho outside empirical-null band — 3 bin-level violations across 2 seeds, all below lower bound). L1 PASS on seed 202. L1 candidate bars PASS all seeds (no kills). L3/L5/L6 PASS all seeds with all bars and controls independently verified by JUDGE. Reproducibility: bit_identical=True. L20: PASS.
+  - Package SHA-256: d5a5bc12daadf7007ea277bc20a03047bb41c74f3a955fed9bf0dcbf07db87d3 (VERIFIED by JUDGE). Attested commit: 3a4e636f.
+  - Non-blocking deviations flagged: terminal round-trip log missing (Rebecca attests inadvertent), commit hash 3a4e636f differs from courier packet 7fdf033e (repo advanced 3 CRITIC-cleared commits post-packet), STATE.md hash CRLF/LF discrepancy (internally consistent), seed ledger labels stale development wording, manifest r3_note stale wording.
+  - O-14: no rerun authorized without Rebecca's fresh signoff and CRITIC-confirmed construction-bug diagnosis.
+  - Updated: `milestone`, `timebox.m3_status` (instrument_failure), `timebox.m3_note`, `role_status` (all roles), `open_blockers` (M3-IF), `next_action` (CRITIC review + Rebecca ruling).
+  - No scientific content, locked bars, code, specifications, or prior provenance entries altered. JUDGE ruling archived unchanged, STATE.md updated, this entry appended.
