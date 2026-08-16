@@ -1386,3 +1386,28 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **No scientific findings, locked bars, M3 specification, Rebecca's ruling, or prior provenance entries altered.** Three artifacts added/replaced and this entry appended only.
 
 **M0 COMPLETE. M1 DELIVERED GREEN AND ACCEPTED. M2 (E1) DELIVERED GREEN — SEALED. M3/E2 V4 GO — timebox active. INTEGRATOR task spec + courier architecture published with B1–B3 corrections attested. Pending focused CRITIC re-review. No build, TASK BUILDER, execution, scoring, courier run, hold-out use, or L15–L17 integration claim authorized.**
+
+
+---
+
+## Entry 41 — Rebecca M3 BUILD GO ruling; CRITIC focused re-review CLEAR; build authorized
+
+**Date:** 2026-08-16 · **Actor:** Rebecca Mcclintic (ruling); RECORDER (attestation and merge)
+
+- **Ruling recorded exactly:** "M3 BUILD GO."
+- **CRITIC focused re-review:** CLEAR. B1-B3 corrections (state-custody: STATE.md currency, commit chain alignment, NF10 language) all resolved. Scientific content verified correct. No new blocking finding.
+- **Chain attested from main `c83b81020e78146552777081b5bd5e5461eb13f5`** (merge of B1-B3 custody closure, Entry 40):
+  - Entry 38: V4 gate package published, CRITIC CLEAR (merged at `7b690a98`)
+  - Entry 39: Rebecca M3 GO ruling, timebox active (merged at `856c1868`)
+  - Entry 40: B1-B3 custody closure, task spec + courier arch published (merged at `c83b810`)
+  - Entry 41: Rebecca M3 BUILD GO, CRITIC focused re-review CLEAR (this entry)
+- **Attested artifact hashes (on main `c83b810`):**
+  - `state/STATE.md` — SHA-256 `8a0000fb7f5c90b56dcb2a86d5a91c9b05c6cad58ffa5cb9ad690f5ef0e586c4`
+  - `specs/m3_e2_implementation_task_spec.md` — SHA-256 `618479f8f5aa43b65cf8927ebe323c36a2ce8ae56e85a8534fc9034f6098e93d`
+  - `specs/m3_e2_courier_architecture.md` — SHA-256 `c8758e5bcf6130cf33fdbe1ead90fbef388e6b2e0e501d45c696d7e607256a28`
+- **Authorization:** build authorized — TASK BUILDER may implement against approved task spec. No scoring execution, courier scoring run, hold-out seed exposure, or L15-L17 integration claim authorized — those require separate Rebecca authorization after implementation + CRITIC verification + INTEGRATOR courier packet.
+- **§1.1 growth-bar proposal:** remains diagnostic-only and non-gating pending separate Rebecca ruling.
+- **Standing protections:** all existing governance remains binding (D1-D5, O-14, O-15, courier-only scoring, ≥2 unseen scoring seeds, full L18 battery, L9 hard fence, no integration claim without L15-L17 evidence, no renaming negative results).
+- **No scientific content, locked bars, M3 specification, task spec, courier architecture, or prior provenance entries altered.** STATE.md updated and this entry appended only.
+
+**M0 COMPLETE. M1 DELIVERED GREEN AND ACCEPTED. M2 (E1) DELIVERED GREEN — SEALED. M3/E2 V4 GO — timebox active. M3 BUILD GO — build authorized; TASK BUILDER may implement against approved task spec. No scoring, courier run, hold-out exposure, or L15-L17 claim authorized. §1.1 growth-bar pending Rebecca.**

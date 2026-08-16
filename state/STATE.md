@@ -64,8 +64,8 @@ watch_items:                        # CRITIC carry-forward items, with locus
     m1_relevant: false
 
 repo:
-  commit_hash: "856c1868a78a2b0c87275ed53120677cce236fc7"   # HEAD of GitHub main (darkside73826779-ship-it/moving-origin-research) — VERIFIED via git ls-remote 2026-08-15T23:53Z. Single source of truth per project instructions.
-  github_main_verified: "856c1868a78a2b0c87275ed53120677cce236fc7"   # GitHub main HEAD, VERIFIED 2026-08-15T23:53Z via git ls-remote https://github.com/darkside73826779-ship-it/moving-origin-research.git refs/heads/main
+  commit_hash: "c83b81020e78146552777081b5bd5e5461eb13f5"   # HEAD of GitHub main — merge of B1-B3 custody closure (Entry 40). Single source of truth.
+  github_main_verified: "c83b81020e78146552777081b5bd5e5461eb13f5"   # GitHub main HEAD, VERIFIED 2026-08-16T00:04Z
   cure_commit_hash: "a85ec91f22521164abd2604a1c299c74f0dd67ac"   # E1 provenance-cure re-run commit (manifest commit hash cured from "pending -- no git repo" to real repository hash a85ec91f; JUDGE scored DELIVERED GREEN from cure artifacts — judge_e1_cure_ruling.md)
   e1_run2_scored_commit: "1d13105e8163859d7972705b731ba8c24a272276"   # E1-RUN-2 scored commit (timing fix dceb258 + cosmetic/L20 float fix; JUDGE scored DELIVERED GREEN with provenance discrepancy flagged — manifest showed "pending -- no git repo", round-trip log claimed 1d13105; subsequently cured in cure re-run at a85ec91)
   timing_fix_commit_hash: "dceb2584f495cde06787693d80f8e40f258eb33c"   # TASK BUILDER timing-construction-bug fix commit (perf_counter_ns + batch fallback for Windows timing resolution; _safe_pearson isfinite guard; instrument_failure flag for non-finite latency) — fixes the E1-RUN-1 crash diagnosed in critic_e1_run1_crash_analysis.md; per Rebecca's construction-bug guard, does not consume D2 budget
@@ -154,28 +154,13 @@ returned_artifacts:                 # inventory of what Rebecca returned — RUN
 
 role_status:                        # latest verdict per role
   JUDGE:        "M1 DELIVERED GREEN (Entry 24); M2 DELIVERED GREEN — E1-RUN-2 scored GREEN (judge_e1_run2_ruling.md, Entry 34), E1-CURE-RUN scored GREEN (judge_e1_cure_ruling.md); all 3 properties pass on all 5 seeds, no kill conditions fire, R4 arithmetic independently verified"
-  CRITIC:       "M1 complete (CLEARED, Entry 24); M2 complete (VERIFIED); M3/E2 V4 CLEAR (F1-F7 resolved, NF1-NF6 addressed); M3 task spec + courier architecture review: narrow BLOCK on B1-B3 (state-custody: STATE.md not current vs M3 GO, commit chain inconsistent, NF10 incorrectly marked fulfilled). Scientific content verified correct (bars, controls, NF7-NF9, hold-out isolation, courier custody, authorization boundaries). B1-B3 are mechanical fixes — focused re-review required, not full cycle."
-  RECORDER:     "current — provenance log current through Entry 34; STATE.md hash attestation at every merge; GitHub repository darkside73826779-ship-it/moving-origin-research is single source of truth; lineage attestation verified (a85ec91, 46 files); M3/E2 spec V4 + changelog + CRITIC V4 CLEAR review persisted in Project Files; pending repository attestation and publication of complete gate package"
-  INTEGRATOR:   "M1 DELIVERED GREEN; M2 DELIVERED GREEN, SEALED, ACCEPTED; M3/E2 V4 CRITIC CLEAR; Rebecca M3 GO ruling issued — timebox ACTIVE (4 sessions / 8 days); GitHub main verified at 856c1868; INTEGRATOR prepared task spec + courier architecture (submitted for CRITIC review); CRITIC returned narrow BLOCK on B1-B3 (state-custody); B1-B3 fixes applied in this STATE.md update; no build cell, task spec execution, scoring packet, diagnostic execution, scoring execution, or hold-out seed exposure authorized; §1.1 growth-bar pending Rebecca's separate ruling; next action: RECORDER provenance attestation then focused CRITIC re-review"
+  CRITIC:       "M1 complete (CLEARED, Entry 24); M2 complete (VERIFIED); M3/E2 V4 CLEAR (F1-F7 resolved, NF1-NF6 addressed); M3 task spec + courier architecture: focused re-review of B1-B3 corrections CLEAR — all state-custody issues resolved. Scientific content verified correct. Build authorized by Rebecca."
+  RECORDER:     "current — provenance log current through Entry 40; B1-B3 custody attested and merged to main at c83b810; Rebecca issued M3 BUILD GO; CRITIC focused re-review CLEAR; STATE.md updated to record build authorization; build authorized — TASK BUILDER may proceed; no scoring or hold-out exposure authorized"
+  INTEGRATOR:   "M1 DELIVERED GREEN; M2 DELIVERED GREEN, SEALED, ACCEPTED; M3/E2 V4 CRITIC CLEAR; Rebecca M3 GO + BUILD GO issued; task spec + courier architecture published and CRITIC-cleared; build authorized — TASK BUILDER may implement; no scoring, courier run, hold-out exposure, or L15-L17 claim authorized; §1.1 growth-bar pending Rebecca's separate ruling; next action: TASK BUILDER implements against approved task spec"
   ARCHITECT:    "M1 closed; M2 closed (E1 spec v3 + Q2/Q3 incorporations + Option E fix committed, scored GREEN); M3/E2 spec V4 submitted — CRITIC fifth independent re-review returned CLEAR (F1-F7 resolved, NF1-NF6 addressed); V4 eligible for Rebecca's M3 Continuation/Scope Gate; no build authorization"
-  TASK_BUILDER: "M1 harness complete + RUN-1 GREEN; M2 E1 implementation complete + E1-RUN-2 GREEN; timing-construction-bug fix committed (dceb258); no active M3 build assignment (M3 V4 CRITIC CLEAR but no build authorization yet)"
+  TASK_BUILDER: "M1 harness complete + RUN-1 GREEN; M2 E1 implementation complete + E1-RUN-2 GREEN; M3 BUILD GO issued by Rebecca — authorized to implement against approved task spec (specs/m3_e2_implementation_task_spec.md); no scoring, courier run, or hold-out exposure authorized yet"
 
-open_blockers:                       # CRITIC narrow BLOCK on B1-B3 (state-custody); B1-B3 fixes applied, pending RECORDER attestation + focused CRITIC re-review
-  - id: B1
-    desc: "STATE.md was not current relative to Rebecca's M3 GO ruling — not updated to reflect M3 GO, active timebox, task-spec submission"
-    source: critic_m3_task_spec_review.md
-    status: fixed_in_this_update
-    required_action: "STATE.md updated to record M3 GO, active timebox, task-spec submission, CRITIC narrow BLOCK"
-  - id: B2
-    desc: "Governing commit/provenance chain inconsistent across documents (7b690a98 vs 1626bb09 vs 856c1868)"
-    source: critic_m3_task_spec_review.md
-    status: fixed_in_this_update
-    required_action: "STATE.md repo.commit_hash and github_main_verified updated to 856c1868 (verified current main); task spec and courier architecture headers already cite 856c1868; RECORDER must attest the chain in provenance log"
-  - id: B3
-    desc: "NF10 incorrectly marked 'fulfilled' — STATE.md was current for V4 CLEAR but not for M3 GO ruling"
-    source: critic_m3_task_spec_review.md
-    status: fixed_in_this_update
-    required_action: "STATE.md updated to reflect M3 GO; NF10 language corrected in both deliverables to accurately describe attested state"
+open_blockers: []                   # B1-B3 resolved — CRITIC focused re-review CLEAR; Rebecca issued M3 BUILD GO
 
 non_blocking_findings_of_record:    # CRITIC V4 review Part 3 — non-blocking, do not gate
   - id: NF7
@@ -191,9 +176,9 @@ non_blocking_findings_of_record:    # CRITIC V4 review Part 3 — non-blocking, 
   - id: NF10
     desc: "STATE.md must be brought current before Rebecca rules (NF3 carried forward)"
     source: critic_m3_e2_spec_rereview_v4.md
-    status: in_progress  # STATE.md updated through V4 CLEAR and M3 GO ruling + B1-B3 fixes; RECORDER provenance attestation pending
+    status: resolved  # STATE.md current through M3 BUILD GO; provenance attested through Entry 41; NF10 fulfilled
 
-next_action: "RECORDER performs provenance attestation (attests updated STATE.md hash, extends provenance log with entries for Rebecca M3 GO ruling + INTEGRATOR deliverable submission + CRITIC narrow BLOCK + B1-B3 fixes). Then focused CRITIC re-review of B1-B3 fixes only (STATE.md currency, commit chain alignment, NF10 language). No build cell, task specification execution, scoring packet, diagnostic execution, scoring execution, or hold-out seed exposure authorized."
+next_action: "TASK BUILDER implements against approved task spec (specs/m3_e2_implementation_task_spec.md). Then CRITIC verifies implementation. Then INTEGRATOR packages courier scoring run. No scoring execution, hold-out seed exposure, courier run, or L15-L17 integration claim authorized until separate Rebecca authorization after implementation + CRITIC verification. §1.1 growth-bar proposal remains diagnostic-only and non-gating pending separate Rebecca ruling."
 ```
 
 ---
@@ -430,3 +415,8 @@ next_action: "RECORDER performs provenance attestation (attests updated STATE.md
   - `open_blockers` updated with B1-B3 (each marked `fixed_in_this_update`).
   - No scientific content, bars, controls, NF7-NF9 handling, or authorization boundaries changed. Provenance log NOT edited (RECORDER owns that). M2 GREEN/SEALED/ACCEPTED, E1-RUN-1 crash, E1-RUN-2 GREEN, lineage/provenance-cure, and M2 completion history all retained.
   - STATE.md itself NOT committed in this round (INTEGRATOR updates STATE.md as operational memory; RECORDER records its hash at merge).
+- **2026-08-16 (RECORDER, authorized by Rebecca M3 BUILD GO ruling) — STATE.md updated to record M3 BUILD GO:**
+  - **This entry.** RECORDER updated STATE.md to record Rebecca's ruling: “M3 BUILD GO.” CRITIC focused re-review of B1-B3 corrections returned CLEAR. Build authorized — TASK BUILDER may implement against approved task spec (specs/m3_e2_implementation_task_spec.md, SHA-256 618479f8). Courier architecture approved (specs/m3_e2_courier_architecture.md, SHA-256 c8758e5b). No scoring, courier scoring run, hold-out seed exposure, or L15-L17 integration claim authorized. §1.1 growth-bar proposal remains diagnostic-only and non-gating.
+  - Updated: `milestone` (BUILD GO), `timebox.m3_status` (build_authorized), `timebox.m3_note`, `repo.commit_hash` (c83b810), `repo.github_main_verified` (c83b810), `repo.note`, `role_status` (all roles), `open_blockers` (cleared — B1-B3 resolved), `NF10` (resolved), `next_action` (TASK BUILDER implements).
+  - No scientific content, locked bars, M3 specification, task spec, courier architecture, or Rebecca's rulings altered. Only state/STATE.md changed.
+  - STATE.md updated by RECORDER under Rebecca's explicit BUILD GO authorization.
