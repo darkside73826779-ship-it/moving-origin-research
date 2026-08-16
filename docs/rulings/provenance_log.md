@@ -1442,3 +1442,21 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **No scientific content, locked bars, code, M3 specification, or prior provenance entries altered.** STATE.md updated and this entry appended only.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3/E2 V4 GO → BUILD GO → CLEARED FOR SCORING. Implementation merged (PR #5). Scoring-mode seed routing fixed (PR #6). CRITIC final clearance: CLEARED FOR SCORING. Courier packet CRITIC-cleared. Ready for Rebecca to execute scoring on supervised executor. §1.1 growth-bar pending Rebecca.**
+
+
+---
+
+## Entry 43 — Rebecca M3 Block Ruling: specification-error correction authorized under four-part test
+
+**Date:** 2026-08-16 · **Actor:** Rebecca Mcclintic (ruling); RECORDER (custody)
+
+- **Ruling file:** `docs/rulings/REBECCA_M3_BLOCK_RULING.md`, SHA-256 `eb0ccff489a9d3d02d48d01e35c2281c5583c82052d680166d3d2cde0004d2fa`
+- **Ruling:** post-scoring instrument change permitted under a four-part test (now standing law): (a) defect demonstrable from spec alone (1−0.95¹⁵ ≈ 54% familywise false-positive rate); (b) change cannot benefit candidate (candidate passed all bars; failures are below-band on a destroy-the-signal control); (c) failed run results retained in full and correction logged as post-scoring; (d) any new scoring uses FRESH seeds — never a re-run (O-14 stands).
+- **Remedy:** one-sided directionality (upper bound only; below-band is informational) AND multiplicity control via null-of-the-max (familywise false-positive rate ≤ 5% across all shuffled-arm checks, verified by direct computation in closure audit before scoring).
+- **Fresh scoring run:** full M3 battery on 3 fresh seeds from authorized pool. Seeds 201–203 results RETAINED: L3/L5/L6 passes and L1 candidate bars stand as valid evidence. Fresh run delivers the verdict; cross-run consistency reported.
+- **Systemic fix (standing):** every scoring spec's closure audit must compute FWFP of each arm's full check battery and correct any control whose FWFP exceeds 5% BEFORE scoring. Directionality must be justified per control. Henceforth discovered pre-scoring.
+- **Non-blocking dispositions accepted:** round-trip log mandatory in future courier packets; ledger/manifest label fixes are mechanical next-implementation items.
+- **Sequence:** amend §2.9/§2.11 → closure-audit FWFP verification → CRITIC clearance → fresh-seed scoring run through executor.
+- **No scientific content or prior provenance entries altered.** Ruling file committed unchanged and this entry appended only.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 scoring: INSTRUMENT FAILURE → Rebecca ruled: specification-error correction authorized under four-part test. Fresh-seed scoring run pending spec amendment + closure audit + CRITIC clearance. O-14 stands. Seeds 201–203 retained.**
