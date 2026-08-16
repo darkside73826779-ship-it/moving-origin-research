@@ -1482,3 +1482,26 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Next authorized action:** complete §2.10 harmonization and the pre-scoring 26-family closure audit, including framework-level FWFP corrections, before implementation can proceed. Fresh scoring requires a separate Rebecca authorization after implementation and review.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 first scoring retained as INSTRUMENT FAILURE. V4.3 targeted L1 shuffled-arm amendment CRITIC-CLEARED as specification only. Scoring BLOCKED pending implementation, §2.10 harmonization, full 26-family FWFP closure, and Rebecca fresh-seed authorization.**
+
+
+---
+
+## Entry 45 — M3 V4.3 STATE.md reconciliation and hash attestation
+
+**Date:** 2026-08-16 · **Actor:** INTEGRATOR (sole STATE.md writer); RECORDER (custody and hash attestation)
+
+- **Gate served:** M3 V4.3 STATE.md Reconciliation Custody Gate following Entries 43–44.
+- **Named base:** `4168c539781bd4610c04530e9c061f1167e51f1b` (GitHub `main`, verified before incorporation).
+- **INTEGRATOR source:** `4222781cb27db0519fae7d08866d49c87468b2f3` on `integrator/m3-v4-3-state-reconciliation`, incorporated as the exact commit without alteration. The source changes only `state/STATE.md`.
+- **STATE.md canonical Git-blob/LF SHA-256:** `5a2668b494a08a584fbcb0106584bbb0164fe8e29619d595074b82d9b09465de`.
+- **STATE.md Windows CRLF representation SHA-256:** `a0977d4c2aefa1237c92aeba6e30c5045dbb94c462cf4b4404ef0789bb9256ee`.
+- **Resolved hash discrepancy:** the previously supplied SHA-256 `61a8b3b489cb69682077324b8e41628488acc431073e6d5b23591ce7a8a3dcc3` came from a pre-normalization working copy containing 409 CRLF and 31 LF-only line endings. Git normalization produced the canonical committed LF blob attested above. The prior RECORDER BLOCK was valid and is resolved by this corrected canonical hash record.
+- **Reconciled operational state:** the first M3 scoring run remains retained in full under its original **INSTRUMENT FAILURE** verdict. Seeds 201–203 may never be rerun; O-14 remains binding.
+- **Preserved evidence:** L3/L5/L6 PASS evidence remains valid. L1 candidate-facing bars remain valid on all three seeds (`R²=0.9857`, `β_age=−0.00150`, all conditional `ρ≥0.6`), and no kill condition fired.
+- **Clearance boundary:** V4.3 is CRITIC-CLEARED as a targeted specification amendment only. It is not implementation clearance and does not authorize fresh scoring. **Scoring remains BLOCKED.**
+- **Required prerequisites:** §2.10 harmonization; complete pre-scoring 26-family closure audit; correction of every control family whose full-battery FWFP exceeds 5%; implementation of the final cleared amendments; independent CRITIC implementation clearance; and Rebecca's separate fresh-seed supervised scoring authorization.
+- **Timebox custody:** session/day counters, caps, and tripwires are unchanged by the INTEGRATOR reconciliation.
+- **Next authorized action:** ARCHITECT completes §2.10 harmonization and the complete 26-family pre-scoring closure audit, including required framework-level FWFP corrections. No implementation or scoring action is authorized by this entry.
+- **Custody boundary:** RECORDER appended this provenance entry only and did not edit `state/STATE.md`, specifications, reviews, implementation, tests, or scoring artifacts.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 first scoring retained as INSTRUMENT FAILURE. V4.3 specification amendment CRITIC-CLEARED only. STATE.md reconciled and canonically attested. Scoring BLOCKED; next action is ARCHITECT §2.10 harmonization and complete 26-family closure audit.**
