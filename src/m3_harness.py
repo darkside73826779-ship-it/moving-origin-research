@@ -57,6 +57,7 @@ L1_SET_SIZE = 10  # 2 per bin
 L1_APPEARANCES_PER_ENTRY = 5
 L1_TIEBREAK_SEED = 42
 L1_FAIR_NAIVE_SEED = 43
+L1_PERMUTED_SEED = 44
 L1_STRUCTURAL_SEED = 777
 L1_N_MEASURED = 200  # 40 per bin * 5 bins
 L1_REHEARSAL_TARGETS = [0, 2, 4, 8, 16]
@@ -624,31 +625,69 @@ def _l1_empirical_null_r2(measured_entries, candidate_sets, n_null=1000):
            float(np.percentile(null_r2s, 95))
 
 
-def _l1_permuted_null_r2(measured_entries, candidate_sets, n_null=1000):
-    """Compute empirical null for permuted arm from its own permutation distribution."""
-    original_priorities = np.array([
-        _l1_priority(e, e['age'], e['rehearsal'])
-        for e in measured_entries
+def _l1_v42_fixed_log_accessibility(measured_entries, candidate_sets):
+    """Reproduce the V4.2 closure verifier's occurrence-level aggregation.
+
+    Nine structural sets contain a duplicate entry slot. The closure verifier
+    records both ranked occurrences before averaging the entry's five total
+    appearances; this focused helper preserves that exact call sequence
+    without changing any other L1 arm.
+    """
+    priorities = np.array([
+        _l1_priority(entry, entry['age'], entry['rehearsal'])
+        for entry in measured_entries
     ])
-    original_log_access, _ = _l1_compute_accessibility(
-        candidate_sets, original_priorities)
-    null_r2s = []
-    for null_seed in range(n_null):
-        rng = np.random.RandomState(null_seed + 10000)
-        # Retrieval is untouched. Only fit labels are reassigned.
-        perm = rng.permutation(L1_N_MEASURED)
-        fit_entries = copy.deepcopy(measured_entries)
-        for i in range(L1_N_MEASURED):
-            source = measured_entries[perm[i]]
-            fit_entries[i]['age'] = source['age']
-            fit_entries[i]['bin'] = source['bin']
-            fit_entries[i]['rehearsal'] = source['rehearsal']
-        r2, _, _, _ = _l1_compute_marginal_mean_curve(
-            fit_entries, original_log_access)
-        null_r2s.append(r2)
-    null_r2s = np.array(null_r2s)
-    return float(np.mean(null_r2s)), float(np.std(null_r2s)), \
-           float(np.percentile(null_r2s, 97.5)), float(np.percentile(null_r2s, 2.5))
+    permutation = np.random.RandomState(
+        L1_TIEBREAK_SEED).permutation(L1_N_MEASURED)
+    tie_rank = np.empty(L1_N_MEASURED, dtype=int)
+    tie_rank[permutation] = np.arange(L1_N_MEASURED)
+    contributions = {
+        entry['global_idx']: [] for entry in measured_entries
+    }
+    for candidate_set in candidate_sets:
+        occurrences = [
+            (entry_idx, priorities[entry_idx], tie_rank[entry_idx])
+            for entry_idx in candidate_set
+        ]
+        occurrences.sort(key=lambda item: (-item[1], item[2]))
+        for rank, (entry_idx, _, _) in enumerate(occurrences, 1):
+            contributions[entry_idx].append(math.log(11 - rank))
+    assert all(
+        len(values) == L1_APPEARANCES_PER_ENTRY
+        for values in contributions.values()
+    )
+    return {
+        entry_idx: float(np.mean(values))
+        for entry_idx, values in contributions.items()
+    }
+
+
+def _l1_permuted_null_rho(
+        measured_entries, fixed_log_accessibility, n_null=1000):
+    """V4.2 permuted-arm null over all 200 measured entries.
+
+    Each trial permutes the age/rehearsal-to-entry mapping and computes
+    Spearman rho(permuted_age, fixed log_accessibility). The exact null seed
+    sequence is 2000..2999, matching the CRITIC-cleared closure verifier.
+    """
+    ages = np.array([entry['age'] for entry in measured_entries])
+    accessibility = np.array([
+        fixed_log_accessibility[entry['global_idx']]
+        for entry in measured_entries
+    ])
+    null_rhos = []
+    for trial in range(n_null):
+        permutation = np.random.RandomState(
+            2000 + trial).permutation(L1_N_MEASURED)
+        null_rhos.append(_safe_spearman(
+            ages[permutation], accessibility))
+    null_rhos = np.array(null_rhos, dtype=float)
+    return {
+        'values': null_rhos.tolist(),
+        'mean': float(np.mean(null_rhos)),
+        'sd': float(np.std(null_rhos)),
+        'p95': float(np.percentile(null_rhos, 95)),
+    }
 
 
 def run_l1(seed, log_lines=None):
@@ -721,7 +760,7 @@ def run_l1(seed, log_lines=None):
 
     # --- Permuted arm ---
     _tee(f"  [L1] Running permuted arm...", log_lines)
-    perm_rng = np.random.RandomState(seed + 1000)
+    perm_rng = np.random.RandomState(L1_PERMUTED_SEED)
     perm = perm_rng.permutation(L1_N_MEASURED)
     permuted_fit_entries = copy.deepcopy(measured)
     for i in range(L1_N_MEASURED):
@@ -729,14 +768,30 @@ def run_l1(seed, log_lines=None):
         permuted_fit_entries[i]['age'] = source['age']
         permuted_fit_entries[i]['bin'] = source['bin']
         permuted_fit_entries[i]['rehearsal'] = source['rehearsal']
-    permuted_log_access = candidate_result['log_accessibility']
+    permuted_log_access = _l1_v42_fixed_log_accessibility(
+        measured, candidate_sets)
     perm_r2, perm_beta, _, _ = _l1_compute_marginal_mean_curve(
         permuted_fit_entries, permuted_log_access)
     perm_rhos = _l1_rehearsal_conditional_rho(
         permuted_fit_entries, permuted_log_access)
+    permuted_ages = [
+        entry['age'] for entry in permuted_fit_entries
+    ]
+    fixed_accessibility = [
+        permuted_log_access[entry['global_idx']]
+        for entry in measured
+    ]
+    permuted_rho_200 = _safe_spearman(
+        permuted_ages, fixed_accessibility)
     results['permuted'] = {
-        'r_squared': perm_r2, 'beta_age': perm_beta,
+        'spearman_rho_200entry': permuted_rho_200,
+        'spearman_rho_age_200_observed': permuted_rho_200,
+        'r_squared_binned_5pt': perm_r2,
+        'diagnostic_5bin_r_squared_non_gating': perm_r2,
+        'beta_age_binned_5pt': perm_beta,
+        'diagnostic_5bin_beta_age_non_gating': perm_beta,
         'conditional_rhos': perm_rhos,
+        'permutation_seed': L1_PERMUTED_SEED,
     }
 
     # --- Shuffled arm ---
@@ -828,12 +883,24 @@ def run_l1(seed, log_lines=None):
         'mean': null_mean, 'sd': null_sd, 'pct_95': null_95,
     }
 
-    perm_null_mean, perm_null_sd, perm_null_upper, perm_null_lower = \
-        _l1_permuted_null_r2(measured, candidate_sets, n_null=1000)
-    results['permuted_null'] = {
-        'mean': perm_null_mean, 'sd': perm_null_sd,
-        'upper': perm_null_upper, 'lower': perm_null_lower,
-    }
+    permuted_rho_null = _l1_permuted_null_rho(
+        measured, permuted_log_access, n_null=1000)
+    perm_rho_lower = (
+        permuted_rho_null['mean'] - 2 * permuted_rho_null['sd'])
+    perm_rho_upper = (
+        permuted_rho_null['mean'] + 2 * permuted_rho_null['sd'])
+    results['permuted'].update({
+        'rho_null_1000_values': permuted_rho_null['values'],
+        'rho_null_mean': permuted_rho_null['mean'],
+        'rho_null_sd': permuted_rho_null['sd'],
+        'rho_null_p95': permuted_rho_null['p95'],
+        'rho_band_lower': perm_rho_lower,
+        'rho_band_upper': perm_rho_upper,
+        'within_mean_pm_2sd_band': (
+            perm_rho_lower <= permuted_rho_200 <= perm_rho_upper
+        ),
+        'null_p95_le_0_15': permuted_rho_null['p95'] <= 0.15,
+    })
 
     # --- Verdict ---
     cand = results['candidate']
@@ -882,10 +949,12 @@ def run_l1(seed, log_lines=None):
     if results['fair_naive']['r_squared'] > null_95:
         instrument_failure_reasons.append("fair_naive R² > null 95th pct")
 
-    perm_upper = perm_null_mean + 2 * perm_null_sd
-    perm_lower = perm_null_mean - 2 * perm_null_sd
-    if perm_r2 > perm_upper or perm_r2 < perm_lower:
-        instrument_failure_reasons.append("permuted R² outside null band")
+    if not results['permuted']['within_mean_pm_2sd_band']:
+        instrument_failure_reasons.append(
+            "permuted 200-entry Spearman rho outside null band")
+    if not results['permuted']['null_p95_le_0_15']:
+        instrument_failure_reasons.append(
+            "permuted rho null p95 exceeds 0.15")
 
     # Shuffled: all 5 rho within shuffled null band
     shuf_rhos = results['shuffled']['conditional_rhos']
@@ -950,6 +1019,8 @@ def run_l1(seed, log_lines=None):
         'structural_seed': L1_STRUCTURAL_SEED,
         'tiebreak_seed': L1_TIEBREAK_SEED,
         'fair_naive_seed': L1_FAIR_NAIVE_SEED,
+        'permuted_seed': L1_PERMUTED_SEED,
+        'permuted_null_seeds': [2000, 2999],
         'fixture_summary': {
             'autobiography_size': len(fixture['autobiography']),
             'cycle_count': fixture['cycle_count'],

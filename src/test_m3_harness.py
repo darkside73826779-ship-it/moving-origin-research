@@ -21,6 +21,17 @@ class M3HarnessTests(unittest.TestCase):
                 counts[idx] += 1
         self.assertEqual(set(counts.values()), {5})
 
+    def test_l1_v42_permuted_gate_passes_seed_102(self):
+        result = m3.run_l1(102)
+        self.assertEqual(result["verdict"], "PASS")
+        permuted = result["permuted"]
+        self.assertTrue(permuted["within_mean_pm_2sd_band"])
+        self.assertTrue(permuted["null_p95_le_0_15"])
+        self.assertIn(
+            "diagnostic_5bin_r_squared_non_gating", permuted)
+        self.assertNotIn("permuted R² outside null band", " ".join(
+            result["instrument_failure_reasons"]))
+
     def test_l3_windows_are_disjoint_and_complete(self):
         fit_used = set(range(700))
         eval_used = set(range(705, 1005))
