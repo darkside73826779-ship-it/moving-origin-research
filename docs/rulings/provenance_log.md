@@ -1461,3 +1461,24 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Merge attestation:** ruling merged to main at `8e9f83a6f7fac8dd6682a446c2730ed14752cc8c` (PR #9, merged 2026-08-16). Ruling is canonical on main.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 scoring: INSTRUMENT FAILURE → Rebecca ruled: specification-error correction authorized under four-part test. Fresh-seed scoring run pending spec amendment + closure audit + CRITIC clearance. O-14 stands. Seeds 201–203 retained.**
+
+
+---
+
+## Entry 44 — M3 V4.3 targeted amendment: CRITIC CLEAR; scoring remains blocked
+
+**Date:** 2026-08-16 · **Actor:** ARCHITECT (V4.3 amendment); CRITIC (independent review); RECORDER (custody)
+
+- **Gate served:** M3 V4.3 L1 shuffled-arm targeted specification amendment review under Rebecca's Entry 43 four-part post-scoring correction ruling.
+- **Base ruling:** `8e9f83a6f7fac8dd6682a446c2730ed14752cc8c` (`docs/rulings/REBECCA_M3_BLOCK_RULING.md`).
+- **ARCHITECT source commit:** `5ba97f6cbee7bf4c85e01368d979a11dfa220879` on `architect/m3-l1-shuffled-fwfp-amendment`. The exact amendment was incorporated without scientific modification.
+- **Amendment files:** `specs/m3_e2_spec_amendment_v4_3.md`; `specs/m3_e2_spec_amendment_v4_3_CHANGELOG.md`; `verification/verify_m3_l1_shuffled_fwfp.py`.
+- **CRITIC ruling:** `reviews/critic_m3_e2_v4_3_amendment_review.md` preserved verbatim. Verdict: **CLEARED — V4.3 targeted spec amendment**.
+- **Clearance boundary:** CLEAR applies to the targeted specification amendment only. It is not implementation clearance and not fresh-scoring authorization.
+- **Scoring remains BLOCKED pending:** (1) implementation of the per-seed null-of-the-max procedure; (2) §2.10 harmonization; (3) full 26-family closure audit with every arm's full check-family FWFP ≤ 5%; and (4) Rebecca's fresh-seed supervised scoring authorization.
+- **CRITIC NB1–NB5 retained in full:** §2.10 summary-row harmonization; two-phase closure-audit clarification; likely additional >5% FWFP families; per-seed exchangeable null generation; and documented domain-separated RNG derivation.
+- **Preserved evidence:** seeds 201–203 remain retained under the original `INSTRUMENT FAILURE` label. L3/L5/L6 PASS evidence on all three seeds remains valid. L1 candidate bars (`R²=0.9857`, `β_age=−0.00150`, all conditional `ρ≥0.6`) remain valid on all three seeds. No kill condition fired. Reproducibility, L20, and interface-invariant evidence remains preserved.
+- **No implementation, scoring, fresh-seed exposure, rerun, STATE.md edit, or candidate-facing bar change occurred.** O-14 and O-15 remain binding.
+- **Next authorized action:** complete §2.10 harmonization and the pre-scoring 26-family closure audit, including framework-level FWFP corrections, before implementation can proceed. Fresh scoring requires a separate Rebecca authorization after implementation and review.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 first scoring retained as INSTRUMENT FAILURE. V4.3 targeted L1 shuffled-arm amendment CRITIC-CLEARED as specification only. Scoring BLOCKED pending implementation, §2.10 harmonization, full 26-family FWFP closure, and Rebecca fresh-seed authorization.**
