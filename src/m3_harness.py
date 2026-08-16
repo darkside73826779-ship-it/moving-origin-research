@@ -97,6 +97,7 @@ L6_N_AUDIT_ROWS = 4  # F7 fix: 4 callables, not 5
 
 # Seed pools
 DEVELOPMENT_SEEDS = [101, 102, 103, 104, 105]
+SCORING_SEEDS = [201, 202, 203]
 SEEDS_DEFAULT = [101, 102, 103]
 
 # Timing
@@ -338,6 +339,24 @@ def _non_timing_projection(results):
         if 'L5' in seed_data:
             seed_data['L5'].pop('growth', None)
     return projected
+
+
+def _allowed_seeds_for_mode(mode):
+    """Return the exact CRITIC B1 seed allowlist for a run mode."""
+    if mode == 'development':
+        return set(DEVELOPMENT_SEEDS)
+    if mode == 'scoring':
+        return set(SCORING_SEEDS) | set(DEVELOPMENT_SEEDS)
+    raise ValueError(f'Unsupported run mode: {mode}')
+
+
+def _run_type_for_mode(mode):
+    """Map run mode to the append-only seed-exposure ledger run type."""
+    if mode == 'scoring':
+        return 'scoring'
+    if mode == 'development':
+        return 'development_diagnostic'
+    raise ValueError(f'Unsupported run mode: {mode}')
 
 
 # ---------------------------------------------------------------------------
@@ -2498,8 +2517,8 @@ def main():
     parser.add_argument('--output-dir', type=str, default='./m3_output',
                         help='Output directory (default: ./m3_output)')
     parser.add_argument('--mode', type=str, default='development',
-                        choices=['development'],
-                        help='Run mode (development only)')
+                        choices=['development', 'scoring'],
+                        help='Run mode')
     parser.add_argument(
         '--verify-reproducibility', action='store_true',
         help='Repeat all selected development runs and compare non-timing data')
@@ -2510,11 +2529,11 @@ def main():
     seeds = [int(s.strip()) for s in args.seeds.split(',')]
 
     # Seed validation
+    allowed_seeds = _allowed_seeds_for_mode(args.mode)
     for s in seeds:
-        if s not in DEVELOPMENT_SEEDS:
+        if s not in allowed_seeds:
             print(
-                f"ERROR: Seed {s} is not in the authorized development pool. "
-                "Scoring-only seeds and arbitrary seeds are forbidden.")
+                f"ERROR: Seed {s} is not authorized for {args.mode} mode.")
             sys.exit(1)
 
     output_dir = args.output_dir
@@ -2546,7 +2565,7 @@ def main():
                 'pool': 'M3_development',
                 'milestone_id': 'M3',
                 'law_id': law,
-                'run_type': 'development_diagnostic',
+                'run_type': _run_type_for_mode(args.mode),
                 'timestamp_cycle': event_id,
             })
             event_id += 1

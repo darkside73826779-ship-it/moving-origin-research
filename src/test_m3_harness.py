@@ -1,3 +1,4 @@
+import inspect
 import unittest
 
 import episodic_cache
@@ -7,6 +8,32 @@ import m3_harness as m3
 
 
 class M3HarnessTests(unittest.TestCase):
+    def test_critic_b1_seed_mode_guard_static(self):
+        self.assertEqual(m3.SCORING_SEEDS, [201, 202, 203])
+        self.assertEqual(
+            m3._allowed_seeds_for_mode("development"),
+            set(m3.DEVELOPMENT_SEEDS),
+        )
+        self.assertEqual(
+            m3._allowed_seeds_for_mode("scoring"),
+            set(m3.SCORING_SEEDS) | set(m3.DEVELOPMENT_SEEDS),
+        )
+        self.assertNotIn(
+            201, m3._allowed_seeds_for_mode("development"))
+        self.assertIn(201, m3._allowed_seeds_for_mode("scoring"))
+        self.assertIn(101, m3._allowed_seeds_for_mode("scoring"))
+        self.assertNotIn(999, m3._allowed_seeds_for_mode("scoring"))
+        self.assertEqual(
+            m3._run_type_for_mode("development"),
+            "development_diagnostic",
+        )
+        self.assertEqual(m3._run_type_for_mode("scoring"), "scoring")
+
+    def test_critic_b1_parser_modes_static(self):
+        source = inspect.getsource(m3.main)
+        self.assertIn(
+            "choices=['development', 'scoring']", source)
+
     def test_l1_fixture_and_candidate_sets(self):
         fixture = m3._l1_build_fixture(101)
         self.assertEqual(len(fixture["autobiography"]), 2200)
