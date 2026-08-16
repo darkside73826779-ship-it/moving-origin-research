@@ -10,6 +10,21 @@
 
 ---
 
+## CRITIC re-review amendments (B1–B3 + NB1/NB3)
+
+CRITIC returned BLOCK on the initial amendment with 3 blocking findings and 3 non-blocking notes. The following fixes resolve all 3 blockers and address NB1/NB3:
+
+| Finding | Fix | Section amended |
+|---|---|---|
+| **B1** — C1/C6 numerical exactness conflict | C1.7 changed from "exactly in binary64" to tolerance-based for transcendental outputs; u1/u2 mantissas remain bit-exact under C6.5. C6.2 broadened from "Trigonometric evaluation" to "Transcendental evaluation" — now explicitly includes `ln` and `sqrt` alongside `sin` and `cos`. **NB1** resolved: conformance vectors are implementation-emitted; JUDGE recomputes u1/u2 bit-exactly and z/ε within C6.2 tolerance; Vector B digest is artifact-custody only, not cross-platform pass/fail. | C1.7, C6.2 |
+| **B2** — C2 AR(3) timeline contradiction | C2.2 corrected: `t_abs = 0..1109` (1110 total cycles); burn-in `t_abs = 0..99` (100 discarded); scored `t_abs = 100..1109` (1010 cycles, re-indexed `t = 0..1009`). C1.5 off-by-one fixed: `t = 0..1110` → `t_abs = 0..1109`. Consistency check added: eval origin at scored t=904 (abs 1004) + h=5 reaches scored t=909 (abs 1109) = last generated cycle. | C1.5, C2.2 |
+| **B3** — Box-Muller rejection stream cursor ambiguity | C1.3 replaced with cursor-level pseudocode (Interpretation B: sequential cursor). `u2=0` special case removed. Forced rejection conformance case added showing exact cursor advancement. Rules out partner-skipping and word-promotion interpretations. | C1.3 |
+| **NB3** — L3 oracle v_h edge case | C7.5 added: documents that v_h ≤ 0 for all horizons means oracle is within both anchors and family passes with large p-value. | C7.5 (new) |
+
+**NB2** (stale gate/schema_version labels) is non-blocking and not addressed in this amendment.
+
+---
+
 ## Origin
 
 TASK BUILDER returned a SPECIFICATION BLOCK on the V4.4 amendment implementation, correctly stopping rather than inventing unauthorized specification rules. WORKFLOW COORDINATOR routed the block to ARCHITECT (per Rebecca's routing instruction, 2026-08-16 19:24 EDT) to prepare a narrow implementation-completeness amendment.

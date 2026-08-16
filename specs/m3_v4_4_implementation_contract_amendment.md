@@ -28,16 +28,55 @@ From each 64-bit big-endian stream word `w`:
 1. Extract the low 53 bits: `m = w & ((1 << 53) - 1)`.
 2. Convert to open-interval uniform: `u = m / 2^53`. This yields `u ∈ [0, 1)`.
 
-### 1.3 Pair consumption and Gaussian computation
+### 1.3 Pair consumption and Gaussian computation (B3 fix — cursor-level pseudocode)
 
-Consume words in consecutive pairs `(w1, w2)` from the stream:
-1. `u1 = low53(w1) / 2^53`.
-2. If `u1 == 0`: **reject** — consume the next word `w1'`, set `u1 = low53(w1') / 2^53`, repeat until `u1 > 0`. Each rejected word increments the rejection counter. The rejected word's partner (`w2` of the original pair) is NOT consumed — only `w1` words are consumed during rejection.
-3. `u2 = low53(w2) / 2^53`. If `u2 == 0`: set `u2 = 2^-53` (smallest positive value; does not reject — `u2 = 0` only affects the angle, not the radius).
-4. Compute:
-   - `z1 = sqrt(-2 * ln(u1)) * cos(2 * π * u2)`
-   - `z2 = sqrt(-2 * ln(u1)) * sin(2 * π * u2)`
-5. Both `z1` and `z2` are standard normal `N(0, 1)` values. They are emitted as a pair: `z1` first, then `z2`.
+The stream is consumed via a monotonically advancing cursor. Each call to `next_word()` reads `stream_word[cursor]` and increments `cursor` by 1. The Gaussian generation loop is:
+
+```
+cursor = 0
+rejection_count = 0
+
+next_word():
+  w = stream_word[cursor]
+  cursor += 1
+  return w
+
+next_open_u1():
+  while true:
+    w1 = next_word()
+    m1 = low53(w1)
+    if m1 != 0:
+      return m1 / 2^53
+    rejection_count += 1
+
+next_gaussian_pair():
+  u1 = next_open_u1()      // consumes ≥1 word; rejected words advance cursor by 1 each
+  w2 = next_word()           // consumes exactly 1 word
+  u2 = low53(w2) / 2^53     // u2=0 is valid; no adjustment, no rejection
+  r = sqrt(-2 * ln(u1))
+  theta = 2 * π * u2
+  return (r * cos(theta), r * sin(theta))
+```
+
+Key properties:
+- `u1` consumption: read words one at a time until `low53(w) != 0`. Each rejected word advances the cursor by exactly 1.
+- `u2` consumption: read exactly 1 word. `u2 = 0` is valid (produces `theta = 0`, `cos = 1`, `sin = 0`). No special case, no adjustment.
+- The next Gaussian pair begins at the cursor position immediately after the `u2` word. No word skipping, no partner promotion.
+- Both `z1 = r * cos(theta)` and `z2 = r * sin(theta)` are standard normal `N(0, 1)` values. They are emitted as a pair: `z1` first, then `z2`.
+
+**Forced rejection conformance case (B3 fix):**
+
+To eliminate any residual ambiguity, the following synthetic case shows exact cursor behavior when a rejection occurs:
+
+```
+word[0] low53 = 0  → rejected as u1 candidate; cursor=1; rejection_count=1
+word[1] low53 = 1  → accepted; u1 = 2^-53; cursor=2
+word[2] low53 = 2^52 → u2 = 0.5; cursor=3
+// Gaussian pair: z1 = sqrt(-2*ln(2^-53)) * cos(π), z2 = sqrt(-2*ln(2^-53)) * sin(π)
+// Next pair begins reading at word[3]
+```
+
+This rules out Interpretation A (partner-skipping) and Interpretation C (word promotion). Only Interpretation B (sequential cursor) is correct.
 
 ### 1.4 Scaling
 
@@ -45,7 +84,7 @@ Scale to the L3 innovation distribution: `ε = sqrt(0.05) * z`, where `0.05` is 
 
 ### 1.5 Array fill order
 
-Gaussian values fill the innovation array in **channel-major, time-major** order: `ε[t, c]` for `t = 0..1110` (including burn-in), `c = 0..7`. The Box–Muller pair `(z1, z2)` fills consecutive array positions: `ε[t, c] = sqrt(0.05) * z1`, `ε[t, c+1] = sqrt(0.05) * z2` (if `c+1 < 8`), or `ε[t, c+1] = sqrt(0.05) * z1_next` if the channel wraps. Specifically: the flat index `i = t * 8 + c` maps to Box–Muller pair `i // 2`, component `i % 2` (0 = cos/z1, 1 = sin/z2).
+Gaussian values fill the innovation array in **channel-major, time-major** order: `ε[t_abs, c]` for `t_abs = 0..1109` (including burn-in), `c = 0..7`. The Box–Muller pair `(z1, z2)` fills consecutive array positions: `ε[t_abs, c] = sqrt(0.05) * z1`, `ε[t_abs, c+1] = sqrt(0.05) * z2` (if `c+1 < 8`), or `ε[t_abs, c+1] = sqrt(0.05) * z1_next` if the channel wraps. Specifically: the flat index `i = t_abs * 8 + c` maps to Box–Muller pair `i // 2`, component `i % 2` (0 = cos/z1, 1 = sin/z2).
 
 Since `8` is even, each time step's 8 channels consume exactly 4 Box–Muller pairs (8 stream words). The full sequence (1110 time steps × 8 channels = 8880 values) consumes exactly 4440 pairs = **8880 stream words** (assuming zero rejections).
 
@@ -53,11 +92,12 @@ Since `8` is even, each time step's 8 channels consume exactly 4 Box–Muller pa
 
 The rejection counter tracks the total number of rejected `w1` words (where `low53(w1) == 0`). The expected rejection count is 8880 / 2^53 ≈ 0. The rejection count is included in the RNG artifact record.
 
-### 1.7 Conformance vectors
+### 1.7 Conformance vectors (B1 fix — tolerance-based, not bit-exact; NB1 — implementation-emitted)
 
-For cross-platform verification, the contract requires:
-- **Vector A (first 10 pairs):** the first 20 stream words, their 53-bit mantissas, the resulting `u1, u2, z1, z2`, and the scaled `ε` values. Any implementation must reproduce these exactly in binary64.
-- **Vector B (full-sequence digest):** SHA-256 of the complete 8880-value `ε` array in C-row-major little-endian binary64.
+For cross-platform verification, the **implementation emits** the following conformance vectors in the RNG artifact record. JUDGE independently recomputes them: `u1`/`u2` mantissa values must reproduce **bit-exactly** (under C6.5, integer arithmetic); `z1`, `z2`, and scaled `ε` values must reproduce **within the C6.2 transcendental tolerance** (1e-12 relative, 1e-14 absolute for near-zero).
+
+- **Vector A (first 10 pairs):** the first 20 consumed stream words (including any rejected words), their 53-bit mantissas, the resulting `u1, u2, z1, z2`, and the scaled `ε` values. JUDGE recomputes `u1`/`u2` bit-exactly and `z`/`ε` within tolerance.
+- **Vector B (full-sequence digest):** SHA-256 of the complete 8880-value `ε` array in C-row-major little-endian binary64. This digest is an **artifact-custody digest** — it verifies that the implementation's stored array matches its own output. It is NOT a cross-platform pass/fail reference: JUDGE recomputes the `ε` array from the stream and tolerance-checks element-wise, not by digest equality across platforms.
 
 ---
 
@@ -67,12 +107,13 @@ For cross-platform verification, the contract requires:
 
 The AR(3) recursion `x[t] = a1·x[t-1] + a2·x[t-2] + a3·x[t-3] + sin_term + ε[t]` requires initial values for `x[-3], x[-2], x[-1]`. These are **fixed zeros**: `x[-3] = x[-2] = x[-1] = 0` (all 8 channels).
 
-### 2.2 Burn-in specification
+### 2.2 Burn-in specification (B2 fix — corrected timeline)
 
 - **Burn-in length:** 100 cycles, generated before the scored sequence.
-- **Burn-in procedure:** the AR(3) recursion runs for `t = 0..109` (110 total pre-scored cycles), generating 1110 cycles total. The first 100 cycles (`t = 0..99`) are the **burn-in** and are discarded. The scored sequence begins at `t = 100` of the pre-burn-in output, re-indexed as `t = 0..1009` in the scored sequence.
-- **Sinusoid time index:** the sinusoid uses **absolute pre-burn-in time**: `sin_term = 0.5 * sin(2π·t_abs / 7 + phase_c)` where `t_abs` is the absolute index including burn-in (0-based from the start of generation). The scored sequence's `t = 0` corresponds to `t_abs = 100`.
-- **Innovation consumption:** innovations are generated for all 1110 cycles (including burn-in). Burn-in innovations are consumed from the RNG stream but their resulting sequence values are discarded.
+- **Generation timeline (corrected):** the AR(3) recursion runs for `t_abs = 0..1109` (**1110 total cycles** generated, including burn-in). The first 100 cycles (`t_abs = 0..99`) are the **burn-in** and are discarded. The scored sequence is `t_abs = 100..1109` (**1010 cycles**), re-indexed as `t = 0..1009` in the scored output.
+- **Sinusoid time index:** the sinusoid uses **absolute pre-burn-in time**: `sin_term = 0.5 * sin(2π·t_abs / 7 + phase_c)` where `t_abs` is the absolute index from the start of generation (0-based). The scored sequence's `t = 0` corresponds to `t_abs = 100`.
+- **Innovation consumption:** innovations are generated for all 1110 cycles (`ε[t_abs, c]` for `t_abs = 0..1109`, `c = 0..7`, total 8880 values). Burn-in innovations are consumed from the RNG stream but their resulting sequence values are discarded.
+- **Consistency check:** evaluation origin at scored `t = 904` (absolute `t_abs = 1004`) with horizon 5 reaches scored `t = 909` (absolute `t_abs = 1109`), which is the last generated cycle — exactly matching the 1010-cycle scored sequence length and the 1110-cycle total generation.
 
 ### 2.3 Channel ordering
 
@@ -194,9 +235,9 @@ These field names are binding in all raw artifact schemas, RNG records, and JUDG
 
 All real-valued arrays are IEEE 754 binary64 (double precision). Every value must be finite (no NaN, no infinity); a non-finite value in any computed array is an INSTRUMENT FAILURE.
 
-### 6.2 Trigonometric evaluation
+### 6.2 Transcendental evaluation (B1 fix — broadened from trigonometric to include ln and sqrt)
 
-The `sin` and `cos` functions are evaluated using the platform's standard C library `libm` implementation (or language-equivalent). Cross-platform differences in the last ULP are expected. **Tolerance:** for all trigonometric-dependent arrays (innovations, predictions, losses, reductions, statistics), the JUDGE recomputation tolerance is `1e-12` relative error per element, or `1e-14` absolute error for near-zero values. Exact bit-equality is NOT required for trigonometric-dependent quantities.
+The `sin`, `cos`, `ln`, and `sqrt` functions are evaluated using the platform's standard C library `libm` implementation (or language-equivalent, e.g., Python `math` module). Cross-platform differences in the last ULP are expected for all transcendental functions. **Tolerance:** for all transcendental-dependent arrays (Gaussian innovations `ε`, predictions, losses, reductions, statistics), the JUDGE recomputation tolerance is `1e-12` relative error per element, or `1e-14` absolute error for near-zero values. Exact bit-equality is NOT required for transcendental-dependent quantities. The `u1`/`u2` mantissa values (integer arithmetic, C6.5) remain bit-exact; only the transcendental outputs (`z1`, `z2`, `ε`, and downstream arrays) are tolerance-checked.
 
 ### 6.3 OLS solver
 
@@ -254,6 +295,10 @@ The V4.1 **candidate-facing reduction bars** (≥5% at every horizon 1..5) remai
 ### 7.4 Preserved failures
 
 The three preserved L3 failures (`ec457fc`, `6ef3cce`, `76a8dd6`) remain retained under their original labels. The repair proposal's development-phase study (seeds 101–105 only) is disclosed as pre-scoring diagnostic evidence, not as scoring evidence.
+
+### 7.5 L3 oracle v_h score edge case (NB3 clarification)
+
+V4.4 §3.2 defines `v_h = max(0.05 - oracle_reduction_h, oracle_reduction_h - 0.95)` and `S = max_h v_h`. When all oracle reductions are strictly inside `(0.05, 0.95)`, every `v_h < 0`, so `S < 0`. When any reduction equals exactly 0.05 or 0.95, the corresponding `v_h = 0`, so `S >= 0`. The upper-tail plus-one p-value test on `S` is mathematically correct in both cases: `S < 0` yields a large p-value (pass), and `S = 0` or `S > 0` is tested against the null distribution. JUDGE should document this explicitly: `v_h <= 0` for all horizons means the oracle is within both anchors and the family passes with a large p-value.
 
 ---
 
