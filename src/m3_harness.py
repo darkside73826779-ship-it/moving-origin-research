@@ -275,17 +275,41 @@ def _sha256_file(path):
     return h.hexdigest()
 
 
-def _get_git_hash():
-    """Try to get git HEAD hash."""
-    try:
-        import subprocess
-        result = subprocess.run(['git', 'rev-parse', 'HEAD'],
-                                capture_output=True, text=True, cwd=os.path.dirname(__file__))
-        if result.returncode == 0:
-            return result.stdout.strip()
-    except Exception:
-        pass
-    return "unknown"
+def _resolve_repository_provenance():
+    """Resolve repository root, HEAD, and STATE.md hash at run time.
+
+    Provenance placeholders are forbidden. A run outside a valid checkout,
+    or without the current state file, is unscoreable and aborts.
+    """
+    import subprocess
+
+    source_dir = os.path.dirname(os.path.abspath(__file__))
+    root_result = subprocess.run(
+        ['git', 'rev-parse', '--show-toplevel'],
+        capture_output=True, text=True, cwd=source_dir, check=False)
+    if root_result.returncode != 0:
+        raise RuntimeError(
+            'Cannot resolve repository root; refusing placeholder provenance')
+    repository_root = root_result.stdout.strip()
+
+    head_result = subprocess.run(
+        ['git', 'rev-parse', 'HEAD'],
+        capture_output=True, text=True, cwd=repository_root, check=False)
+    commit_hash = head_result.stdout.strip()
+    if (
+        head_result.returncode != 0
+        or len(commit_hash) != 40
+        or any(ch not in '0123456789abcdef' for ch in commit_hash.lower())
+    ):
+        raise RuntimeError(
+            'Cannot resolve a valid 40-character HEAD commit hash')
+
+    state_path = os.path.join(repository_root, 'state', 'STATE.md')
+    if not os.path.isfile(state_path):
+        raise RuntimeError(
+            f'Current STATE.md not found at {state_path}')
+    state_hash = _sha256_file(state_path)
+    return commit_hash, state_hash
 
 
 def _check_finite(d, name=""):
@@ -943,22 +967,28 @@ def run_l1(seed, log_lines=None):
 # ---------------------------------------------------------------------------
 
 def _l3_generate_sequence(seed):
-    """Generate AR(3) sequence: x[t] = 0.5*x[t-1] - 0.3*x[t-2] + 0.15*x[t-3]
-    + 0.1*sin(t/23) + eps[t], 8-dimensional, N=1010."""
+    """Generate the CRITIC-cleared v4.1 AR(3) fixture exactly.
+
+    x[t] = 0.3*x[t-1] - 0.2*x[t-2] + 0.1*x[t-3]
+           + 0.5*sin(2*pi*t/7) + eps[t]
+    eps ~ N(0, 0.05 variance); 100 generated cycles are discarded.
+    """
     rng = np.random.RandomState(seed)
-    n = L3_SEQUENCE_LENGTH
+    burn_in = 100
+    n = L3_SEQUENCE_LENGTH + burn_in
     d = L3_INPUT_DIM
     x = np.zeros((n, d))
-    for t in range(n):
-        if t >= 1:
-            x[t] += 0.5 * x[t-1]
-        if t >= 2:
-            x[t] -= 0.3 * x[t-2]
-        if t >= 3:
-            x[t] += 0.15 * x[t-3]
-        x[t] += 0.1 * np.sin(t / 23.0)
-        x[t] += rng.normal(0, 0.05, d)
-    return x
+    for t in range(3, n):
+        sinusoid = 0.5 * np.sin(2.0 * np.pi * t / 7.0)
+        noise = rng.normal(0, np.sqrt(0.05), size=d)
+        x[t] = (
+            0.3 * x[t-1]
+            - 0.2 * x[t-2]
+            + 0.1 * x[t-3]
+            + sinusoid
+            + noise
+        )
+    return x[burn_in:]
 
 
 def _l3_compute_state(x):
@@ -2597,7 +2627,8 @@ def main():
 
     # 3. m3_manifest.json
     manifest_path = os.path.join(output_dir, 'm3_manifest.json')
-    git_hash = _get_git_hash()
+    git_hash, state_md_sha256 = (
+        _resolve_repository_provenance())
     deviations = []
     if platform.python_version() != '3.11':
         deviations.append(f"Python {platform.python_version()} vs pinned 3.11 (non-blocking)")
@@ -2683,11 +2714,7 @@ def main():
     # Update manifest with wall clock and hashes
     manifest_out['wall_clock_seconds'] = (
         time.perf_counter() - run_started)
-    state_path = os.path.join(
-        os.path.dirname(os.path.dirname(__file__)), 'state', 'STATE.md')
-    manifest_out['state_md_sha256'] = (
-        _sha256_file(state_path) if os.path.exists(state_path) else 'missing'
-    )
+    manifest_out['state_md_sha256'] = state_md_sha256
     manifest_out['output_files'] = [
         'm3_run_results.json',
         *per_law_filenames,
