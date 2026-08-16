@@ -113,7 +113,7 @@ The AR(3) recursion `x[t] = a1·x[t-1] + a2·x[t-2] + a3·x[t-3] + sin_term + ε
 - **Generation timeline (corrected):** the AR(3) recursion runs for `t_abs = 0..1109` (**1110 total cycles** generated, including burn-in). The first 100 cycles (`t_abs = 0..99`) are the **burn-in** and are discarded. The scored sequence is `t_abs = 100..1109` (**1010 cycles**), re-indexed as `t = 0..1009` in the scored output.
 - **Sinusoid time index:** the sinusoid uses **absolute pre-burn-in time**: `sin_term = 0.5 * sin(2π·t_abs / 7 + phase_c)` where `t_abs` is the absolute index from the start of generation (0-based). The scored sequence's `t = 0` corresponds to `t_abs = 100`.
 - **Innovation consumption:** innovations are generated for all 1110 cycles (`ε[t_abs, c]` for `t_abs = 0..1109`, `c = 0..7`, total 8880 values). Burn-in innovations are consumed from the RNG stream but their resulting sequence values are discarded.
-- **Consistency check:** evaluation origin at scored `t = 904` (absolute `t_abs = 1004`) with horizon 5 reaches scored `t = 909` (absolute `t_abs = 1109`), which is the last generated cycle — exactly matching the 1010-cycle scored sequence length and the 1110-cycle total generation.
+- **Consistency check:** evaluation origin at scored `t = 1004` (absolute `t_abs = 1104`) with horizon 5 reaches scored `t = 1009` (absolute `t_abs = 1109`), the last generated cycle — exactly matching the 1010-cycle scored sequence length and the 1110-cycle total generation.
 
 ### 2.3 Channel ordering
 
