@@ -1,0 +1,55 @@
+{
+  "config": {
+    "A_sig": 10.0,
+    "sigma_f": 0.1,
+    "sigma_q": 0.1,
+    "lambda": 16.0,
+    "rd_bucket_size": 30,
+    "tau": 50,
+    "k": 10,
+    "d": 32,
+    "n_entries": 1000,
+    "now": 999,
+    "n_cu": 30,
+    "n_rd": 20
+  },
+  "baseline_critic": {
+    "RD": 0.8266666666666668,
+    "CU": 0.9266666666666667,
+    "ALL": 0.8866666666666667
+  },
+  "final": {
+    "per_seed": [
+      {
+        "seed": 42,
+        "RD": 0.3,
+        "CU": 0.0,
+        "ALL": 0.12
+      },
+      {
+        "seed": 43,
+        "RD": 0.23500000000000004,
+        "CU": 0.0,
+        "ALL": 0.094
+      },
+      {
+        "seed": 44,
+        "RD": 0.22999999999999998,
+        "CU": 0.0,
+        "ALL": 0.092
+      }
+    ],
+    "mean": {
+      "RD": 0.255,
+      "CU": 0.0,
+      "ALL": 0.102
+    },
+    "checks": {
+      "all_seeds_positive": true,
+      "all_seeds_above_floor": true,
+      "cu_below_0.1_all_seeds": true,
+      "rd_positive_all_seeds": true,
+      "aggregate_in_open_interval": true
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "command": "python e1_experiment.py --seeds 42,43,44,45,46 --output-dir ./e1_output",
+  "diagnostic_command": "python e1_experiment.py --seeds 42,43,44 --output-dir ./e1_output",
+  "commit_hash": "pending -- no git repo",
+  "purpose": "E1 moving-origin experiment (three-property test per Rebecca's E1 gate ruling + Q2/Q3 incorporations + Option E amendment + R1-R4 sign-off requirements per REBECCA_OPTION_E_SIGNOFF.md): (i) correctness (oracle_agreement == 1.0, kill f), (ii) operational distinctness (latency_ratio <= 2.0 [d1] AND candidate_latency_growth_10x <= 2.0 on a battery where fair_naive_latency_growth_10x >= 4.0 [d2]; slope ratio is diagnostic only; kill d), (iii) load-bearing coupling (downstream_degradation > 0 on all seeds AND mean >= 0.05; observed magnitude reported; Option E frozen arm + additive/bucketed consumer battery; R1-R4 reporting). Plus structural: chain integrity (kill b), coordinate shift (kill c), wall-clock independence (kill e). Old kill (a) RETIRED. 5 active kill conditions (b-f). Timing methodology: median >=100 reps, warm-up excluded, perf_counter_ns high-resolution monotonic clock with batch fallback, IQR reported (NB-6 resolved; E1-RUN-1 crash fix applied).",
+  "bars": "oracle_agreement == 1.0 (kill f); latency_ratio <= 2.0 [d1] AND candidate_latency_growth_10x <= 2.0 on battery where fair_naive_latency_growth_10x >= 4.0 [d2] (kill d; slope ratio diagnostic only); chain_integrity == 1.0 (kill b); coordinate_shift == 1.0 (kill c); wall_clock_shift_detected == 0.0 (kill e); downstream_degradation > 0 all seeds AND mean >= 0.05 (property iii; magnitude reported; R1-R4 component-wise reporting). Old equivalence_agreement <= 0.90 RETIRED.",
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "scoring_seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "holdout_seeds": [
+    45,
+    46
+  ],
+  "r3_note": "R3: scoring run uses 5 seeds (42,43,44,45,46); 45,46 are HOLD-OUT (never in development). Diagnostic uses only 42,43,44. All floors/kill conditions apply to all FIVE jointly.",
+  "wall_clock_seconds": 8.389204300001438,
+  "deps": {
+    "python": "3.11.x",
+    "numpy": "1.26.4",
+    "scipy": "1.13.1"
+  },
+  "python_version_runtime": "Python 3.12.10",
+  "output_files": [
+    "e1_run_results.json",
+    "e1_invariants.json",
+    "e1_manifest.json",
+    "e1_run.log",
+    "e1_profile.json"
+  ],
+  "artifact_package_includes": [
+    "e1_experiment.py",
+    "critic_independent_rerderivation.py (R4: CRITIC's independent re-derivation of the consumer battery, included for auditable arithmetic)"
+  ],
+  "deviations_logged": [
+    "Python runtime 3.12.10 differs from pinned 3.11.x"
+  ]
+}

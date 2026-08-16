@@ -1,0 +1,53 @@
+{
+  "profile_version": "m1-locked-1.0",
+  "profile_vector": [
+    0.5,
+    0.4862359431774359,
+    0.0,
+    0.13333333333333333,
+    0.4633796296296296,
+    0.5054433772059359,
+    0.010377800984312242,
+    0.08333333333333333,
+    0.4850462962962963,
+    0.4666439040998062,
+    -0.03035019666770213,
+    0.08333333333333333,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    0.49222222222222217,
+    0.4334048893605959,
+    -0.05300290385213771,
+    0.16666666666666666,
+    0.7314814814814815,
+    0.7071203756987581,
+    0.42594667265913344,
+    0.2833333333333334
+  ],
+  "arm_order": [
+    "empty",
+    "permuted",
+    "shuffled",
+    "oracle",
+    "naive",
+    "frozen"
+  ],
+  "metric_order": [
+    "auroc",
+    "ndcg_at_k",
+    "spearman_rho",
+    "recall_at_k"
+  ],
+  "drift_criterion": "pearson_corr(profile_vector, new_profile_vector) < 0.7 => drifted (locked bar); self-test threshold < 0.5 (stricter, for margin)",
+  "l20_self_test": {
+    "no_drift_corr": 1.0,
+    "no_drift_passes": true,
+    "perturbation_1": "full_arm_block_reversal",
+    "perturbation_1_corr": -0.02176471975066368,
+    "perturbation_2": "empty_oracle_swap",
+    "perturbation_2_corr": 0.1659449368605814,
+    "both_perturbations_flag_drift": true
+  }
+}

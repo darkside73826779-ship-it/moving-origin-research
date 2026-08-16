@@ -1,0 +1,21 @@
+E1-RUN-1 Round-Trip Log
+=======================
+Date:             2026-08-15 America/New_York
+Command run:      python e1_experiment.py --seeds 42,43,44,45,46 --output-dir ./e1_scoring_output
+Execution count:  1 (no retry performed)
+Exit status:      1 (crashed during L20 self-test)
+Python version:   Python 3.12.10
+numpy version:    1.26.4
+scipy version:    1.13.1
+Observed wall:    9.7 seconds (executor measurement; no manifest was produced)
+Scored commit:    f9dc658f40291a026769474fe3dd6ff9dfc86fe6
+Seeds:            42, 43, 44, 45, 46
+Integrity gate:   all entries in MANIFEST_SHA256.txt matched
+Output directory: e1_scoring_output
+Output files:     e1_run.log only (partial output from crash)
+Deviation:        Python 3.12.10 used because Python 3.11 was unavailable. Pinned numpy/scipy versions were used.
+Crash stderr:     e1_crash_stderr.txt (returned alongside the raw output directory)
+
+The scoring output directory is returned raw and unmodified. The run produced
+no JSON or re-derivation artifacts before crashing. Per the binding packet,
+the run was not retried, fixed, or rerun with different parameters.

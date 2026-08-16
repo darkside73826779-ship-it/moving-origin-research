@@ -1,0 +1,24 @@
+E1-RUN-2 Round-Trip Log
+=======================
+Date:             2026-08-15 19:23:10 -04:00
+Command run:      python e1_experiment.py --seeds 42,43,44,45,46 --output-dir ./e1_scoring_output
+Execution count:  1
+Exit status:      0
+Python version:   Python 3.12.10
+numpy version:    1.26.4
+scipy version:    1.13.1
+Wall clock:       8.389204300001438 seconds (from e1_manifest.json)
+Scored commit:    1d13105e8163859d7972705b731ba8c24a272276
+Seeds:            42, 43, 44, 45, 46
+Integrity gate:   all entries in MANIFEST_SHA256.txt matched
+Output files:     critic_independent_rerderivation.py, e1_invariants.json, e1_manifest.json, e1_profile.json, e1_run.log, e1_run_results.json
+Deviation:        Python 3.12.10 used because Python 3.11 was unavailable. Pinned numpy/scipy versions were used.
+e1_verdict:       PASS
+
+Output file sizes and SHA-256 hashes:
+critic_independent_rerderivation.py  4700 bytes  F00DA3FF24BB9B26CD100B51C604D5F0A2F79660887E5AA07C543B835BA0F960
+e1_invariants.json                  65497 bytes  B4D0282C33210F286C0FED6ECDAC5BBFDF0F4B48067D3660D6AC510707951976
+e1_manifest.json                     2708 bytes  4E1A6D5DAC868ABA085706C8F493B0DE767392EC85E3291A1DFC3D3C98432C0D
+e1_profile.json                      1581 bytes  E9569721CE069131287EE449978C954BAA38256D8E4590D5E9562D8B28329563
+e1_run.log                           9126 bytes  61024FEACF4EE62B77DB929379D30ACE233A008C96D805B7571BBF9C3F7C811E
+e1_run_results.json                158707 bytes  5898562DCFBEF808E214096C8DBA35D4E6BDB871EC55B44250B6040BA709C81A

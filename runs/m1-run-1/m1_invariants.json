@@ -1,0 +1,273 @@
+{
+  "invariant_suite_green": true,
+  "invariants": {
+    "I1_reproducibility": {
+      "passes": true,
+      "detail": "rerun matches run for all 3 seeds",
+      "per_seed_max_abs_diff": {
+        "42": 0.0,
+        "43": 0.0,
+        "44": 0.0
+      }
+    },
+    "I2_oracle_ceiling": {
+      "passes": true,
+      "per_metric": {
+        "auroc": 1.0,
+        "ndcg_at_k": 1.0,
+        "spearman_rho": 1.0,
+        "recall_at_k": 1.0
+      },
+      "floor": 0.95
+    },
+    "I3_contamination_floor": {
+      "passes": true,
+      "method": "empirical_null",
+      "null_replicate_count": 100,
+      "null_seeds": [
+        100,
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        108,
+        109,
+        110,
+        111,
+        112,
+        113,
+        114,
+        115,
+        116,
+        117,
+        118,
+        119,
+        120,
+        121,
+        122,
+        123,
+        124,
+        125,
+        126,
+        127,
+        128,
+        129,
+        130,
+        131,
+        132,
+        133,
+        134,
+        135,
+        136,
+        137,
+        138,
+        139,
+        140,
+        141,
+        142,
+        143,
+        144,
+        145,
+        146,
+        147,
+        148,
+        149,
+        150,
+        151,
+        152,
+        153,
+        154,
+        155,
+        156,
+        157,
+        158,
+        159,
+        160,
+        161,
+        162,
+        163,
+        164,
+        165,
+        166,
+        167,
+        168,
+        169,
+        170,
+        171,
+        172,
+        173,
+        174,
+        175,
+        176,
+        177,
+        178,
+        179,
+        180,
+        181,
+        182,
+        183,
+        184,
+        185,
+        186,
+        187,
+        188,
+        189,
+        190,
+        191,
+        192,
+        193,
+        194,
+        195,
+        196,
+        197,
+        198,
+        199
+      ],
+      "per_metric_empirical_band": {
+        "auroc": {
+          "lower": 0.36109722222222224,
+          "upper": 0.6474097222222222,
+          "width": 0.2863124999999999,
+          "low_power": true
+        },
+        "ndcg_at_k": {
+          "lower": 0.3334834485646845,
+          "upper": 0.6268297485905364,
+          "width": 0.29334630002585194,
+          "low_power": true
+        },
+        "spearman_rho": {
+          "lower": -0.19125396056926292,
+          "upper": 0.14847942411859955,
+          "width": 0.33973338468786246,
+          "low_power": true
+        },
+        "recall_at_k": {
+          "lower": 0.0,
+          "upper": 0.2752499999999998,
+          "width": 0.2752499999999998,
+          "low_power": true
+        }
+      },
+      "per_metric_null_stats": {
+        "auroc": {
+          "mean": 0.5041444444444445,
+          "std": 0.06464454161175974,
+          "min": 0.3597222222222222,
+          "max": 0.6522222222222223
+        },
+        "ndcg_at_k": {
+          "mean": 0.47833812814430415,
+          "std": 0.06478788938893007,
+          "min": 0.3287577636408412,
+          "max": 0.6293318691919775
+        },
+        "spearman_rho": {
+          "mean": 0.0008780257428462836,
+          "std": 0.0698008482803165,
+          "min": -0.19502669880249582,
+          "max": 0.1625218068280638
+        },
+        "recall_at_k": {
+          "mean": 0.10300000000000002,
+          "std": 0.0680982653037046,
+          "min": 0.0,
+          "max": 0.3
+        }
+      },
+      "per_arm_per_metric_in_band": {
+        "empty": {
+          "auroc": true,
+          "ndcg_at_k": true,
+          "spearman_rho": true,
+          "recall_at_k": true
+        },
+        "permuted": {
+          "auroc": true,
+          "ndcg_at_k": true,
+          "spearman_rho": true,
+          "recall_at_k": true
+        },
+        "shuffled": {
+          "auroc": true,
+          "ndcg_at_k": true,
+          "spearman_rho": true,
+          "recall_at_k": true
+        }
+      },
+      "shuffled_post_fix_verification": {
+        "auroc": 0.4850462962962963,
+        "ndcg_at_k": 0.4666439040998062,
+        "spearman_rho": -0.03035019666770213,
+        "recall_at_k": 0.08333333333333333
+      },
+      "method_note": "central 99% interval [0.5th, 99.5th percentile] of the naive arm over null replicate seeds; an arm passes a metric iff its 3-seed mean falls within that band."
+    },
+    "I4_discrimination_bar": {
+      "passes": true,
+      "bar": 0.3,
+      "per_metric": {
+        "auroc": {
+          "oracle_mean": 1.0,
+          "naive_mean": 0.49222222222222217,
+          "margin": 0.5077777777777779,
+          "bar": 0.3,
+          "passes_per_seed": [
+            true,
+            true,
+            true
+          ],
+          "passes": true
+        },
+        "ndcg_at_k": {
+          "oracle_mean": 1.0,
+          "naive_mean": 0.4334048893605959,
+          "margin": 0.566595110639404,
+          "bar": 0.3,
+          "passes_per_seed": [
+            true,
+            true,
+            true
+          ],
+          "passes": true
+        },
+        "spearman_rho": {
+          "oracle_mean": 1.0,
+          "naive_mean": -0.05300290385213771,
+          "margin": 1.0530029038521378,
+          "bar": 0.3,
+          "passes_per_seed": [
+            true,
+            true,
+            true
+          ],
+          "passes": true
+        },
+        "recall_at_k": {
+          "oracle_mean": 1.0,
+          "naive_mean": 0.16666666666666666,
+          "margin": 0.8333333333333334,
+          "bar": 0.3,
+          "passes_per_seed": [
+            true,
+            true,
+            true
+          ],
+          "passes": true
+        }
+      }
+    },
+    "I5_frozen_ordering": {
+      "passes": true,
+      "per_metric": {
+        "spearman_rho": "naive<frozen<oracle",
+        "auroc": "naive<frozen<oracle",
+        "ndcg_at_k": "naive<frozen<oracle",
+        "recall_at_k": "N/A on recall_at_k: seed 44: frozen=naive=0.2500 (tie at metric granularity); frozen<oracle strict=True; seeds 42,43 pass strict. Mean-level: frozen_mean=0.2833 > naive_mean=0.1667 (holds); frozen_mean=0.2833 < oracle_mean=1.0000 (holds). N/A per pre-registered fallback (non-strict frozen>naive not met on 1 seed(s); suite does not fail on this alone)."
+      }
+    }
+  }
+}

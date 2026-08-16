@@ -1,0 +1,31 @@
+{
+  "profile_version": "e1-locked-3.0",
+  "profile_vector": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    0.10760000000000003
+  ],
+  "metric_order": [
+    "oracle_agreement",
+    "latency_ratio_membership",
+    "candidate_latency_growth_10x",
+    "chain_integrity_final",
+    "coordinate_shift",
+    "downstream_degradation"
+  ],
+  "drift_criterion": "pearson_corr(profile_vector, new_profile_vector) < 0.70 => drifted (locked bar); self-test threshold < 0.50",
+  "l20_self_test": {
+    "no_drift_corr": 1.0,
+    "no_drift_passes": true,
+    "perturbation_1": "metric_block_reversal",
+    "perturbation_1_definition": "N5 fix: reverse the 6-element profile vector [m0,m1,m2,m3,m4,m5] -> [m5,m4,m3,m2,m1,m0]. (Before: [oracle_agreement, latency_ratio_membership, candidate_latency_growth_10x, chain_integrity_final, coordinate_shift, downstream_degradation]. After: [downstream_degradation, coordinate_shift, chain_integrity_final, candidate_latency_growth_10x, latency_ratio_membership, oracle_agreement].)",
+    "perturbation_1_corr": -0.20000000000000004,
+    "perturbation_2": "candidate_empty_swap",
+    "perturbation_2_definition": "N5 fix: swap the candidate's profile vector [m0..m5] with the empty arm's profile vector [0.0, 0.0, 0.0, 0.0, 0.0, 0.0] (empty arm has oracle_agreement=0.0 and all other metrics at chance/zero). Resulting vector: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]. (Before: candidate's 6 metrics. After: empty arm's 6 metrics \u2014 all zeros.)",
+    "perturbation_2_corr": 0.0,
+    "both_perturbations_flag_drift": true
+  }
+}

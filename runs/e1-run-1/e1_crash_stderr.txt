@@ -1,0 +1,28 @@
+C:\Users\darks\.openclaw\workspace\E1_RUN_1_PACKET\E1_RUN_1_OPENCLAW_PACKET\e1_venv\Lib\site-packages\numpy\core\_methods.py:173: RuntimeWarning: invalid value encountered in subtract
+  x = asanyarray(arr - arrmean)
+C:\Users\darks\.openclaw\workspace\E1_RUN_1_PACKET\E1_RUN_1_OPENCLAW_PACKET\e1_venv\Lib\site-packages\scipy\stats\_stats_py.py:4787: RuntimeWarning: invalid value encountered in subtract
+  xm = x.astype(dtype) - xmean
+C:\Users\darks\.openclaw\workspace\E1_RUN_1_PACKET\E1_RUN_1_OPENCLAW_PACKET\e1_venv\Lib\site-packages\scipy\stats\_stats_py.py:4788: RuntimeWarning: invalid value encountered in subtract
+  ym = y.astype(dtype) - ymean
+Traceback (most recent call last):
+  File "C:\Users\darks\.openclaw\workspace\E1_RUN_1_PACKET\E1_RUN_1_OPENCLAW_PACKET\e1_experiment.py", line 2806, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "C:\Users\darks\.openclaw\workspace\E1_RUN_1_PACKET\E1_RUN_1_OPENCLAW_PACKET\e1_experiment.py", line 2432, in main
+    l20 = l20_self_test(pv)
+          ^^^^^^^^^^^^^^^^^
+  File "C:\Users\darks\.openclaw\workspace\E1_RUN_1_PACKET\E1_RUN_1_OPENCLAW_PACKET\e1_experiment.py", line 2189, in l20_self_test
+    no_drift = _safe_pearson(pv, pv)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\darks\.openclaw\workspace\E1_RUN_1_PACKET\E1_RUN_1_OPENCLAW_PACKET\e1_experiment.py", line 2173, in _safe_pearson
+    r = pearsonr(a, b)[0]
+        ^^^^^^^^^^^^^^
+  File "C:\Users\darks\.openclaw\workspace\E1_RUN_1_PACKET\E1_RUN_1_OPENCLAW_PACKET\e1_venv\Lib\site-packages\scipy\stats\_stats_py.py", line 4793, in pearsonr
+    normxm = linalg.norm(xm)
+             ^^^^^^^^^^^^^^^
+  File "C:\Users\darks\.openclaw\workspace\E1_RUN_1_PACKET\E1_RUN_1_OPENCLAW_PACKET\e1_venv\Lib\site-packages\scipy\linalg\_misc.py", line 146, in norm
+    a = np.asarray_chkfinite(a)
+        ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\darks\.openclaw\workspace\E1_RUN_1_PACKET\E1_RUN_1_OPENCLAW_PACKET\e1_venv\Lib\site-packages\numpy\lib\function_base.py", line 630, in asarray_chkfinite
+    raise ValueError(
+ValueError: array must not contain infs or NaNs

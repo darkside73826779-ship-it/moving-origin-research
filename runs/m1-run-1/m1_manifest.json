@@ -1,0 +1,28 @@
+{
+  "command": "python m1_harness.py --seeds 42,43,44 --output-dir ./m1_output",
+  "commit_hash": "cebfa1308472dc8daa76a0c2a74628895dc6b873",
+  "purpose": "M1 harness: validate L18 control battery discriminates oracle from naive by >= 0.30 on every metric, 3 seeds.",
+  "bar": "oracle >= naive + 0.30 on every metric; invariant suite green (I1-I5).",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "wall_clock_seconds": 0.09144882199962012,
+  "deps": {
+    "python": "3.11.x (exact version recorded at runtime via python --version)",
+    "numpy": "1.26.4",
+    "scipy": "1.13.1"
+  },
+  "python_version_runtime": "Python 3.14.3",
+  "output_files": [
+    "m1_run_results.json",
+    "m1_invariants.json",
+    "m1_manifest.json",
+    "m1_run.log",
+    "m1_profile.json"
+  ],
+  "deviations_logged": [
+    "Python runtime 3.14.3 differs from pinned 3.11.x"
+  ]
+}

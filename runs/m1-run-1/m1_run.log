@@ -1,0 +1,45 @@
+========================================================================
+M1 HARNESS -- L18 control battery validation
+seeds=[42, 43, 44]  output_dir=./m1_output
+python_version_runtime=Python 3.14.3
+numpy=2.5.2  scipy=1.18.0
+========================================================================
+[run1] running battery over seeds...
+  seed 42: empty=auroc=0.5000, ndcg_at_k=0.4990, spearman_rho=0.0000, recall_at_k=0.1500, permuted=auroc=0.4247, ndcg_at_k=0.4351, spearman_rho=0.0557, recall_at_k=0.0500, shuffled=auroc=0.4957, ndcg_at_k=0.4728, spearman_rho=0.0305, recall_at_k=0.0500, oracle=auroc=1.0000, ndcg_at_k=1.0000, spearman_rho=1.0000, recall_at_k=1.0000, naive=auroc=0.5194, ndcg_at_k=0.4031, spearman_rho=-0.0338, recall_at_k=0.1000, frozen=auroc=0.7389, ndcg_at_k=0.6288, spearman_rho=0.4379, recall_at_k=0.2000
+  seed 43: empty=auroc=0.5000, ndcg_at_k=0.4978, spearman_rho=0.0000, recall_at_k=0.2000, permuted=auroc=0.4528, ndcg_at_k=0.5737, spearman_rho=-0.0769, recall_at_k=0.1000, shuffled=auroc=0.4036, ndcg_at_k=0.4123, spearman_rho=-0.0926, recall_at_k=0.1000, oracle=auroc=1.0000, ndcg_at_k=1.0000, spearman_rho=1.0000, recall_at_k=1.0000, naive=auroc=0.4275, ndcg_at_k=0.4390, spearman_rho=-0.1706, recall_at_k=0.1500, frozen=auroc=0.7644, ndcg_at_k=0.7205, spearman_rho=0.3841, recall_at_k=0.4000
+  seed 44: empty=auroc=0.5000, ndcg_at_k=0.4619, spearman_rho=0.0000, recall_at_k=0.0500, permuted=auroc=0.5126, ndcg_at_k=0.5075, spearman_rho=0.0523, recall_at_k=0.1000, shuffled=auroc=0.5558, ndcg_at_k=0.5148, spearman_rho=-0.0290, recall_at_k=0.1000, oracle=auroc=1.0000, ndcg_at_k=1.0000, spearman_rho=1.0000, recall_at_k=1.0000, naive=auroc=0.5297, ndcg_at_k=0.4580, spearman_rho=0.0454, recall_at_k=0.2500, frozen=auroc=0.6911, ndcg_at_k=0.7720, spearman_rho=0.4559, recall_at_k=0.2500
+[I1] reproducibility: re-running all seeds (run 2)...
+[I1] passes=True  per_seed_max_abs_diff={'42': 0.0, '43': 0.0, '44': 0.0}
+[I2] passes=True  per_metric={'auroc': 1.0, 'ndcg_at_k': 1.0, 'spearman_rho': 1.0, 'recall_at_k': 1.0} floor=0.95
+[I3] building empirical null from naive arm over 100 seeds (100..199)...
+[I3] passes=True  method=empirical_null  null_replicates=100
+      band auroc: [0.3611, 0.6474] width=0.2863 low_power=True
+      band ndcg_at_k: [0.3335, 0.6268] width=0.2933 low_power=True
+      band spearman_rho: [-0.1913, 0.1485] width=0.3397 low_power=True
+      band recall_at_k: [0.0000, 0.2752] width=0.2752 low_power=True
+      empty: auroc=0.5000(in), ndcg_at_k=0.4862(in), spearman_rho=0.0000(in), recall_at_k=0.1333(in)
+      permuted: auroc=0.4634(in), ndcg_at_k=0.5054(in), spearman_rho=0.0104(in), recall_at_k=0.0833(in)
+      shuffled: auroc=0.4850(in), ndcg_at_k=0.4666(in), spearman_rho=-0.0304(in), recall_at_k=0.0833(in)
+      shuffled_post_fix_verification: auroc=0.4850, ndcg_at_k=0.4666, spearman_rho=-0.0304, recall_at_k=0.0833
+[I4] passes=True bar=0.3
+      auroc: oracle_mean=1.0000 naive_mean=0.4922 margin=0.5078 passes_per_seed=[True, True, True] passes=True
+      ndcg_at_k: oracle_mean=1.0000 naive_mean=0.4334 margin=0.5666 passes_per_seed=[True, True, True] passes=True
+      spearman_rho: oracle_mean=1.0000 naive_mean=-0.0530 margin=1.0530 passes_per_seed=[True, True, True] passes=True
+      recall_at_k: oracle_mean=1.0000 naive_mean=0.1667 margin=0.8333 passes_per_seed=[True, True, True] passes=True
+[I5] passes=True  per_metric={'spearman_rho': 'naive<frozen<oracle', 'auroc': 'naive<frozen<oracle', 'ndcg_at_k': 'naive<frozen<oracle', 'recall_at_k': 'N/A on recall_at_k: seed 44: frozen=naive=0.2500 (tie at metric granularity); frozen<oracle strict=True; seeds 42,43 pass strict. Mean-level: frozen_mean=0.2833 > naive_mean=0.1667 (holds); frozen_mean=0.2833 < oracle_mean=1.0000 (holds). N/A per pre-registered fallback (non-strict frozen>naive not met on 1 seed(s); suite does not fail on this alone).'}
+[L20] no_drift_corr=1.0 no_drift_passes=True
+[L20] pert1(full_arm_block_reversal)_corr=-0.0218 (<0.5: True)
+[L20] pert2(empty_oracle_swap)_corr=0.1659 (<0.5: True)
+[L20] both_perturbations_flag_drift=True
+[manifest] deviations_logged (self-detected): ['Python runtime 3.14.3 differs from pinned 3.11.x']
+------------------------------------------------------------------------
+invariant_suite_green = True
+wall_clock_seconds = 0.0914
+python_version_runtime = Python 3.14.3
+Output files written:
+  ./m1_output/m1_run_results.json
+  ./m1_output/m1_invariants.json
+  ./m1_output/m1_manifest.json
+  ./m1_output/m1_run.log
+  ./m1_output/m1_profile.json
+------------------------------------------------------------------------
