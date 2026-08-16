@@ -1342,3 +1342,22 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **No scientific findings, locked bars, prior provenance entries, or GitHub main altered.** Four artifacts added/replaced and this entry appended only.
 
 **M0 COMPLETE. M1 DELIVERED GREEN AND ACCEPTED. M2 (E1) DELIVERED GREEN — SEALED. M3/E2 spec V4 CRITIC CLEAR — F1–F7 resolved, NF1–NF6 addressed, NF7–NF10 non-blocking findings of record. V4 package eligible for Rebecca's M3 Continuation/Scope Gate. No build cell, task specification, scoring packet, execution, or M3 timebox authorized. §1.1 growth-bar proposal pending Rebecca.**
+
+
+---
+
+## Entry 39 — Rebecca M3 Continuation/Scope Gate ruling: GO. Timebox approved and active.
+
+**Date:** 2026-08-15 · **Actor:** Rebecca Mcclintic (ruling); RECORDER (custody and attestation)
+
+- **Ruling:** Rebecca issued M3/E2 V4 GO (`docs/rulings/REBECCA_M3_GO.md`, SHA-256 `0f7b2aa29848dc2b9d3645b640dbe5994d6f54765ec360ce10604bc702350de4`). The M3/E2 V4 scope covering L1, L3, L5, and L6 is approved as merged on main at `7b690a98d9e100e8625173a37113710bac690811` and independently cleared by CRITIC in `reviews/critic_m3_e2_spec_rereview_v4.md`.
+- **Ruling hash:** `0f7b2aa29848dc2b9d3645b640dbe5994d6f54765ec360ce10604bc702350de4`
+- **Approved timebox:** 4 sessions / 8 calendar days. M3 timebox starts with this ruling on 2026-08-15. Binding tripwires: session 2 elapsed; day 4 elapsed; any law's instrument-failure branch unresolved past one full session; pre-registered ≥2-of-4 escalation trigger. Permitted dispositions at tripwire: continue within cap, pause/stop, or close M3 and propose new milestone. No cap-revision branch.
+- **§1.1 growth-bar proposal:** no ruling made. Remains diagnostic-only and non-gating. Adoption, rejection, or modification requires separate explicit Rebecca ruling.
+- **Authorization boundary:** this GO authorizes (1) RECORDER to publish this ruling, append provenance, and update state; then (2) INTEGRATOR to prepare self-contained M3 implementation task specification and courier architecture only. Does NOT authorize: implementation or code changes; build cell or TASK BUILDER; diagnostic execution; scoring execution or courier scoring run; hold-out seed exposure or use; any L15–L17 integration claim. Task specification must receive independent CRITIC clearance before any build authorization returns to Rebecca.
+- **Standing protections:** all existing governance remains binding — authority chain (Rebecca > constitution > approved specification > agent judgment); D1–D5; O-14; O-15; courier-only scoring; ≥2 unseen scoring seeds; full L18 battery; L9 hard fence; no integration claim without L15–L17 evidence; no renaming/suppressing/reframing negative results.
+- **STATE.md update:** RECORDER updated STATE.md under Rebecca's explicit authorization (§Authorization boundary item 1) to record: M3 GO ruling; timebox approved and active; tripwires and no-cap-revision rule; §1.1 diagnostic-only disposition; authorization boundary; next handoff to INTEGRATOR. STATE.md SHA-256 recorded below.
+- **Next handoff:** after Rebecca merges this custody-only branch, INTEGRATOR prepares the self-contained M3 implementation task specification and courier architecture from the approved V4 package, then submits for independent CRITIC review. No other role may begin out of sequence.
+- **No scientific findings, locked bars, M3 specification, or prior provenance entries altered.** Ruling file added byte-for-byte and this entry appended only.
+
+**M0 COMPLETE. M1 DELIVERED GREEN AND ACCEPTED. M2 (E1) DELIVERED GREEN — SEALED. M3/E2 V4 GO — Rebecca approved scope; 4-session/8-day timebox active from 2026-08-15; §1.1 diagnostic-only pending separate ruling; no build, TASK BUILDER, execution, scoring, courier run, hold-out use, or L15–L17 integration claim authorized. Next: INTEGRATOR drafts task spec + courier architecture for CRITIC review.**
