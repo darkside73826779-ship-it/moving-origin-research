@@ -1361,3 +1361,28 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **No scientific findings, locked bars, M3 specification, or prior provenance entries altered.** Ruling file added byte-for-byte and this entry appended only.
 
 **M0 COMPLETE. M1 DELIVERED GREEN AND ACCEPTED. M2 (E1) DELIVERED GREEN — SEALED. M3/E2 V4 GO — Rebecca approved scope; 4-session/8-day timebox active from 2026-08-15; §1.1 diagnostic-only pending separate ruling; no build, TASK BUILDER, execution, scoring, courier run, hold-out use, or L15–L17 integration claim authorized. Next: INTEGRATOR drafts task spec + courier architecture for CRITIC review.**
+
+
+---
+
+## Entry 40 — M3 task-spec/courier-architecture custody closure; B1–B3 corrections attested
+
+**Date:** 2026-08-15 · **Actor:** RECORDER (custody and provenance attestation); INTEGRATOR (STATE.md sole author, task spec + courier architecture author); CRITIC (task-spec/courier-architecture reviewer)
+
+- **Chain attested from verified main `856c1868a78a2b0c87275ed53120677cce236fc7`:**
+  - Entry 38: V4 gate package published, CRITIC fifth independent review CLEAR (merged to main at `7b690a98`).
+  - Entry 39: Rebecca M3 Continuation/Scope Gate ruling: GO. 4-session/8-day timebox approved and active from 2026-08-15 (merged to main at `856c1868`).
+  - Post-Entry-39 (Project Files, not yet in provenance log): INTEGRATOR prepared task spec (`specs/m3_e2_implementation_task_spec.md`) and courier architecture (`specs/m3_e2_courier_architecture.md`) per Rebecca's GO §Authorization boundary item 2. Both DRAFT — requires independent CRITIC review; no build authorization.
+  - Post-Entry-39: CRITIC reviewed both deliverables (`reviews/critic_m3_task_spec_review.md`): **narrow BLOCK on B1–B3** (state-custody, not scientific). Scientific content verified correct (bars, controls, NF7–NF9, hold-out isolation, courier custody, authorization boundaries). B1: STATE.md not current vs M3 GO ruling. B2: governing commit chain inconsistent (7b690a98 vs 1626bb09 vs 856c1868). B3: NF10 incorrectly marked fulfilled. Mechanical fixes — focused re-review required, not full cycle.
+  - Post-Entry-39: INTEGRATOR applied B1–B3 corrections: B1 fixed (STATE.md updated to record M3 GO, active timebox, task-spec submission, CRITIC narrow BLOCK); B2 fixed (repo.commit_hash and github_main_verified updated to 856c1868, commit chain documented); B3 fixed (NF10 language corrected from "fulfilled" to "in_progress" — RECORDER provenance attestation still pending, which this entry now fulfills).
+- **Artifacts published to repository (all hashes independently verified by RECORDER):**
+  - `state/STATE.md` — SHA-256 `8a0000fb7f5c90b56dcb2a86d5a91c9b05c6cad58ffa5cb9ad690f5ef0e586c4` (INTEGRATOR-authored, replaced byte-for-byte; supersedes Entry 39 version `fd9a4d95...`)
+  - `specs/m3_e2_implementation_task_spec.md` — SHA-256 `618479f8f5aa43b65cf8927ebe323c36a2ce8ae56e85a8534fc9034f6098e93d` (new file)
+  - `specs/m3_e2_courier_architecture.md` — SHA-256 `c8758e5bcf6130cf33fdbe1ead90fbef388e6b2e0e501d45c696d7e607256a28` (new file)
+- **B1–B3 disposition:** all three marked `fixed_in_this_update` in STATE.md `open_blockers`. B1 (STATE.md currency vs M3 GO): fixed. B2 (commit chain alignment): fixed — all documents now cite `856c1868` as verified current main. B3 (NF10 language): fixed — NF10 status corrected to `in_progress`, now fulfilled by this RECORDER provenance attestation.
+- **Scientific content:** verified correct by CRITIC. No bars, controls, NF7–NF9 handling, hold-out isolation, courier custody, or authorization boundaries changed. No scientific findings altered.
+- **Authorization boundary (unchanged):** no build cell, TASK BUILDER, diagnostic execution, scoring packet, scoring execution, hold-out seed exposure, or L15–L17 integration claim authorized. §1.1 growth-bar proposal remains diagnostic-only and non-gating pending separate Rebecca ruling. Task specification and courier architecture are DRAFT — require focused CRITIC re-review of B1–B3 fixes (STATE.md currency, commit chain alignment, NF10 language) before build authorization returns to Rebecca.
+- **Next handoff:** focused CRITIC re-review of B1–B3 corrections only. No other role authorized to begin.
+- **No scientific findings, locked bars, M3 specification, Rebecca's ruling, or prior provenance entries altered.** Three artifacts added/replaced and this entry appended only.
+
+**M0 COMPLETE. M1 DELIVERED GREEN AND ACCEPTED. M2 (E1) DELIVERED GREEN — SEALED. M3/E2 V4 GO — timebox active. INTEGRATOR task spec + courier architecture published with B1–B3 corrections attested. Pending focused CRITIC re-review. No build, TASK BUILDER, execution, scoring, courier run, hold-out use, or L15–L17 integration claim authorized.**
