@@ -1249,3 +1249,33 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 ---
 
 **M0 COMPLETE. M1 DELIVERED GREEN AND ACCEPTED. M2 (E1) DELIVERED GREEN — first scored evidence about the moving origin. Property (i) correctness: oracle_agreement=1.0 on all 5 seeds. Property (ii) operational distinctness: candidate 1.0× (≤2.0), fair-naive 6.89× (≥4.0, battery valid). Property (iii) load-bearing coupling: degradation mean=0.1076 (≥0.05), all seeds > 0, not a corner. No kill conditions fire. Hold-out seeds 45/46 consistent. Awaiting Rebecca's continuation gate to M3. Timebox: Session 1/3, Day 1/7.**
+
+---
+
+## Entry 35 — Repository arrangement ruling committed; clean import to private repo completed
+
+**Date:** 2026-08-16 (00:22 UTC) · **Actor:** RECORDER (first custodial act as full custodian of `darkside73826779-ship-it/moving-origin-research`)
+
+**What happened:**
+
+1. **Repository arrangement ruling committed.** Rebecca's binding ruling "Repository Arrangement: Everyone on the Same Page" (dated 2026-08-15) is committed verbatim to `docs/rulings/2026-08-15_repository_arrangement.md`, including the addendum recording Rebecca's Option B resolution (raw artifacts committed as-is, uncurated; flip-ready concern deferred while the repo remains private) of the conflict between the "nothing personal/machine-identifying" clause and the "runs/ raw and complete, never curated" clause.
+2. **Clean import completed.** The tracked file tree at pre-migration workspace commit `1d13105e8163859d7972705b731ba8c24a272276` (HEAD at the time of migration) was used to build a fresh, single-commit repository — no prior `.git` history pushed. Session internals, caches, packet directories/zips, and other non-canonical files were excluded per the RECORDER's import scope. The one identified non-artifact personal/path reference (`e1_spec.md`'s self-citation of `/home/user/workspace/e1_spec_CHANGES.md`) was rewritten as a relative path (`e1_spec_CHANGES.md`) before commit. Raw run artifacts (`runs/e1-run-1/`, including the Windows crash paths in `e1_crash_stderr.txt`) were committed as-is per Rebecca's Option B ruling above.
+3. **Import commit hash recorded:** `a85ec91f22521164abd2604a1c299c74f0dd67ac` (branch `main`, pushed to `darkside73826779-ship-it/moving-origin-research`, now the repository's default branch).
+4. **Pre-migration commit hash (source of content):** `1d13105e8163859d7972705b731ba8c24a272276` (workspace HEAD).
+5. **File manifest generated:** relative path + SHA-256 + size for all 46 imported files, saved to `repo_import_manifest.json` (workspace-side, outside the repo) as the content-identical verification target for the pending lineage attestation.
+
+**Structure established:** `README.md`, `.gitignore`, `docs/rulings/` (this log + the ruling), `src/` (implementation), `specs/` (E1 spec + changelogs), `reviews/` (CRITIC/JUDGE/ARCHITECT working files), `state/STATE.md`, `runs/{e1-run-1,e1-run-2,m1-run-1}/` (raw returns).
+
+**Pending (per the ruling's housekeeping clause):**
+
+- **Lineage attestation** — the local agent must verify, from a fresh checkout of the import commit, that the imported tree is content-identical to the pre-migration tree at `1d13105e8163859d7972705b731ba8c24a272276`. The mapping is to be committed to `docs/rulings/`.
+- **Provenance-cure re-run** — pending, to be executed by the local agent at the import SHA (`a85ec91f22521164abd2604a1c299c74f0dd67ac`) from a fresh checkout, per the ruling's requirement that everything executed for scoring comes from a fresh checkout of a named commit.
+- The RECORDER marks the E1 chain **SEALED**, and M2 acceptance completes, only once both of the above are committed. Neither is complete as of this entry.
+
+### Open items
+
+- **O-36:** ACTIVE — lineage attestation (local agent, fresh checkout of `a85ec91f`, content-identical verification against `1d13105e`)
+- **O-37:** ACTIVE — provenance-cure re-run (local agent, fresh checkout of `a85ec91f`)
+- Weekly repo report to Rebecca (five lines: committed / awaiting merge / excluded+why / STATE.md hash / flip-readiness) not yet due; first report will cover this entry.
+
+**M0 COMPLETE. M1 DELIVERED GREEN AND ACCEPTED. M2 (E1) DELIVERED GREEN. Repository custody transferred to RECORDER; clean import to `darkside73826779-ship-it/moving-origin-research` complete at commit `a85ec91f22521164abd2604a1c299c74f0dd67ac`. Lineage attestation and provenance-cure re-run pending at the local agent. M2 acceptance and E1-chain sealing await both.**
