@@ -47,6 +47,16 @@ from m3_v44_artifacts import (
 )
 import episodic_serialize as _episodic_serialize
 import episodic_store as _episodic_store
+from m3_reproducibility import (
+    PROJECTION_SCHEMA_VERSION,
+    ReproducibilityProjectionError,
+    ReproducibilityInvariantError,
+    build_rng_derivation_summaries,
+    canonical_digest,
+    compute_scoring_semantic_digest,
+    compute_final_report_digest,
+    mode_label as _mode_label,
+)
 
 # ---------------------------------------------------------------------------
 # Constants — V4 locked bars (NEVER change these)
@@ -350,7 +360,8 @@ def _check_finite(d, name=""):
 
 
 def _non_timing_projection(results):
-    """Remove timing-only fields before reproducibility comparison."""
+    """Legacy projection — retained for backward compatibility, superseded by
+    compute_scoring_semantic_digest per the reproducibility contract."""
     projected = copy.deepcopy(results)
     for seed_data in projected.values():
         if 'L1' in seed_data:
@@ -359,6 +370,74 @@ def _non_timing_projection(results):
         if 'L5' in seed_data:
             seed_data['L5'].pop('growth', None)
     return projected
+
+
+def _build_reproducibility_config(args, seeds, laws_to_run):
+    """Build the configuration block for the scoring-semantic digest (§2.3)."""
+    return {
+        'projection_schema_version': PROJECTION_SCHEMA_VERSION,
+        'mode': args.mode,
+        'seeds': list(seeds),
+        'laws_selected': list(laws_to_run),
+        'protocol_id': V44_PROTOCOL_ID,
+        'null_replicate_count': V44_NULL_REPLICATES,
+        'alpha_family': V44_ALPHA_FAMILY,
+        'alpha_seed': V44_ALPHA_SEED,
+        'locked_bars': {
+            'L1': {'R2_BAR': L1_R2_BAR, 'RHO_BAR': L1_RHO_BAR,
+                   'LAMBDA': L1_LAMBDA, 'BETA': L1_BETA,
+                   'NOW_FINAL': L1_NOW_FINAL, 'N_BINS': L1_N_BINS,
+                   'BIN_SIZE': L1_BIN_SIZE,
+                   'MEASURED_PER_BIN': L1_MEASURED_PER_BIN,
+                   'STRIDE': L1_STRIDE,
+                   'N_CANDIDATE_SETS': L1_N_CANDIDATE_SETS,
+                   'SET_SIZE': L1_SET_SIZE,
+                   'APPEARANCES_PER_ENTRY': L1_APPEARANCES_PER_ENTRY,
+                   'TIEBREAK_SEED': L1_TIEBREAK_SEED,
+                   'FAIR_NAIVE_SEED': L1_FAIR_NAIVE_SEED,
+                   'PERMUTED_SEED': L1_PERMUTED_SEED,
+                   'STRUCTURAL_SEED': L1_STRUCTURAL_SEED,
+                   'N_MEASURED': L1_N_MEASURED,
+                   'REHEARSAL_TARGETS': L1_REHEARSAL_TARGETS,
+                   'N_REPLICATES': L1_N_REPLICATES,
+                   'PRIMING_COUNT': L1_PRIMING_COUNT},
+            'L3': {'REDUCTION_BAR': L3_REDUCTION_BAR,
+                   'HORIZON': L3_HORIZON,
+                   'SEQUENCE_LENGTH': L3_SEQUENCE_LENGTH,
+                   'STATE_DIM': L3_STATE_DIM, 'INPUT_DIM': L3_INPUT_DIM,
+                   'OUTPUT_DIM': L3_OUTPUT_DIM,
+                   'FIT_ORIGINS': L3_FIT_ORIGINS,
+                   'EVAL_ORIGINS_START': L3_EVAL_ORIGINS_START,
+                   'EVAL_ORIGINS_END': L3_EVAL_ORIGINS_END,
+                   'N_EVAL': L3_N_EVAL, 'C_CLIP': L3_C_CLIP},
+            'L5': {'ACCURACY_BAR': L5_ACCURACY_BAR,
+                   'CHAIN_WALK_ACCURACY_BAR': L5_CHAIN_WALK_ACCURACY_BAR,
+                   'N_CHAINS': L5_N_CHAINS,
+                   'CHAIN_LENGTH': L5_CHAIN_LENGTH,
+                   'N_COMBINATION_FACTS': L5_N_COMBINATION_FACTS,
+                   'N_CHAIN_FACTS': L5_N_CHAIN_FACTS,
+                   'N_REPLICATES': L5_N_REPLICATES,
+                   'N_SUBJECTS': L5_N_SUBJECTS,
+                   'FREEZE_CYCLE': L5_FREEZE_CYCLE, 'W': L5_W,
+                   'N_QUERIES': L5_N_QUERIES,
+                   'N_CHAIN_QUERIES': L5_N_CHAIN_QUERIES},
+            'L6': {'N_ATTACKS': L6_N_ATTACKS,
+                   'N_AUDIT_ROWS': L6_N_AUDIT_ROWS},
+            'V44': {'NULL_REPLICATES': V44_NULL_REPLICATES,
+                    'ALPHA_FAMILY': V44_ALPHA_FAMILY,
+                    'ALPHA_SEED': V44_ALPHA_SEED,
+                    'PROTOCOL_ID': V44_PROTOCOL_ID},
+            'growth': {'GROWTH_CANDIDATE_BAR': GROWTH_CANDIDATE_BAR,
+                       'GROWTH_FAIR_NAIVE_BAR': GROWTH_FAIR_NAIVE_BAR},
+            'timing': {'TIMING_REPETITIONS': TIMING_REPETITIONS,
+                       'WARMUP_FRACTION': WARMUP_FRACTION,
+                       'GROWTH_HISTORY_SIZES': GROWTH_HISTORY_SIZES},
+        },
+        'stochastic_families_by_law': dict(STOCHASTIC_FAMILIES_BY_LAW),
+        'seed_policy': (
+            list(DEVELOPMENT_SEEDS) if args.mode == 'development'
+            else 'WITHHELD; supplied by courier'),
+    }
 
 
 def _v44_verify_l1_cross_slot_identity(all_results):
@@ -2126,7 +2205,8 @@ def _v44_draw(law, arm, role, seed, replicate, subdraw, registry):
     return RNGDerivation(law, arm, role, int(seed), int(replicate), int(subdraw), registry)
 
 
-def _v44_summary(observed, null_values, *, direction, records, extra=None):
+def _v44_summary(observed, null_values, *, direction, records, extra=None,
+                   rng_artifact_records=None):
     """Return the binding V4.4 rank result for exactly one seed/family."""
     if len(null_values) != V44_NULL_REPLICATES:
         raise ValueError("V4.4 controls require exactly 1000 null values")
@@ -2145,6 +2225,8 @@ def _v44_summary(observed, null_values, *, direction, records, extra=None):
         'alpha_seed': V44_ALPHA_SEED,
         'per_seed_pass': bool(p_value > V44_ALPHA_SEED),
         'rng_derivation_records': records,
+        'rng_derivation_summaries': build_rng_derivation_summaries(
+            rng_artifact_records or []),
     }
     if extra:
         result.update(extra)
@@ -2396,9 +2478,12 @@ def run_l1(seed, log_lines=None, artifact_writer=None):
         observed_perm = observed_draw.permutation()
         observed_result = _v44_l1_arm(measured, candidate_sets, observed_perm)
         records = []
+        artifact_records = []
+        obs_art_rec = observed_draw.artifact_record(observed_perm)
+        artifact_records.append(obs_art_rec)
         reference = _v44_write_l1_draw(
             artifact_writer, f'L1.{arm}', 'OBSERVED', 0,
-            [observed_draw.artifact_record(observed_perm)], measured,
+            [obs_art_rec], measured,
             candidate_sets, observed_result, observed_perm)
         if reference:
             records.append(reference)
@@ -2408,14 +2493,17 @@ def run_l1(seed, log_lines=None, artifact_writer=None):
             permutation = draw.permutation()
             null_result = _v44_l1_arm(measured, candidate_sets, permutation)
             null_values.append(null_result['r_squared'])
+            null_art_rec = draw.artifact_record(permutation)
+            artifact_records.append(null_art_rec)
             reference = _v44_write_l1_draw(
                 artifact_writer, f'L1.{arm}', 'NULL', replicate,
-                [draw.artifact_record(permutation)], measured, candidate_sets,
+                [null_art_rec], measured, candidate_sets,
                 null_result, permutation)
             if reference:
                 records.append(reference)
         summary = _v44_summary(observed_result['r_squared'], null_values,
-                               direction='upper', records=records)
+                               direction='upper', records=records,
+                               rng_artifact_records=artifact_records)
         summary['r_squared_observed'] = summary['observed_statistic']
         if artifact_writer is None:
             summary['r_squared_null_1000'] = summary['null_statistics']
@@ -2426,7 +2514,6 @@ def run_l1(seed, log_lines=None, artifact_writer=None):
         if artifact_writer is not None:
             summary['raw_draw_manifest_refs'] = records
             summary.pop('rng_derivation_records', None)
-            summary.pop('null_statistics', None)
         controls[arm] = summary
 
     # L1 permuted: use the retained V4.2 200-entry Spearman statistic.
@@ -2440,9 +2527,12 @@ def run_l1(seed, log_lines=None, artifact_writer=None):
         'spearman_rho': observed_rho,
     }
     records = []
+    artifact_records = []
+    obs_art_rec = observed_draw.artifact_record(observed_mapping)
+    artifact_records.append(obs_art_rec)
     reference = _v44_write_l1_draw(
         artifact_writer, 'L1.permuted', 'OBSERVED', 0,
-        [observed_draw.artifact_record(observed_mapping)], measured,
+        [obs_art_rec], measured,
         candidate_sets, observed_permuted_result, observed_mapping,
         mapped_entries=observed_mapped)
     if reference:
@@ -2457,15 +2547,19 @@ def run_l1(seed, log_lines=None, artifact_writer=None):
             'priority_values': np.ones(L1_N_MEASURED).tolist(),
             'log_accessibility': access, 'spearman_rho': rho,
         }
+        null_art_rec = draw.artifact_record(mapping)
+        artifact_records.append(null_art_rec)
         reference = _v44_write_l1_draw(
             artifact_writer, 'L1.permuted', 'NULL', replicate,
-            [draw.artifact_record(mapping)], measured, candidate_sets,
+            [null_art_rec], measured, candidate_sets,
             null_permuted_result, mapping, mapped_entries=mapped)
         if reference:
             records.append(reference)
     abs_null_rhos = [abs(value) for value in null_rhos]
+    permuted_null_rhos_signed = null_rhos  # preserve signed rhos before shuffled section reuses variable name
     permuted_summary = _v44_summary(abs(observed_rho), abs_null_rhos,
                                     direction='two_sided_magnitude', records=records,
+                                    rng_artifact_records=artifact_records,
                                     extra={
                                         'spearman_rho_200entry': observed_rho,
                                         'abs_rho_null_1000': abs_null_rhos,
@@ -2486,9 +2580,6 @@ def run_l1(seed, log_lines=None, artifact_writer=None):
     if artifact_writer is not None:
         permuted_summary['raw_draw_manifest_refs'] = records
         permuted_summary.pop('rng_derivation_records', None)
-        permuted_summary.pop('null_statistics', None)
-        permuted_summary.pop('abs_rho_null_1000', None)
-        permuted_summary.pop('paired_age_accessibility_200', None)
 
     # L1 shuffled: reassign 1,200 individual priming queries and rank the
     # within-draw maximum of the five rhos (upper tail only).
@@ -2502,9 +2593,12 @@ def run_l1(seed, log_lines=None, artifact_writer=None):
     observed_rhos = observed_shuffled['conditional_rhos']
     priming_queries = [event['ref_global_idx'] for event in fixture['priming_events']]
     records = []
+    artifact_records = []
+    obs_art_rec = observed_draw.artifact_record(observed_assignment)
+    artifact_records.append(obs_art_rec)
     reference = _v44_write_l1_draw(
         artifact_writer, 'L1.shuffled', 'OBSERVED', 0,
-        [observed_draw.artifact_record(observed_assignment)], observed_entries,
+        [obs_art_rec], observed_entries,
         candidate_sets, observed_shuffled, candidate_tie,
         query_assignment=observed_queries, priming_queries=priming_queries)
     if reference:
@@ -2523,15 +2617,18 @@ def run_l1(seed, log_lines=None, artifact_writer=None):
         rhos = null_result['conditional_rhos']
         null_rhos.append(rhos)
         null_maxima.append(max(rhos))
+        null_art_rec = draw.artifact_record(assignment)
+        artifact_records.append(null_art_rec)
         reference = _v44_write_l1_draw(
             artifact_writer, 'L1.shuffled', 'NULL', replicate,
-            [draw.artifact_record(assignment)], entries, candidate_sets,
+            [null_art_rec], entries, candidate_sets,
             null_result, candidate_tie, query_assignment=assignments,
             priming_queries=priming_queries)
         if reference:
             records.append(reference)
     shuffled_summary = _v44_summary(max(observed_rhos), null_maxima,
                                     direction='upper', records=records,
+                                    rng_artifact_records=artifact_records,
                                     extra={
                                         'conditional_rho_values_5': observed_rhos,
                                         'rho_null_1000x5': null_rhos,
@@ -2552,11 +2649,6 @@ def run_l1(seed, log_lines=None, artifact_writer=None):
     if artifact_writer is not None:
         shuffled_summary['raw_draw_manifest_refs'] = records
         shuffled_summary.pop('rng_derivation_records', None)
-        shuffled_summary.pop('null_statistics', None)
-        shuffled_summary.pop('rho_null_1000x5', None)
-        shuffled_summary.pop('null_max_1000', None)
-        shuffled_summary.pop('observed_query_to_entry_assignment_1200', None)
-        shuffled_summary.pop('observed_realized_rehearsal_counts_200', None)
 
     results = {
         'seed': seed, 'law': 'L1', 'candidate': candidate, 'oracle': oracle,
@@ -2612,7 +2704,7 @@ def run_l1(seed, log_lines=None, artifact_writer=None):
         },
     }
     if artifact_writer is None:
-        results['permuted']['rho_null_1000_values'] = null_rhos
+        results['permuted']['rho_null_1000_values'] = permuted_null_rhos_signed
     kill_reasons, failures = [], []
     if candidate['beta_age'] >= 0: kill_reasons.append('candidate beta_age >= 0')
     if candidate['r_squared'] < L1_R2_BAR: kill_reasons.append('candidate R2 below bar')
@@ -2968,9 +3060,12 @@ def run_l3(seed, log_lines=None, artifact_writer=None):
         observed_sequence = _l3_sequence_from_innovations(innovations)
         observed = _l3_family_draw(observed_sequence, family)
         records = []
+        artifact_records = []
+        obs_art_rec = observed_rng.artifact_record()
+        artifact_records.append(obs_art_rec)
         reference = _v44_write_l3_draw(
             artifact_writer, f'L3.{family}', 'OBSERVED', 0,
-            [observed_rng.artifact_record()], innovations, observed_sequence,
+            [obs_art_rec], innovations, observed_sequence,
             observed)
         if reference:
             records.append(reference)
@@ -2981,20 +3076,22 @@ def run_l3(seed, log_lines=None, artifact_writer=None):
             null_sequence = _l3_sequence_from_innovations(null_innovations)
             null = _l3_family_draw(null_sequence, family)
             null_statistics.append(null['statistic'])
+            null_art_rec = draw.artifact_record()
+            artifact_records.append(null_art_rec)
             reference = _v44_write_l3_draw(
                 artifact_writer, f'L3.{family}', 'NULL', replicate,
-                [draw.artifact_record()], null_innovations, null_sequence, null)
+                [null_art_rec], null_innovations, null_sequence, null)
             if reference:
                 records.append(reference)
         controls[family] = _v44_summary(observed['statistic'], null_statistics,
                                         direction='upper', records=records,
+                                        rng_artifact_records=artifact_records,
                                         extra={'observed_reductions_5': observed['reductions'],
                                                'observed_violation_score_5': observed['violation_score_5']})
         observed_draws[family] = observed
         if artifact_writer is not None:
             controls[family]['raw_draw_manifest_refs'] = records
             controls[family].pop('rng_derivation_records', None)
-            controls[family].pop('null_statistics', None)
     # Contract 3: permuted and shuffled nulls reuse their observed innovations.
     for family in ('permuted', 'shuffled'):
         innovation = _v44_draw('L3', family, 'OBSERVED', seed, 0, 0, registry)
@@ -3004,9 +3101,13 @@ def run_l3(seed, log_lines=None, artifact_writer=None):
         perturbation = transform.accepted_derangement() if family == 'permuted' else transform.permutation()
         observed = _l3_family_draw(x, family, np.asarray(perturbation, dtype=int))
         records = []
+        artifact_records = []
+        obs_art_rec1 = innovation.artifact_record()
+        obs_art_rec2 = transform.artifact_record(perturbation)
+        artifact_records.extend([obs_art_rec1, obs_art_rec2])
         reference = _v44_write_l3_draw(
             artifact_writer, f'L3.{family}', 'OBSERVED', 0,
-            [innovation.artifact_record(), transform.artifact_record(perturbation)],
+            [obs_art_rec1, obs_art_rec2],
             innovations, x, observed, perturbation)
         if reference:
             records.append(reference)
@@ -3016,21 +3117,23 @@ def run_l3(seed, log_lines=None, artifact_writer=None):
             null_perturbation = draw.accepted_derangement() if family == 'permuted' else draw.permutation()
             null = _l3_family_draw(x, family, np.asarray(null_perturbation, dtype=int))
             null_statistics.append(null['statistic'])
+            null_art_rec = draw.artifact_record(null_perturbation)
+            artifact_records.append(null_art_rec)
             reference = _v44_write_l3_draw(
                 artifact_writer, f'L3.{family}', 'NULL', replicate,
-                [draw.artifact_record(null_perturbation)], innovations, x, null,
+                [null_art_rec], innovations, x, null,
                 null_perturbation)
             if reference:
                 records.append(reference)
         controls[family] = _v44_summary(observed['statistic'], null_statistics,
                                         direction='upper', records=records,
+                                        rng_artifact_records=artifact_records,
                                         extra={'observed_reductions_5': observed['reductions'],
                                                'observed_violation_score_5': observed['violation_score_5']})
         observed_draws[family] = observed
         if artifact_writer is not None:
             controls[family]['raw_draw_manifest_refs'] = records
             controls[family].pop('rng_derivation_records', None)
-            controls[family].pop('null_statistics', None)
     # Candidate has the governing repaired state and uses the observed permuted
     # sequence.  Its bar is unchanged and is intentionally not randomized.
     # Reuse the exact observed sequence without consuming a second RNG domain.
@@ -3191,10 +3294,13 @@ def run_l5(seed, log_lines=None, artifact_writer=None):
     returned_content, expected_content_rows = _v44_l5_content_rows(
         permuted_chain_store, chain_facts)
     records = []
+    artifact_records = []
+    obs_art_rec1 = observed_fields.artifact_record(field_mapping)
+    obs_art_rec2 = observed_chain.artifact_record(content_mapping)
+    artifact_records.extend([obs_art_rec1, obs_art_rec2])
     reference = _v44_write_l5_draw(
         artifact_writer, 'OBSERVED', 0,
-        [observed_fields.artifact_record(field_mapping),
-         observed_chain.artifact_record(content_mapping)],
+        [obs_art_rec1, obs_art_rec2],
         observed_facts, observed_rows, observed_accuracy, field_mapping,
         permuted_chain_facts, content_mapping, returned_content,
         expected_content_rows)
@@ -3215,10 +3321,12 @@ def run_l5(seed, log_lines=None, artifact_writer=None):
                 chain_permutation[index]]
         null_store = _L5FactStore(null_facts, null_chain_facts, chains, frozen=False)
         null_returned, null_expected = _v44_l5_content_rows(null_store, chain_facts)
+        null_art_rec1 = field.artifact_record(field_permutation)
+        null_art_rec2 = chain.artifact_record(chain_permutation)
+        artifact_records.extend([null_art_rec1, null_art_rec2])
         reference = _v44_write_l5_draw(
             artifact_writer, 'NULL', replicate,
-            [field.artifact_record(field_permutation),
-             chain.artifact_record(chain_permutation)],
+            [null_art_rec1, null_art_rec2],
             null_facts, null_rows, accuracy, field_permutation,
             null_chain_facts, chain_permutation, null_returned, null_expected)
         if reference:
@@ -3227,6 +3335,7 @@ def run_l5(seed, log_lines=None, artifact_writer=None):
     observed_departure = abs(observed_accuracy - pooled_center)
     null_departures = [abs(value - pooled_center) for value in null_accuracies]
     summary = _v44_summary(observed_departure, null_departures, direction='two_sided_magnitude', records=records,
+                           rng_artifact_records=artifact_records,
                            extra={'observed_accuracy': observed_accuracy, 'null_accuracies_1000': null_accuracies,
                                   'pooled_center': pooled_center, 'observed_absolute_departure': observed_departure,
                                   'null_absolute_departures_1000': null_departures,
@@ -3241,10 +3350,6 @@ def run_l5(seed, log_lines=None, artifact_writer=None):
     if artifact_writer is not None:
         summary['raw_draw_manifest_refs'] = records
         summary.pop('rng_derivation_records', None)
-        summary.pop('null_statistics', None)
-        summary.pop('null_accuracies_1000', None)
-        summary.pop('null_absolute_departures_1000', None)
-        summary.pop('query_results_200', None)
     candidate_chain_accuracy = float(np.mean([row['accuracy'] for row in candidate_chain]))
     frozen_store = _L5StoreCapability(_L5FactStore(facts, chain_facts, chains, frozen=True))
     frozen_chain_rows = _l5_run_chain_walks(frozen_store)
@@ -3978,9 +4083,10 @@ def main():
     _tee(f"--- L20 Drift Self-Test ---", log_lines)
     l20_result = l20_self_test(profile_vector, log_lines)
 
-    # Reproducibility check: optionally re-run the same diagnostic and compare
-    # a projection that excludes wall-clock timing fields.
+    # Reproducibility check: re-run and compare scoring-semantic digests
+    # per the reproducibility-contract specification v1.1.
     _tee(f"--- Reproducibility Check ---", log_lines)
+    repro_config = _build_reproducibility_config(args, seeds, laws_to_run)
     if args.verify_reproducibility:
         second_results = {}
         with contextlib.redirect_stdout(io.StringIO()):
@@ -3996,27 +4102,36 @@ def main():
                     elif law == 'L6':
                         repeated['L6'] = run_l6(seed)
                 second_results[str(seed)] = repeated
-        first_projection = _non_timing_projection(all_results)
-        second_projection = _non_timing_projection(second_results)
-        bit_identical = (
-            json.dumps(first_projection, sort_keys=True)
-            == json.dumps(second_projection, sort_keys=True)
-        )
+        # Apply the same cross-seed post-processing to pass 2 so both
+        # passes have identical modifications (e.g., cross-slot identity).
+        _v44_verify_l1_cross_slot_identity(second_results)
+        pass1_digest, pass1_payload = compute_scoring_semantic_digest(
+            all_results, repro_config)
+        pass2_digest, _ = compute_scoring_semantic_digest(
+            second_results, repro_config)
+        digests_equal = pass1_digest == pass2_digest
         reproducibility = {
             'checked': True,
-            'bit_identical': bit_identical,
-            'scope': 'all non-timing fields',
+            'certification': 'bit-identical scoring-semantic reproducibility',
+            'pass1_digest': pass1_digest,
+            'pass2_digest': pass2_digest,
+            'digests_equal': digests_equal,
+            'projection_schema_version': PROJECTION_SCHEMA_VERSION,
+            'projection_classification_failures': [],
+            'invariant_failures': [],
         }
     else:
+        pass1_digest, pass1_payload = compute_scoring_semantic_digest(
+            all_results, repro_config)
         reproducibility = {
             'checked': False,
-            'bit_identical': None,
-            'scope': 'not requested for this diagnostic invocation',
+            'certification': None,
+            'projection_schema_version': PROJECTION_SCHEMA_VERSION,
         }
     _tee(
         f"  checked={reproducibility['checked']} "
-        f"bit_identical={reproducibility['bit_identical']} "
-        "(non-timing metrics)",
+        f"digests_equal={reproducibility.get('digests_equal', 'N/A')} "
+        "(bit-identical scoring-semantic reproducibility)",
         log_lines,
     )
 
@@ -4064,6 +4179,20 @@ def main():
 
     _tee(f"--- Overall Verdict: {overall} ---", log_lines)
 
+    # Compute the non-compared final-report digest (§3.2).
+    final_report_digest = compute_final_report_digest(
+        pass1_payload,
+        reproducibility.get('pass1_digest'),
+        reproducibility.get('pass2_digest'),
+        reproducibility.get('digests_equal'),
+        reproducibility,
+        interface_invariants,
+        all_finite,
+        l20_result,
+        raw_artifact_validation,
+        overall)
+    reproducibility['final_report_digest'] = final_report_digest
+
     # --- Write output files ---
     _tee(f"--- Writing output files to {output_dir} ---", log_lines)
 
@@ -4075,7 +4204,7 @@ def main():
             'seeds': seeds,
             'mode': args.mode,
             'development_seeds': DEVELOPMENT_SEEDS,
-            'scoring_seed_policy': 'WITHHELD; forbidden in development',
+            'scoring_seed_policy': _mode_label(args.mode, 'scoring_seed_pool'),
         },
         'results': all_results,
         'overall_verdict': overall,
@@ -4164,11 +4293,8 @@ def main():
             *v44_artifact_files,
         ],
         'development_seeds_pool': DEVELOPMENT_SEEDS,
-        'scoring_seed_pool': 'WITHHELD; forbidden in development',
-        'r3_note': (
-            'Scoring-only seed identities are absent from this development '
-            'implementation and its artifacts.'
-        ),
+        'scoring_seed_pool': _mode_label(args.mode, 'scoring_seed_pool'),
+        'r3_note': _mode_label(args.mode, 'r3_note'),
         'nf7_note': 'Raw per-entry data emitted in L1 results for independent R² recomputation',
         'nf8_note': 'L3 permuted arm violations route to INSTRUMENT FAILURE, never KILL',
         'nf9_note': 'L5 frozen arm labeled "L18 negative control"; binary walk accuracy is inherent',
@@ -4201,7 +4327,7 @@ def main():
         output_dir, 'm3_seed_exposure_ledger.json')
     _write_json(ledger_path, {
         'append_only': True,
-        'scope': 'M3 development diagnostics only',
+        'scope': _mode_label(args.mode, 'scope'),
         'events': seed_exposure_ledger,
     })
     _tee(f"  Written: {ledger_path}", log_lines)
