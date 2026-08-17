@@ -685,6 +685,122 @@ class FinalReportDigestTests(unittest.TestCase):
 # §6.2 — Stale-label regression tests
 # ---------------------------------------------------------------------------
 
+class NestedFailClosedTests(unittest.TestCase):
+    """Tests for recursive fail-closed on nested structures (§5.2)."""
+
+    def test_l5_chain_walk_results_unexpected_field(self):
+        config = _make_config()
+        results = {'101': {'L5': _make_l5_result()}}
+        results['101']['L5']['frozen']['chain_walk_results'][0]['unexpected'] = 1
+        with self.assertRaises(rep.ReproducibilityProjectionError):
+            rep.compute_scoring_semantic_digest(results, config)
+
+    def test_l5_chain_walk_results_missing_required(self):
+        config = _make_config()
+        results = {'101': {'L5': _make_l5_result()}}
+        del results['101']['L5']['frozen']['chain_walk_results'][0]['accuracy']
+        with self.assertRaises(rep.ReproducibilityProjectionError):
+            rep.compute_scoring_semantic_digest(results, config)
+
+    def test_l5_query_results_unexpected_field(self):
+        config = _make_config()
+        results = {'101': {'L5': _make_l5_result()}}
+        results['101']['L5']['v44_stochastic_controls']['permuted']['query_results_200'][0]['unexpected'] = 1
+        with self.assertRaises(rep.ReproducibilityProjectionError):
+            rep.compute_scoring_semantic_digest(results, config)
+
+    def test_l5_query_results_missing_required(self):
+        config = _make_config()
+        results = {'101': {'L5': _make_l5_result()}}
+        del results['101']['L5']['v44_stochastic_controls']['permuted']['query_results_200'][0]['correct']
+        with self.assertRaises(rep.ReproducibilityProjectionError):
+            rep.compute_scoring_semantic_digest(results, config)
+
+    def test_l1_paired_age_accessibility_unexpected_field(self):
+        config = _make_config()
+        results = {'101': {'L1': _make_l1_result()}}
+        results['101']['L1']['v44_stochastic_controls']['permuted']['paired_age_accessibility_200'][0]['unexpected'] = 1
+        with self.assertRaises(rep.ReproducibilityProjectionError):
+            rep.compute_scoring_semantic_digest(results, config)
+
+    def test_l6_reachability_audit_unexpected_field(self):
+        config = _make_config()
+        results = {'101': {'L6': _make_l6_result()}}
+        results['101']['L6']['reachability_audit'][0]['unexpected'] = 1
+        with self.assertRaises(rep.ReproducibilityProjectionError):
+            rep.compute_scoring_semantic_digest(results, config)
+
+    def test_l6_attacks_unexpected_field(self):
+        config = _make_config()
+        results = {'101': {'L6': _make_l6_result()}}
+        results['101']['L6']['attacks'][0]['unexpected'] = 1
+        with self.assertRaises(rep.ReproducibilityProjectionError):
+            rep.compute_scoring_semantic_digest(results, config)
+
+    def test_l6_l18_arms_unexpected_field(self):
+        config = _make_config()
+        results = {'101': {'L6': _make_l6_result()}}
+        results['101']['L6']['l18_arms']['empty']['unexpected'] = 1
+        with self.assertRaises(rep.ReproducibilityProjectionError):
+            rep.compute_scoring_semantic_digest(results, config)
+
+    def test_rng_summary_extra_field(self):
+        config = _make_config()
+        results = {'101': {'L1': _make_l1_result()}}
+        results['101']['L1']['v44_stochastic_controls']['frozen']['rng_derivation_summaries'][0]['unexpected'] = 1
+        with self.assertRaises(rep.ReproducibilityProjectionError):
+            rep.compute_scoring_semantic_digest(results, config)
+
+    def test_rng_summary_missing_required(self):
+        config = _make_config()
+        results = {'101': {'L1': _make_l1_result()}}
+        del results['101']['L1']['v44_stochastic_controls']['frozen']['rng_derivation_summaries'][0]['sha256_digest']
+        with self.assertRaises(rep.ReproducibilityProjectionError):
+            rep.compute_scoring_semantic_digest(results, config)
+
+    def test_missing_required_container_l1_candidate(self):
+        config = _make_config()
+        results = {'101': {'L1': _make_l1_result()}}
+        del results['101']['L1']['candidate']
+        with self.assertRaises(rep.ReproducibilityProjectionError):
+            rep.compute_scoring_semantic_digest(results, config)
+
+    def test_missing_required_container_l1_v44_controls(self):
+        config = _make_config()
+        results = {'101': {'L1': _make_l1_result()}}
+        del results['101']['L1']['v44_stochastic_controls']
+        with self.assertRaises(rep.ReproducibilityProjectionError):
+            rep.compute_scoring_semantic_digest(results, config)
+
+    def test_missing_required_container_l3_reductions(self):
+        config = _make_config()
+        results = {'101': {'L3': _make_l3_result()}}
+        del results['101']['L3']['reductions']
+        with self.assertRaises(rep.ReproducibilityProjectionError):
+            rep.compute_scoring_semantic_digest(results, config)
+
+    def test_missing_required_family_l1_shuffled(self):
+        config = _make_config()
+        results = {'101': {'L1': _make_l1_result()}}
+        del results['101']['L1']['v44_stochastic_controls']['shuffled']
+        with self.assertRaises(rep.ReproducibilityProjectionError):
+            rep.compute_scoring_semantic_digest(results, config)
+
+    def test_missing_required_family_l3_frozen(self):
+        config = _make_config()
+        results = {'101': {'L3': _make_l3_result()}}
+        del results['101']['L3']['v44_stochastic_controls']['frozen']
+        with self.assertRaises(rep.ReproducibilityProjectionError):
+            rep.compute_scoring_semantic_digest(results, config)
+
+    def test_missing_required_container_l5_candidate(self):
+        config = _make_config()
+        results = {'101': {'L5': _make_l5_result()}}
+        del results['101']['L5']['candidate']
+        with self.assertRaises(rep.ReproducibilityProjectionError):
+            rep.compute_scoring_semantic_digest(results, config)
+
+
 class StaleLabelRegressionTests(unittest.TestCase):
     """Guard against stale mode-aware labels leaking between modes."""
 

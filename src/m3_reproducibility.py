@@ -345,23 +345,31 @@ def _check_required(path: str, d: Dict[str, Any], required: frozenset) -> None:
 
 
 def _check_list_items(path: str, items: list, row_schema: frozenset) -> None:
-    """Check that all dict items in a list have only classified fields."""
+    """Check that all dict items in a list have classified fields and all required fields present."""
     for i, item in enumerate(items):
         if isinstance(item, dict):
             for key in item:
                 if key not in row_schema:
                     raise ReproducibilityProjectionError(
                         f"{path}[{i}].{key}", type(item[key]).__name__)
+            for field in row_schema:
+                if field not in item:
+                    raise ReproducibilityProjectionError(
+                        f"{path}[{i}].{field}", "MISSING_REQUIRED_FIELD")
 
 
 def _check_rng_summaries(path: str, summaries: list) -> None:
-    """Check RNG derivation summary records have only classified fields."""
+    """Check RNG derivation summary records have classified fields and all required fields present."""
     for i, record in enumerate(summaries):
         if isinstance(record, dict):
             for key in record:
                 if key not in _RNG_SUMMARY_FIELDS:
                     raise ReproducibilityProjectionError(
                         f"{path}[{i}].{key}", type(record[key]).__name__)
+            for field in _RNG_SUMMARY_FIELDS:
+                if field not in record:
+                    raise ReproducibilityProjectionError(
+                        f"{path}[{i}].{field}", "MISSING_REQUIRED_FIELD")
 
 
 # ---------------------------------------------------------------------------
@@ -599,6 +607,13 @@ def _fail_closed_l1(law_result: Dict[str, Any], path: str) -> None:
     """Check all fields in L1 results are classified and required fields present."""
     # Required top-level fields
     _check_required(path, law_result, _L1_TOP_LEVEL_A)
+    # Required containers
+    _l1_required_containers = frozenset({
+        'candidate', 'oracle', 'frozen', 'fair_naive', 'recency_only',
+        'rehearsal_only', 'shuffled', 'permuted', 'empty',
+        'v44_stochastic_controls', 'v44_deterministic_controls',
+    })
+    _check_required(path, law_result, _l1_required_containers)
     # Top-level
     for key in law_result:
         if key in _L1_TOP_LEVEL_A or key in _L1_TOP_LEVEL_B:
@@ -651,11 +666,13 @@ def _fail_closed_l1_permuted(permuted: Dict[str, Any], path: str) -> None:
 
 
 def _fail_closed_l1_v44_controls(controls: Dict[str, Any], path: str) -> None:
+    # Required families
+    _check_required(path, controls, frozenset({'frozen', 'fair_naive', 'permuted', 'shuffled'}))
     for family, summary in controls.items():
         extra_a = _get_l1_family_extra_a(family)
         extra_c = _get_l1_family_extra_c(family)
-        # Required base fields
-        _check_required(f"{path}.{family}", summary, _V44_SUMMARY_A)
+        # Required base + family-specific extras
+        _check_required(f"{path}.{family}", summary, _V44_SUMMARY_A | extra_a)
         for key in summary:
             if key in _V44_SUMMARY_A or key in _V44_SUMMARY_B:
                 continue
@@ -690,6 +707,7 @@ def _fail_closed_l1_v44_det(det: Dict[str, Any], path: str) -> None:
         'oracle': _L1_V44_DET_ORACLE_A,
         'empty': _L1_V44_DET_EMPTY_A,
     }
+    _check_required(path, det, frozenset(schemas.keys()))
     # "where present" fields in deterministic controls
     det_optional = frozenset({
         'deterministic_reproduction_equal_across_seed_slots',
@@ -709,28 +727,43 @@ def _fail_closed_l1_v44_det(det: Dict[str, Any], path: str) -> None:
 
 
 def _fail_closed_l3(law_result: Dict[str, Any], path: str) -> None:
+    _check_required(path, law_result, _L3_TOP_LEVEL_A)
+    _check_required(path, law_result, _L3_REDUCTION_FIELDS_A)
+    _check_required(path, law_result, frozenset({'empty', 'v44_stochastic_controls', 'v44_artifact_support'}))
     for key in law_result:
         if key in _L3_TOP_LEVEL_A or key in _L3_TOP_LEVEL_B:
             continue
         if key in _L3_REDUCTION_FIELDS_A:
             continue
         if key == 'empty':
+            _check_required(f"{path}.empty", law_result[key], _L3_EMPTY_A)
             _check_dict_fields(f"{path}.empty", law_result[key], _L3_EMPTY_A)
         elif key == 'v44_stochastic_controls':
+            _check_required(f"{path}.{key}", law_result[key], frozenset({'frozen', 'oracle', 'permuted', 'shuffled'}))
             for family, summary in law_result[key].items():
+                _check_required(f"{path}.{key}.{family}", summary, _V44_SUMMARY_A | _L3_V44_FAMILY_EXTRA_A)
                 for field in summary:
-                    if field not in _V44_SUMMARY_A and \
-                       field not in _V44_SUMMARY_B and \
-                       field not in _L3_V44_FAMILY_EXTRA_A:
+                    if field not in _V44_SUMMARY_A and field not in _V44_SUMMARY_B and field not in _L3_V44_FAMILY_EXTRA_A:
                         raise ReproducibilityProjectionError(
                             f"{path}.{key}.{family}.{field}",
                             type(summary[field]).__name__)
+                if 'rng_derivation_summaries' in summary:
+                    _check_rng_summaries(
+                        f"{path}.{key}.{family}.rng_derivation_summaries",
+                        summary['rng_derivation_summaries'])
         else:
             raise ReproducibilityProjectionError(
                 f"{path}.{key}", type(law_result[key]).__name__)
 
 
 def _fail_closed_l5(law_result: Dict[str, Any], path: str) -> None:
+    _check_required(path, law_result, _L5_TOP_LEVEL_A)
+    _l5_required_arms = frozenset({
+        'candidate', 'fair_naive', 'frozen', 'oracle', 'permuted',
+        'shuffled', 'full_scan', 'empty', 'v44_stochastic_controls',
+        'v44_artifact_support',
+    })
+    _check_required(path, law_result, _l5_required_arms)
     arm_schemas = {
         'candidate': _L5_CANDIDATE_A,
         'fair_naive': _L5_FAIR_NAIVE_A,
@@ -745,21 +778,33 @@ def _fail_closed_l5(law_result: Dict[str, Any], path: str) -> None:
         if key in _L5_TOP_LEVEL_A or key in _L5_TOP_LEVEL_B:
             continue
         if key in arm_schemas:
-            _check_dict_fields(f"{path}.{key}", law_result[key],
-                               arm_schemas[key])
+            arm_data = law_result[key]
+            _check_required(f"{path}.{key}", arm_data, arm_schemas[key])
+            _check_dict_fields(f"{path}.{key}", arm_data, arm_schemas[key])
+            if 'chain_walk_results' in arm_data:
+                _check_list_items(f"{path}.{key}.chain_walk_results",
+                                 arm_data['chain_walk_results'],
+                                 _CHAIN_WALK_ROW_A)
         elif key == 'v44_stochastic_controls':
+            _check_required(f"{path}.{key}", law_result[key], frozenset({'permuted'}))
             for family, summary in law_result[key].items():
+                _check_required(f"{path}.{key}.{family}", summary, _V44_SUMMARY_A | _L5_V44_PERMUTED_EXTRA_A)
                 for field in summary:
-                    if field not in _V44_SUMMARY_A and \
-                       field not in _V44_SUMMARY_B and \
-                       field not in _L5_V44_PERMUTED_EXTRA_A:
+                    if field not in _V44_SUMMARY_A and field not in _V44_SUMMARY_B and field not in _L5_V44_PERMUTED_EXTRA_A:
                         raise ReproducibilityProjectionError(
                             f"{path}.{key}.{family}.{field}",
                             type(summary[field]).__name__)
+                if 'rng_derivation_summaries' in summary:
+                    _check_rng_summaries(
+                        f"{path}.{key}.{family}.rng_derivation_summaries",
+                        summary['rng_derivation_summaries'])
+                if 'query_results_200' in summary:
+                    _check_list_items(f"{path}.{key}.{family}.query_results_200",
+                                     summary['query_results_200'],
+                                     _QUERY_RESULT_ROW_A)
         else:
             raise ReproducibilityProjectionError(
                 f"{path}.{key}", type(law_result[key]).__name__)
-
 
 def _fail_closed_l6(law_result: Dict[str, Any], path: str) -> None:
     _check_required(path, law_result, _L6_FIELDS_A)
@@ -774,6 +819,20 @@ def _fail_closed_l6(law_result: Dict[str, Any], path: str) -> None:
     if 'attacks' in law_result:
         _check_list_items(f"{path}.attacks",
                          law_result['attacks'], _ATTACK_ROW_A)
+    # Check l18_arms inner dicts
+    if 'l18_arms' in law_result:
+        for arm_name, arm_data in law_result['l18_arms'].items():
+            if isinstance(arm_data, dict):
+                for key in arm_data:
+                    if key not in frozenset({'expected', 'observed', 'pass'}):
+                        raise ReproducibilityProjectionError(
+                            f"{path}.l18_arms.{arm_name}.{key}",
+                            type(arm_data[key]).__name__)
+                for field in ('expected', 'observed', 'pass'):
+                    if field not in arm_data:
+                        raise ReproducibilityProjectionError(
+                            f"{path}.l18_arms.{arm_name}.{field}",
+                            "MISSING_REQUIRED_FIELD")
 
 
 _FAIL_CLOSED = {
