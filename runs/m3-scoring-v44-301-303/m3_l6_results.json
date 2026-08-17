@@ -1,0 +1,399 @@
+{
+  "law": "L6",
+  "mode": "scoring",
+  "results": {
+    "301": {
+      "seed": 301,
+      "law": "L6",
+      "reachability_audit": [
+        {
+          "module": "episodic_store",
+          "callable_name": "query_episodic",
+          "return_type_observed": "_EpisodicResult",
+          "is_tagged_union": true,
+          "verdict": "pass"
+        },
+        {
+          "module": "episodic_store",
+          "callable_name": "query_episodic_batch",
+          "return_type_observed": "list",
+          "is_tagged_union": true,
+          "verdict": "pass"
+        },
+        {
+          "module": "episodic_serialize",
+          "callable_name": "to_json",
+          "return_type_observed": "bytes",
+          "is_tagged_union": true,
+          "verdict": "pass"
+        },
+        {
+          "module": "episodic_serialize",
+          "callable_name": "from_json",
+          "return_type_observed": "_EpisodicResult",
+          "is_tagged_union": true,
+          "verdict": "pass"
+        }
+      ],
+      "module_public_names": {
+        "episodic_store": [
+          "query_episodic",
+          "query_episodic_batch"
+        ],
+        "episodic_cache": [],
+        "episodic_serialize": [
+          "from_json",
+          "to_json"
+        ]
+      },
+      "module_namespace_complete": true,
+      "attacks": [
+        {
+          "attack_id": 1,
+          "path_type": "path_reachability",
+          "caught": true,
+          "diagnosis": "No reachable function returns bare content; all return EpisodicResult"
+        },
+        {
+          "attack_id": 2,
+          "path_type": "provenance_stripping",
+          "caught": true,
+          "diagnosis": "REJECTED \u2014 argument error"
+        },
+        {
+          "attack_id": 3,
+          "path_type": "batch_field_omission",
+          "caught": true,
+          "diagnosis": "All 3 elements have all 4 fields"
+        },
+        {
+          "attack_id": 4,
+          "path_type": "serialization_stripping",
+          "caught": true,
+          "diagnosis": "Tag and all 4 fields survive exactly"
+        },
+        {
+          "attack_id": 5,
+          "path_type": "cache_layer_leak",
+          "caught": true,
+          "diagnosis": "No cache exists; episodic_cache exports zero public callables"
+        },
+        {
+          "attack_id": 6,
+          "path_type": "alias_wrapper",
+          "caught": true,
+          "diagnosis": "No secondary function exists beyond the 4 named callables"
+        },
+        {
+          "attack_id": 7,
+          "path_type": "error_path_partial_return",
+          "caught": true,
+          "diagnosis": "Returned Rejected(reason=\"registry_unavailable\")"
+        },
+        {
+          "attack_id": 8,
+          "path_type": "deliberately_broken_variant",
+          "caught": true,
+          "diagnosis": "Harness correctly rejects the broken variant"
+        }
+      ],
+      "l18_arms": {
+        "empty": {
+          "expected": "Rejected(reason=\"not_found\")",
+          "observed": "Rejected(reason=\"not_found\")",
+          "pass": true
+        },
+        "permuted": {
+          "expected": "Success with full 4-field structure (content may be wrong)",
+          "observed": "Fixed content derangement applied; provenance fields preserved",
+          "pass": true
+        },
+        "shuffled": {
+          "expected": "Results correct relative to own query, independent of position",
+          "observed": "All elements are EpisodicResult",
+          "pass": true
+        },
+        "oracle": {
+          "expected": "Content, source, context match exactly",
+          "observed": "Direct trusted-zone field match=True",
+          "pass": true
+        },
+        "frozen": {
+          "expected": "Replayed value validates as well-formed tagged union",
+          "observed": "Round-trip via from_json(to_json()) preserves tag: True",
+          "pass": true
+        },
+        "fair_naive": {
+          "expected": "No bypass found",
+          "observed": "No reachable path returns bare content",
+          "pass": true
+        }
+      },
+      "verdict": "PASS",
+      "kill_reasons": [],
+      "instrument_failure_reasons": []
+    },
+    "302": {
+      "seed": 302,
+      "law": "L6",
+      "reachability_audit": [
+        {
+          "module": "episodic_store",
+          "callable_name": "query_episodic",
+          "return_type_observed": "_EpisodicResult",
+          "is_tagged_union": true,
+          "verdict": "pass"
+        },
+        {
+          "module": "episodic_store",
+          "callable_name": "query_episodic_batch",
+          "return_type_observed": "list",
+          "is_tagged_union": true,
+          "verdict": "pass"
+        },
+        {
+          "module": "episodic_serialize",
+          "callable_name": "to_json",
+          "return_type_observed": "bytes",
+          "is_tagged_union": true,
+          "verdict": "pass"
+        },
+        {
+          "module": "episodic_serialize",
+          "callable_name": "from_json",
+          "return_type_observed": "_EpisodicResult",
+          "is_tagged_union": true,
+          "verdict": "pass"
+        }
+      ],
+      "module_public_names": {
+        "episodic_store": [
+          "query_episodic",
+          "query_episodic_batch"
+        ],
+        "episodic_cache": [],
+        "episodic_serialize": [
+          "from_json",
+          "to_json"
+        ]
+      },
+      "module_namespace_complete": true,
+      "attacks": [
+        {
+          "attack_id": 1,
+          "path_type": "path_reachability",
+          "caught": true,
+          "diagnosis": "No reachable function returns bare content; all return EpisodicResult"
+        },
+        {
+          "attack_id": 2,
+          "path_type": "provenance_stripping",
+          "caught": true,
+          "diagnosis": "REJECTED \u2014 argument error"
+        },
+        {
+          "attack_id": 3,
+          "path_type": "batch_field_omission",
+          "caught": true,
+          "diagnosis": "All 3 elements have all 4 fields"
+        },
+        {
+          "attack_id": 4,
+          "path_type": "serialization_stripping",
+          "caught": true,
+          "diagnosis": "Tag and all 4 fields survive exactly"
+        },
+        {
+          "attack_id": 5,
+          "path_type": "cache_layer_leak",
+          "caught": true,
+          "diagnosis": "No cache exists; episodic_cache exports zero public callables"
+        },
+        {
+          "attack_id": 6,
+          "path_type": "alias_wrapper",
+          "caught": true,
+          "diagnosis": "No secondary function exists beyond the 4 named callables"
+        },
+        {
+          "attack_id": 7,
+          "path_type": "error_path_partial_return",
+          "caught": true,
+          "diagnosis": "Returned Rejected(reason=\"registry_unavailable\")"
+        },
+        {
+          "attack_id": 8,
+          "path_type": "deliberately_broken_variant",
+          "caught": true,
+          "diagnosis": "Harness correctly rejects the broken variant"
+        }
+      ],
+      "l18_arms": {
+        "empty": {
+          "expected": "Rejected(reason=\"not_found\")",
+          "observed": "Rejected(reason=\"not_found\")",
+          "pass": true
+        },
+        "permuted": {
+          "expected": "Success with full 4-field structure (content may be wrong)",
+          "observed": "Fixed content derangement applied; provenance fields preserved",
+          "pass": true
+        },
+        "shuffled": {
+          "expected": "Results correct relative to own query, independent of position",
+          "observed": "All elements are EpisodicResult",
+          "pass": true
+        },
+        "oracle": {
+          "expected": "Content, source, context match exactly",
+          "observed": "Direct trusted-zone field match=True",
+          "pass": true
+        },
+        "frozen": {
+          "expected": "Replayed value validates as well-formed tagged union",
+          "observed": "Round-trip via from_json(to_json()) preserves tag: True",
+          "pass": true
+        },
+        "fair_naive": {
+          "expected": "No bypass found",
+          "observed": "No reachable path returns bare content",
+          "pass": true
+        }
+      },
+      "verdict": "PASS",
+      "kill_reasons": [],
+      "instrument_failure_reasons": []
+    },
+    "303": {
+      "seed": 303,
+      "law": "L6",
+      "reachability_audit": [
+        {
+          "module": "episodic_store",
+          "callable_name": "query_episodic",
+          "return_type_observed": "_EpisodicResult",
+          "is_tagged_union": true,
+          "verdict": "pass"
+        },
+        {
+          "module": "episodic_store",
+          "callable_name": "query_episodic_batch",
+          "return_type_observed": "list",
+          "is_tagged_union": true,
+          "verdict": "pass"
+        },
+        {
+          "module": "episodic_serialize",
+          "callable_name": "to_json",
+          "return_type_observed": "bytes",
+          "is_tagged_union": true,
+          "verdict": "pass"
+        },
+        {
+          "module": "episodic_serialize",
+          "callable_name": "from_json",
+          "return_type_observed": "_EpisodicResult",
+          "is_tagged_union": true,
+          "verdict": "pass"
+        }
+      ],
+      "module_public_names": {
+        "episodic_store": [
+          "query_episodic",
+          "query_episodic_batch"
+        ],
+        "episodic_cache": [],
+        "episodic_serialize": [
+          "from_json",
+          "to_json"
+        ]
+      },
+      "module_namespace_complete": true,
+      "attacks": [
+        {
+          "attack_id": 1,
+          "path_type": "path_reachability",
+          "caught": true,
+          "diagnosis": "No reachable function returns bare content; all return EpisodicResult"
+        },
+        {
+          "attack_id": 2,
+          "path_type": "provenance_stripping",
+          "caught": true,
+          "diagnosis": "REJECTED \u2014 argument error"
+        },
+        {
+          "attack_id": 3,
+          "path_type": "batch_field_omission",
+          "caught": true,
+          "diagnosis": "All 3 elements have all 4 fields"
+        },
+        {
+          "attack_id": 4,
+          "path_type": "serialization_stripping",
+          "caught": true,
+          "diagnosis": "Tag and all 4 fields survive exactly"
+        },
+        {
+          "attack_id": 5,
+          "path_type": "cache_layer_leak",
+          "caught": true,
+          "diagnosis": "No cache exists; episodic_cache exports zero public callables"
+        },
+        {
+          "attack_id": 6,
+          "path_type": "alias_wrapper",
+          "caught": true,
+          "diagnosis": "No secondary function exists beyond the 4 named callables"
+        },
+        {
+          "attack_id": 7,
+          "path_type": "error_path_partial_return",
+          "caught": true,
+          "diagnosis": "Returned Rejected(reason=\"registry_unavailable\")"
+        },
+        {
+          "attack_id": 8,
+          "path_type": "deliberately_broken_variant",
+          "caught": true,
+          "diagnosis": "Harness correctly rejects the broken variant"
+        }
+      ],
+      "l18_arms": {
+        "empty": {
+          "expected": "Rejected(reason=\"not_found\")",
+          "observed": "Rejected(reason=\"not_found\")",
+          "pass": true
+        },
+        "permuted": {
+          "expected": "Success with full 4-field structure (content may be wrong)",
+          "observed": "Fixed content derangement applied; provenance fields preserved",
+          "pass": true
+        },
+        "shuffled": {
+          "expected": "Results correct relative to own query, independent of position",
+          "observed": "All elements are EpisodicResult",
+          "pass": true
+        },
+        "oracle": {
+          "expected": "Content, source, context match exactly",
+          "observed": "Direct trusted-zone field match=True",
+          "pass": true
+        },
+        "frozen": {
+          "expected": "Replayed value validates as well-formed tagged union",
+          "observed": "Round-trip via from_json(to_json()) preserves tag: True",
+          "pass": true
+        },
+        "fair_naive": {
+          "expected": "No bypass found",
+          "observed": "No reachable path returns bare content",
+          "pass": true
+        }
+      },
+      "verdict": "PASS",
+      "kill_reasons": [],
+      "instrument_failure_reasons": []
+    }
+  }
+}

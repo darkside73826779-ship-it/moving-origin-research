@@ -1,0 +1,71 @@
+=== M3/E2 Harness ===
+Law: all
+Seeds: [301, 302, 303]
+Mode: scoring
+Output: ./m3_scoring_output
+Python: 3.11.9
+NumPy: 1.26.4
+SciPy: 1.13.1
+
+--- Seed 301 ---
+  [L1] Building fixed fixture for V4.4 seed slot 301...
+  [L1] V4.4 verdict: PASS
+  [L3] Running V4.4 SHA-256-CTR control families for seed slot 301...
+  [L3] V4.4 verdict: PASS
+  [L5] Building V4.4 fixed fixture for seed slot 301...
+  [L5] V4.4 verdict: PASS
+  [L6] Running episodic completeness tests for seed 301...
+  [L6] Running reachability audit (4 callables)...
+  [L6] Running 8-attack matrix...
+  [L6] Running L18 arms...
+  [L6] Verdict: PASS
+
+--- Seed 302 ---
+  [L1] Building fixed fixture for V4.4 seed slot 302...
+  [L1] V4.4 verdict: PASS
+  [L3] Running V4.4 SHA-256-CTR control families for seed slot 302...
+  [L3] V4.4 verdict: PASS
+  [L5] Building V4.4 fixed fixture for seed slot 302...
+  [L5] V4.4 verdict: PASS
+  [L6] Running episodic completeness tests for seed 302...
+  [L6] Running reachability audit (4 callables)...
+  [L6] Running 8-attack matrix...
+  [L6] Running L18 arms...
+  [L6] Verdict: PASS
+
+--- Seed 303 ---
+  [L1] Building fixed fixture for V4.4 seed slot 303...
+  [L1] V4.4 verdict: PASS
+  [L3] Running V4.4 SHA-256-CTR control families for seed slot 303...
+  [L3] V4.4 verdict: INSTRUMENT_FAILURE
+  [L5] Building V4.4 fixed fixture for seed slot 303...
+  [L5] V4.4 verdict: PASS
+  [L6] Running episodic completeness tests for seed 303...
+  [L6] Running reachability audit (4 callables)...
+  [L6] Running 8-attack matrix...
+  [L6] Running L18 arms...
+  [L6] Verdict: PASS
+
+--- Interface-Law Negative Injections ---
+  L11/L13/backdating passes=True
+  finite_numeric_results=True
+--- L20 Drift Self-Test ---
+  [L20] no_drift_corr=1.0000 pert1=-0.2464 pert2=0.0000 passes=True
+--- Reproducibility Check ---
+  checked=True bit_identical=False (non-timing metrics)
+--- Overall Verdict: INSTRUMENT_FAILURE ---
+--- Writing output files to ./m3_scoring_output ---
+  Written: ./m3_scoring_output\m3_run_results.json
+  Written: ./m3_scoring_output\m3_l1_results.json
+  Written: ./m3_scoring_output\m3_l3_results.json
+  Written: ./m3_scoring_output\m3_l5_results.json
+  Written: ./m3_scoring_output\m3_l6_results.json
+  Written: ./m3_scoring_output\m3_invariants.json
+  Written: ./m3_scoring_output\m3_v44_raw_manifest.json
+  Written: ./m3_scoring_output\m3_manifest.json
+  Written: ./m3_scoring_output\m3_run.log
+  Written: ./m3_scoring_output\m3_profile.json
+  Written: ./m3_scoring_output\m3_seed_exposure_ledger.json
+
+=== M3/E2 Harness Complete ===
+Overall verdict: INSTRUMENT_FAILURE

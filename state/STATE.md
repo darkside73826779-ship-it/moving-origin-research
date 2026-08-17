@@ -7,9 +7,9 @@
 ```yaml
 # STATE.md — team operational schema (under Rebecca's M0 addendum, Entry 13 / O-10)
 # Updated by: INTEGRATOR (sole writer). RECORDER records hash at every merge.
-# Last-updated: 2026-08-16T14:52:00-04:00.
+# Last-updated: 2026-08-17T00:36:00-04:00.
 
-milestone: M3                       # First M3 scoring run retained as INSTRUMENT FAILURE (Entry 43); L3/L5/L6 PASS evidence and L1 candidate-facing PASS evidence on seeds 201–203 remain valid, with no kill conditions; Rebecca authorized a post-scoring specification correction under the Entry 43 four-part test; V4.3 is CRITIC-CLEARED as a targeted specification amendment only (Entry 44); V4.4 B1–B4 specification-framework closure is CRITIC-CLEAR (verdict CLEAR; B1–B4 resolved; no new blockers) and merged through Rebecca-authorized PR #13, with CRITIC ruling and merge custody preserved in Entry 46 and merged via PR #14 (Entry 46); per Rebecca ruling 2026-08-16, V4.4 completed §2.10 harmonization, the complete 26-family pre-scoring closure audit, and framework-level FWFP corrections (max 48/1001 ≤ 5%), so those prerequisites are RETIRED and the next implementation role is TASK BUILDER (cleared V4.4 amendments only); scoring BLOCKED and fresh scoring not authorized; V4.4 is not claimed implemented
+milestone: M3                       # M3 V4.4 scoring cycle complete. First scoring run (seeds 201–203) retained as INSTRUMENT FAILURE. Second scoring run (seeds 301–303) retained as INSTRUMENT FAILURE (L3 frozen arm borderline on seed 303, within 4.8% FWFP — genuine, not a spec defect). L1 V4.4 fix worked (one-sided null-of-the-max). L5/L6 PASS on all seeds. No kill conditions fired on any seed across both runs. Candidate passes all candidate-facing bars on all 6 scoring seeds. Reproducibility bit_identical=False (construction bug: artifact_writer not passed to second pass — not non-determinism). Rebecca authorized provisional advancement to M4 with qualified instrument certification. Seeds 201–203 and 301–303 retained, never rerun (O-14). Four-part test (Entry 43) remains binding. O-14, O-15, D1–D5, L9, L18 all binding.
 session_count: 5                    # completed working sessions (M1: 1; M2: 1; M3 spec cycle: 2 — V0→V3 BLOCKED, V4 CLEARED; M3 GO + task spec: 1 — GO ruling, task spec/courier arch prepared, CRITIC narrow BLOCK)
 milestone_session_budget: 4        # M3 timebox: 4 sessions / 8 calendar days (Rebecca M3 GO ruling, active starting 2026-08-15)
 
@@ -18,7 +18,7 @@ timebox:
   m2_started: 2026-08-15            # M2 timebox clock started 2026-08-15 (CRITIC cleared Q2/Q3 incorporations)
   m2_sessions_consumed: 1            # M2 consumed 1 session
   m2_days_consumed: 1               # M2 consumed 1 day
-  m3_status: scoring_blocked         # Entry 44: V4.3 CRITIC-CLEARED as targeted specification amendment only. Entry 46: V4.4 B1–B4 specification-framework closure CRITIC-CLEAR and merged (PR #13; custody PR #14). Rebecca ruling 2026-08-16: §2.10 harmonization + complete 26-family closure audit + framework-level FWFP corrections COMPLETE; next implementation role is TASK BUILDER (cleared V4.4 amendments only). Still not implementation clearance and not fresh-scoring authorization; scoring remains BLOCKED
+  m3_status: provisionally_advanced  # M3 V4.4 scoring cycle complete. Both scoring runs retained as INSTRUMENT FAILURE (seeds 201–203 first run, seeds 301–303 second run). Rebecca authorized provisional advancement to M4 with qualified instrument certification. No kills fired on any seed. Instrument-failure label retained. Reproducibility construction bug diagnosed (not non-determinism). Seeds 201–203 and 301–303 never rerun.
   m3_sessions_consumed: 1            # M3 timebox: 1 session consumed (INTEGRATOR prepared task spec + courier architecture; CRITIC reviewed)
   m3_days_consumed: 1               # M3 timebox: 1 day consumed
   m3_session_cap: 4
@@ -27,7 +27,7 @@ timebox:
   m3_tripwire_after_session: 2
   m3_tripwire_after_day: 4
   m3_tripwire_calendar: 2026-08-19   # started + 4 days
-  m3_note: "First M3 scoring on seeds 201–203 is retained in full under its original INSTRUMENT FAILURE label. L3, L5, and L6 PASS evidence remains valid; L1 candidate-facing bars passed on all three seeds (R²=0.9857, beta_age=-0.00150, all conditional rho>=0.6), and no kill condition fired. Rebecca authorized a post-scoring specification correction under the Entry 43 four-part test. V4.3 is CRITIC-CLEARED only as a targeted specification amendment; it is not implemented and supplies no fresh-scoring authorization. V4.4 B1–B4 specification-framework closure is CRITIC-CLEAR (Entry 46: verdict CLEAR; B1, B2, B3, B4 resolved; no new blockers; final classification 9 stochastic / 17 deterministic; maximum corrected FWFP 48/1001 ≈ 0.047952) and merged through Rebecca-authorized PR #13 (spec-framework merge commit 24c0fc85e96c6b82c05d6ecefdebb263e120a498), with the CRITIC ruling and merge custody preserved in Entry 46 and merged via PR #14 at current main 07001593a823f6418c7fbf87b10c93fa19642c3c; V4.4 certifies pre-scoring specification-framework closure only and is not implemented. Scoring is BLOCKED pending §2.10 harmonization, a complete pre-scoring 26-family closure audit, correction of every control family whose full-battery FWFP exceeds 5%, implementation of the final cleared amendments, independent CRITIC implementation clearance, and Rebecca's separate fresh-seed supervised scoring authorization. Seeds 201–203 must never be rerun. O-14, O-15, D1–D5, L9, L18, and all standing protections remain binding."
+  m3_note: "M3 V4.4 scoring cycle complete. First scoring run (seeds 201–203) retained as INSTRUMENT FAILURE. Second scoring run (seeds 301–303, M3-SCORING-2) retained as INSTRUMENT FAILURE: L1 PASS all seeds (V4.4 fix — one-sided null-of-the-max — confirmed working, shuffled p=1.000), L3 INSTRUMENT_FAILURE on seed 303 only (frozen arm p=0.012 < alpha_seed=0.0167, borderline within 4.8% FWFP — genuine, not a spec defect), L5/L6 PASS all seeds. No kill conditions fired on any seed across both runs. Candidate passes all candidate-facing bars on all 6 scoring seeds. Reproducibility bit_identical=False (construction bug: artifact_writer not passed to second pass — not non-determinism). Rebecca authorized provisional advancement to M4 with qualified instrument certification. Seeds 201–203 and 301–303 retained, never rerun (O-14). Four-part test (Entry 43) remains binding. O-14, O-15, D1–D5, L9, L18, and all standing protections remain binding."
 
 locked_bars:                        # only bars active/relevant to current milestone
   M1_discrimination: "oracle >= naive + 0.30 on every metric, 3 seeds"
@@ -64,8 +64,9 @@ watch_items:                        # CRITIC carry-forward items, with locus
     m1_relevant: false
 
 repo:
-  commit_hash: "07001593a823f6418c7fbf87b10c93fa19642c3c"   # GitHub main for this V4.4 post-custody reconciliation gate; single source of truth. Incorporates PR #13 (V4.4 spec-framework merge, 24c0fc8) and PR #14 (custody merge, current main), custody result 169d962e4122e2865e9d72a4d63a4567ef5e985c
-  github_main_verified: "07001593a823f6418c7fbf87b10c93fa19642c3c"   # GitHub main HEAD, VERIFIED 2026-08-16 from a fresh clone
+  commit_hash: "95440b4792d1eb100b3b1d015eb02b6dbf92ecc3"   # GitHub main HEAD; V4.4 implementation merged (ARCHITECT implementation-completeness amendment + TASK BUILDER V4.4 stochastic controls, CRITIC-CLEARED). Scoring run executed at this commit.
+  github_main_verified: "95440b4792d1eb100b3b1d015eb02b6dbf92ecc3"   # GitHub main HEAD, VERIFIED 2026-08-17T00:36Z via git ls-remote
+  scoring_branch: "scoring/m3-v44-fresh-seeds-301-303"   # Scoring results branch at 6589fed9a98273fe7a97be0dc0defdf9f9a08aee — contains runs/m3-scoring-v44-301-303/ summary files and RUN_PROVENANCE_AND_LOCAL_RETENTION.md
   cure_commit_hash: "a85ec91f22521164abd2604a1c299c74f0dd67ac"   # E1 provenance-cure re-run commit (manifest commit hash cured from "pending -- no git repo" to real repository hash a85ec91f; JUDGE scored DELIVERED GREEN from cure artifacts — judge_e1_cure_ruling.md)
   e1_run2_scored_commit: "1d13105e8163859d7972705b731ba8c24a272276"   # E1-RUN-2 scored commit (timing fix dceb258 + cosmetic/L20 float fix; JUDGE scored DELIVERED GREEN with provenance discrepancy flagged — manifest showed "pending -- no git repo", round-trip log claimed 1d13105; subsequently cured in cure re-run at a85ec91)
   timing_fix_commit_hash: "dceb2584f495cde06787693d80f8e40f258eb33c"   # TASK BUILDER timing-construction-bug fix commit (perf_counter_ns + batch fallback for Windows timing resolution; _safe_pearson isfinite guard; instrument_failure flag for non-finite latency) — fixes the E1-RUN-1 crash diagnosed in critic_e1_run1_crash_analysis.md; per Rebecca's construction-bug guard, does not consume D2 budget
@@ -112,6 +113,12 @@ run_requests_to_rebecca:            # courier packets issued (per merge-candidat
     status: returned — INSTRUMENT FAILURE
     note: "Retained in full under the original verdict. L3/L5/L6 PASS evidence and L1 candidate-facing PASS evidence remain valid on seeds 201–203; no kill condition fired. Seeds 201–203 must never be rerun (O-14). This historical request is not authorization for fresh scoring."
 
+  - id: M3-SCORING-2
+    command: "python src/m3_harness.py --law all --seeds 301,302,303 --mode scoring --verify-reproducibility --output-dir ./m3_scoring_output"
+    issued: 2026-08-16
+    status: returned — INSTRUMENT FAILURE
+    note: "M3 V4.4 fresh-seed scoring run (seeds 301–303). L1 PASS all seeds (V4.4 fix — one-sided null-of-the-max — resolved first run's false positives; shuffled p=1.000). L3 INSTRUMENT_FAILURE on seed 303 only (frozen arm p=0.012 < alpha_seed=0.0167, borderline within 4.8% FWFP — genuine, not a spec defect). L5/L6 PASS all seeds. No kill conditions fired. Candidate passes all candidate-facing bars on all 3 seeds. Reproducibility bit_identical=False (construction bug: artifact_writer not passed to second pass — not non-determinism). Seeds 301–303 retained, never rerun (O-14)."
+
 returned_artifacts:                 # inventory of what Rebecca returned — RUN-1 GREEN (Entry 24), E1-RUN-2 GREEN (Entry 34), E1-CURE-RUN GREEN (cure ruling)
   - run_id: "m1-20260815T194311Z"
     files:
@@ -151,6 +158,26 @@ returned_artifacts:                 # inventory of what Rebecca returned — RUN
     deviations:
       - "Python 3.12.10 vs pinned 3.11 (non-blocking)"
 
+  - run_id: "m3-scoring-v44-301-303"
+    files:
+      - "runs/m3-scoring-v44-301-303/m3_run_results.json"
+      - "runs/m3-scoring-v44-301-303/m3_l1_results.json"
+      - "runs/m3-scoring-v44-301-303/m3_l3_results.json"
+      - "runs/m3-scoring-v44-301-303/m3_l5_results.json"
+      - "runs/m3-scoring-v44-301-303/m3_l6_results.json"
+      - "runs/m3-scoring-v44-301-303/m3_invariants.json"
+      - "runs/m3-scoring-v44-301-303/m3_manifest.json"
+      - "runs/m3-scoring-v44-301-303/m3_run.log"
+      - "runs/m3-scoring-v44-301-303/m3_profile.json"
+      - "runs/m3-scoring-v44-301-303/m3_seed_exposure_ledger.json"
+      - "runs/m3-scoring-v44-301-303/m3_scoring_roundtrip_log.txt"
+      - "runs/m3-scoring-v44-301-303/RUN_PROVENANCE_AND_LOCAL_RETENTION.md"
+    commit_hash: "95440b4792d1eb100b3b1d015eb02b6dbf92ecc3"
+    wall_clock_seconds: 852.6
+    deviations:
+      - "Python 3.11.9 vs pinned 3.11 (non-blocking)"
+      - "Reproducibility bit_identical=False (construction bug: artifact_writer not passed to second pass — not non-determinism)"
+
 ## Prerequisites complete
 
 - **PREREQUISITE 2 (I3 null replicates >=100):** DONE — TASK BUILDER raised null-replicate count from 30 to >=100 in m1_harness.py; committed in RUN-2 hygiene batch (commit `7aefce893a3c579077d48b5bee386b90a4c1ba21`, 2026-08-15).
@@ -159,17 +186,17 @@ returned_artifacts:                 # inventory of what Rebecca returned — RUN
 - **GitHub repository migration:** DONE — workspace repo migrated to GitHub (darkside73826779-ship-it/moving-origin-research); lineage attestation verified; main HEAD at 856c1868 (VERIFIED 2026-08-15T23:53Z).
 
 role_status:                        # latest verdict per role
-  JUDGE:        "M1 DELIVERED GREEN; M2 DELIVERED GREEN. First M3 scoring verdict retained as INSTRUMENT FAILURE; L3/L5/L6 PASS evidence and L1 candidate-facing PASS evidence on seeds 201–203 remain valid; no kill condition fired"
-  CRITIC:       "V4.4 B1–B4 specification-framework closure CRITIC-CLEAR (Entry 46: verdict CLEAR; B1–B4 resolved; no new blockers). This certifies pre-scoring specification-framework closure only; it is not implementation clearance and not fresh-scoring authorization. Independent CRITIC implementation clearance remains required after final cleared amendments are implemented. (Prior: V4.3 CRITIC-CLEARED as a targeted specification amendment only, Entry 44.)"
-  RECORDER:     "Provenance current through Entry 47; V4.4 CRITIC CLEAR ruling and merge custody preserved (Entry 46) and V4.4 STATE reconciliation attested (Entry 47, main 9192cf1). RECORDER custody/hash attestation is required before this V4.4 routing-correction STATE.md may merge"
-  INTEGRATOR:   "M3 operational state corrected per Rebecca ruling 2026-08-16: §2.10 harmonization, complete 26-family closure audit, and framework-level FWFP corrections COMPLETE under V4.4 (Entry 46); Entry 47's ARCHITECT re-routing superseded as stale; next implementation role is TASK BUILDER (cleared V4.4 amendments only). First scoring retained as INSTRUMENT FAILURE; scoring BLOCKED; implementation and scoring not retroactively authorized; no fresh scoring authorized; seeds 201–203 never rerun; V4.3 and V4.4 not claimed implemented"
-  ARCHITECT:    "V4.4 closure work COMPLETE and CRITIC-cleared (§2.10 harmonization; complete 26-family closure audit; framework-level FWFP corrections, max 48/1001 ≤ 5%; Entry 46). No further ARCHITECT action authorized for this milestone unless a new specification defect is found."
-  TASK_BUILDER: "NEXT IMPLEMENTATION ROLE (after RECORDER custody/incorporation of this corrected STATE.md), per Rebecca ruling 2026-08-16. Authorized only to implement the exact CRITIC-cleared V4.4 amendments. No scoring, scoring-packet construction, fresh-seed selection/exposure, or rerun. Independent CRITIC implementation clearance required afterward."
+  JUDGE:        "M1 DELIVERED GREEN; M2 DELIVERED GREEN. M3 V4.4 scoring ruled INSTRUMENT FAILURE. L1 PASS all seeds (V4.4 fix confirmed). L3 INSTRUMENT_FAILURE seed 303 (frozen arm borderline). L5/L6 PASS. No kills. Candidate passes all candidate-facing bars on all 6 scoring seeds across both runs."
+  CRITIC:       "M3 V4.4 results review: BLOCK. L3 borderline genuine (within 4.8% FWFP, not a spec defect). Reproducibility construction bug diagnosed (artifact_writer not passed to second pass — not non-determinism). No spec change warranted. Stale scoring labels noted (seed ledger scope, manifest boilerplate)."
+  RECORDER:     "Provenance current through Entry 48; M3 V4.4 scoring run artifacts on scoring branch scoring/m3-v44-fresh-seeds-301-303 at 6589fed. Pending: attest updated STATE.md hash, extend provenance log with Entries 49–52, publish all artifacts to GitHub main."
+  INTEGRATOR:   "M3 STATE.md reconciled for V4.4 scoring cycle. Provisional advancement to M4 authorized by Rebecca with qualified instrument certification. Reproducibility bug (artifact_writer not passed to second pass) and stale scoring labels (seed ledger scope, manifest boilerplate) require fixing before future scoring. Both scoring runs retained as INSTRUMENT FAILURE; seeds 201–203 and 301–303 never rerun. No L15–L17 integration claim follows from M3."
+  ARCHITECT:    "V4.4 closure work COMPLETE and CRITIC-cleared. No further ARCHITECT action authorized for M3 unless a new specification defect is found."
+  TASK_BUILDER: "V4.4 implementation merged at 95440b4. No active assignment until M4 preparation begins. Reproducibility bug fix and stale label fixes pending."
 
-open_blockers:                      # Rebecca ruling 2026-08-16: §2.10 harmonization, the complete 26-family closure audit, and framework-level FWFP corrections are COMPLETE under V4.4 (Entry 46 CRITIC CLEAR); retired below to completed_prerequisites
-  - "Implementation of the final cleared V4.4 amendments (next: TASK BUILDER)"
-  - "Independent CRITIC implementation clearance"
-  - "Rebecca's separate fresh-seed supervised scoring authorization"
+open_blockers:                      # Post-M3 scoring cycle — must be fixed before future scoring
+  - "Fix reproducibility-checker construction bug (pass artifact_writer to second pass or strip artifact-dependent fields from reproducibility comparison)"
+  - "Fix stale scoring labels (seed ledger scope says 'M3 development diagnostics only' but should say 'M3 scoring'; manifest boilerplate still references development context)"
+  - "Document milestone-wide multiplicity for future specs (M3 used two scoring runs on two seed pools; future specs should pre-register multiplicity expectations)"
 
 completed_prerequisites:            # retired from open_blockers per Rebecca ruling 2026-08-16 (see changelog); completed and CRITIC-cleared under V4.4 (Entry 46)
   - id: PRQ_2_10_harmonization
@@ -195,7 +222,7 @@ non_blocking_findings_of_record:    # CRITIC V4 review Part 3 — non-blocking, 
     source: critic_m3_e2_spec_rereview_v4.md
     status: resolved  # STATE.md reconciled through Entries 43–44 and Entry 46 (V4.4 post-custody); new STATE.md hash requires RECORDER custody attestation before merge
 
-next_action: "Per Rebecca ruling 2026-08-16: §2.10 harmonization, the complete 26-family pre-scoring closure audit, and framework-level FWFP corrections are COMPLETE under V4.4 (Entry 46 CRITIC CLEAR); Entry 47's routing of that work back to ARCHITECT is stale and superseded. After this corrected STATE.md receives RECORDER custody and is incorporated, the next implementation role is TASK BUILDER, authorized only to implement the exact CRITIC-cleared V4.4 amendments — no scoring, scoring-packet construction, fresh-seed selection/exposure, or rerun. Implementation is then followed by independent CRITIC implementation clearance. Fresh scoring remains blocked until Rebecca separately authorizes a supervised run on fresh seeds. Seeds 201–203 remain INSTRUMENT FAILURE evidence and must never be rerun. O-14, O-15, D1–D5, L9, L18, and all standing protections remain binding."
+next_action: "RECORDER performs provenance attestation (attest updated STATE.md hash, extend provenance log with Entries 49–52, publish all M3 V4.4 scoring artifacts to GitHub main). Then M4 preparation begins. Seeds 201–203 and 301–303 retained as INSTRUMENT FAILURE evidence, never rerun (O-14). No L15–L17 integration claim follows from M3. O-14, O-15, D1–D5, L9, L18, and all standing protections remain binding."
 ```
 
 ---
@@ -448,3 +475,12 @@ next_action: "Per Rebecca ruling 2026-08-16: §2.10 harmonization, the complete 
   - Corrected active-state routing/status only: retired §2.10 harmonization, the complete 26-family closure audit, and framework-level FWFP corrections from `open_blockers` into a new `completed_prerequisites` block; preserved as pending: implementation of cleared V4.4 amendments, independent CRITIC implementation clearance, and Rebecca's separate fresh-seed supervised-scoring authorization. Updated: `Last-updated`, `milestone`, `timebox.m3_status`, `role_status` (RECORDER, INTEGRATOR, ARCHITECT, TASK_BUILDER), `open_blockers`, added `completed_prerequisites`, `next_action`.
   - Entry 47's historical text is preserved verbatim in provenance (not edited here); this correction supersedes only the stale *active routing*, and records the superseding Rebecca ruling. First-run INSTRUMENT FAILURE label, seeds 201–203 rerun prohibition, prior valid L3/L5/L6 PASS and L1 no-kill evidence, timebox/tripwires, scientific bars, Entry 43 four-part test, O-14/O-15, and all standing protections preserved unchanged.
   - No specification, verifier, code, provenance, review, or scoring artifact altered. Only state/STATE.md changed. Implementation and scoring remain BLOCKED. STATE.md hash requires RECORDER custody attestation before merge; no merge performed by INTEGRATOR.
+- **2026-08-17 (INTEGRATOR) — M3 V4.4 scoring cycle STATE.md reconciliation:**
+  - **This entry.** INTEGRATOR updated STATE.md to reflect the completed M3 V4.4 scoring cycle and Rebecca's delivery gate ruling.
+  - **M3-SCORING-2 (seeds 301–303):** returned — INSTRUMENT FAILURE. L1 PASS all seeds (V4.4 one-sided null-of-the-max fix confirmed working, shuffled p=1.000). L3 INSTRUMENT_FAILURE on seed 303 only (frozen arm p=0.012 < alpha_seed=0.0167, borderline within 4.8% FWFP — genuine, not a spec defect). L5/L6 PASS all seeds. No kill conditions fired. Candidate passes all candidate-facing bars on all 3 seeds. Reproducibility bit_identical=False (construction bug: artifact_writer not passed to second pass — not non-determinism). Wall clock 852.6s. Python 3.11.9, numpy 1.26.4, scipy 1.13.1. Scoring commit 95440b4. Scoring results on branch scoring/m3-v44-fresh-seeds-301-303 at 6589fed.
+  - **Rebecca delivery gate ruling:** provisional advancement to M4 with qualified instrument certification. Instrument-failure label retained for both scoring runs. Seeds 201–203 and 301–303 retained, never rerun (O-14). No L15–L17 integration claim follows from M3. Four-part test (Entry 43) remains binding.
+  - **Updated fields:** `Last-updated`, `milestone` (M3 V4.4 scoring cycle complete, provisional advancement), `timebox.m3_status` (provisionally_advanced), `timebox.m3_note`, `repo.commit_hash` (95440b4), `repo.github_main_verified` (95440b4), `repo.scoring_branch` (added), `run_requests_to_rebecca` (added M3-SCORING-2), `returned_artifacts` (added m3-scoring-v44-301-303), `role_status` (all roles updated), `open_blockers` (replaced with post-scoring fixes needed), `next_action` (RECORDER provenance attestation then M4 preparation).
+  - **Key facts preserved:** Seeds 201–203 retained as INSTRUMENT FAILURE (first run), never rerun. Seeds 301–303 retained as INSTRUMENT FAILURE (second run), never rerun. Candidate passes all candidate-facing bars on all 6 scoring seeds across both runs. No kill conditions fired in either run. L1 V4.4 fix worked. L3 frozen arm borderline on seed 303 is genuine (within FWFP). Reproducibility failure is a construction bug (not non-determinism). No L15–L17 integration claim. Four-part test (Entry 43) binding. O-14, O-15, D1–D5, L9, L18 all binding.
+  - **Open blockers (must be fixed before future scoring):** (1) Fix reproducibility-checker construction bug (pass artifact_writer to second pass or strip artifact-dependent fields). (2) Fix stale scoring labels (seed ledger scope, manifest boilerplate). (3) Document milestone-wide multiplicity for future specs.
+  - No specifications, scientific findings, locked bars, provenance logs, or code altered. Only state/STATE.md changed. Committed to branch integrator/m3-v44-state-reconciliation.
+  - Next recipient: RECORDER (attest STATE.md hash, extend provenance log with Entries 49–52, publish all artifacts to GitHub main).

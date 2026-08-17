@@ -1575,3 +1575,82 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Exact next authorized role:** **Rebecca**, to decide whether to incorporate this custody-only branch. Only after incorporation does TASK BUILDER become next for the narrowly bounded V4.4 implementation.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 first scoring retained as INSTRUMENT FAILURE. V4.4 closure prerequisites completed and retired by Rebecca ruling. STATE.md routing corrected and canonically attested. Implementation and scoring remain BLOCKED; seeds 201–203 must never be rerun.**
+
+
+---
+
+## Entry 49 — M3 V4.4 fresh-seed scoring run (seeds 301, 302, 303)
+
+**Date:** 2026-08-16 · **Actor:** Rebecca (supervised execution); JUDGE (scoring); RECORDER (logging)
+
+- **Scoring command:** `python src/m3_harness.py --law all --seeds 301,302,303 --mode scoring --verify-reproducibility --output-dir ./m3_scoring_output`
+- **Base commit:** `95440b4` + 3 authorized seed-enablement edits (SCORING_SEEDS, RETAINED_INSTRUMENT_FAILURE_SEEDS, _allowed_seeds_for_mode)
+- **Exit status:** 1. Wall clock: 852.6 seconds.
+- **L1:** PASS on all 3 seeds (V4.4 one-sided null-of-the-max fix worked — shuffled p=1.000).
+- **L3:** PASS on seeds 301, 302; INSTRUMENT_FAILURE on seed 303 (frozen arm p=12/1001=0.012 < alpha_seed=0.0167; borderline within 4.8% FWFP).
+- **L5:** PASS on all 3 seeds.
+- **L6:** PASS on all 3 seeds.
+- **No kill conditions fired.** Candidate passes all candidate-facing bars on all 3 seeds.
+- **Reproducibility:** bit_identical=False (construction bug — artifact_writer not passed to second pass; not non-determinism).
+- **Seeds 301-303 retained as scored evidence, never rerun (O-14).**
+- **257,636 raw artifact files (16.3GB) retained locally on Rebecca's system.**
+- **Scoring summaries (12 files) published to `runs/m3-scoring-v44-301-303/`.**
+
+---
+
+## Entry 50 — JUDGE Phase B ruling
+
+**Date:** 2026-08-16 · **Actor:** JUDGE (ruling); RECORDER (logging)
+
+- **Verdict:** INSTRUMENT FAILURE (L3 frozen arm seed 303).
+- P-values verified from integer `exceed_or_tie_count` fields.
+- L1 V4.4 fix confirmed (shuffled p=1.000 all seeds).
+- Reproducibility failure flagged for CRITIC investigation (diff fields not localized in artifacts).
+- Phase B raw-artifact recomputation not completed (16.3GB retained locally, available on request).
+- **Ruling file:** `reviews/judge_m3_v44_scoring_ruling.md`, SHA-256 `f5ad26f6b7ac76bf70b3127b136d49da466405bd2e1f1bf2011bb398756131bb`.
+
+---
+
+## Entry 51 — CRITIC results review
+
+**Date:** 2026-08-16 · **Actor:** CRITIC (review); RECORDER (logging)
+
+- **Verdict:** BLOCK — INSTRUMENT FAILURE confirmed.
+- L3 frozen arm seed 303: genuine borderline case within pre-registered FWFP (48/1001 ≈ 4.8%). Not a construction bug, not a spec defect, not a candidate failure.
+- Reproducibility failure: construction bug diagnosed (second pass omits `artifact_writer`, causing structural field differences). Not non-determinism. No impact on scored metrics. Fix: pass `artifact_writer` to second pass or strip artifact-dependent fields.
+- L1 V4.4 fix confirmed working.
+- No spec change warranted for L3 frozen arm.
+- Cross-run: candidate stable across 6 scoring seeds, no kills in either run.
+- **Review file:** `reviews/critic_m3_v44_scoring_results_review.md`, SHA-256 `17e9d7f259008e159582245e8b244753a1e9c9b69a291eb7b9331d5d1a1dcd27`.
+
+---
+
+## Entry 52 — Rebecca M3 delivery gate ruling
+
+**Date:** 2026-08-17 · **Actor:** Rebecca Mcclintic (ruling); RECORDER (logging)
+
+- **Ruling:** INSTRUMENT FAILURE retained. Candidate-facing evidence sufficient for provisional advancement to M4 with qualified instrument certification.
+- No additional scoring run authorized to obtain a PASS.
+- No modification of L3 frozen-control test or retroactive multiplicity correction.
+- Candidate passed every candidate-facing bar across all 6 scoring seeds, no kill conditions.
+- Required before future scoring: fix reproducibility-checker construction bug, fix stale scoring labels, document milestone-wide multiplicity for future specs.
+- All existing runs and labels preserved without reinterpretation or deletion.
+- Seeds 201-203 and 301-303 retained, never rerun.
+- **Ruling file:** `docs/rulings/REBECCA_M3_DELIVERY_RULING.md`, SHA-256 `e0492faf07fb2680f45f59d437bbeae17bd2fa5b13a948c88217e5f6f897bafd`.
+
+---
+
+## RECORDER custody attestation
+
+- **STATE.md SHA-256 (from INTEGRATOR branch `integrator/m3-v44-state-reconciliation` at `177cb80`):** `9347513e0fea776fabb11ccc8715551338977d1125b02de52bab2ebf7da59890` — VERIFIED ✓.
+- **Base main:** `95440b4792d1eb100b3b1d015eb02b6dbf92ecc3`.
+- **Artifacts published:**
+  - `reviews/judge_m3_v44_scoring_ruling.md` — SHA-256 `f5ad26f6b7ac76bf70b3127b136d49da466405bd2e1f1bf2011bb398756131bb`
+  - `reviews/critic_m3_v44_scoring_results_review.md` — SHA-256 `17e9d7f259008e159582245e8b244753a1e9c9b69a291eb7b9331d5d1a1dcd27`
+  - `docs/rulings/REBECCA_M3_DELIVERY_RULING.md` — SHA-256 `e0492faf07fb2680f45f59d437bbeae17bd2fa5b13a948c88217e5f6f897bafd`
+  - `runs/m3-scoring-v44-301-303/` — 12 scoring summary files (raw 16.3GB stays local)
+  - `state/STATE.md` — SHA-256 `9347513e0fea776fabb11ccc8715551338977d1125b02de52bab2ebf7da59890` (from INTEGRATOR commit `177cb80`)
+  - `docs/rulings/provenance_log.md` — extended with Entries 49-52 and this attestation
+- **No scientific content, bars, controls, prior provenance entries, or run labels altered.** All artifacts committed unchanged; provenance entries appended only.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. Candidate passes all bars on 6 scoring seeds, no kills. Seeds 201-203 and 301-303 retained. Reproducibility construction bug and stale labels require fixing before future scoring.**
