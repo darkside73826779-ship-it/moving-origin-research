@@ -1,10 +1,10 @@
-# M3/E2 Focused Amendment Record
-- Preserved L3 failures at ec457fc/6ef3cce/76a8dd6 and repair proposal 9d72d2c.
-- Preserved L1 seed-102 false INSTRUMENT_FAILURE under 5-bin R² at prior SHAs.
-- V4.2 gates L1 permuted on 200-entry Spearman rho, fixed permutation seed 44.
-- Null uses exactly 1,000 permutations, seeds 2000–2999, mean ± 2SD unchanged.
-- Null p95 must remain <=0.15; violation routes to INSTRUMENT_FAILURE.
-- Former five-bin R² and beta_age remain labeled non-gating diagnostics.
-- Added focused seed-102 regression and updated permuted artifact schema.
-- No other arm, law, bar, verdict, seed pool, or authorization boundary changed.
-- Hold-outs remain unexposed; no scoring or courier packet was performed.
+# M3/E2 V4.4 Implementation Record
+- Retained all prior L3 failures at ec457fc/6ef3cce/76a8dd6 and L1 seed-102 false failure.
+- Added frozen SHA-256-CTR/Fisher-Yates/Box-Muller RNG and exact subdraw custody.
+- Applied 1,000-draw, ties-adverse plus-one family tests to the nine stochastic controls.
+- Implemented L1 one-sided null-of-max shuffle and retained all deterministic L1 checks.
+- Implemented amended L3 burn-in, delay state, paired shuffle control, and raw evidence.
+- Restored and gated every exact L5 control; candidate access-count mismatch remains KILL.
+- Added content-addressed raw draw manifests with fail-closed schema/RNG validation.
+- Retained seeds 201–203 are rejected; no scoring, hold-out execution, or courier occurred.
+- Dev 101–105 first pass was all PASS; post-fix L5 verification is separately preserved.
