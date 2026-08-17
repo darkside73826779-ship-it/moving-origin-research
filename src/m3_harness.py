@@ -35,6 +35,16 @@ import scipy
 from scipy.stats import spearmanr, pearsonr
 
 import episodic_cache as _episodic_cache
+from m3_v44_rng import (
+    NULL_REPLICATE_COUNT,
+    RNGDerivation,
+    RNGDomainUseRegistry,
+    plus_one_upper_tail_pvalue,
+    sorted_null_order_statistic_985,
+)
+from m3_v44_artifacts import (
+    RawArtifactWriter, validate_manifest, STOCHASTIC_FAMILIES_BY_LAW,
+)
 import episodic_serialize as _episodic_serialize
 import episodic_store as _episodic_store
 
@@ -91,13 +101,23 @@ L5_W = 200  # single-axis window
 L5_N_QUERIES = 400  # 200 world-validity + 200 self-acquisition
 L5_N_CHAIN_QUERIES = 40  # 20 full + 20 partial
 
+# V4.4 stochastic-family calibration.  These values are binding for the
+# nine stochastic controls; candidate-facing bars above remain unchanged.
+V44_NULL_REPLICATES = NULL_REPLICATE_COUNT
+V44_ALPHA_FAMILY = 0.05
+V44_ALPHA_SEED = V44_ALPHA_FAMILY / 3.0
+V44_PROTOCOL_ID = "M3-V4.4-SHA256-CTR-FY-v1"
+
 # L6 bars
 L6_N_ATTACKS = 8
 L6_N_AUDIT_ROWS = 4  # F7 fix: 4 callables, not 5
 
 # Seed pools
 DEVELOPMENT_SEEDS = [101, 102, 103, 104, 105]
+# Retained first-run INSTRUMENT FAILURE evidence.  These identities are
+# permanently non-executable and may never be re-run.
 SCORING_SEEDS = [201, 202, 203]
+RETAINED_INSTRUMENT_FAILURE_SEEDS = frozenset(SCORING_SEEDS)
 SEEDS_DEFAULT = [101, 102, 103]
 
 # Timing
@@ -341,12 +361,49 @@ def _non_timing_projection(results):
     return projected
 
 
+def _v44_verify_l1_cross_slot_identity(all_results):
+    """Enforce deterministic L1 ablation identity across exactly three slots."""
+    l1_slots = [
+        result['L1'] for result in all_results.values()
+        if 'L1' in result
+    ]
+    if not l1_slots:
+        return
+    if len(l1_slots) != 3:
+        reason = 'L1 deterministic cross-slot identity requires exactly three result slots'
+        for slot in l1_slots:
+            slot['instrument_failure_reasons'].append(reason)
+            slot['verdict'] = 'INSTRUMENT_FAILURE'
+        return
+    for arm in ('recency_only', 'rehearsal_only'):
+        hashes = [
+            _v44_canonical_json_hash({
+                'r_squared': slot[arm].get('r_squared'),
+                'beta_age': slot[arm]['beta_age'],
+                'conditional_rhos': slot[arm]['conditional_rhos'],
+            })
+            for slot in l1_slots
+        ]
+        identical = len(set(hashes)) == 1
+        for slot in l1_slots:
+            evidence = slot['v44_deterministic_controls'][arm]
+            evidence['deterministic_reproduction_equal_across_seed_slots'] = identical
+            evidence['cross_slot_hashes'] = hashes
+            if not identical:
+                slot['instrument_failure_reasons'].append(
+                    f'{arm} deterministic cross-slot identity failed')
+                slot['verdict'] = 'INSTRUMENT_FAILURE'
+
+
 def _allowed_seeds_for_mode(mode):
     """Return the exact CRITIC B1 seed allowlist for a run mode."""
     if mode == 'development':
         return set(DEVELOPMENT_SEEDS)
     if mode == 'scoring':
-        return set(SCORING_SEEDS) | set(DEVELOPMENT_SEEDS)
+        # Fresh supervised scoring identities are intentionally supplied only
+        # by the separate courier authorization path, which this harness does
+        # not implement.  Fail closed rather than exposing any retained seed.
+        return set()
     raise ValueError(f'Unsupported run mode: {mode}')
 
 
@@ -504,7 +561,7 @@ def _l1_compute_accessibility(candidate_sets, priority_values, tiebreak_perm=Non
         tiebreak_perm = np.random.RandomState(L1_TIEBREAK_SEED).permutation(L1_N_MEASURED)
 
     # For each set, rank entries by priority descending, tie-break by permutation
-    per_set_ranks = {}  # set_idx -> {entry_idx: rank}
+    per_set_ranks = {}  # set_idx -> [(entry_idx, rank)] occurrence rows
     for s_idx, s in enumerate(candidate_sets):
         # Build (priority, tiebreak_key, entry_idx) tuples
         items = []
@@ -512,19 +569,19 @@ def _l1_compute_accessibility(candidate_sets, priority_values, tiebreak_perm=Non
             items.append((priority_values[idx], tiebreak_perm[idx], idx))
         # Sort by priority descending, then by tiebreak key ascending
         items.sort(key=lambda x: (-x[0], x[1]))
-        ranks = {}
+        ranks = []
         for rank, (_, _, idx) in enumerate(items):
-            ranks[idx] = rank + 1  # 1-indexed
+            ranks.append((idx, rank + 1))  # 1-indexed; duplicates preserved
         per_set_ranks[s_idx] = ranks
 
     # Per-entry aggregation: log_accessibility(e) = mean over sets containing e of log(11 - rank)
     log_access = {}
     for e_idx in range(L1_N_MEASURED):
         vals = []
-        for s_idx, s in enumerate(candidate_sets):
-            if e_idx in s:
-                rank = per_set_ranks[s_idx][e_idx]
-                vals.append(math.log(11 - rank))
+        for s_idx, _ in enumerate(candidate_sets):
+            for entry_idx, rank in per_set_ranks[s_idx]:
+                if entry_idx == e_idx:
+                    vals.append(math.log(11 - rank))
         if vals:
             log_access[e_idx] = float(np.mean(vals))
         else:
@@ -709,7 +766,7 @@ def _l1_permuted_null_rho(
     }
 
 
-def run_l1(seed, log_lines=None):
+def _run_l1_legacy(seed, log_lines=None):
     """Run L1 access physics test for one seed."""
     _tee(f"  [L1] Building fixture for seed {seed}...", log_lines)
     fixture = _l1_build_fixture(seed)
@@ -1136,7 +1193,7 @@ def _l3_build_targets(x, origins, horizon):
     return np.array(targets)
 
 
-def run_l3(seed, log_lines=None):
+def _run_l3_legacy(seed, log_lines=None):
     """Run L3 thick present test for one seed."""
     _tee(f"  [L3] Generating AR(3) sequence for seed {seed}...", log_lines)
     x = _l3_generate_sequence(seed)
@@ -1638,7 +1695,7 @@ def _l5_fair_naive_world_validity(facts):
     return correct / len(results)
 
 
-def run_l5(seed, log_lines=None):
+def _run_l5_legacy(seed, log_lines=None):
     """Run L5 bi-temporality test for one seed."""
     _tee(f"  [L5] Building combination fixture for seed {seed}...", log_lines)
     combo_facts = _l5_build_combination_fixture(seed)
@@ -2053,6 +2110,1277 @@ def run_l5(seed, log_lines=None):
 
     _tee(f"  [L5] Verdict: {verdict}", log_lines)
     return results
+
+
+
+# ---------------------------------------------------------------------------
+# V4.4 stochastic-family controls
+# ---------------------------------------------------------------------------
+# The legacy V4 implementations remain above as historical helpers.  Public
+# run_l1/run_l3/run_l5 below are the V4.4 routes.  All stochastic draws are
+# generated only by m3_v44_rng; NumPy is used for deterministic array algebra
+# and the specified least-squares solver, never as a control-family RNG.
+
+
+def _v44_draw(law, arm, role, seed, replicate, subdraw, registry):
+    return RNGDerivation(law, arm, role, int(seed), int(replicate), int(subdraw), registry)
+
+
+def _v44_summary(observed, null_values, *, direction, records, extra=None):
+    """Return the binding V4.4 rank result for exactly one seed/family."""
+    if len(null_values) != V44_NULL_REPLICATES:
+        raise ValueError("V4.4 controls require exactly 1000 null values")
+    p_value, count = plus_one_upper_tail_pvalue(observed, null_values)
+    result = {
+        'protocol_id': V44_PROTOCOL_ID,
+        'null_replicate_count': V44_NULL_REPLICATES,
+        'meaningful_failure_direction': direction,
+        'observed_statistic': float(observed),
+        'null_statistics': [float(v) for v in null_values],
+        'null_upper_order_statistic_985': float(
+            sorted_null_order_statistic_985(null_values)),
+        'exceed_or_tie_count': int(count),
+        'plus_one_p_value': float(p_value),
+        'alpha_family': V44_ALPHA_FAMILY,
+        'alpha_seed': V44_ALPHA_SEED,
+        'per_seed_pass': bool(p_value > V44_ALPHA_SEED),
+        'rng_derivation_records': records,
+    }
+    if extra:
+        result.update(extra)
+    return result
+
+
+def _v44_l1_entries(measured, permutation):
+    """Map age/rehearsal factors to fixed entry identities using a permutation."""
+    mapped = copy.deepcopy(measured)
+    for index, entry in enumerate(mapped):
+        source = measured[permutation[index]]
+        entry['age'] = source['age']
+        entry['bin'] = source['bin']
+        entry['rehearsal'] = source['rehearsal']
+    return mapped
+
+
+def _v44_l1_priming_reassignment(measured, fixture, permutation):
+    """Reassign the 1,200 priming queries, preserving their individual events."""
+    source_ids = [event['ref_global_idx'] for event in fixture['priming_events']]
+    if len(source_ids) != L1_PRIMING_COUNT or len(permutation) != L1_PRIMING_COUNT:
+        raise ValueError("invalid V4.4 L1 shuffled priming query domain")
+    # The Fisher--Yates result is a bijection on the 1,200 *individual query
+    # slots*.  Slot j belongs to recipient j//6, yielding six destination
+    # slots per entry.  Applying that bijection event-by-event is a genuine
+    # one-to-one schedule reassignment: two events from the same original
+    # recipient can, and ordinarily do, go to different destinations.
+    # It deliberately does not relabel whole count bundles.
+    reassigned = [permutation[query_id] // 6
+                  for query_id in range(L1_PRIMING_COUNT)]
+    counts = [0] * L1_N_MEASURED
+    for entry_id in reassigned:
+        counts[entry_id] += 1
+    shuffled = copy.deepcopy(measured)
+    for entry, count in zip(shuffled, counts):
+        entry['rehearsal'] = count
+    return shuffled, reassigned, counts
+
+
+def _v44_l1_arm(measured, candidate_sets, permutation):
+    return _l1_run_arm(measured, candidate_sets, lambda entry: 1.0, permutation)
+
+
+def _v44_canonical_json_hash(value):
+    return hashlib.sha256(
+        json.dumps(value, sort_keys=True, separators=(',', ':'),
+                   ensure_ascii=True).encode('utf-8')
+    ).hexdigest()
+
+
+def _v44_l1_permuted_statistic(measured, candidate_sets, mapping):
+    # The retained V4.2 statistic uses all 200 paired age/accessibility rows.
+    # Candidate priorities are strict in this fixture, so identity tie order is
+    # sufficient and keeps this stochastic family free of a platform RNG.
+    fixed_access = _l1_v42_fixed_log_accessibility_v44(measured, candidate_sets)
+    mapped = _v44_l1_entries(measured, mapping)
+    ages = [entry['age'] for entry in mapped]
+    accessibility = [fixed_access[entry['global_idx']] for entry in measured]
+    rho = _safe_spearman(ages, accessibility)
+    return float(rho), mapped, fixed_access
+
+
+def _l1_v42_fixed_log_accessibility_v44(measured_entries, candidate_sets):
+    priorities = np.array([
+        _l1_priority(entry, entry['age'], entry['rehearsal'])
+        for entry in measured_entries
+    ])
+    # The retained V4.2 transform ranks *occurrences*.  Candidate sets can
+    # contain a duplicate slot, so using the ordinary dictionary-based rank
+    # helper would silently collapse an occurrence and change the statistic.
+    # There are no ties among distinct priorities in this fixture; identity is
+    # an explicit deterministic tie order rather than a second random draw.
+    contributions = {entry['global_idx']: [] for entry in measured_entries}
+    for candidate_set in candidate_sets:
+        occurrences = [
+            (entry_id, priorities[entry_id], entry_id)
+            for entry_id in candidate_set
+        ]
+        occurrences.sort(key=lambda item: (-item[1], item[2]))
+        for rank, (entry_id, _, _) in enumerate(occurrences, 1):
+            contributions[entry_id].append(math.log(11 - rank))
+    if not all(
+            len(values) == L1_APPEARANCES_PER_ENTRY
+            for values in contributions.values()):
+        raise ValueError('V4.2 occurrence aggregation is malformed')
+    return {
+        entry_id: float(np.mean(values))
+        for entry_id, values in contributions.items()
+    }
+
+
+def _v44_l1_ranked_occurrences(candidate_sets, priority_values, ranking):
+    rows = []
+    for set_id, candidate_set in enumerate(candidate_sets):
+        occurrences = [
+            (entry_id, priority_values[entry_id], ranking[entry_id])
+            for entry_id in candidate_set
+        ]
+        occurrences.sort(key=lambda item: (-item[1], item[2]))
+        rows.extend(
+            (set_id, entry_id, rank)
+            for rank, (entry_id, _, _) in enumerate(occurrences, 1)
+        )
+    return np.asarray(rows, dtype=np.int64)
+
+
+def _v44_write_l1_draw(writer, family, draw_role, replicate_index, rng_records,
+                        measured, candidate_sets, result, ranking,
+                        mapped_entries=None, query_assignment=None,
+                        priming_queries=None):
+    """Emit one complete L1 raw draw without retaining its payload in results."""
+    if writer is None:
+        return None
+    entries = measured if mapped_entries is None else mapped_entries
+    priorities = np.asarray(result['priority_values'], dtype=np.float64)
+    ranks = _v44_l1_ranked_occurrences(candidate_sets, priorities, ranking)
+    entry_columns = {
+        'entry_id': [entry['global_idx'] for entry in entries],
+        'age': [entry['age'] for entry in entries],
+        'rehearsal': [entry['rehearsal'] for entry in entries],
+        'bin': [entry['bin'] for entry in entries],
+    }
+    common = {
+        'entries_200': writer.columns(
+            'entries_200', entry_columns, row_key='entry_id',
+            ordering_rule='global_idx ascending'),
+        'candidate_sets_100': writer.array(
+            'candidate_sets_100', candidate_sets, row_key='set_id',
+            ordering_rule='set_id ascending, occurrence order preserved'),
+        'ranked_occurrences_500': writer.array(
+            'ranked_occurrences_500', ranks, row_key='[set_id,entry_id,rank]',
+            ordering_rule='set_id then rank ascending'),
+        'log_accessibility_200': writer.columns(
+            'log_accessibility_200', {
+                'entry_id': list(range(L1_N_MEASURED)),
+                'value': [result['log_accessibility'][index]
+                          for index in range(L1_N_MEASURED)],
+            }, row_key='entry_id', ordering_rule='entry_id ascending'),
+    }
+    if family in ('L1.frozen', 'L1.fair_naive'):
+        common.update({
+            'bin_memberships_200': writer.array(
+                'bin_memberships_200', [entry['bin'] for entry in entries],
+                row_key='entry_id', ordering_rule='entry_id ascending'),
+            'bin_means_5': writer.array(
+                'bin_means_5', result['bin_means'], row_key='bin',
+                ordering_rule='bin ascending'),
+            'bin_age_representatives_5': writer.array(
+                'bin_age_representatives_5', result['bin_age_representatives'],
+                row_key='bin', ordering_rule='bin ascending'),
+            'r_squared': writer.array(
+                'r_squared', np.asarray(result['r_squared']), row_key='scalar',
+                ordering_rule='single value'),
+        })
+        if family == 'L1.fair_naive':
+            common['ranking_permutation_200'] = writer.array(
+                'ranking_permutation_200', ranking, row_key='entry_id',
+                ordering_rule='entry_id ascending')
+    elif family == 'L1.permuted':
+        common = {
+            'entry_ids_200': writer.array(
+                'entry_ids_200', list(range(L1_N_MEASURED)), row_key='entry_id',
+                ordering_rule='entry_id ascending'),
+            'age_values_200': writer.array(
+                'age_values_200', [entry['age'] for entry in entries],
+                row_key='entry_id', ordering_rule='entry_id ascending'),
+            'rehearsal_values_200': writer.array(
+                'rehearsal_values_200', [entry['rehearsal'] for entry in entries],
+                row_key='entry_id', ordering_rule='entry_id ascending'),
+            'mapping_permutation_200': writer.array(
+                'mapping_permutation_200', ranking, row_key='entry_id',
+                ordering_rule='entry_id ascending'),
+            'log_accessibility_200': common['log_accessibility_200'],
+            'paired_age_accessibility_200': writer.columns(
+                'paired_age_accessibility_200', {
+                    'entry_id': list(range(L1_N_MEASURED)),
+                    'age': [entry['age'] for entry in entries],
+                    'accessibility': [result['log_accessibility'][index]
+                                      for index in range(L1_N_MEASURED)],
+                }, row_key='entry_id', ordering_rule='entry_id ascending'),
+            'spearman_rho': writer.array(
+                'spearman_rho', np.asarray(result['spearman_rho']),
+                row_key='scalar', ordering_rule='single value'),
+        }
+    elif family == 'L1.shuffled':
+        common.update({
+            'priming_queries_1200': writer.array(
+                'priming_queries_1200', priming_queries, row_key='query_id',
+                ordering_rule='priming cycle ascending'),
+            'query_to_entry_assignment_1200': writer.array(
+                'query_to_entry_assignment_1200', query_assignment,
+                row_key='query_id', ordering_rule='priming cycle ascending'),
+            'realized_rehearsal_counts_200': writer.array(
+                'realized_rehearsal_counts_200',
+                [entry['rehearsal'] for entry in entries], row_key='entry_id',
+                ordering_rule='entry_id ascending'),
+            'within_bin_pairs_5': writer.columns(
+                'within_bin_pairs_5', {
+                    'entry_id': [entry['global_idx'] for entry in entries],
+                    'bin': [entry['bin'] for entry in entries],
+                    'rehearsal': [entry['rehearsal'] for entry in entries],
+                    'accessibility': [result['log_accessibility'][entry['global_idx']]
+                                      for entry in entries],
+                }, row_key='entry_id', ordering_rule='entry_id ascending'),
+            'conditional_rho_5': writer.array(
+                'conditional_rho_5', result['conditional_rhos'], row_key='bin',
+                ordering_rule='bin ascending'),
+        })
+    return writer.declare_draw(
+        family, draw_role=draw_role, replicate_index=replicate_index,
+        fields=common, rng_records=rng_records)
+
+
+def run_l1(seed, log_lines=None, artifact_writer=None):
+    """Run L1 with V4.4 calibrated frozen-RNG control families."""
+    _tee(f"  [L1] Building fixed fixture for V4.4 seed slot {seed}...", log_lines)
+    fixture = _l1_build_fixture(seed)
+    measured = fixture['measured_entries']
+    candidate_sets = _l1_build_candidate_sets(seed)
+    # Candidate and exact arms retain their locked fixed-fixture transforms.
+    # Preserve the registered fixed tie-break construction for deterministic
+    # arms.  It is a fixed fixture, not a V4.4 stochastic-family draw.
+    candidate_tie = np.random.RandomState(
+        L1_TIEBREAK_SEED).permutation(L1_N_MEASURED).tolist()
+    candidate = _l1_run_arm(measured, candidate_sets,
+                            lambda e: _l1_priority(e, e['age'], e['rehearsal']),
+                            candidate_tie)
+    oracle = _l1_run_arm(measured, candidate_sets,
+                         lambda e: _l1_priority(e, e['age'], e['rehearsal']),
+                         candidate_tie)
+    recency = _l1_run_arm(measured, candidate_sets,
+                          lambda e: math.exp(-L1_LAMBDA * e['age']), candidate_tie)
+    rehearsal = _l1_run_arm(measured, candidate_sets,
+                            lambda e: 1.0 + L1_BETA * math.log1p(e['rehearsal']),
+                            candidate_tie)
+    fixture_hash = _v44_canonical_json_hash([
+        {key: entry[key] for key in (
+            'global_idx', 'cycle', 'bin', 'age', 'rehearsal'
+        )}
+        for entry in measured
+    ])
+    schedule_hash = _v44_canonical_json_hash(candidate_sets)
+    registry = RNGDomainUseRegistry()
+    controls = {}
+
+    # L1 frozen and fair-naive: a 200-entry FY tie/identifier order per draw.
+    for arm in ('frozen', 'fair_naive'):
+        observed_draw = _v44_draw('L1', arm, 'OBSERVED', seed, 0, 0, registry)
+        observed_perm = observed_draw.permutation()
+        observed_result = _v44_l1_arm(measured, candidate_sets, observed_perm)
+        records = []
+        reference = _v44_write_l1_draw(
+            artifact_writer, f'L1.{arm}', 'OBSERVED', 0,
+            [observed_draw.artifact_record(observed_perm)], measured,
+            candidate_sets, observed_result, observed_perm)
+        if reference:
+            records.append(reference)
+        null_values = []
+        for replicate in range(V44_NULL_REPLICATES):
+            draw = _v44_draw('L1', arm, 'NULL', seed, replicate, 0, registry)
+            permutation = draw.permutation()
+            null_result = _v44_l1_arm(measured, candidate_sets, permutation)
+            null_values.append(null_result['r_squared'])
+            reference = _v44_write_l1_draw(
+                artifact_writer, f'L1.{arm}', 'NULL', replicate,
+                [draw.artifact_record(permutation)], measured, candidate_sets,
+                null_result, permutation)
+            if reference:
+                records.append(reference)
+        summary = _v44_summary(observed_result['r_squared'], null_values,
+                               direction='upper', records=records)
+        summary['r_squared_observed'] = summary['observed_statistic']
+        if artifact_writer is None:
+            summary['r_squared_null_1000'] = summary['null_statistics']
+        summary['draw_role_observed'] = {
+            'ranking_permutation_200': observed_perm,
+            'r_squared': observed_result['r_squared'],
+        }
+        if artifact_writer is not None:
+            summary['raw_draw_manifest_refs'] = records
+            summary.pop('rng_derivation_records', None)
+            summary.pop('null_statistics', None)
+        controls[arm] = summary
+
+    # L1 permuted: use the retained V4.2 200-entry Spearman statistic.
+    observed_draw = _v44_draw('L1', 'permuted', 'OBSERVED', seed, 0, 0, registry)
+    observed_mapping = observed_draw.permutation()
+    observed_rho, observed_mapped, fixed_access = _v44_l1_permuted_statistic(
+        measured, candidate_sets, observed_mapping)
+    observed_permuted_result = {
+        'priority_values': np.ones(L1_N_MEASURED).tolist(),
+        'log_accessibility': fixed_access,
+        'spearman_rho': observed_rho,
+    }
+    records = []
+    reference = _v44_write_l1_draw(
+        artifact_writer, 'L1.permuted', 'OBSERVED', 0,
+        [observed_draw.artifact_record(observed_mapping)], measured,
+        candidate_sets, observed_permuted_result, observed_mapping,
+        mapped_entries=observed_mapped)
+    if reference:
+        records.append(reference)
+    null_rhos = []
+    for replicate in range(V44_NULL_REPLICATES):
+        draw = _v44_draw('L1', 'permuted', 'NULL', seed, replicate, 0, registry)
+        mapping = draw.permutation()
+        rho, mapped, access = _v44_l1_permuted_statistic(measured, candidate_sets, mapping)
+        null_rhos.append(rho)
+        null_permuted_result = {
+            'priority_values': np.ones(L1_N_MEASURED).tolist(),
+            'log_accessibility': access, 'spearman_rho': rho,
+        }
+        reference = _v44_write_l1_draw(
+            artifact_writer, 'L1.permuted', 'NULL', replicate,
+            [draw.artifact_record(mapping)], measured, candidate_sets,
+            null_permuted_result, mapping, mapped_entries=mapped)
+        if reference:
+            records.append(reference)
+    abs_null_rhos = [abs(value) for value in null_rhos]
+    permuted_summary = _v44_summary(abs(observed_rho), abs_null_rhos,
+                                    direction='two_sided_magnitude', records=records,
+                                    extra={
+                                        'spearman_rho_200entry': observed_rho,
+                                        'abs_rho_null_1000': abs_null_rhos,
+                                        # V4.4 forbids percentile interpolation.
+                                        # The fixed power check is the 950th
+                                        # one-indexed null order statistic.
+                                        'null_abs_rho_p95': float(sorted(abs_null_rhos)[949]),
+                                        'null_p95_le_0_15': bool(sorted(abs_null_rhos)[949] <= 0.15),
+                                        'observed_mapping_permutation_200': observed_mapping,
+                                        'paired_age_accessibility_200': [
+                                            {'entry_id': entry['global_idx'],
+                                             'age': entry['age'],
+                                             'accessibility': fixed_access[entry['global_idx']]}
+                                            for entry in observed_mapped
+                                        ],
+                                    })
+    controls['permuted'] = permuted_summary
+    if artifact_writer is not None:
+        permuted_summary['raw_draw_manifest_refs'] = records
+        permuted_summary.pop('rng_derivation_records', None)
+        permuted_summary.pop('null_statistics', None)
+        permuted_summary.pop('abs_rho_null_1000', None)
+        permuted_summary.pop('paired_age_accessibility_200', None)
+
+    # L1 shuffled: reassign 1,200 individual priming queries and rank the
+    # within-draw maximum of the five rhos (upper tail only).
+    observed_draw = _v44_draw('L1', 'shuffled', 'OBSERVED', seed, 0, 0, registry)
+    observed_assignment = observed_draw.permutation()
+    observed_entries, observed_queries, observed_counts = _v44_l1_priming_reassignment(
+        measured, fixture, observed_assignment)
+    observed_shuffled = _l1_run_arm(
+        observed_entries, candidate_sets,
+        lambda e: _l1_priority(e, e['age'], e['rehearsal']), candidate_tie)
+    observed_rhos = observed_shuffled['conditional_rhos']
+    priming_queries = [event['ref_global_idx'] for event in fixture['priming_events']]
+    records = []
+    reference = _v44_write_l1_draw(
+        artifact_writer, 'L1.shuffled', 'OBSERVED', 0,
+        [observed_draw.artifact_record(observed_assignment)], observed_entries,
+        candidate_sets, observed_shuffled, candidate_tie,
+        query_assignment=observed_queries, priming_queries=priming_queries)
+    if reference:
+        records.append(reference)
+    null_rhos = []
+    null_maxima = []
+    for replicate in range(V44_NULL_REPLICATES):
+        draw = _v44_draw('L1', 'shuffled', 'NULL', seed, replicate, 0, registry)
+        assignment = draw.permutation()
+        entries, assignments, _ = _v44_l1_priming_reassignment(
+            measured, fixture, assignment)
+        null_result = _l1_run_arm(
+            entries, candidate_sets,
+            lambda e: _l1_priority(e, e['age'], e['rehearsal']),
+            candidate_tie)
+        rhos = null_result['conditional_rhos']
+        null_rhos.append(rhos)
+        null_maxima.append(max(rhos))
+        reference = _v44_write_l1_draw(
+            artifact_writer, 'L1.shuffled', 'NULL', replicate,
+            [draw.artifact_record(assignment)], entries, candidate_sets,
+            null_result, candidate_tie, query_assignment=assignments,
+            priming_queries=priming_queries)
+        if reference:
+            records.append(reference)
+    shuffled_summary = _v44_summary(max(observed_rhos), null_maxima,
+                                    direction='upper', records=records,
+                                    extra={
+                                        'conditional_rho_values_5': observed_rhos,
+                                        'rho_null_1000x5': null_rhos,
+                                        'null_max_1000': null_maxima,
+                                        'observed_max': max(observed_rhos),
+                                        'age_tests_pass': all(
+                                            slope < 0 for slope in
+                                            observed_shuffled['age_conditional_slopes']),
+                                        'below_threshold_labels': [
+                                            'shuffle exceeded typical destruction — informational'
+                                            for rho in observed_rhos
+                                            if rho < sorted_null_order_statistic_985(null_maxima)
+                                        ],
+                                        'observed_query_to_entry_assignment_1200': observed_queries,
+                                        'observed_realized_rehearsal_counts_200': observed_counts,
+                                    })
+    controls['shuffled'] = shuffled_summary
+    if artifact_writer is not None:
+        shuffled_summary['raw_draw_manifest_refs'] = records
+        shuffled_summary.pop('rng_derivation_records', None)
+        shuffled_summary.pop('null_statistics', None)
+        shuffled_summary.pop('rho_null_1000x5', None)
+        shuffled_summary.pop('null_max_1000', None)
+        shuffled_summary.pop('observed_query_to_entry_assignment_1200', None)
+        shuffled_summary.pop('observed_realized_rehearsal_counts_200', None)
+
+    results = {
+        'seed': seed, 'law': 'L1', 'candidate': candidate, 'oracle': oracle,
+        'frozen': {key: value for key, value in _v44_l1_arm(
+            measured, candidate_sets, controls['frozen']['draw_role_observed']['ranking_permutation_200']).items()
+                   if key != 'per_set_ranks'},
+        'fair_naive': {key: value for key, value in _v44_l1_arm(
+            measured, candidate_sets, controls['fair_naive']['draw_role_observed']['ranking_permutation_200']).items()
+                       if key != 'per_set_ranks'},
+        'recency_only': {key: value for key, value in recency.items() if key != 'per_set_ranks'},
+        'rehearsal_only': {key: value for key, value in rehearsal.items() if key != 'per_set_ranks'},
+        'permuted': {
+            'spearman_rho_200entry': observed_rho,
+            'rho_null_p95': permuted_summary['null_abs_rho_p95'],
+            'null_p95_le_0_15': permuted_summary['null_p95_le_0_15'],
+            'plus_one_p_value': permuted_summary['plus_one_p_value'],
+            'within_mean_pm_2sd_band': permuted_summary['per_seed_pass'],
+            'diagnostic_5bin_r_squared_non_gating': None,
+        },
+        'shuffled': {key: value for key, value in observed_shuffled.items() if key != 'per_set_ranks'},
+        'empty': {'returned_defined_error': True, 'observed': {'error': 'empty_fixture'}},
+        'v44_stochastic_controls': controls,
+        'v44_deterministic_controls': {
+            'recency_only': {
+                'r_squared': recency['r_squared'],
+                'beta_age': recency['beta_age'],
+                'conditional_rho_5': recency['conditional_rhos'],
+                'structural_fixture_hash': fixture_hash,
+                'candidate_set_schedule_hash': schedule_hash,
+                'deterministic_reproduction_equal_across_seed_slots': True,
+            },
+            'rehearsal_only': {
+                'beta_age': rehearsal['beta_age'],
+                'conditional_rho_5': rehearsal['conditional_rhos'],
+                'structural_fixture_hash': fixture_hash,
+                'candidate_set_schedule_hash': schedule_hash,
+                'deterministic_reproduction_equal_across_seed_slots': True,
+            },
+            'oracle': {
+                'r_squared': oracle['r_squared'],
+                'beta_age': oracle['beta_age'],
+                'conditional_rho_5': oracle['conditional_rhos'],
+                'structural_fixture_hash': fixture_hash,
+                'candidate_set_schedule_hash': schedule_hash,
+            },
+            'empty': {'returned_defined_error': True, 'numeric_result_absent': True},
+        },
+        'v44_artifact_support': {
+            'status': ('complete_streaming_raw_artifacts'
+                       if artifact_writer is not None else 'in_memory_test_mode'),
+            'raw_array_writer': 'm3_v44_raw_manifest.json',
+            'full_per_draw_raw_schema_complete': artifact_writer is not None,
+        },
+    }
+    if artifact_writer is None:
+        results['permuted']['rho_null_1000_values'] = null_rhos
+    kill_reasons, failures = [], []
+    if candidate['beta_age'] >= 0: kill_reasons.append('candidate beta_age >= 0')
+    if candidate['r_squared'] < L1_R2_BAR: kill_reasons.append('candidate R2 below bar')
+    if any(rho < L1_RHO_BAR for rho in candidate['conditional_rhos']): kill_reasons.append('candidate rehearsal rho below bar')
+    if any(slope >= 0 for slope in candidate['age_conditional_slopes']): kill_reasons.append('candidate age slope nonnegative')
+    if recency['r_squared'] < L1_R2_BAR or recency['beta_age'] >= 0 or any(rho >= L1_RHO_BAR for rho in recency['conditional_rhos']): failures.append('recency_only exact predicate failed')
+    if rehearsal['beta_age'] < 0 or any(rho < L1_RHO_BAR for rho in rehearsal['conditional_rhos']): failures.append('rehearsal_only exact predicate failed')
+    if oracle['r_squared'] < L1_R2_BAR or oracle['beta_age'] >= 0 or any(rho < L1_RHO_BAR for rho in oracle['conditional_rhos']): failures.append('oracle exact predicate failed')
+    if not results['empty']['returned_defined_error']: failures.append('empty exact contract failed')
+    for arm in ('frozen', 'fair_naive', 'permuted', 'shuffled'):
+        if not controls[arm]['per_seed_pass']:
+            failures.append(f'{arm} V4.4 plus-one p-value <= alpha_seed')
+    if not permuted_summary['null_p95_le_0_15']:
+        failures.append('permuted null_abs_rho_p95 exceeds 0.15 power check')
+    if not shuffled_summary['age_tests_pass']:
+        failures.append('shuffled age-conditional test failed')
+    results['v44_deterministic_controls']['recency_only']['all_exact_checks_pass'] = (
+        'recency_only exact predicate failed' not in failures)
+    results['v44_deterministic_controls']['rehearsal_only']['all_exact_checks_pass'] = (
+        'rehearsal_only exact predicate failed' not in failures)
+    results['v44_deterministic_controls']['oracle']['all_exact_checks_pass'] = (
+        'oracle exact predicate failed' not in failures)
+    results['verdict'] = 'INSTRUMENT_FAILURE' if failures else ('KILL' if kill_reasons else 'PASS')
+    results['kill_reasons'] = kill_reasons
+    results['instrument_failure_reasons'] = failures
+    _tee(f"  [L1] V4.4 verdict: {results['verdict']}", log_lines)
+    return results
+
+
+def _l3_sequence_from_innovations(innovations):
+    if np.shape(innovations) != (1110, L3_INPUT_DIM):
+        raise ValueError('V4.4 L3 innovations must have shape 1110x8')
+    x = np.zeros((1110, L3_INPUT_DIM), dtype=np.float64)
+    phase = np.arange(L3_INPUT_DIM, dtype=np.float64) * (np.pi / 16.0)
+    for absolute_t in range(1110):
+        previous_1 = x[absolute_t - 1] if absolute_t >= 1 else 0.0
+        previous_2 = x[absolute_t - 2] if absolute_t >= 2 else 0.0
+        previous_3 = x[absolute_t - 3] if absolute_t >= 3 else 0.0
+        x[absolute_t] = (0.3 * previous_1 - 0.2 * previous_2 + 0.1 * previous_3
+                         + 0.5 * np.sin(2.0 * np.pi * absolute_t / 7.0 + phase)
+                         + innovations[absolute_t])
+    return x[100:]
+
+
+def _l3_fast_predict(features_fit, targets_fit, features_evaluation,
+                     return_weights=False):
+    """Equivalent multi-output OLS with one rcond=None solve per design matrix."""
+    active = np.std(features_fit, axis=0) > 1e-15
+    if not np.any(active):
+        weights = np.zeros((features_fit.shape[1] + 1, targets_fit.shape[1]))
+        weights[0] = np.mean(targets_fit, axis=0)
+        prediction = np.tile(weights[0], (len(features_evaluation), 1))
+        return (prediction, weights) if return_weights else prediction
+    fit = np.hstack([np.ones((len(features_fit), 1)), features_fit[:, active]])
+    evaluation = np.hstack([np.ones((len(features_evaluation), 1)), features_evaluation[:, active]])
+    active_weights = np.linalg.lstsq(fit, targets_fit, rcond=None)[0]
+    weights = np.zeros((features_fit.shape[1] + 1, targets_fit.shape[1]))
+    weights[0] = active_weights[0]
+    weights[1 + np.flatnonzero(active)] = active_weights[1:]
+    prediction = evaluation @ active_weights
+    return (prediction, weights) if return_weights else prediction
+
+
+def _l3_lag_features(x, origins):
+    return np.array([np.concatenate([x[t], x[t-1], x[t-2]]) for t in origins])
+
+
+def _l3_v44_compute_state(x):
+    """Contract 7 repaired delay state with the required zero initial state."""
+    state = np.zeros((len(x), L3_STATE_DIM), dtype=np.float64)
+    for t in range(1, len(x)):
+        state[t, 0::2] = x[t]
+        state[t, 1::2] = x[t - 1]
+    return state
+
+
+def _l3_losses(predictions, targets):
+    errors = (predictions.reshape(-1, 5, 8) - targets.reshape(-1, 5, 8)) ** 2
+    return errors, np.mean(errors, axis=(0, 2))
+
+
+def _l3_base_pipeline(x):
+    fitting = list(range(L3_FIT_ORIGINS))
+    evaluation = list(range(L3_EVAL_ORIGINS_START, L3_EVAL_ORIGINS_END + 1))
+    state = _l3_v44_compute_state(x)
+    targets_fit = _l3_build_targets(x, fitting, L3_HORIZON)
+    targets_evaluation = _l3_build_targets(x, evaluation, L3_HORIZON)
+    raw_predictions, raw_weights = _l3_fast_predict(
+        x[fitting], targets_fit, x[evaluation], return_weights=True)
+    raw_errors, raw_loss = _l3_losses(raw_predictions, targets_evaluation)
+    return {'x': x, 'state': state, 'fitting': fitting, 'evaluation': evaluation,
+            'targets_fit': targets_fit, 'targets_evaluation': targets_evaluation,
+            'raw_predictions': raw_predictions, 'raw_errors': raw_errors,
+            'raw_loss': raw_loss, 'raw_fit_features': x[fitting],
+            'raw_evaluation_features': x[evaluation], 'raw_weights': raw_weights}
+
+
+def _l3_reductions(raw_loss, controlled_loss):
+    if np.any(raw_loss == 0.0):
+        raise FloatingPointError('V4.4 L3 degenerate raw loss')
+    return (raw_loss - controlled_loss) / raw_loss
+
+
+def _l3_family_draw(x, family, perturbation=None):
+    base = _l3_base_pipeline(x)
+    fitting, evaluation = base['fitting'], base['evaluation']
+    if family == 'frozen':
+        features_fit = np.zeros((len(fitting), L3_STATE_DIM))
+        features_evaluation = np.zeros((len(evaluation), L3_STATE_DIM))
+        prediction, controlled_weights = _l3_fast_predict(
+            features_fit, base['targets_fit'], features_evaluation,
+            return_weights=True)
+        errors, loss = _l3_losses(prediction, base['targets_evaluation'])
+        reductions = _l3_reductions(base['raw_loss'], loss)
+        statistic = max(reductions)
+        violations = None
+        kind = 'frozen'
+    elif family == 'oracle':
+        oracle_fitting = list(range(2, L3_FIT_ORIGINS))
+        features_fit = _l3_lag_features(x, oracle_fitting)
+        features_evaluation = _l3_lag_features(x, evaluation)
+        prediction, controlled_weights = _l3_fast_predict(
+            features_fit, _l3_build_targets(x, oracle_fitting, L3_HORIZON),
+            features_evaluation, return_weights=True)
+        errors, loss = _l3_losses(prediction, base['targets_evaluation'])
+        reductions = _l3_reductions(base['raw_loss'], loss)
+        violations = np.maximum(0.05 - reductions, reductions - 0.95)
+        statistic = max(violations)
+        kind = 'oracle'
+    elif family == 'permuted':
+        features_fit = base['state'][fitting]
+        features_evaluation = base['state'][evaluation]
+        state_prediction, controlled_weights = _l3_fast_predict(
+            features_fit, base['targets_fit'], features_evaluation,
+            return_weights=True)
+        reshaped = state_prediction.reshape(-1, 5, 8)
+        prediction = reshaped[:, :, perturbation].reshape(-1, L3_OUTPUT_DIM)
+        errors, loss = _l3_losses(prediction, base['targets_evaluation'])
+        reductions = _l3_reductions(base['raw_loss'], loss)
+        statistic = max(reductions)
+        violations = None
+        kind = 'permuted'
+    elif family == 'shuffled':
+        shuffled = x[perturbation]
+        base = _l3_base_pipeline(shuffled)
+        fitting, evaluation = base['fitting'], base['evaluation']
+        features_fit = base['state'][fitting]
+        features_evaluation = base['state'][evaluation]
+        state_prediction, controlled_weights = _l3_fast_predict(
+            features_fit, base['targets_fit'], features_evaluation,
+            return_weights=True)
+        state_errors, state_loss = _l3_losses(state_prediction, base['targets_evaluation'])
+        frozen_fit = np.zeros((len(fitting), L3_STATE_DIM))
+        frozen_evaluation = np.zeros((len(evaluation), L3_STATE_DIM))
+        frozen_prediction, frozen_weights = _l3_fast_predict(
+            frozen_fit, base['targets_fit'], frozen_evaluation,
+            return_weights=True)
+        frozen_errors, frozen_loss = _l3_losses(frozen_prediction, base['targets_evaluation'])
+        reductions = _l3_reductions(base['raw_loss'], state_loss)
+        frozen_reductions = _l3_reductions(base['raw_loss'], frozen_loss)
+        violations = reductions - frozen_reductions - 0.01
+        statistic = max(violations)
+        prediction, errors, loss = state_prediction, state_errors, state_loss
+        kind = 'shuffled'
+    else:
+        raise ValueError('unknown L3 family')
+    return {'statistic': float(statistic), 'reductions': reductions.tolist(),
+            'raw_loss': base['raw_loss'].tolist(), 'controlled_loss': loss.tolist(),
+            'raw_squared_errors': base['raw_errors'].tolist(),
+            'controlled_squared_errors': errors.tolist(), 'sequence': x.tolist(),
+            'family': kind, 'violation_score_5': None if violations is None else violations.tolist(),
+            'fitting_origin_indices': list(range(700)),
+            'buffer_cycle_indices': list(range(700, 705)),
+            'evaluation_origin_indices': list(range(705, 1005)),
+            'base': base, 'controlled_predictions': prediction,
+            'controlled_weights': controlled_weights,
+            'controlled_fit_features': features_fit,
+            'controlled_evaluation_features': features_evaluation,
+            'frozen_predictions': (frozen_prediction if family == 'shuffled'
+                                    else None),
+            'frozen_weights': (frozen_weights if family == 'shuffled' else None),
+            'frozen_squared_errors': (frozen_errors if family == 'shuffled'
+                                      else None),
+            'frozen_loss': (frozen_loss if family == 'shuffled' else None)}
+
+
+def _v44_l3_indices(writer):
+    return {
+        'fitting_origin_indices': writer.array(
+            'fitting_origin_indices', np.arange(700), row_key='origin',
+            ordering_rule='ascending 0..699'),
+        'buffer_cycle_indices': writer.array(
+            'buffer_cycle_indices', np.arange(700, 705), row_key='cycle',
+            ordering_rule='ascending 700..704'),
+        'evaluation_origin_indices': writer.array(
+            'evaluation_origin_indices', np.arange(705, 1005), row_key='origin',
+            ordering_rule='ascending 705..1004'),
+        'fit_target_indices_by_horizon': writer.array(
+            'fit_target_indices_by_horizon',
+            np.asarray([np.arange(h, 700 + h) for h in range(1, 6)]),
+            row_key='[horizon,origin]', ordering_rule='horizon then origin ascending'),
+        'evaluation_target_indices_by_horizon': writer.array(
+            'evaluation_target_indices_by_horizon',
+            np.asarray([np.arange(705 + h, 1005 + h) for h in range(1, 6)]),
+            row_key='[horizon,origin]', ordering_rule='horizon then origin ascending'),
+    }
+
+
+def _v44_l3_horizon(array):
+    return np.asarray(array, dtype=np.float64).reshape(-1, 5, 8).transpose(1, 0, 2)
+
+
+def _v44_write_l3_draw(writer, family, draw_role, replicate_index, rng_records,
+                        innovations, unshuffled_sequence, draw,
+                        perturbation=None):
+    if writer is None:
+        return None
+    base = draw['base']
+    fields = _v44_l3_indices(writer)
+    fields['innovations_1110x8'] = writer.array(
+        'innovations_1110x8', innovations, row_key='[absolute_time,channel]',
+        ordering_rule='absolute_time then channel ascending')
+    fields['targets_by_horizon'] = {
+        'fitting': writer.array(
+            'targets_by_horizon.fitting', _v44_l3_horizon(base['targets_fit']),
+            row_key='[horizon,fitting_origin,channel]',
+            ordering_rule='horizon then origin then channel'),
+        'evaluation': writer.array(
+            'targets_by_horizon.evaluation',
+            _v44_l3_horizon(base['targets_evaluation']),
+            row_key='[horizon,evaluation_origin,channel]',
+            ordering_rule='horizon then origin then channel'),
+    }
+    fields['design_matrices_by_horizon'] = {
+        'baseline_fitting': writer.array(
+            'design_matrices_by_horizon.baseline_fitting',
+            np.repeat(base['raw_fit_features'][None, :, :], 5, axis=0),
+            row_key='[horizon,fitting_origin,feature]',
+            ordering_rule='horizon then origin then feature'),
+        'baseline_evaluation': writer.array(
+            'design_matrices_by_horizon.baseline_evaluation',
+            np.repeat(base['raw_evaluation_features'][None, :, :], 5, axis=0),
+            row_key='[horizon,evaluation_origin,feature]',
+            ordering_rule='horizon then origin then feature'),
+        'controlled_fitting': writer.array(
+            'design_matrices_by_horizon.controlled_fitting',
+            np.repeat(draw['controlled_fit_features'][None, :, :], 5, axis=0),
+            row_key='[horizon,fitting_origin,feature]',
+            ordering_rule='horizon then origin then feature'),
+        'controlled_evaluation': writer.array(
+            'design_matrices_by_horizon.controlled_evaluation',
+            np.repeat(draw['controlled_evaluation_features'][None, :, :], 5, axis=0),
+            row_key='[horizon,evaluation_origin,feature]',
+            ordering_rule='horizon then origin then feature'),
+    }
+    baseline_predictions = _v44_l3_horizon(base['raw_predictions'])
+    controlled_predictions = _v44_l3_horizon(draw['controlled_predictions'])
+    baseline_errors = np.asarray(base['raw_errors']).transpose(1, 0, 2)
+    controlled_errors = np.asarray(draw['controlled_squared_errors']).transpose(1, 0, 2)
+    baseline_weights = base['raw_weights'].reshape(
+        base['raw_weights'].shape[0], 5, 8).transpose(1, 0, 2)
+    controlled_weights = draw['controlled_weights'].reshape(
+        draw['controlled_weights'].shape[0], 5, 8).transpose(1, 0, 2)
+    if family == 'L3.frozen':
+        fields.update({
+            'sequence_1010x8': writer.array(
+                'sequence_1010x8', unshuffled_sequence,
+                row_key='[time,channel]', ordering_rule='time then channel ascending'),
+            'fitted_baseline_weights_by_horizon': writer.array(
+                'fitted_baseline_weights_by_horizon', baseline_weights,
+                row_key='[horizon,coefficient,channel]',
+                ordering_rule='horizon then coefficient then channel'),
+            'baseline_predictions_by_horizon': writer.array(
+                'baseline_predictions_by_horizon', baseline_predictions,
+                row_key='[horizon,evaluation_origin,channel]',
+                ordering_rule='horizon then origin then channel'),
+            'frozen_predictions_by_horizon': writer.array(
+                'frozen_predictions_by_horizon', controlled_predictions,
+                row_key='[horizon,evaluation_origin,channel]',
+                ordering_rule='horizon then origin then channel'),
+            'per_example_baseline_squared_errors_by_horizon': writer.array(
+                'per_example_baseline_squared_errors_by_horizon', baseline_errors,
+                row_key='[horizon,evaluation_origin,channel]',
+                ordering_rule='horizon then origin then channel'),
+            'per_example_frozen_squared_errors_by_horizon': writer.array(
+                'per_example_frozen_squared_errors_by_horizon', controlled_errors,
+                row_key='[horizon,evaluation_origin,channel]',
+                ordering_rule='horizon then origin then channel'),
+            'baseline_loss_5': writer.array('baseline_loss_5', base['raw_loss'],
+                                             row_key='horizon', ordering_rule='ascending'),
+            'frozen_loss_5': writer.array('frozen_loss_5', draw['controlled_loss'],
+                                           row_key='horizon', ordering_rule='ascending'),
+            'reduction_5': writer.array('reduction_5', draw['reductions'],
+                                        row_key='horizon', ordering_rule='ascending'),
+        })
+    elif family == 'L3.oracle':
+        fields.update({
+            'sequence_1010x8': writer.array('sequence_1010x8', unshuffled_sequence,
+                                             row_key='[time,channel]', ordering_rule='time then channel ascending'),
+            'fitted_baseline_weights_by_horizon': writer.array('fitted_baseline_weights_by_horizon', baseline_weights, row_key='[horizon,coefficient,channel]', ordering_rule='horizon then coefficient then channel'),
+            'baseline_predictions_by_horizon': writer.array('baseline_predictions_by_horizon', baseline_predictions, row_key='[horizon,evaluation_origin,channel]', ordering_rule='horizon then origin then channel'),
+            'oracle_predictions_by_horizon': writer.array('oracle_predictions_by_horizon', controlled_predictions, row_key='[horizon,evaluation_origin,channel]', ordering_rule='horizon then origin then channel'),
+            'per_example_baseline_squared_errors_by_horizon': writer.array('per_example_baseline_squared_errors_by_horizon', baseline_errors, row_key='[horizon,evaluation_origin,channel]', ordering_rule='horizon then origin then channel'),
+            'per_example_oracle_squared_errors_by_horizon': writer.array('per_example_oracle_squared_errors_by_horizon', controlled_errors, row_key='[horizon,evaluation_origin,channel]', ordering_rule='horizon then origin then channel'),
+            'baseline_loss_5': writer.array('baseline_loss_5', base['raw_loss'], row_key='horizon', ordering_rule='ascending'),
+            'oracle_loss_5': writer.array('oracle_loss_5', draw['controlled_loss'], row_key='horizon', ordering_rule='ascending'),
+            'reduction_5': writer.array('reduction_5', draw['reductions'], row_key='horizon', ordering_rule='ascending'),
+            'violation_score_5': writer.array('violation_score_5', draw['violation_score_5'], row_key='horizon', ordering_rule='ascending'),
+        })
+    elif family == 'L3.permuted':
+        fields.update({
+            'sequence_1010x8': writer.array('sequence_1010x8', unshuffled_sequence, row_key='[time,channel]', ordering_rule='time then channel ascending'),
+            'channel_derangement': writer.array('channel_derangement', perturbation, row_key='channel', ordering_rule='channel ascending'),
+            'fitted_weights_by_horizon': writer.array('fitted_weights_by_horizon', controlled_weights, row_key='[horizon,coefficient,channel]', ordering_rule='horizon then coefficient then channel'),
+            'baseline_predictions_by_horizon': writer.array('baseline_predictions_by_horizon', baseline_predictions, row_key='[horizon,evaluation_origin,channel]', ordering_rule='horizon then origin then channel'),
+            'permuted_predictions_by_horizon': writer.array('permuted_predictions_by_horizon', controlled_predictions, row_key='[horizon,evaluation_origin,channel]', ordering_rule='horizon then origin then channel'),
+            'per_example_baseline_squared_errors_by_horizon': writer.array('per_example_baseline_squared_errors_by_horizon', baseline_errors, row_key='[horizon,evaluation_origin,channel]', ordering_rule='horizon then origin then channel'),
+            'per_example_permuted_squared_errors_by_horizon': writer.array('per_example_permuted_squared_errors_by_horizon', controlled_errors, row_key='[horizon,evaluation_origin,channel]', ordering_rule='horizon then origin then channel'),
+            'baseline_loss_5': writer.array('baseline_loss_5', base['raw_loss'], row_key='horizon', ordering_rule='ascending'),
+            'permuted_loss_5': writer.array('permuted_loss_5', draw['controlled_loss'], row_key='horizon', ordering_rule='ascending'),
+            'reduction_5': writer.array('reduction_5', draw['reductions'], row_key='horizon', ordering_rule='ascending'),
+        })
+    else:
+        # The binding shuffled schema enumerates targets/fitted outputs but
+        # not a separate design_matrices_by_horizon field.
+        fields.pop('design_matrices_by_horizon', None)
+        fields.update({
+            'unshuffled_sequence_1010x8': writer.array('unshuffled_sequence_1010x8', unshuffled_sequence, row_key='[time,channel]', ordering_rule='time then channel ascending'),
+            'cycle_order_permutation': writer.array('cycle_order_permutation', perturbation, row_key='time', ordering_rule='time ascending'),
+            'shuffled_sequence_1010x8': writer.array('shuffled_sequence_1010x8', base['x'], row_key='[time,channel]', ordering_rule='time then channel ascending'),
+            'fitted_weights_by_horizon': writer.array('fitted_weights_by_horizon', controlled_weights, row_key='[horizon,coefficient,channel]', ordering_rule='horizon then coefficient then channel'),
+            'shuffled_predictions_by_horizon': writer.array('shuffled_predictions_by_horizon', controlled_predictions, row_key='[horizon,evaluation_origin,channel]', ordering_rule='horizon then origin then channel'),
+            'paired_shuffled_frozen_predictions_by_horizon': writer.array('paired_shuffled_frozen_predictions_by_horizon', _v44_l3_horizon(draw['frozen_predictions']), row_key='[horizon,evaluation_origin,channel]', ordering_rule='horizon then origin then channel'),
+            'per_example_shuffled_squared_errors_by_horizon': writer.array('per_example_shuffled_squared_errors_by_horizon', controlled_errors, row_key='[horizon,evaluation_origin,channel]', ordering_rule='horizon then origin then channel'),
+            'per_example_paired_frozen_squared_errors_by_horizon': writer.array('per_example_paired_frozen_squared_errors_by_horizon', np.asarray(draw['frozen_squared_errors']).transpose(1, 0, 2), row_key='[horizon,evaluation_origin,channel]', ordering_rule='horizon then origin then channel'),
+            'shuffled_loss_5': writer.array('shuffled_loss_5', draw['controlled_loss'], row_key='horizon', ordering_rule='ascending'),
+            'paired_frozen_loss_5': writer.array('paired_frozen_loss_5', draw['frozen_loss'], row_key='horizon', ordering_rule='ascending'),
+            'reduction_difference_minus_tolerance_5': writer.array('reduction_difference_minus_tolerance_5', draw['violation_score_5'], row_key='horizon', ordering_rule='ascending'),
+        })
+    return writer.declare_draw(family, draw_role=draw_role,
+                               replicate_index=replicate_index, fields=fields,
+                               rng_records=rng_records)
+
+
+def run_l3(seed, log_lines=None, artifact_writer=None):
+    """Run the four V4.4 stochastic L3 controls plus unchanged candidate bar."""
+    _tee(f"  [L3] Running V4.4 SHA-256-CTR control families for seed slot {seed}...", log_lines)
+    registry = RNGDomainUseRegistry()
+    controls, observed_draws = {}, {}
+    for family in ('frozen', 'oracle'):
+        observed_rng = _v44_draw('L3', family, 'OBSERVED', seed, 0, 0, registry)
+        innovations = observed_rng.gaussian_innovations()
+        observed_sequence = _l3_sequence_from_innovations(innovations)
+        observed = _l3_family_draw(observed_sequence, family)
+        records = []
+        reference = _v44_write_l3_draw(
+            artifact_writer, f'L3.{family}', 'OBSERVED', 0,
+            [observed_rng.artifact_record()], innovations, observed_sequence,
+            observed)
+        if reference:
+            records.append(reference)
+        null_statistics = []
+        for replicate in range(V44_NULL_REPLICATES):
+            draw = _v44_draw('L3', family, 'NULL', seed, replicate, 0, registry)
+            null_innovations = draw.gaussian_innovations()
+            null_sequence = _l3_sequence_from_innovations(null_innovations)
+            null = _l3_family_draw(null_sequence, family)
+            null_statistics.append(null['statistic'])
+            reference = _v44_write_l3_draw(
+                artifact_writer, f'L3.{family}', 'NULL', replicate,
+                [draw.artifact_record()], null_innovations, null_sequence, null)
+            if reference:
+                records.append(reference)
+        controls[family] = _v44_summary(observed['statistic'], null_statistics,
+                                        direction='upper', records=records,
+                                        extra={'observed_reductions_5': observed['reductions'],
+                                               'observed_violation_score_5': observed['violation_score_5']})
+        observed_draws[family] = observed
+        if artifact_writer is not None:
+            controls[family]['raw_draw_manifest_refs'] = records
+            controls[family].pop('rng_derivation_records', None)
+            controls[family].pop('null_statistics', None)
+    # Contract 3: permuted and shuffled nulls reuse their observed innovations.
+    for family in ('permuted', 'shuffled'):
+        innovation = _v44_draw('L3', family, 'OBSERVED', seed, 0, 0, registry)
+        innovations = innovation.gaussian_innovations()
+        x = _l3_sequence_from_innovations(innovations)
+        transform = _v44_draw('L3', family, 'OBSERVED', seed, 0, 1, registry)
+        perturbation = transform.accepted_derangement() if family == 'permuted' else transform.permutation()
+        observed = _l3_family_draw(x, family, np.asarray(perturbation, dtype=int))
+        records = []
+        reference = _v44_write_l3_draw(
+            artifact_writer, f'L3.{family}', 'OBSERVED', 0,
+            [innovation.artifact_record(), transform.artifact_record(perturbation)],
+            innovations, x, observed, perturbation)
+        if reference:
+            records.append(reference)
+        null_statistics = []
+        for replicate in range(V44_NULL_REPLICATES):
+            draw = _v44_draw('L3', family, 'NULL', seed, replicate, 0, registry)
+            null_perturbation = draw.accepted_derangement() if family == 'permuted' else draw.permutation()
+            null = _l3_family_draw(x, family, np.asarray(null_perturbation, dtype=int))
+            null_statistics.append(null['statistic'])
+            reference = _v44_write_l3_draw(
+                artifact_writer, f'L3.{family}', 'NULL', replicate,
+                [draw.artifact_record(null_perturbation)], innovations, x, null,
+                null_perturbation)
+            if reference:
+                records.append(reference)
+        controls[family] = _v44_summary(observed['statistic'], null_statistics,
+                                        direction='upper', records=records,
+                                        extra={'observed_reductions_5': observed['reductions'],
+                                               'observed_violation_score_5': observed['violation_score_5']})
+        observed_draws[family] = observed
+        if artifact_writer is not None:
+            controls[family]['raw_draw_manifest_refs'] = records
+            controls[family].pop('rng_derivation_records', None)
+            controls[family].pop('null_statistics', None)
+    # Candidate has the governing repaired state and uses the observed permuted
+    # sequence.  Its bar is unchanged and is intentionally not randomized.
+    # Reuse the exact observed sequence without consuming a second RNG domain.
+    candidate_base = _l3_base_pipeline(
+        np.asarray(observed_draws['permuted']['sequence'], dtype=np.float64))
+    candidate_prediction = _l3_fast_predict(candidate_base['state'][candidate_base['fitting']], candidate_base['targets_fit'], candidate_base['state'][candidate_base['evaluation']])
+    _, candidate_loss = _l3_losses(candidate_prediction, candidate_base['targets_evaluation'])
+    candidate_reductions = _l3_reductions(candidate_base['raw_loss'], candidate_loss).tolist()
+    failures = [arm for arm, summary in controls.items() if not summary['per_seed_pass']]
+    kill_reasons = ['candidate reduction below 5%'] if any(value < L3_REDUCTION_BAR for value in candidate_reductions) else []
+    results = {'seed': seed, 'law': 'L3', 'reductions': {str(i + 1): value for i, value in enumerate(candidate_reductions)},
+               'frozen_reductions': {str(i + 1): value for i, value in enumerate(observed_draws['frozen']['reductions'])},
+               'oracle_reductions': {str(i + 1): value for i, value in enumerate(observed_draws['oracle']['reductions'])},
+               'permuted_reductions': {str(i + 1): value for i, value in enumerate(observed_draws['permuted']['reductions'])},
+               'shuffled_reductions': {str(i + 1): value for i, value in enumerate(observed_draws['shuffled']['reductions'])},
+               'shuffled_frozen_reductions': {str(i + 1): value - 0.01 - observed_draws['shuffled']['violation_score_5'][i] for i, value in enumerate(observed_draws['shuffled']['reductions'])},
+               'empty': {'returned_defined_error': True}, 'v44_stochastic_controls': controls,
+               'v44_artifact_support': {
+                   'status': ('complete_streaming_raw_artifacts'
+                              if artifact_writer is not None else 'in_memory_test_mode'),
+                   'raw_array_writer': 'm3_v44_raw_manifest.json',
+                   'full_per_draw_raw_schema_complete': artifact_writer is not None,
+               },
+               'kill_reasons': kill_reasons, 'instrument_failure_reasons': [f'{arm} V4.4 plus-one p-value <= alpha_seed' for arm in failures]}
+    results['verdict'] = 'INSTRUMENT_FAILURE' if failures else ('KILL' if kill_reasons else 'PASS')
+    _tee(f"  [L3] V4.4 verdict: {results['verdict']}", log_lines)
+    return results
+
+
+def _v44_l5_permuted_combo(facts, mapping):
+    permuted = copy.deepcopy(facts)
+    for i, fact in enumerate(permuted):
+        source = facts[mapping[i]]
+        fact['acquired_at'], fact['valid_from'], fact['valid_until'] = source['acquired_at'], source['valid_from'], source['valid_until']
+    rows = []
+    for fact in permuted:
+        prediction = _l5_world_validity_query(fact, fact['scoring_now'])
+        rows.append({'query_id': fact['fact_id'], 'prediction': prediction, 'truth': fact['truth'], 'correct': prediction == fact['truth']})
+    return permuted, rows, sum(row['correct'] for row in rows) / len(rows)
+
+
+def _v44_l5_content_rows(store, chain_facts):
+    expected, returned = [], []
+    for chain_id in range(L5_N_CHAINS):
+        for max_hops in (L5_CHAIN_LENGTH, 5):
+            visited = store.walk_chain(chain_id, max_hops)
+            # Each of the forty registered chain queries reports the content
+            # at its returned head node; the walk IDs themselves are checked
+            # separately by the exact chain-integrity control.
+            returned.append(store.read_fact(visited[0])['content'])
+            expected.append(next(
+                fact['content'] for fact in chain_facts
+                if fact['fact_id'] == visited[0]))
+    return returned, expected
+
+
+def _v44_l5_full_scan_exact(rows):
+    return bool(rows) and all(
+        row['accuracy'] == 1.0
+        and row['access_count_delta'] == L5_N_CHAIN_FACTS
+        for row in rows)
+
+
+def _v44_l5_oracle_exact(combo, rows):
+    return (
+        combo['world_validity_accuracy'] == 1.0
+        and combo['self_acquisition_accuracy'] == 1.0
+        and bool(rows)
+        and all(row['accuracy'] == 1.0 and row['access_count_matches_k']
+                for row in rows)
+    )
+
+
+def _v44_l5_empty_exact(combination_result, chain_result):
+    return (
+        combination_result.get('error') == 'empty_fixture'
+        and chain_result.get('error') == 'empty_fixture')
+
+
+def _v44_write_l5_draw(writer, draw_role, replicate_index, rng_records, facts,
+                        rows, accuracy, field_mapping, chain_facts,
+                        content_mapping, returned_content, expected_content):
+    if writer is None:
+        return None
+    fields = {
+        'facts_200': writer.columns('facts_200', {
+            'fact_id': [fact['fact_id'] for fact in facts],
+            'acquired_at': [fact['acquired_at'] for fact in facts],
+            'valid_from': [fact['valid_from'] for fact in facts],
+            'valid_until': [fact['valid_until'] for fact in facts],
+        }, row_key='fact_id', ordering_rule='fixture fact order'),
+        'truth_labels_200': writer.array(
+            'truth_labels_200', [row['truth'] for row in rows], row_key='query_id',
+            ordering_rule='fixture fact order'),
+        'field_mapping_derangement_200': writer.array(
+            'field_mapping_derangement_200', field_mapping, row_key='fact index',
+            ordering_rule='fact index ascending'),
+        'predictions_200': writer.array(
+            'predictions_200', [row['prediction'] for row in rows], row_key='query_id',
+            ordering_rule='fixture fact order'),
+        'query_results_200': writer.columns('query_results_200', {
+            'query_id': [row['query_id'] for row in rows],
+            'prediction': [row['prediction'] for row in rows],
+            'truth': [row['truth'] for row in rows],
+            'correct': [row['correct'] for row in rows],
+        }, row_key='query_id', ordering_rule='fixture fact order'),
+        'combo_accuracy': writer.array(
+            'combo_accuracy', np.asarray(accuracy), row_key='scalar',
+            ordering_rule='single value'),
+        'chain_nodes_200': writer.columns('chain_nodes_200', {
+            'fact_id': [fact['fact_id'] for fact in chain_facts],
+            'chain_id': [fact['chain_id'] for fact in chain_facts],
+            'node_idx': [fact['node_idx'] for fact in chain_facts],
+            'content': [fact['content'] for fact in chain_facts],
+        }, row_key='fact_id', ordering_rule='chain-major node-minor'),
+        'chain_content_derangement_200': writer.array(
+            'chain_content_derangement_200', content_mapping, row_key='chain fact index',
+            ordering_rule='chain-major node-minor'),
+        'returned_chain_content_40': writer.text(
+            'returned_chain_content_40', returned_content, row_key='walk query',
+            ordering_rule='chain then full/partial then visit order'),
+        'expected_chain_content_40': writer.text(
+            'expected_chain_content_40', expected_content, row_key='walk query',
+            ordering_rule='chain then full/partial then visit order'),
+            'chain_content_mismatch_rate': writer.array(
+            'chain_content_mismatch_rate',
+            np.asarray(sum(
+                actual != expected
+                for actual, expected in zip(returned_content, expected_content)
+            ) / L5_N_CHAIN_QUERIES),
+            row_key='scalar', ordering_rule='single value'),
+    }
+    return writer.declare_draw('L5.permuted', draw_role=draw_role,
+                               replicate_index=replicate_index, fields=fields,
+                               rng_records=rng_records)
+
+
+def run_l5(seed, log_lines=None, artifact_writer=None):
+    """Run L5 with the V4.4 pooled-center permuted randomization family."""
+    _tee(f"  [L5] Building V4.4 fixed fixture for seed slot {seed}...", log_lines)
+    facts = _l5_build_combination_fixture(seed)
+    chain_facts, chains = _l5_build_chain_fixture(seed)
+    candidate_store = _L5StoreCapability(_L5FactStore(facts, chain_facts, chains))
+    candidate_combo = _l5_run_combination_queries(candidate_store, facts)
+    candidate_chain = _l5_run_chain_walks(candidate_store)
+    registry = RNGDomainUseRegistry()
+    observed_fields = _v44_draw('L5', 'permuted', 'OBSERVED', seed, 0, 0, registry)
+    field_mapping = observed_fields.accepted_derangement()
+    observed_facts, observed_rows, observed_accuracy = _v44_l5_permuted_combo(facts, field_mapping)
+    observed_chain = _v44_draw('L5', 'permuted', 'OBSERVED', seed, 0, 1, registry)
+    content_mapping = observed_chain.accepted_derangement()
+    expected_content = [fact['content'] for fact in chain_facts]
+    permuted_chain_facts = copy.deepcopy(chain_facts)
+    for index, fact in enumerate(permuted_chain_facts):
+        fact['content'] = expected_content[content_mapping[index]]
+    permuted_chain_store = _L5FactStore(
+        observed_facts, permuted_chain_facts, chains, frozen=False)
+    returned_content, expected_content_rows = _v44_l5_content_rows(
+        permuted_chain_store, chain_facts)
+    records = []
+    reference = _v44_write_l5_draw(
+        artifact_writer, 'OBSERVED', 0,
+        [observed_fields.artifact_record(field_mapping),
+         observed_chain.artifact_record(content_mapping)],
+        observed_facts, observed_rows, observed_accuracy, field_mapping,
+        permuted_chain_facts, content_mapping, returned_content,
+        expected_content_rows)
+    if reference:
+        records.append(reference)
+    null_accuracies = []
+    for replicate in range(V44_NULL_REPLICATES):
+        field = _v44_draw('L5', 'permuted', 'NULL', seed, replicate, 0, registry)
+        field_permutation = field.accepted_derangement()
+        null_facts, null_rows, accuracy = _v44_l5_permuted_combo(
+            facts, field_permutation)
+        chain = _v44_draw('L5', 'permuted', 'NULL', seed, replicate, 1, registry)
+        chain_permutation = chain.accepted_derangement()
+        null_accuracies.append(accuracy)
+        null_chain_facts = copy.deepcopy(chain_facts)
+        for index, fact in enumerate(null_chain_facts):
+            fact['content'] = [node['content'] for node in chain_facts][
+                chain_permutation[index]]
+        null_store = _L5FactStore(null_facts, null_chain_facts, chains, frozen=False)
+        null_returned, null_expected = _v44_l5_content_rows(null_store, chain_facts)
+        reference = _v44_write_l5_draw(
+            artifact_writer, 'NULL', replicate,
+            [field.artifact_record(field_permutation),
+             chain.artifact_record(chain_permutation)],
+            null_facts, null_rows, accuracy, field_permutation,
+            null_chain_facts, chain_permutation, null_returned, null_expected)
+        if reference:
+            records.append(reference)
+    pooled_center = float(np.mean([observed_accuracy] + null_accuracies))
+    observed_departure = abs(observed_accuracy - pooled_center)
+    null_departures = [abs(value - pooled_center) for value in null_accuracies]
+    summary = _v44_summary(observed_departure, null_departures, direction='two_sided_magnitude', records=records,
+                           extra={'observed_accuracy': observed_accuracy, 'null_accuracies_1000': null_accuracies,
+                                  'pooled_center': pooled_center, 'observed_absolute_departure': observed_departure,
+                                  'null_absolute_departures_1000': null_departures,
+                                  'chain_content_mismatch_rate': sum(
+                                      actual != expected
+                                      for actual, expected in zip(
+                                          returned_content, expected_content_rows)
+                                  ) / L5_N_CHAIN_QUERIES,
+                                  'field_mapping_derangement_200': field_mapping,
+                                  'chain_content_derangement_200': content_mapping,
+                                  'query_results_200': observed_rows})
+    if artifact_writer is not None:
+        summary['raw_draw_manifest_refs'] = records
+        summary.pop('rng_derivation_records', None)
+        summary.pop('null_statistics', None)
+        summary.pop('null_accuracies_1000', None)
+        summary.pop('null_absolute_departures_1000', None)
+        summary.pop('query_results_200', None)
+    candidate_chain_accuracy = float(np.mean([row['accuracy'] for row in candidate_chain]))
+    frozen_store = _L5StoreCapability(_L5FactStore(facts, chain_facts, chains, frozen=True))
+    frozen_chain_rows = _l5_run_chain_walks(frozen_store)
+    frozen_accuracy = float(np.mean([row['accuracy'] for row in frozen_chain_rows]))
+    # Retained shuffled exact control: derange the 180 predecessor targets.
+    non_roots = [fact for fact in chain_facts if fact['supersedes'] is not None]
+    shifted_targets = [fact['supersedes'] for fact in non_roots]
+    shifted_targets = shifted_targets[1:] + shifted_targets[:1]
+    shifted_by_id = {
+        fact['fact_id']: shifted_targets[index]
+        for index, fact in enumerate(non_roots)
+    }
+    shuffled_chain_facts = []
+    for source in chain_facts:
+        transformed = dict(source)
+        if transformed['supersedes'] is not None:
+            transformed['supersedes'] = shifted_by_id[transformed['fact_id']]
+        shuffled_chain_facts.append(transformed)
+    shuffled_rows = _l5_run_chain_walks(
+        _L5StoreCapability(_L5FactStore(
+            facts, shuffled_chain_facts, chains, frozen=False)))
+    shuffled_accuracy = float(np.mean([row['accuracy'] for row in shuffled_rows]))
+    # Execute an actual query-order permutation; content and truth must remain
+    # exactly query-ID invariant despite the reordered schedule.
+    shuffled_query_facts = list(reversed(facts))
+    shuffled_query_store = _L5StoreCapability(
+        _L5FactStore(facts, chain_facts, chains, frozen=False))
+    shuffled_combo = _l5_run_combination_queries(
+        shuffled_query_store, shuffled_query_facts)
+    shuffled_query_order_equal = (
+        shuffled_combo['world_validity_accuracy']
+        == candidate_combo['world_validity_accuracy']
+        and shuffled_combo['self_acquisition_accuracy']
+        == candidate_combo['self_acquisition_accuracy'])
+
+    class _V44FullScanStore(_L5FactStore):
+        def walk_chain(self, chain_id, max_hops):
+            scanned = [self.read_fact(fact_id) for fact_id in self._chain_log]
+            records_by_id = {
+                fact['fact_id']: fact for fact in scanned
+                if fact['chain_id'] == chain_id
+            }
+            current = max(records_by_id.values(), key=lambda fact: fact['node_idx'])
+            visited = []
+            for _ in range(max_hops):
+                visited.append(current['fact_id'])
+                if current['supersedes'] is None:
+                    break
+                current = records_by_id[current['supersedes']]
+            return visited
+
+    full_scan_rows = _l5_run_chain_walks(
+        _L5StoreCapability(_V44FullScanStore(
+            facts, chain_facts, chains, frozen=False)))
+    # Oracle executes both combination query types and all forty registered
+    # path/count checks over the unmodified ground-truth fixture.
+    oracle_store = _L5StoreCapability(
+        _L5FactStore(facts, chain_facts, chains, frozen=False))
+    oracle_combo = _l5_run_combination_queries(oracle_store, facts)
+    oracle_chain_rows = _l5_run_chain_walks(oracle_store)
+    oracle_world = oracle_combo['world_validity_accuracy'] == 1.0
+    oracle_self = oracle_combo['self_acquisition_accuracy'] == 1.0
+    oracle_chain = all(
+        row['accuracy'] == 1.0 and row['access_count_matches_k']
+        for row in oracle_chain_rows)
+
+    def _empty_fixture_query(combination_facts, chain_records, query_kind):
+        store = _L5FactStore(combination_facts, chain_records, {
+            chain_id: [] for chain_id in range(L5_N_CHAINS)})
+        if query_kind == 'combination':
+            observed = store.read_fact('missing_combination')
+        else:
+            observed = store.read_fact('missing_chain')
+        return {'error': 'empty_fixture'} if observed is None else {'error': None}
+
+    empty_combination = _empty_fixture_query([], [], 'combination')
+    empty_chain = _empty_fixture_query([], [], 'chain')
+    kill_reasons = []
+    if candidate_combo['world_validity_accuracy'] < L5_ACCURACY_BAR or candidate_combo['self_acquisition_accuracy'] < L5_ACCURACY_BAR: kill_reasons.append('candidate combination accuracy below bar')
+    if candidate_chain_accuracy < L5_CHAIN_WALK_ACCURACY_BAR: kill_reasons.append('candidate chain accuracy below bar')
+    if not all(row['access_count_matches_k'] for row in candidate_chain):
+        kill_reasons.append('candidate access_count delta != k')
+    failures = []
+    if not summary['per_seed_pass']: failures.append('permuted V4.4 plus-one p-value <= alpha_seed')
+    if summary['chain_content_mismatch_rate'] != 1.0: failures.append('permuted chain content mismatch rate != 1.00')
+    if _l5_fair_naive_world_validity(facts) != 0.75:
+        failures.append('fair-naive exact world-validity accuracy != 0.75')
+    if frozen_accuracy > 0.0:
+        failures.append('frozen post-freeze chain walk accuracy > 0')
+    if not _v44_l5_oracle_exact(oracle_combo, oracle_chain_rows):
+        failures.append('oracle exact fixture predicate failed')
+    if not shuffled_query_order_equal:
+        failures.append('shuffled query-order accuracy differs from original')
+    if shuffled_accuracy > 0.05:
+        failures.append('shuffled chain walk accuracy > 0.05')
+    if not _v44_l5_full_scan_exact(full_scan_rows):
+        failures.append('full-scan exact path accuracy/delta=200 failed')
+    if not _v44_l5_empty_exact(empty_combination, empty_chain):
+        failures.append('empty fixture query did not return defined error')
+    results = {'seed': seed, 'law': 'L5',
+               'candidate': {'world_validity_accuracy': candidate_combo['world_validity_accuracy'], 'self_acquisition_accuracy': candidate_combo['self_acquisition_accuracy'], 'chain_walk_accuracy': candidate_chain_accuracy, 'access_count_matches_k': all(row['access_count_matches_k'] for row in candidate_chain)},
+               'fair_naive': {'combo_accuracy_world_validity': _l5_fair_naive_world_validity(facts), 'chain_walk_accuracy': 'N/A'},
+               'frozen': {'chain_walk_accuracy_post_freeze': frozen_accuracy, 'label': 'L18 negative control', 'chain_walk_results': frozen_chain_rows},
+               'oracle': {
+                   'world_validity_accuracy': oracle_combo['world_validity_accuracy'],
+                   'self_acquisition_accuracy': oracle_combo['self_acquisition_accuracy'],
+                   'chain_walk_accuracy': float(np.mean([
+                       row['accuracy'] for row in oracle_chain_rows])),
+                   'chain_walk_results': oracle_chain_rows,
+               },
+               'permuted': {'combo_accuracy': observed_accuracy, 'chain_content_mismatch_rate': summary['chain_content_mismatch_rate'], 'plus_one_p_value': summary['plus_one_p_value'], 'pooled_center': pooled_center},
+               'shuffled': {
+                   'combo_query_order_accuracy': shuffled_combo['world_validity_accuracy'],
+                   'self_acquisition_query_order_accuracy': shuffled_combo['self_acquisition_accuracy'],
+                   'query_order_equal_to_original': shuffled_query_order_equal,
+                   'chain_walk_accuracy': shuffled_accuracy, 'edge_count': 180,
+                   'chain_walk_results': shuffled_rows},
+               'full_scan': {
+                   'chain_walk_accuracy': float(np.mean([row['accuracy'] for row in full_scan_rows])),
+                   'access_count_deltas': [row['access_count_delta'] for row in full_scan_rows],
+                   'chain_walk_results': full_scan_rows, 'log': 'chain_fixture_separate'},
+               'empty': {
+                   'combination_returned_defined_error': empty_combination.get('error') == 'empty_fixture',
+                   'chain_returned_defined_error': empty_chain.get('error') == 'empty_fixture'},
+               'v44_stochastic_controls': {'permuted': summary},
+               'v44_artifact_support': {'status': ('complete_streaming_raw_artifacts' if artifact_writer is not None else 'in_memory_test_mode'), 'raw_array_writer': 'm3_v44_raw_manifest.json', 'full_per_draw_raw_schema_complete': artifact_writer is not None},
+               'kill_reasons': kill_reasons, 'instrument_failure_reasons': failures}
+    results['verdict'] = 'INSTRUMENT_FAILURE' if failures else ('KILL' if kill_reasons else 'PASS')
+    _tee(f"  [L5] V4.4 verdict: {results['verdict']}", log_lines)
+    return results
+
+
+def write_v44_summary_artifacts(output_dir, all_results):
+    """Removed compatibility hook; summary-only artifacts are forbidden."""
+    raise RuntimeError(
+        'summary-only V4.4 artifacts are forbidden; use RawArtifactWriter')
 
 
 # ---------------------------------------------------------------------------
@@ -2531,6 +3859,11 @@ def main():
     # Seed validation
     allowed_seeds = _allowed_seeds_for_mode(args.mode)
     for s in seeds:
+        if s in RETAINED_INSTRUMENT_FAILURE_SEEDS:
+            print(
+                f"ERROR: Seed {s} is retained INSTRUMENT FAILURE evidence "
+                "and may never be re-run.")
+            sys.exit(1)
         if s not in allowed_seeds:
             print(
                 f"ERROR: Seed {s} is not authorized for {args.mode} mode.")
@@ -2538,6 +3871,12 @@ def main():
 
     output_dir = args.output_dir
     os.makedirs(output_dir, exist_ok=True)
+    laws_to_run = ['L1', 'L3', 'L5', 'L6'] if args.law == 'all' else [args.law]
+    expected_stochastic_families = tuple(
+        family for law in laws_to_run
+        for family in STOCHASTIC_FAMILIES_BY_LAW.get(law, ()))
+    raw_artifact_writer = RawArtifactWriter(
+        output_dir, expected_families=expected_stochastic_families)
 
     log_lines = []
     _tee(f"=== M3/E2 Harness ===", log_lines)
@@ -2551,7 +3890,6 @@ def main():
     _tee("", log_lines)
 
     all_results = {}
-    laws_to_run = ['L1', 'L3', 'L5', 'L6'] if args.law == 'all' else [args.law]
     seed_exposure_ledger = []
     event_id = 1
 
@@ -2562,7 +3900,10 @@ def main():
             seed_exposure_ledger.append({
                 'event_id': event_id,
                 'seed_id': seed,
-                'pool': 'M3_development',
+                'pool': (
+                    'M3_development' if args.mode == 'development'
+                    else 'M3_fresh_supervised_scoring'
+                ),
                 'milestone_id': 'M3',
                 'law_id': law,
                 'run_type': _run_type_for_mode(args.mode),
@@ -2570,15 +3911,20 @@ def main():
             })
             event_id += 1
             if law == 'L1':
-                seed_results['L1'] = run_l1(seed, log_lines)
+                seed_results['L1'] = run_l1(
+                    seed, log_lines, artifact_writer=raw_artifact_writer)
             elif law == 'L3':
-                seed_results['L3'] = run_l3(seed, log_lines)
+                seed_results['L3'] = run_l3(
+                    seed, log_lines, artifact_writer=raw_artifact_writer)
             elif law == 'L5':
-                seed_results['L5'] = run_l5(seed, log_lines)
+                seed_results['L5'] = run_l5(
+                    seed, log_lines, artifact_writer=raw_artifact_writer)
             elif law == 'L6':
                 seed_results['L6'] = run_l6(seed, log_lines)
         all_results[str(seed)] = seed_results
         _tee("", log_lines)
+
+    _v44_verify_l1_cross_slot_identity(all_results)
 
     _tee("--- Interface-Law Negative Injections ---", log_lines)
     interface_invariants = run_interface_invariants()
@@ -2674,6 +4020,30 @@ def main():
         log_lines,
     )
 
+    # Raw evidence is binding: custody/schema/RNG failures are retained as
+    # INSTRUMENT FAILURE before any result or invariant is serialized.
+    raw_manifest_name = raw_artifact_writer.finalize()
+    try:
+        raw_manifest = validate_manifest(output_dir)
+        raw_artifact_validation = {
+            'passed': True, 'manifest': raw_manifest_name,
+            'error': None,
+        }
+    except Exception as exc:
+        raw_artifact_validation = {
+            'passed': False, 'manifest': raw_manifest_name,
+            'error': f'{type(exc).__name__}: {exc}',
+        }
+        reason = (
+            'V4.4 raw artifact validation failed: '
+            f"{raw_artifact_validation['error']}")
+        for seed_data in all_results.values():
+            for law in ('L1', 'L3', 'L5'):
+                if law in seed_data:
+                    result = seed_data[law]
+                    result.setdefault('instrument_failure_reasons', []).append(reason)
+                    result['verdict'] = 'INSTRUMENT_FAILURE'
+
     # Overall verdict
     all_verdicts = []
     for seed_key, seed_data in all_results.items():
@@ -2688,6 +4058,8 @@ def main():
     if not interface_invariants['passes']:
         overall = 'INSTRUMENT_FAILURE'
     if not all_finite:
+        overall = 'INSTRUMENT_FAILURE'
+    if not raw_artifact_validation['passed']:
         overall = 'INSTRUMENT_FAILURE'
 
     _tee(f"--- Overall Verdict: {overall} ---", log_lines)
@@ -2708,6 +4080,7 @@ def main():
         'results': all_results,
         'overall_verdict': overall,
         'reproducibility': reproducibility,
+        'raw_artifact_validation': raw_artifact_validation,
         'interface_invariants': interface_invariants,
         'finite_numeric_results': all_finite,
     }
@@ -2739,6 +4112,7 @@ def main():
         'per_law_verdicts': {},
         'l20_self_test': l20_result,
         'reproducibility': reproducibility,
+        'raw_artifact_validation': raw_artifact_validation,
         'interface_invariants': interface_invariants,
         'finite_numeric_results': all_finite,
     }
@@ -2753,6 +4127,9 @@ def main():
         invariants_out['per_law_verdicts'][law] = law_verdicts
     _write_json(invariants_path, invariants_out)
     _tee(f"  Written: {invariants_path}", log_lines)
+
+    v44_artifact_files = [raw_manifest_name]
+    _tee(f"  Written: {os.path.join(output_dir, raw_manifest_name)}", log_lines)
 
     # 3. m3_manifest.json
     manifest_path = os.path.join(output_dir, 'm3_manifest.json')
@@ -2784,6 +4161,7 @@ def main():
             'm3_manifest.json',
             'm3_run.log',
             'm3_profile.json',
+            *v44_artifact_files,
         ],
         'development_seeds_pool': DEVELOPMENT_SEEDS,
         'scoring_seed_pool': 'WITHHELD; forbidden in development',
@@ -2834,6 +4212,7 @@ def main():
         'm3_run_results.json', 'm3_invariants.json',
         'm3_run.log', 'm3_profile.json',
         'm3_seed_exposure_ledger.json',
+        *v44_artifact_files,
     ] + per_law_filenames
     for fname in hashable_files:
         fpath = os.path.join(output_dir, fname)
@@ -2852,6 +4231,7 @@ def main():
         'm3_run.log',
         'm3_profile.json',
         'm3_seed_exposure_ledger.json',
+        *v44_artifact_files,
     ]
     manifest_out['file_hashes'] = file_hashes
     manifest_out['file_hash_note'] = (
