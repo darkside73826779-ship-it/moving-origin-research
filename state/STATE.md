@@ -7,7 +7,7 @@
 ```yaml
 # STATE.md — team operational schema (under Rebecca's M0 addendum, Entry 13 / O-10)
 # Updated by: INTEGRATOR (sole writer). RECORDER records hash at every merge.
-# Last-updated: 2026-08-17T00:36:00-04:00.
+# Last-updated: 2026-08-17T14:29:00-04:00.
 
 milestone: M3                       # M3 V4.4 scoring cycle complete. First scoring run (seeds 201–203) retained as INSTRUMENT FAILURE. Second scoring run (seeds 301–303) retained as INSTRUMENT FAILURE (L3 frozen arm borderline on seed 303, within 4.8% FWFP — genuine, not a spec defect). L1 V4.4 fix worked (one-sided null-of-the-max). L5/L6 PASS on all seeds. No kill conditions fired on any seed across both runs. Candidate passes all candidate-facing bars on all 6 scoring seeds. Reproducibility bit_identical=False (construction bug: artifact_writer not passed to second pass — not non-determinism). Rebecca authorized provisional advancement to M4 with qualified instrument certification. Seeds 201–203 and 301–303 retained, never rerun (O-14). Four-part test (Entry 43) remains binding. O-14, O-15, D1–D5, L9, L18 all binding.
 session_count: 5                    # completed working sessions (M1: 1; M2: 1; M3 spec cycle: 2 — V0→V3 BLOCKED, V4 CLEARED; M3 GO + task spec: 1 — GO ruling, task spec/courier arch prepared, CRITIC narrow BLOCK)
@@ -64,8 +64,8 @@ watch_items:                        # CRITIC carry-forward items, with locus
     m1_relevant: false
 
 repo:
-  commit_hash: "95440b4792d1eb100b3b1d015eb02b6dbf92ecc3"   # GitHub main HEAD; V4.4 implementation merged (ARCHITECT implementation-completeness amendment + TASK BUILDER V4.4 stochastic controls, CRITIC-CLEARED). Scoring run executed at this commit.
-  github_main_verified: "95440b4792d1eb100b3b1d015eb02b6dbf92ecc3"   # GitHub main HEAD, VERIFIED 2026-08-17T00:36Z via git ls-remote
+  commit_hash: "d65396d3ea7920e1c4c049697de27d34f50bf7cc"   # GitHub main HEAD; PR #18 merged — RECORDER published CRITIC M3 reproducibility-contract reviews (v1.0 BLOCK + v1.1 CLEAR) + Entry 53 to GitHub main. Prior main was 09b94d0 (lean role initialization scripts). Scoring run executed at 95440b4 (V4.4 implementation merged).
+  github_main_verified: "d65396d3ea7920e1c4c049697de27d34f50bf7cc"   # GitHub main HEAD, VERIFIED 2026-08-17T14:29-04:00 via gh api
   scoring_branch: "scoring/m3-v44-fresh-seeds-301-303"   # Scoring results branch at 6589fed9a98273fe7a97be0dc0defdf9f9a08aee — contains runs/m3-scoring-v44-301-303/ summary files and RUN_PROVENANCE_AND_LOCAL_RETENTION.md
   cure_commit_hash: "a85ec91f22521164abd2604a1c299c74f0dd67ac"   # E1 provenance-cure re-run commit (manifest commit hash cured from "pending -- no git repo" to real repository hash a85ec91f; JUDGE scored DELIVERED GREEN from cure artifacts — judge_e1_cure_ruling.md)
   e1_run2_scored_commit: "1d13105e8163859d7972705b731ba8c24a272276"   # E1-RUN-2 scored commit (timing fix dceb258 + cosmetic/L20 float fix; JUDGE scored DELIVERED GREEN with provenance discrepancy flagged — manifest showed "pending -- no git repo", round-trip log claimed 1d13105; subsequently cured in cure re-run at a85ec91)
@@ -83,7 +83,10 @@ repo:
   m1_harness_file_hash: "6d33349a2d10686f8f2b42709ec43a7da6e175948ebd60b28801b1627bcc8413"   # retroactive SHA-256 of m1_harness.py at git init (anchors RUN-1 integrity, since repo did not exist at RUN-1 time)
   artifact: "m1_harness.py + requirements.txt + e1_experiment.py + all specs/reviews/runs"
   m3_e2_spec_v4_project_files: true   # M3/E2 spec V4 (specs/m3_e2_spec_amended_v4.md) + changelog (specs/m3_e2_spec_changelog_v4.md) + CRITIC V4 review (reviews/critic_m3_e2_spec_rereview_v4.md) persisted in Project Files
-  note: "GitHub repository darkside73826779-ship-it/moving-origin-research is the single source of truth. Main verified at 07001593a823f6418c7fbf87b10c93fa19642c3c from a fresh clone. Entry 43 retains the first M3 scoring run as INSTRUMENT FAILURE and authorizes a post-scoring specification correction only under its four-part test. Entry 44 records V4.3 CRITIC clearance as a targeted specification amendment only; V4.3 is not claimed implemented. Entry 46 records V4.4 B1–B4 specification-framework closure as CRITIC-CLEAR (verdict CLEAR; B1–B4 resolved; no new blockers), merged through Rebecca-authorized PR #13 (spec-framework merge 24c0fc8), with the CRITIC ruling and merge custody preserved and merged via PR #14 (custody result 169d962, current main 07001593). PR #13 introduced only the five attested specification/verification files; no implementation, scoring artifact, fresh-seed material, or STATE.md change was introduced by PR #13 or PR #14. V4.4 is not claimed implemented. Scoring remains BLOCKED; no fresh scoring is authorized."
+  reproducibility_contract_spec_branch: "architect/m3-reproducibility-contract"   # ARCHITECT reproducibility-contract spec branch; HEAD af6678a9809de5abfeb30505c52e50f09a48ffeb; spec content SHA 3c8480cc163251f88db2b70b921f65a31468cc17
+  reproducibility_contract_critic_v1_review_sha256: "af0375b2a25627e25251eb7fe3cdad87bdffaed162eb462346c09cd0ef7b3d64"   # CRITIC v1.0 review (BLOCK, BF1-BF4) — reviews/critic_m3_reproducibility_contract_spec_review.md
+  reproducibility_contract_critic_v1_1_review_sha256: "f22e531380757e3c58d3043710047387be178336c274b1b0a8f9a87b42288c39"   # CRITIC v1.1 re-review (CLEAR, BF1-BF4 resolved) — reviews/critic_m3_reproducibility_contract_spec_rereview.md
+  note: "GitHub repository darkside73826779-ship-it/moving-origin-research is the single source of truth. Main verified at d65396d3ea7920e1c4c049697de27d34f50bf7cc via gh api (2026-08-17T14:29-04:00). PR #18 merged CRITIC M3 reproducibility-contract reviews (v1.0 BLOCK + v1.1 CLEAR) and Entry 53 to GitHub main. Entry 52 attested V4.4 scoring cycle provenance (Entries 49-52, provisional M4 advancement). Entry 53 published reproducibility-contract CRITIC reviews; STATE.md SHA-256 at Entry 53 was 9347513e0fea776fabb11ccc8715551338977d1125b02de52bab2ebf7da59890 (unchanged since Entry 52). M3 V4.4 scoring cycle: both runs retained as INSTRUMENT FAILURE; seeds 201-203 and 301-303 never rerun (O-14). Reproducibility-contract spec CRITIC-CLEARED (v1.1, CLEAR) — approved for TASK BUILDER implementation subject to Rebecca's separate authorization. No scoring, fresh-seed exposure, or rerun authorized."
 
 run_requests_to_rebecca:            # courier packets issued (per merge-candidate, batched per BUILD_PHASE_ORG Ruling 2)
   - id: RUN-1
@@ -187,16 +190,16 @@ returned_artifacts:                 # inventory of what Rebecca returned — RUN
 
 role_status:                        # latest verdict per role
   JUDGE:        "M1 DELIVERED GREEN; M2 DELIVERED GREEN. M3 V4.4 scoring ruled INSTRUMENT FAILURE. L1 PASS all seeds (V4.4 fix confirmed). L3 INSTRUMENT_FAILURE seed 303 (frozen arm borderline). L5/L6 PASS. No kills. Candidate passes all candidate-facing bars on all 6 scoring seeds across both runs."
-  CRITIC:       "M3 V4.4 results review: BLOCK. L3 borderline genuine (within 4.8% FWFP, not a spec defect). Reproducibility construction bug diagnosed (artifact_writer not passed to second pass — not non-determinism). No spec change warranted. Stale scoring labels noted (seed ledger scope, manifest boilerplate)."
-  RECORDER:     "Provenance current through Entry 48; M3 V4.4 scoring run artifacts on scoring branch scoring/m3-v44-fresh-seeds-301-303 at 6589fed. Pending: attest updated STATE.md hash, extend provenance log with Entries 49–52, publish all artifacts to GitHub main."
-  INTEGRATOR:   "M3 STATE.md reconciled for V4.4 scoring cycle. Provisional advancement to M4 authorized by Rebecca with qualified instrument certification. Reproducibility bug (artifact_writer not passed to second pass) and stale scoring labels (seed ledger scope, manifest boilerplate) require fixing before future scoring. Both scoring runs retained as INSTRUMENT FAILURE; seeds 201–203 and 301–303 never rerun. No L15–L17 integration claim follows from M3."
-  ARCHITECT:    "V4.4 closure work COMPLETE and CRITIC-cleared. No further ARCHITECT action authorized for M3 unless a new specification defect is found."
-  TASK_BUILDER: "V4.4 implementation merged at 95440b4. No active assignment until M4 preparation begins. Reproducibility bug fix and stale label fixes pending."
+  CRITIC:       "M3 V4.4 results review: BLOCK. L3 borderline genuine (within 4.8% FWFP, not a spec defect). Reproducibility construction bug diagnosed (artifact_writer not passed to second pass — not non-determinism). No spec change warranted. Stale scoring labels noted (seed ledger scope, manifest boilerplate). M3 reproducibility-contract spec review: v1.0 BLOCK (BF1-BF4), v1.1 CLEAR (BF1-BF4 resolved, NF1-NF4 addressed, NF5-NF7 new non-blocking) — spec approved for TASK BUILDER implementation."
+  RECORDER:     "Provenance current through Entry 53. PR #18 merged CRITIC M3 reproducibility-contract reviews (v1.0 BLOCK + v1.1 CLEAR) + Entry 53 to GitHub main at d65396d. STATE.md SHA-256 at Entry 53: 9347513e0fea776fabb11ccc8715551338977d1125b02de52bab2ebf7da59890 (unchanged since Entry 52). Pending: attest updated STATE.md hash after INTEGRATOR reconciliation."
+  INTEGRATOR:   "M3 STATE.md reconciled for reproducibility-contract CRITIC review publication (PR #18, Entry 53). Repo hashes updated to d65396d. Role status updated for all roles. Reproducibility-contract spec is CRITIC-CLEARED (v1.1 CLEAR) and published to GitHub main — approved for TASK BUILDER implementation subject to Rebecca's separate authorization. Both scoring runs retained as INSTRUMENT FAILURE; seeds 201-203 and 301-303 never rerun. No L15-L17 integration claim follows from M3."
+  ARCHITECT:    "V4.4 closure work COMPLETE and CRITIC-cleared. M3 reproducibility-contract spec v1.1 CRITIC-CLEARED (BF1-BF4 resolved). No further ARCHITECT action authorized unless a new specification defect is found."
+  TASK_BUILDER: "V4.4 implementation merged at 95440b4. Reproducibility-contract spec CRITIC-CLEARED (v1.1 CLEAR) — ready for implementation subject to Rebecca's separate authorization. Reproducibility bug fix and stale label fixes are covered by the reproducibility-contract spec. No active assignment until Rebecca authorizes implementation."
 
-open_blockers:                      # Post-M3 scoring cycle — must be fixed before future scoring
-  - "Fix reproducibility-checker construction bug (pass artifact_writer to second pass or strip artifact-dependent fields from reproducibility comparison)"
-  - "Fix stale scoring labels (seed ledger scope says 'M3 development diagnostics only' but should say 'M3 scoring'; manifest boilerplate still references development context)"
+open_blockers:                      # Post-M3 scoring cycle — must be fixed before future scoring. Reproducibility-contract spec (CRITIC-CLEARED v1.1) covers items 1-2; implementation pending Rebecca's authorization.
+  - "Implement reproducibility-contract spec (CRITIC-CLEARED v1.1 CLEAR) — fixes reproducibility-checker construction bug (pass artifact_writer to second pass or strip artifact-dependent fields) and stale scoring labels (seed ledger scope, manifest boilerplate). Spec on branch architect/m3-reproducibility-contract at 3c8480c. Ready for TASK BUILDER subject to Rebecca's authorization."
   - "Document milestone-wide multiplicity for future specs (M3 used two scoring runs on two seed pools; future specs should pre-register multiplicity expectations)"
+  - "Rebecca's separate authorization to begin reproducibility-contract implementation"
 
 completed_prerequisites:            # retired from open_blockers per Rebecca ruling 2026-08-16 (see changelog); completed and CRITIC-cleared under V4.4 (Entry 46)
   - id: PRQ_2_10_harmonization
@@ -206,7 +209,7 @@ completed_prerequisites:            # retired from open_blockers per Rebecca rul
   - id: PRQ_fwfp_family_corrections
     desc: "Framework-level correction of every control family whose full-battery FWFP exceeds 5% — COMPLETE. Maximum corrected full-family FWFP = 48/1001 ≈ 0.047952 ≤ 5% (Entry 46, CRITIC-verified)."
 
-non_blocking_findings_of_record:    # CRITIC V4 review Part 3 — non-blocking, do not gate
+non_blocking_findings_of_record:    # CRITIC V4 review Part 3 + reproducibility-contract v1.1 re-review — non-blocking, do not gate
   - id: NF7
     desc: "Three printed R² values (frozen, fair-naive, rehearsal-only) not independently reproducible by CRITIC's from-scratch implementation; none affects any branch-defining predicate — documentation/reproducibility issue, not a score-definition defect"
     source: critic_m3_e2_spec_rereview_v4.md
@@ -220,9 +223,21 @@ non_blocking_findings_of_record:    # CRITIC V4 review Part 3 — non-blocking, 
   - id: NF10
     desc: "STATE.md must be brought current before Rebecca rules (NF3 carried forward)"
     source: critic_m3_e2_spec_rereview_v4.md
-    status: resolved  # STATE.md reconciled through Entries 43–44 and Entry 46 (V4.4 post-custody); new STATE.md hash requires RECORDER custody attestation before merge
+    status: resolved  # STATE.md reconciled through Entries 43–44 and Entry 46 (V4.4 post-custody); V4.4 scoring cycle (Entry 52); reproducibility-contract review publication (Entry 53, this update)
+  - id: RC_NF5
+    source_id: NF5
+    desc: "v44_artifact_support presence description inaccurate in reproducibility-contract spec v1.1 — states 'present in pass 1, absent in pass 2' but field is present in BOTH passes with different values. Classification B exclusion still works correctly. TASK BUILDER should be aware."
+    source: critic_m3_reproducibility_contract_spec_rereview.md
+  - id: RC_NF6
+    source_id: NF6
+    desc: "Final-report digest behavior when reproducibility not checked — spec does not explicitly specify what final-report digest payload contains when --verify-reproducibility is not requested. TASK BUILDER should clarify whether pass1_digest, pass2_digest, digests_equal are set to null or omitted."
+    source: critic_m3_reproducibility_contract_spec_rereview.md
+  - id: RC_NF7
+    source_id: NF7
+    desc: "compute_final_report_digest(...) parameter list uses '...' in spec — acceptable for a design spec but TASK BUILDER must determine exact parameter list during implementation."
+    source: critic_m3_reproducibility_contract_spec_rereview.md
 
-next_action: "RECORDER performs provenance attestation (attest updated STATE.md hash, extend provenance log with Entries 49–52, publish all M3 V4.4 scoring artifacts to GitHub main). Then M4 preparation begins. Seeds 201–203 and 301–303 retained as INSTRUMENT FAILURE evidence, never rerun (O-14). No L15–L17 integration claim follows from M3. O-14, O-15, D1–D5, L9, L18, and all standing protections remain binding."
+next_action: "RECORDER attests updated STATE.md hash and extends provenance log. The M3 reproducibility-contract spec is CRITIC-CLEARED (v1.1 CLEAR) and published to GitHub main (PR #18, Entry 53). The spec covers the reproducibility-checker construction bug fix and stale scoring label fixes — it is approved for TASK BUILDER implementation, subject to Rebecca's separate authorization to begin implementation. No scoring, fresh-seed exposure, or rerun authorized. Seeds 201-203 and 301-303 retained as INSTRUMENT FAILURE evidence, never rerun (O-14). No L15-L17 integration claim follows from M3. O-14, O-15, D1-D5, L9, L18, and all standing protections remain binding."
 ```
 
 ---
@@ -484,3 +499,15 @@ next_action: "RECORDER performs provenance attestation (attest updated STATE.md 
   - **Open blockers (must be fixed before future scoring):** (1) Fix reproducibility-checker construction bug (pass artifact_writer to second pass or strip artifact-dependent fields). (2) Fix stale scoring labels (seed ledger scope, manifest boilerplate). (3) Document milestone-wide multiplicity for future specs.
   - No specifications, scientific findings, locked bars, provenance logs, or code altered. Only state/STATE.md changed. Committed to branch integrator/m3-v44-state-reconciliation.
   - Next recipient: RECORDER (attest STATE.md hash, extend provenance log with Entries 49–52, publish all artifacts to GitHub main).
+- **2026-08-17 (INTEGRATOR) — M3 reproducibility-contract CRITIC review publication STATE.md reconciliation:**
+  - **This entry.** INTEGRATOR updated STATE.md to reflect the M3 reproducibility-contract CRITIC review publication (PR #18 merged, Entry 53 appended to provenance log).
+  - **RECORDER publication (PR #18):** RECORDER published two CRITIC review documents of the M3 Reproducibility-Contract Specification to GitHub main (merge commit d65396d3ea7920e1c4c049697de27d34f50bf7cc). Prior main was 09b94d06ded642ed2cf37595806c1a1a9dc62c15. PR #18 source commit d5650fc3301af76785a4b489414bbd4ac2370016. Entry 53 appended to provenance log. STATE.md SHA-256 at Entry 53: 9347513e0fea776fabb11ccc8715551338977d1125b02de52bab2ebf7da59890 (unchanged since Entry 52 — no INTEGRATOR update had occurred between Entries 52 and 53).
+  - **CRITIC reproducibility-contract spec review:**
+    - v1.0 (reviews/critic_m3_reproducibility_contract_spec_review.md, SHA-256 af0375b2a25627e25251eb7fe3cdad87bdffaed162eb462346c09cd0ef7b3d64): BLOCK — BF1 (Classification C invariant #1 mathematically incorrect: rho_null_1000_values stores signed values but null_statistics stores absolute values), BF2 (Classification A/C overlap violates "exactly one classification" rule), BF3 (top-level digest inputs not available from specified function signature), BF4 (result SHA and branch do not exist on GitHub — provenance defect). NF1-NF4 (non-blocking: two canonicalization methods, conditionally-present fields guidance, rho_null_1000_values removal opportunity, NFC redundancy).
+    - v1.1 (reviews/critic_m3_reproducibility_contract_spec_rereview.md, SHA-256 f22e531380757e3c58d3043710047387be178336c274b1b0a8f9a87b42288c39): CLEAR — BF1-BF4 all resolved. BF1: invariant corrected to [abs(x) for x in rho_null_1000_values] == null_statistics. BF2: overlap eliminated, each field in exactly one classification. BF3: two-digest architecture (compared digest excludes top-level fields computed after reproducibility check; non-compared final-report digest includes them). BF4: branch pushed to GitHub, SHA 3c8480c verified. NF1-NF4 addressed. NF5-NF7 new non-blocking (v44_artifact_support presence description inaccurate, final-report digest behavior when reproducibility not checked, compute_final_report_digest parameter list uses ellipsis). Spec approved for TASK BUILDER implementation.
+  - **ARCHITECT reproducibility-contract spec:** on branch architect/m3-reproducibility-contract, HEAD af6678a9809de5abfeb30505c52e50f09a48ffeb, spec content SHA 3c8480cc163251f88db2b70b921f65a31468cc17. Spec covers: compute_scoring_semantic_digest (Classification A extraction, C invariant checks, fail-closed traversal), compute_final_report_digest (non-compared integrity hash), Classification A field retention, normalized RNG derivation summaries, mode-aware label helper, mutation tests, stale label regression tests.
+  - **Updated fields:** `Last-updated`, `repo.commit_hash` (d65396d), `repo.github_main_verified` (d65396d), `repo.note`, added `repo.reproducibility_contract_spec_branch`, `repo.reproducibility_contract_critic_v1_review_sha256`, `repo.reproducibility_contract_critic_v1_1_review_sha256`, `role_status` (CRITIC, RECORDER, INTEGRATOR, ARCHITECT, TASK_BUILDER), `open_blockers` (consolidated: reproducibility-contract spec now CRITIC-cleared, covers bug fix + stale labels; added Rebecca authorization as blocker), `non_blocking_findings_of_record` (added RC_NF5-RC_NF7 preserving source labels NF5-NF7 from reproducibility-contract v1.1 re-review; updated NF10 status), `next_action`.
+  - **Key facts preserved:** Seeds 201–203 retained as INSTRUMENT FAILURE (first run), never rerun. Seeds 301–303 retained as INSTRUMENT FAILURE (second run), never rerun. Candidate passes all candidate-facing bars on all 6 scoring seeds across both runs. No kill conditions fired in either run. L1 V4.4 fix worked. L3 frozen arm borderline on seed 303 is genuine (within FWFP). Reproducibility failure is a construction bug (not non-determinism). No L15–L17 integration claim. Four-part test (Entry 43) binding. O-14, O-15, D1–D5, L9, L18 all binding.
+  - No specifications, scientific findings, locked bars, provenance logs, code, reviews, or scoring artifacts altered. Only state/STATE.md changed. STATE.md hash requires RECORDER custody attestation before merge; no merge performed by INTEGRATOR.
+  - Next recipient: RECORDER (attest updated STATE.md hash, extend provenance log).
+  - Authorized scope: Update state/STATE.md only. No merging to main. No modification of any file other than state/STATE.md. No scoring, seed execution, or hold-out seed exposure. No implementation or code changes. No activation of TASK BUILDER (requires Rebecca's separate authorization).
