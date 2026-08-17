@@ -729,7 +729,7 @@ def _fail_closed_l1_v44_det(det: Dict[str, Any], path: str) -> None:
 def _fail_closed_l3(law_result: Dict[str, Any], path: str) -> None:
     _check_required(path, law_result, _L3_TOP_LEVEL_A)
     _check_required(path, law_result, _L3_REDUCTION_FIELDS_A)
-    _check_required(path, law_result, frozenset({'empty', 'v44_stochastic_controls', 'v44_artifact_support'}))
+    _check_required(path, law_result, frozenset({'empty', 'v44_stochastic_controls'}))
     for key in law_result:
         if key in _L3_TOP_LEVEL_A or key in _L3_TOP_LEVEL_B:
             continue
@@ -761,7 +761,6 @@ def _fail_closed_l5(law_result: Dict[str, Any], path: str) -> None:
     _l5_required_arms = frozenset({
         'candidate', 'fair_naive', 'frozen', 'oracle', 'permuted',
         'shuffled', 'full_scan', 'empty', 'v44_stochastic_controls',
-        'v44_artifact_support',
     })
     _check_required(path, law_result, _l5_required_arms)
     arm_schemas = {

@@ -8,7 +8,7 @@
 
 ## Files created
 
-- `src/m3_reproducibility.py` (839 lines) — reproducibility contract module
+- `src/m3_reproducibility.py` (961 lines) — reproducibility contract module
 - `src/test_m3_reproducibility.py` — mutation tests and stale label regression tests
 
 ## Files modified
@@ -30,7 +30,7 @@
 
 ### 2. Harness integration (`m3_harness.py`)
 
-- **Pruning fix (§4.2):** Changed artifact-mode pruning to only remove Classification B fields (`rng_derivation_records`, `raw_draw_manifest_refs`). Classification A fields (`null_statistics`, `null_accuracies_1000`, `null_absolute_departures_1000`, `query_results_200`, `rho_null_1000x5`, `paired_age_accessibility_200`, `observed_query_to_entry_assignment_1200`, `observed_realized_rehearsal_counts_200`, `abs_rho_null_1000`, `null_max_1000`) are now retained in both passes regardless of `artifact_writer` state.
+- **Pruning fix (§4.2):** Changed artifact-mode pruning to only remove Classification B fields (`rng_derivation_records`, `raw_draw_manifest_refs`). Classification A fields (`null_statistics`, `null_accuracies_1000`, `null_absolute_departures_1000`, `query_results_200`, `rho_null_1000x5`, `paired_age_accessibility_200`, `observed_query_to_entry_assignment_1200`, `observed_realized_rehearsal_counts_200`) are now retained in both passes regardless of `artifact_writer` state. Classification C fields (`abs_rho_null_1000`, `null_max_1000`, `rho_null_1000_values`, `r_squared_null_1000`) are also retained for invariant checking.
 - **RNG derivation summaries (§2.5):** Added `rng_derivation_summaries` to all V4.4 stochastic control summaries. Built from `draw.artifact_record(...)` dicts collected at draw time, independent of `artifact_writer` presence.
 - **Reproducibility check replacement (§4.1):** Replaced `_non_timing_projection` + JSON string comparison with `compute_scoring_semantic_digest` two-digest architecture. Pass 1 and pass 2 produce scoring-semantic digests; comparison is `pass1_digest == pass2_digest`.
 - **Final-report digest (§3.2):** Added `compute_final_report_digest` call after overall verdict computation; stored as `reproducibility.final_report_digest`.
