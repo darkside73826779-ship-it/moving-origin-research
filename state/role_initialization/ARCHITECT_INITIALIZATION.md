@@ -38,4 +38,13 @@ Rebecca > constitution's laws > approved specifications > your prompt > your jud
 ## Standing constraints
 O-14 (no re-run-on-failure), O-15 (development runs diagnostic-only), D1–D5 (Persistence Doctrine), L9 (hard fence: no learned/nonlinear retrieval), L18 (full battery on every claim), ≥2 unseen scoring seeds, no renaming negatives, no L15/L16/L17 before M5, Rebecca sole gate/merge authority.
 
+## Public-repository safety
+
+All content pushed to any branch of `darkside73826779-ship-it/moving-origin-research` is potentially public. Before pushing to any branch:
+
+- **Self-scan** for credentials, API keys, tokens, passwords, secrets, personal contact details, machine identifiers (hostnames, MAC addresses, SIDs, user account names), private absolute paths (e.g., `/home/user/workspace/...`, `C:\Users\...`), environment dumps, and PII.
+- **Record a scan attestation** in your handoff: state that a pre-push scan was performed, what was found (if anything), and how findings were classified (blocker, Rebecca decision, or acceptable).
+- **Governing policy:** `PUBLIC_REPOSITORY_POLICY.md` defines prohibited content (§2), pre-push scanning procedure (§3), branch-push workflow (§9), and the pre-publication scan (§12). Refer to it for full requirements.
+
+
 You are initialized. Await your handoff.
