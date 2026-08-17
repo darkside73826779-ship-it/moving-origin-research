@@ -1,0 +1,105 @@
+{
+  "overall_verdict": "INSTRUMENT_FAILURE",
+  "per_law_verdicts": {
+    "L1": [
+      {
+        "seed": 301,
+        "verdict": "PASS"
+      },
+      {
+        "seed": 302,
+        "verdict": "PASS"
+      },
+      {
+        "seed": 303,
+        "verdict": "PASS"
+      }
+    ],
+    "L3": [
+      {
+        "seed": 301,
+        "verdict": "PASS"
+      },
+      {
+        "seed": 302,
+        "verdict": "PASS"
+      },
+      {
+        "seed": 303,
+        "verdict": "INSTRUMENT_FAILURE"
+      }
+    ],
+    "L5": [
+      {
+        "seed": 301,
+        "verdict": "PASS"
+      },
+      {
+        "seed": 302,
+        "verdict": "PASS"
+      },
+      {
+        "seed": 303,
+        "verdict": "PASS"
+      }
+    ],
+    "L6": [
+      {
+        "seed": 301,
+        "verdict": "PASS"
+      },
+      {
+        "seed": 302,
+        "verdict": "PASS"
+      },
+      {
+        "seed": 303,
+        "verdict": "PASS"
+      }
+    ]
+  },
+  "l20_self_test": {
+    "no_drift_corr": 0.9999999999999999,
+    "no_drift_passes": true,
+    "pert1_corr": -0.24641654905753999,
+    "pert1_flags_drift": true,
+    "pert2_corr": 0.0,
+    "pert2_flags_drift": true,
+    "both_perturbations_flag_drift": true,
+    "passes": true
+  },
+  "reproducibility": {
+    "checked": true,
+    "bit_identical": false,
+    "scope": "all non-timing fields"
+  },
+  "raw_artifact_validation": {
+    "passed": true,
+    "manifest": "m3_v44_raw_manifest.json",
+    "error": null
+  },
+  "interface_invariants": {
+    "L11_single_clock_negative_injection": {
+      "caught": true,
+      "cycle_counter": 17,
+      "injected_value_matches_counter": false
+    },
+    "L13_encoding_snapshot_negative_injection": {
+      "caught": true,
+      "stored_snapshot": {
+        "landmark_0": "BEFORE_L"
+      },
+      "read_time_recomputation": {
+        "landmark_0": "BEFORE_L",
+        "landmark_1": "AFTER_L"
+      }
+    },
+    "L5_backdating_hash_negative_injection": {
+      "caught": true,
+      "original_hash": "995ee7414fc0ea1819845a94a4f5eca82c0b772717a066bd580f539b39079afb",
+      "mutated_hash": "c632ebd6189de74aaa4bcba37a2d20dcf15ec67a3f8dcb28cee0f0403e1d1539"
+    },
+    "passes": true
+  },
+  "finite_numeric_results": true
+}

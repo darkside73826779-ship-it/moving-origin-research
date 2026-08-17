@@ -1,0 +1,114 @@
+{
+  "append_only": true,
+  "scope": "M3 development diagnostics only",
+  "events": [
+    {
+      "event_id": 1,
+      "seed_id": 301,
+      "pool": "M3_fresh_supervised_scoring",
+      "milestone_id": "M3",
+      "law_id": "L1",
+      "run_type": "scoring",
+      "timestamp_cycle": 1
+    },
+    {
+      "event_id": 2,
+      "seed_id": 301,
+      "pool": "M3_fresh_supervised_scoring",
+      "milestone_id": "M3",
+      "law_id": "L3",
+      "run_type": "scoring",
+      "timestamp_cycle": 2
+    },
+    {
+      "event_id": 3,
+      "seed_id": 301,
+      "pool": "M3_fresh_supervised_scoring",
+      "milestone_id": "M3",
+      "law_id": "L5",
+      "run_type": "scoring",
+      "timestamp_cycle": 3
+    },
+    {
+      "event_id": 4,
+      "seed_id": 301,
+      "pool": "M3_fresh_supervised_scoring",
+      "milestone_id": "M3",
+      "law_id": "L6",
+      "run_type": "scoring",
+      "timestamp_cycle": 4
+    },
+    {
+      "event_id": 5,
+      "seed_id": 302,
+      "pool": "M3_fresh_supervised_scoring",
+      "milestone_id": "M3",
+      "law_id": "L1",
+      "run_type": "scoring",
+      "timestamp_cycle": 5
+    },
+    {
+      "event_id": 6,
+      "seed_id": 302,
+      "pool": "M3_fresh_supervised_scoring",
+      "milestone_id": "M3",
+      "law_id": "L3",
+      "run_type": "scoring",
+      "timestamp_cycle": 6
+    },
+    {
+      "event_id": 7,
+      "seed_id": 302,
+      "pool": "M3_fresh_supervised_scoring",
+      "milestone_id": "M3",
+      "law_id": "L5",
+      "run_type": "scoring",
+      "timestamp_cycle": 7
+    },
+    {
+      "event_id": 8,
+      "seed_id": 302,
+      "pool": "M3_fresh_supervised_scoring",
+      "milestone_id": "M3",
+      "law_id": "L6",
+      "run_type": "scoring",
+      "timestamp_cycle": 8
+    },
+    {
+      "event_id": 9,
+      "seed_id": 303,
+      "pool": "M3_fresh_supervised_scoring",
+      "milestone_id": "M3",
+      "law_id": "L1",
+      "run_type": "scoring",
+      "timestamp_cycle": 9
+    },
+    {
+      "event_id": 10,
+      "seed_id": 303,
+      "pool": "M3_fresh_supervised_scoring",
+      "milestone_id": "M3",
+      "law_id": "L3",
+      "run_type": "scoring",
+      "timestamp_cycle": 10
+    },
+    {
+      "event_id": 11,
+      "seed_id": 303,
+      "pool": "M3_fresh_supervised_scoring",
+      "milestone_id": "M3",
+      "law_id": "L5",
+      "run_type": "scoring",
+      "timestamp_cycle": 11
+    },
+    {
+      "event_id": 12,
+      "seed_id": 303,
+      "pool": "M3_fresh_supervised_scoring",
+      "milestone_id": "M3",
+      "law_id": "L6",
+      "run_type": "scoring",
+      "timestamp_cycle": 12
+    }
+  ]
+}
