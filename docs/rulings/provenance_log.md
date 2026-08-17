@@ -1677,3 +1677,23 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Next authorized role:** **Rebecca**, to review and decide whether to merge this publication branch to main.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. CRITIC reproducibility-contract reviews published to GitHub recorder branch. No merge to main; Rebecca sole merge authority. Seeds 201–203 and 301–303 retained, never rerun.**
+
+
+---
+
+## Entry 54 — M3 reproducibility-contract STATE.md reconciliation custody and hash attestation
+
+**Date:** 2026-08-17 · **Actor:** INTEGRATOR (sole STATE.md writer); RECORDER (custody and hash attestation)
+
+- **Gate served:** M3 reproducibility-contract STATE.md Reconciliation Custody following PR #18 (CRITIC review publication, Entry 53).
+- **Named base:** `d65396d3ea7920e1c4c049697de27d34f50bf7cc` (GitHub main, post-PR #18 merge; independently verified before attestation).
+- **INTEGRATOR source:** `8b6d7ea7fcc5510ea11227f05e446fb2ec1199ae` on `integrator/m3-reproducibility-contract-state-reconciliation`; direct parent is the named base and the branch is exactly one commit ahead. The source changes only `state/STATE.md` (42 insertions, 15 deletions).
+- **STATE.md committed Git blob:** `9b81c120bcc309202727c308e24b22f6db79504d`.
+- **STATE.md canonical Git-blob/LF SHA-256:** `cae049ec452459d98554cb4890640ae208493c18143f8c5295fa3e2c8845719f` — VERIFIED. Independently computed by RECORDER from the INTEGRATOR branch content; matches INTEGRATOR-reported hash. 0 CRLF lines (pure LF).
+- **Reconciliation verification:** the state accurately records Entry 53 (CRITIC reproducibility-contract review publication, PR #18 merged at `d65396d`), the CRITIC v1.0 BLOCK and v1.1 CLEAR verdicts, updated repo hashes (`d65396d`), updated role statuses for all roles, consolidated open blockers (reproducibility-contract spec CRITIC-CLEARED, covers construction bug fix and stale label fixes), added RC_NF5–RC_NF7 non-blocking findings, and updated next action. V4.4 is specification-framework closure only and is not claimed implemented.
+- **Preserved evidence and protections:** the first M3 scoring run remains **INSTRUMENT FAILURE** (seeds 201–203). The second M3 scoring run remains **INSTRUMENT FAILURE** (seeds 301–303). Seeds 201–203 and 301–303 are retained and must never be rerun. Prior L3/L5/L6 PASS evidence remains valid. L1 candidate-facing bars passed with no kill condition. Rebecca Entry 43 and its four-part test remain binding. All timebox counts, caps, dates, and tripwire fields are unchanged. O-14, O-15, D1–D5, L9, L18, L15, unseen-seed protections, supervised-execution boundaries, Phase A / Phase B separation, and all standing protections remain intact.
+- **Authorization boundary:** implementation and scoring remain **BLOCKED**. No TASK BUILDER work, implementation, courier scoring construction, fresh-seed selection or exposure, scoring, or rerun of seeds 201–203 or 301–303 is authorized by the INTEGRATOR reconciliation or this custody entry. The reproducibility-contract spec is CRITIC-CLEARED (v1.1 CLEAR) and approved for TASK BUILDER implementation, subject to Rebecca's separate authorization.
+- **Scope attestation:** the INTEGRATOR result changes only `state/STATE.md`; it alters no scientific standard, verdict, specification, verifier, implementation, scoring artifact, review, or provenance content. RECORDER appended this provenance entry only and did not alter `state/STATE.md`, specifications, verification artifacts, implementation, scoring artifacts, or reviews.
+- **Exact next authorized role:** **Rebecca**, to decide whether to incorporate this custody-only branch. No implementation or scoring action is authorized by this entry.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. CRITIC reproducibility-contract reviews published and merged (PR #18, Entry 53). STATE.md reconciled and canonically attested (Entry 54). Implementation and scoring remain BLOCKED; seeds 201–203 and 301–303 must never be rerun.**
