@@ -62,11 +62,15 @@ Scans are not required for pushes that only modify files under `src/` (code) or 
 
 ### 3.2 Required checks
 
-1. **Secret scanning:** Run a secret-detection tool (e.g., `gitleaks`, `trufflehog`, or equivalent) against the full diff of the push. Any finding is a publication blocker.
-2. **Pattern checks:** Regex scan for:
+1. **Secret scanning:** Run a secret-detection tool (e.g., `gitleaks`, `trufflehog`, or equivalent) against **all new commits introduced by the push, including intermediate commits and their diffs** — not just the net diff between branch tip and base. Every commit in the push range must be scanned, so that secrets added in an intermediate commit and later removed are still detected (BF3 resolution).
+2. **Pattern checks:** Regex scan for (minimum examples, not exhaustive — the binding secret-scanning tool provides additional coverage):
    - API keys and tokens (e.g., `ghp_`, `sk-`, `AKIA`, `xox`, bearer tokens)
-   - Private keys (`-----BEGIN`)
-   - Email addresses other than Rebecca's published attribution (`darkside73826779@gmail.com` is the principal's published contact)
+   - JWT tokens
+   - `.env` file contents
+   - Service-account JSON keys
+   - SSH private keys (`-----BEGIN`)
+   - Cloud provider tokens (GCP, Azure, etc.)
+   - Email addresses — publication of any email, including the principal's, is a Rebecca decision (see §3.4)
    - Phone numbers, physical addresses
    - Absolute paths matching `/home/`, `/Users/`, `C:\Users\`, or sandbox hostnames
    - Environment variable dumps (`API_KEY=`, `SECRET=`, `TOKEN=`)
@@ -85,6 +89,21 @@ Public-safety scan: <tool(s) used>, <scope>, <findings count>, <disposition>
 If findings are zero: `"Public-safety scan: gitleaks + regex, full diff, 0 findings, cleared."`
 
 If findings are nonzero: the push is blocked until findings are resolved or explicitly waived by Rebecca.
+
+### 3.4 Email publication decision (NF4 resolution)
+
+The principal's email (`darkside73826779@gmail.com`) is not currently published in any existing public-readiness file at the base SHA. Only the GitHub organization name (`darkside73826779-ship-it`) appears in repository URLs. Publication of any email address — including the principal's — is a Rebecca decision, not an automatic exception. If Rebecca authorizes email publication, it should be added to `CITATION.cff` or `SECURITY.md` as the designated contact method.
+
+### 3.5 Credential remediation in git history (BF1 resolution)
+
+A prospective cleanup commit does NOT remove credentials from git history. Once the repository is public, any credential in any historical commit is accessible via `git log`, `git show`, or GitHub's commit browsing interface.
+
+For credential/PII blockers found in git history:
+1. **Rotate or revoke the credential** before the repository goes public. Once rotated, the historical exposure is moot — the credential no longer works.
+2. **If rotation/revocation is not possible**, the repository must not go public until the credential-containing commits are remediated through an authorized exception to the history-rewriting prohibition (§11.2). Rebecca must explicitly authorize any such exception.
+3. **A cleanup commit alone is insufficient** for credential remediation — it documents but does not remediate. It may accompany rotation/revocation as a record of what was found and how it was addressed.
+
+This does not modify §11.2's general prohibition on history rewriting. It defines the narrow exception path for credential remediation when no other option exists.
 
 ---
 
@@ -148,8 +167,8 @@ Before the publication-readiness merge, the RECORDER (or Rebecca-authorized cust
 | File count | 257,636 |
 | Total byte count | (to be computed by custodian) |
 | Raw manifest | `m3_v44_raw_manifest.json` (~202 MB, committed summary only) |
-| Root checksum | SHA-256 of the artifact root directory (to be computed) |
-| Manifest checksum | SHA-256 of `m3_v44_raw_manifest.json` |
+| Root checksum | SHA-256 of the artifact root directory, computed as: `find . -type f | sort | xargs sha256sum` (or equivalent), producing a sorted file-list with per-file hashes, then SHA-256 of the combined output (NF3 resolution) |
+| Manifest checksum | SHA-256 of `m3_v44_raw_manifest.json` (single-file `sha256sum`) |
 | Scoring seeds | 201, 202, 203, 301, 302, 303 (identities already in provenance) |
 | Retention statement | Artifacts retained locally; not silently replaced; not deleted |
 | Access procedure | Open a GitHub issue labeled "artifact-access request"; do not transmit credentials in public issues |
@@ -237,15 +256,14 @@ All existing files, commits, branches, SHAs, rulings, provenance entries, and ev
 **Recommendation:** A mandatory one-time pre-publication scan must run before the repository is flipped to public. The scan covers:
 - All branches (§12.3)
 - All commit messages across all branches
-- All handoffs, STATE.md entries, and provenance entries
-- All file contents in `handoffs/`, `state/`, `docs/`, `runs/`
+- All file contents across **all directories** — including `handoffs/`, `state/`, `docs/`, `runs/`, `src/`, `specs/`, `reviews/`, `verification/`, `diagnostics/`, `packages/`, `.github/`, and root-level files (BF2 resolution)
 
 **Classification of findings:**
 - **Blockers (must fix before public):** Credentials, tokens, API keys, private keys, personal contact details beyond Rebecca's published attribution.
 - **Rebecca decisions (flag for principal):** Absolute paths (`/home/user/workspace/...`), internal operational language, session references, agent model names. Rebecca decides whether to accept these as historical artifacts of the development process or require redaction.
 - **Acceptable as-is:** Internal role names (ARCHITECT, CRITIC, TASK BUILDER, etc.) that are already documented in `AI_CONTRIBUTIONS.md`. Governance terminology (O-14, D1–D5, etc.) that is cross-referenced in `GOVERNANCE_SOURCE_MAP.md`.
 
-**No history rewriting by default.** If Rebecca classifies content as requiring redaction, the preferred approach is a prospective cleanup commit that adds a `PUBLIC_SAFETY_NOTES.md` documenting what was redacted and why, rather than rewriting Git history.
+**No history rewriting by default.** If Rebecca classifies content as requiring redaction, the preferred approach is a prospective cleanup commit that adds a `PUBLIC_SAFETY_NOTES.md` documenting what was redacted and why. However, for credential/PII blockers specifically, a cleanup commit is insufficient — see §3.5 for the credential remediation path (rotate/revoke, or authorized history-rewriting exception) (BF1 resolution).
 
 ### 12.2 Conflict 2 — Branch-push workflow change
 
@@ -264,7 +282,7 @@ Public-safety scan: <tool(s)>, <scope>, <findings>, <disposition>
 
 2. **Rebecca's decision per branch:** For each branch with findings:
    - **Option A (publish as-is):** Rebecca accepts the content as a historical artifact of the development process. The branch remains public.
-   - **Option B (prune public ref):** Rebecca authorizes removal of the remote branch ref. The branch name and head SHA are recorded by the RECORDER before pruning. No silent branch deletion — the record is preserved in provenance.
+   - **Option B (prune public ref):** Rebecca authorizes removal of the remote branch ref. Before pruning, the RECORDER must: (a) record the branch name and head SHA, and (b) preserve a private archive (`git bundle` of the branch) or explicitly attest that the branch content is fully merged into main and no unique content is lost (NF1 resolution). No silent branch deletion — the record is preserved in provenance.
 
 Stale branches (e.g., `state-m2-complete`) that have been fully merged and serve no ongoing purpose may be pruned with Rebecca's authorization after RECORDER records their names and head SHAs.
 
