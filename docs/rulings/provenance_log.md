@@ -1654,3 +1654,26 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **No scientific content, bars, controls, prior provenance entries, or run labels altered.** All artifacts committed unchanged; provenance entries appended only.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. Candidate passes all bars on 6 scoring seeds, no kills. Seeds 201-203 and 301-303 retained. Reproducibility construction bug and stale labels require fixing before future scoring.**
+
+
+---
+
+## Entry 53 — M3 Reproducibility-Contract CRITIC review publication
+
+**Date:** 2026-08-17 · **Actor:** CRITIC (review production); RECORDER (publication and provenance attestation)
+
+- **Gate served:** CRITIC review publication routing — publish v1.0 BLOCK and v1.1 CLEAR reviews of the M3 Reproducibility-Contract Specification to GitHub.
+- **Named base (reviewed lineage):** `f9d16fa` (GitHub main at time of CRITIC review, per CRITIC handoff `CRITIC_RECORDER_PUBLICATION_HANDOFF.md`).
+- **Publication branch base:** `09b94d06ded642ed2cf37595806c1a1a9dc62c15` (current GitHub main at publication time).
+- **Architect branch referenced:** `architect/m3-reproducibility-contract`, HEAD `af6678a9809de5abfeb30505c52e50f09a48ffeb`; spec content SHA `3c8480cc163251f88db2b70b921f65a31468cc17`.
+- **RECORDER publication branch:** `recorder/m3-reproducibility-contract-review-publication`, branched from current main `09b94d06`.
+- **Artifacts published (byte-for-byte, SHA-256 verified source-to-destination match):**
+  - `reviews/critic_m3_reproducibility_contract_spec_review.md` — SHA-256 `af0375b2a25627e25251eb7fe3cdad87bdffaed162eb462346c09cd0ef7b3d64` (CRITIC v1.0 review, verdict BLOCK, BF1–BF4, NF1–NF4)
+  - `reviews/critic_m3_reproducibility_contract_spec_rereview.md` — SHA-256 `f22e531380757e3c58d3043710047387be178336c274b1b0a8f9a87b42288c39` (CRITIC v1.1 re-review, verdict CLEAR, BF1–BF4 resolved, NF1–NF4 addressed, NF5–NF7 new non-blocking)
+- **STATE.md (no new INTEGRATOR attestation event):** no INTEGRATOR update occurred since Entry 52 custody attestation. Current GitHub main STATE.md SHA-256 observed as `9347513e0fea776fabb11ccc8715551338977d1125b02de52bab2ebf7da59890` (unchanged; recorded for reference only).
+- **Preserved evidence and protections:** the first M3 scoring run remains **INSTRUMENT FAILURE**. Seeds 201–203 and 301–303 are retained and must never be rerun. All prior provenance entries (1–52) remain unchanged. O-14, O-15, D1–D5, L9, L18, L15, unseen-seed protections, supervised-execution boundaries, Phase A / Phase B separation, and all standing protections remain intact.
+- **Scope attestation:** the RECORDER published two CRITIC review documents byte-for-byte without modification, appended this provenance entry only, and did not edit STATE.md, specifications, implementation, scoring artifacts, or any prior provenance entry. No merge to main was performed or requested — Rebecca is sole merge authority.
+- **Authorization boundary:** this publication publishes CRITIC review artifacts to a `recorder/` branch only. It does not authorize implementation, scoring, fresh-seed exposure, reruns, or any merge to main. The CRITIC v1.1 CLEAR verdict approves the reproducibility-contract specification for TASK BUILDER implementation, subject to Rebecca's separate authorization.
+- **Next authorized role:** **Rebecca**, to review and decide whether to merge this publication branch to main.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. CRITIC reproducibility-contract reviews published to GitHub recorder branch. No merge to main; Rebecca sole merge authority. Seeds 201–203 and 301–303 retained, never rerun.**
