@@ -1,0 +1,59 @@
+{
+  "commit_hash": "95440b4792d1eb100b3b1d015eb02b6dbf92ecc3",
+  "seeds": [
+    301,
+    302,
+    303
+  ],
+  "mode": "scoring",
+  "law": "all",
+  "python_version_runtime": "3.11.9",
+  "python_version_pinned": "3.11",
+  "numpy_version": "1.26.4",
+  "scipy_version": "1.13.1",
+  "deviations_logged": [
+    "Python 3.11.9 vs pinned 3.11 (non-blocking)"
+  ],
+  "wall_clock_seconds": 852.0064162999988,
+  "output_files": [
+    "m3_run_results.json",
+    "m3_l1_results.json",
+    "m3_l3_results.json",
+    "m3_l5_results.json",
+    "m3_l6_results.json",
+    "m3_invariants.json",
+    "m3_manifest.json",
+    "m3_run.log",
+    "m3_profile.json",
+    "m3_seed_exposure_ledger.json",
+    "m3_v44_raw_manifest.json"
+  ],
+  "development_seeds_pool": [
+    101,
+    102,
+    103,
+    104,
+    105
+  ],
+  "scoring_seed_pool": "WITHHELD; forbidden in development",
+  "r3_note": "Scoring-only seed identities are absent from this development implementation and its artifacts.",
+  "nf7_note": "Raw per-entry data emitted in L1 results for independent R\u00b2 recomputation",
+  "nf8_note": "L3 permuted arm violations route to INSTRUMENT FAILURE, never KILL",
+  "nf9_note": "L5 frozen arm labeled \"L18 negative control\"; binary walk accuracy is inherent",
+  "nf10_note": "STATE.md currency attested by RECORDER; build authorized by Rebecca M3 BUILD GO",
+  "growth_bar_note": "L5 growth thresholds are diagnostic-only and non-gating per \u00a71.1",
+  "state_md_sha256": "01b9e8a47c5b51211dcd788279947f5bcba7840f5cf03e96e101e450eeee7be4",
+  "file_hashes": {
+    "m3_run_results.json": "8b5bca7d4b715d04f6a16186a81df711b72583956a14296806c15d79179993d6",
+    "m3_invariants.json": "0037c4abe3e3412e5bbae9449c51eaea40c43111efd16b3c4563e489b56b2a11",
+    "m3_run.log": "1ab69d25a592259b5dad6c646a17cba9b5d7197aed9b234853b215397cfa766f",
+    "m3_profile.json": "cff62fe14bb93b79af222f90800ee2caa32a90979404d210bde291916f59a6f8",
+    "m3_seed_exposure_ledger.json": "01fc96a5c20893369ed8337794391b045d4ce5dafebf932032fd439a96de2afe",
+    "m3_v44_raw_manifest.json": "c5c4d6f2156627f87058b23942a9f9728f3c9293352ac341a20e9514772d7c3e",
+    "m3_l1_results.json": "b3004e59235cbc558e1823818d6129d0e70b98ea5ca8bb12552e66ff31e71b14",
+    "m3_l3_results.json": "61eebb67f3d3bdd676db2162484f1c8b377baf9f7c08e9e04365448af1d4e805",
+    "m3_l5_results.json": "55b2c6a07263966543f75075b4319ffd449a4187a44d6fbc7ff9afd6d32c2045",
+    "m3_l6_results.json": "c17ee7a5391ba3dd0b92b654cc395a81b9e75ab2d61ca319f31ff3c8abe794e6"
+  },
+  "file_hash_note": "Manifest excludes its own self-referential hash."
+}
