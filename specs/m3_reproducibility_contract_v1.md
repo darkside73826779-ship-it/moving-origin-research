@@ -1,11 +1,11 @@
-# M3 Reproducibility-Contract Specification v1
+# M3 Reproducibility-Contract Specification v1.1
 
 **Serves:** M3 reproducibility-contract clarification (Rebecca's binding design direction, 2026-08-17)
-**Status:** ARCHITECT specification — requires CRITIC review before TASK BUILDER implementation
+**Status:** ARCHITECT specification — CRITIC BLOCK BF1–BF4 resolved, re-submitted for review
 **Date:** 2026-08-17 · **Author:** ARCHITECT
 **Base SHA:** `f9d16fa` (GitHub main)
 **Authority chain:** Rebecca > constitution's laws > approved specifications > this specification > agent judgment
-**Prior reviews:** CRITIC M3 V4.4 scoring results review (`reviews/critic_m3_v44_scoring_results_review.md`) — diagnosed the construction bug. Rebecca M3 delivery gate ruling (`docs/rulings/REBECCA_M3_DELIVERY_RULING.md`) — authorized provisional M4 advancement, required this fix before future scoring. Provenance log reviewed through Entry 52.
+**Prior reviews:** CRITIC M3 V4.4 scoring results review (`reviews/critic_m3_v44_scoring_results_review.md`) — diagnosed the construction bug. Rebecca M3 delivery gate ruling (`docs/rulings/REBECCA_M3_DELIVERY_RULING.md`) — authorized provisional M4 advancement, required this fix before future scoring. CRITIC spec review (`reviews/CRITIC-M3-Reproducibility-Contract-Spec-Review.md`) — BLOCK, BF1–BF4 + NF1–NF4. Provenance log reviewed through Entry 52.
 **Role boundary:** The ARCHITECT specifies the contract. No code implementation, no scoring, no seed execution, no merge.
 
 ---
@@ -83,7 +83,7 @@ Rebecca directed a strict version of "strip fields" (Option B) with the followin
 
 ### 2.2 Three classifications
 
-Every field in the raw results dictionary must fall into exactly one of three classifications. Any field not found in any classification triggers a fail-closed error.
+Every field in the raw results dictionary must fall into exactly one of three classifications. Any field not found in any classification triggers a fail-closed error. No field may appear in more than one classification.
 
 #### Classification A — Required semantic digest fields
 
@@ -95,7 +95,7 @@ These fields are excluded from the digest with a stated rationale. They are vali
 
 #### Classification C — Derived duplicate fields with invariant checks
 
-These fields are duplicates of canonical semantic fields in Classification A. They are not independently digested. Instead, an invariant check asserts equality to their canonical source. If the duplicate value differs from the canonical value, the reproducibility check fails.
+These fields are duplicates of canonical semantic fields in Classification A. They are NOT independently digested. Instead, an invariant check asserts the expected relationship to their canonical source. If the invariant fails, the reproducibility check fails. Classification C fields are removed from Classification A to avoid overlap (BF2 resolution).
 
 ### 2.3 Top-level configuration block
 
@@ -117,17 +117,42 @@ The projection includes a top-level configuration block that is itself a digest 
 | `stochastic_families_by_law` | `STOCHASTIC_FAMILIES_BY_LAW` | Law-to-family mapping |
 | `seed_policy` | Mode-aware string | Development: list of development seeds. Scoring: `"WITHHELD; supplied by courier"` |
 
-### 2.4 Top-level output fields (beyond per-law results)
+### 2.4 Two-digest architecture (BF3 resolution)
 
-The following top-level output fields that affect the overall verdict are Classification A:
+Per Rebecca's directive, the specification uses two distinct digests to avoid circularity: `overall_verdict` depends on the reproducibility check result, so it must not be an input to the digest that determines reproducibility.
 
-| Field | Source | Description |
-|---|---|---|
-| `overall_verdict` | Computed from all law verdicts | Overall PASS/KILL/INSTRUMENT_FAILURE |
-| `interface_invariants` | `run_interface_invariants()` | L11/L13/backdating injection results (full dict: `L11_single_clock_negative_injection`, `L13_encoding_snapshot_negative_injection`, `L5_backdating_hash_negative_injection`, `passes`) |
-| `finite_numeric_results` | `_check_finite(all_results)` | Boolean: all numeric results finite |
-| `l20_self_test` | `l20_self_test(profile_vector)` | Full result dict: `no_drift_corr`, `no_drift_passes`, `pert1_corr`, `pert1_flags_drift`, `pert2_corr`, `pert2_flags_drift`, `both_perturbations_flag_drift`, `passes` |
-| `raw_artifact_validation` | `validate_manifest()` | Dict: `passed` (bool), `manifest` (filename), `error` (string or null) |
+#### Digest 1 — Compared scoring-semantic digest
+
+This is the digest compared between pass 1 and pass 2 to certify reproducibility. It contains ONLY fields independently available from both passes:
+
+- **Configuration block** (§2.3)
+- **Per-law results** (L1, L3, L5, L6) — all Classification A fields from §2.5–§2.8
+
+It does NOT include:
+- `overall_verdict` (computed after reproducibility check; depends on its result)
+- `interface_invariants` (computed once from pass 1, not re-computed in pass 2)
+- `finite_numeric_results` (computed once from pass 1, not re-computed in pass 2)
+- `l20_self_test` (computed once from pass 1 profile vector, not re-computed in pass 2)
+- `raw_artifact_validation` (computed after reproducibility check, from pass 1 only)
+- The reproducibility result itself (circular)
+
+**Invariant:** Only the compared scoring-semantic digest determines `digests_equal`. The final-report digest is not an input to reproducibility pass/fail and cannot affect `overall_verdict` except as a reported artifact hash.
+
+#### Digest 2 — Non-compared final-report digest
+
+This is a single integrity hash computed once, after reproducibility and raw-artifact validation are complete. It is NOT compared between passes. It provides tamper-evidence for the complete output bundle.
+
+It contains:
+- The compared scoring-semantic digest payload (from pass 1)
+- `pass1_digest` and `pass2_digest` hex values
+- `digests_equal` boolean
+- `interface_invariants` (full dict: `L11_single_clock_negative_injection`, `L13_encoding_snapshot_negative_injection`, `L5_backdating_hash_negative_injection`, `passes`)
+- `finite_numeric_results` (boolean)
+- `l20_self_test` (full dict: `no_drift_corr`, `no_drift_passes`, `pert1_corr`, `pert1_flags_drift`, `pert2_corr`, `pert2_flags_drift`, `both_perturbations_flag_drift`, `passes`)
+- `raw_artifact_validation` (dict: `passed`, `manifest`, `error`)
+- `overall_verdict` (string)
+
+The final-report digest is emitted in the output as `final_report_digest` for downstream tamper-evidence. It is labeled as an integrity hash, not reproducibility evidence.
 
 ### 2.5 Per-law projection — L1
 
@@ -178,10 +203,12 @@ Base summary fields (all families):
 - `alpha_seed`
 - `per_seed_pass`
 
-Family-specific extra fields:
+Family-specific extra fields (Classification A):
 - **frozen, fair_naive:** `r_squared_observed`, `draw_role_observed` (dict: `ranking_permutation_200`, `r_squared`)
-- **permuted:** `spearman_rho_200entry`, `abs_rho_null_1000` (list of 1000 floats), `null_abs_rho_p95`, `null_p95_le_0_15`, `observed_mapping_permutation_200` (list of 200 ints), `paired_age_accessibility_200` (list of dicts: `entry_id`, `age`, `accessibility`)
-- **shuffled:** `conditional_rho_values_5` (list of 5 floats), `rho_null_1000x5` (list of 1000×5), `null_max_1000` (list of 1000 floats), `observed_max`, `age_tests_pass`, `below_threshold_labels` (list of strings), `observed_query_to_entry_assignment_1200` (list of 1200 ints), `observed_realized_rehearsal_counts_200` (list of 200 ints)
+- **permuted:** `spearman_rho_200entry`, `null_abs_rho_p95`, `null_p95_le_0_15`, `observed_mapping_permutation_200` (list of 200 ints), `paired_age_accessibility_200` (list of dicts: `entry_id`, `age`, `accessibility`)
+- **shuffled:** `conditional_rho_values_5` (list of 5 floats), `rho_null_1000x5` (list of 1000×5), `observed_max`, `age_tests_pass`, `below_threshold_labels` (list of strings), `observed_query_to_entry_assignment_1200` (list of 1200 ints), `observed_realized_rehearsal_counts_200` (list of 200 ints)
+
+Note: `abs_rho_null_1000` and `null_max_1000` are NOT in Classification A — they are Classification C derived duplicates (see below).
 
 RNG derivation summaries (per family):
 
@@ -217,6 +244,8 @@ The full ordered list of these summaries is digested as `rng_derivation_summarie
 - `returned_defined_error` (empty arm only)
 - `numeric_result_absent` (empty arm only)
 
+Fields marked "where present" are conditionally absent based on arm type or seed-slot count. Their absence is valid and does NOT trigger fail-closed. Only the presence of an unclassified field triggers fail-closed (NF2 resolution).
+
 #### Classification B (explicit non-digest, with rationale)
 
 | Field | Rationale |
@@ -228,11 +257,13 @@ The full ordered list of these summaries is digested as `rng_derivation_summarie
 
 #### Classification C (derived duplicates with invariant checks)
 
+These fields are NOT in Classification A. They are derived from canonical Classification A fields and are checked via invariant, not independently digested.
+
 | Duplicate field | Canonical source | Invariant |
 |---|---|---|
-| `permuted.rho_null_1000_values` (L1 top-level, present only when `artifact_writer is None`) | `v44_stochastic_controls.permuted.null_statistics` | If present, must equal `null_statistics` element-wise. If absent, no check. |
-| `v44_stochastic_controls.{frozen,fair_naive}.r_squared_null_1000` (present only when `artifact_writer is None`) | `v44_stochastic_controls.{frozen,fair_naive}.null_statistics` | If present, must equal `null_statistics` element-wise. If absent, no check. |
-| `v44_stochastic_controls.permuted.abs_rho_null_1000` | `v44_stochastic_controls.permuted.null_statistics` | Must equal `[abs(x) for x in null_statistics]` element-wise. |
+| `permuted.rho_null_1000_values` (L1 top-level, present only when `artifact_writer is None`) | `v44_stochastic_controls.permuted.null_statistics` | If present: `[abs(x) for x in rho_null_1000_values] == null_statistics` element-wise. The canonical `null_statistics` stores absolute-valued rhos (because `_v44_summary` is called with `abs_null_rhos`); the duplicate stores the signed raw rhos. The invariant is absolute-value equality, not direct equality (BF1 resolution). If absent, no check. |
+| `v44_stochastic_controls.{frozen,fair_naive}.r_squared_null_1000` (present only when `artifact_writer is None`) | `v44_stochastic_controls.{frozen,fair_naive}.null_statistics` | If present: must equal `null_statistics` element-wise. If absent, no check. |
+| `v44_stochastic_controls.permuted.abs_rho_null_1000` | `v44_stochastic_controls.permuted.null_statistics` | Must equal `null_statistics` element-wise (both are absolute-valued). |
 | `v44_stochastic_controls.shuffled.null_max_1000` | `v44_stochastic_controls.shuffled.rho_null_1000x5` | Must equal `[max(row) for row in rho_null_1000x5]` element-wise. |
 
 ### 2.6 Per-law projection — L3
@@ -261,7 +292,7 @@ The full ordered list of these summaries is digested as `rng_derivation_summarie
 
 Base summary fields: same as L1 §2.5.
 
-Family-specific extras:
+Family-specific extras (Classification A):
 - All four families: `observed_reductions_5` (list of 5 floats), `observed_violation_score_5` (list of 5 floats or null)
 
 RNG derivation summaries: same normalized format as L1 §2.5.
@@ -330,7 +361,7 @@ Same as L1 §2.5 Classification B.
 
 Base summary fields: same as L1 §2.5.
 
-Family-specific extras:
+Family-specific extras (Classification A):
 - `observed_accuracy`
 - `null_accuracies_1000` (list of 1000 floats)
 - `pooled_center`
@@ -363,56 +394,40 @@ L6 does not use `artifact_writer` and has no artifact-dependent fields. All L6 r
 
 ## 3. Canonical digest method
 
-### 3.1 Projection construction
+### 3.1 Compared scoring-semantic digest construction
 
 The TASK BUILDER shall implement a function `compute_scoring_semantic_digest(results, config)` that:
 
-1. Constructs the projection dictionary by extracting only Classification A fields from the raw results, following the field paths in §2.3–§2.8.
-2. Validates Classification C invariant checks (§2.5).
-3. Fails closed if any field in the raw results is not found in Classification A, B, or C.
-4. Prepends the configuration block (§2.3) and top-level output fields (§2.4).
-5. Serializes and hashes per §3.2.
+1. Constructs the projection dictionary by extracting only Classification A fields from the per-law results, following the field paths in §2.5–§2.8.
+2. Validates Classification C invariant checks (§2.5). Classification C fields are NOT included in the digest payload.
+3. Fails closed if any field in the per-law results is not found in Classification A, B, or C.
+4. Prepends the configuration block (§2.3).
+5. Serializes and hashes per §3.3.
 
-### 3.2 Canonical serialization
+This function accepts only per-law `results` and `config`. It does NOT accept `overall_verdict`, `interface_invariants`, `finite_numeric_results`, `l20_self_test`, or `raw_artifact_validation` — those are not available from both passes and are not in the compared digest (BF3 resolution).
 
-The canonical digest is computed as follows:
+### 3.2 Non-compared final-report digest construction
 
-1. **NFC normalization:** All string values are Unicode NFC-normalized (matching `_nfc()` in `m3_v44_artifacts.py`).
+The TASK BUILDER shall implement a function `compute_final_report_digest(...)` that accepts the compared digest payload, reproducibility result, and all top-level output fields. It computes a single integrity hash over the complete output bundle. This digest is NOT compared between passes and does NOT affect `overall_verdict`.
+
+### 3.3 Canonical serialization
+
+Both digests use the same canonical serialization:
+
+1. **NFC normalization:** All string values are Unicode NFC-normalized (matching `_nfc()` in `m3_v44_artifacts.py`). Note: with `ensure_ascii=True`, NFC normalization is belt-and-suspenders — it ensures consistent Unicode representation before ASCII escaping. The existing codebase has two canonicalization methods (`_v44_canonical_json_hash` with `ensure_ascii=True`, `_canonical_json_bytes` with `ensure_ascii=False`); this spec uses `ensure_ascii=True` for consistency with the harness's existing hash function (NF1/NF4 resolution).
 2. **Numeric normalization:** NumPy scalar types are converted to Python native types via `.item()`. Floats are checked for finiteness; `NaN` or `Inf` cause immediate failure (`allow_nan=False`).
 3. **JSON serialization:** `json.dumps(value, ensure_ascii=True, sort_keys=True, separators=(',', ':'), allow_nan=False).encode('utf-8')`
-   - `ensure_ascii=True` for consistency with the existing `_v44_canonical_json_hash` in `m3_harness.py` (line 2191).
-   - `sort_keys=True` ensures dict key order does not affect the digest.
-   - Compact separators eliminate whitespace variation.
 4. **Hash:** `hashlib.sha256(canonical_bytes).hexdigest()`
-
-### 3.3 Digest payload structure
-
-```json
-{
-  "projection_schema_version": "m3_scoring_semantic_reproducibility_v1",
-  "config": { ... },
-  "top_level": { "overall_verdict", "interface_invariants", "finite_numeric_results", "l20_self_test", "raw_artifact_validation" },
-  "results": {
-    "<seed>": {
-      "L1": { ... Classification A fields ... },
-      "L3": { ... },
-      "L5": { ... },
-      "L6": { ... }
-    }
-  }
-}
-```
-
-The digest is computed over the entire payload. Both passes must produce identical digests.
 
 ### 3.4 Fail-closed enforcement
 
 The projection function must:
 
-1. Traverse every field in the raw results dictionary recursively.
+1. Traverse every field in the raw per-law results dictionary recursively.
 2. For each leaf or container, check whether its path matches a Classification A, B, or C entry.
 3. If a field is not found in any classification, raise `ReproducibilityProjectionError` with the field path and value type.
 4. If a Classification C invariant check fails, raise `ReproducibilityInvariantError` with the duplicate field path, canonical source path, and both values.
+5. Fields marked "where present" (NF2 resolution) are conditionally absent based on arm type or seed-slot count. Their absence is valid and does NOT trigger fail-closed. Only the presence of an unclassified (unknown) field triggers fail-closed.
 
 This is an allowlist, not recursive deletion. Any future field added to the results without updating the projection will cause a fail-closed error, not silent exclusion.
 
@@ -430,11 +445,13 @@ Both passes produce a `scoring_semantic_digest` via `compute_scoring_semantic_di
 
 The current harness pops `null_statistics` and other Classification A fields from V4.4 control summaries when `artifact_writer is not None`. The projection must have access to these fields in both passes.
 
-**Specification requirement:** The TASK BUILDER shall ensure that Classification A fields (including `null_statistics`, `null_accuracies_1000`, `null_absolute_departures_1000`, `query_results_200`, `abs_rho_null_1000`, `rho_null_1000x5`, `null_max_1000`, `paired_age_accessibility_200`, `observed_query_to_entry_assignment_1200`, `observed_realized_rehearsal_counts_200`) are retained in the results dictionary regardless of `artifact_writer` state. The artifact-mode pruning may only remove Classification B fields (`raw_draw_manifest_refs`, `rng_derivation_records`).
+**Specification requirement:** The TASK BUILDER shall ensure that Classification A fields (including `null_statistics`, `null_accuracies_1000`, `null_absolute_departures_1000`, `query_results_200`, `rho_null_1000x5`, `paired_age_accessibility_200`, `observed_query_to_entry_assignment_1200`, `observed_realized_rehearsal_counts_200`) are retained in the results dictionary regardless of `artifact_writer` state. The artifact-mode pruning may only remove Classification B fields (`raw_draw_manifest_refs`, `rng_derivation_records`).
+
+Note: `abs_rho_null_1000` and `null_max_1000` are Classification C (derived duplicates). They must also be retained for invariant checking, but are not independently digested.
 
 The normalized RNG derivation summary (§2.5) must also be retained in both passes. It is built directly from the RNG draw objects at draw time, not from `rng_derivation_records` which may be popped.
 
-### 4.3 Output label
+### 4.3 Output label and structure
 
 The reproducibility output shall use this exact label:
 
@@ -453,16 +470,20 @@ The reproducibility result dictionary shall be restructured to:
   "digests_equal": true|false,
   "projection_schema_version": "m3_scoring_semantic_reproducibility_v1",
   "projection_classification_failures": [],
-  "invariant_failures": []
+  "invariant_failures": [],
+  "final_report_digest": "<hex>"
 }
 ```
+
+The `final_report_digest` is computed after reproducibility and raw-artifact validation are complete. It is an integrity hash for the output bundle, not reproducibility evidence.
 
 When `--verify-reproducibility` is not requested:
 ```json
 {
   "checked": false,
   "certification": null,
-  "projection_schema_version": "m3_scoring_semantic_reproducibility_v1"
+  "projection_schema_version": "m3_scoring_semantic_reproducibility_v1",
+  "final_report_digest": "<hex>"
 }
 ```
 
@@ -474,7 +495,7 @@ The first pass's raw-artifact manifest validation (`validate_manifest()`) contin
 
 ## 5. Mutation test requirements
 
-The TASK BUILDER shall implement automated mutation tests that traverse every Classification A leaf in a synthetic fixture and verify that mutating its value changes the digest. These tests are diagnostic (O-15) and use development seeds 101–105 only if live execution is required; synthetic fixtures are preferred.
+The TASK BUILDER shall implement automated mutation tests that traverse every Classification A leaf in a synthetic fixture and verify that mutating its value changes the compared scoring-semantic digest. These tests are diagnostic (O-15) and use development seeds 101–105 only if live execution is required; synthetic fixtures are preferred.
 
 ### 5.1 Automated leaf traversal
 
@@ -486,16 +507,21 @@ For each law (L1, L3, L5, L6), construct a synthetic result dictionary matching 
 4. Assert `mutated_digest != original_digest`.
 5. Restore the original value.
 
-### 5.2 Fail-closed tests
+Classification C fields are NOT included in this traversal (they are not digested). Their invariants are tested separately (§5.2).
+
+### 5.2 Fail-closed and invariant tests
 
 - **Unknown field:** Add a field `unexpected_field` to a result dictionary. Assert `compute_scoring_semantic_digest()` raises `ReproducibilityProjectionError`.
-- **Missing required field:** Remove a Classification A field from a result dictionary. Assert `compute_scoring_semantic_digest()` raises `ReproducibilityProjectionError`.
-- **Classification C invariant violation:** Set `permuted.rho_null_1000_values` to a value differing from `v44_stochastic_controls.permuted.null_statistics`. Assert the invariant check raises `ReproducibilityInvariantError`.
+- **Missing required field:** Remove a Classification A field from a result dictionary (one that is not marked "where present"). Assert `compute_scoring_semantic_digest()` raises `ReproducibilityProjectionError`.
+- **Classification C invariant violation (BF1):** Set `permuted.rho_null_1000_values` to a value where `[abs(x) for x in rho_null_1000_values] != null_statistics`. Assert the invariant check raises `ReproducibilityInvariantError`.
+- **Classification C invariant — abs_rho_null_1000:** Set `abs_rho_null_1000` to a value differing from `null_statistics`. Assert `ReproducibilityInvariantError`.
+- **Classification C invariant — null_max_1000:** Set `null_max_1000` to a value where `[max(row) for row in rho_null_1000x5]` differs. Assert `ReproducibilityInvariantError`.
 
 ### 5.3 Non-digest field tests
 
-- **Artifact field change does not alter digest:** Change `v44_artifact_support.status` or add/remove `raw_draw_manifest_refs`. Assert the digest is unchanged.
-- **Key order does not alter digest:** Shuffle dict key order in a result dictionary. Assert the digest is unchanged.
+- **Artifact field change does not alter digest:** Change `v44_artifact_support.status` or add/remove `raw_draw_manifest_refs`. Assert the compared digest is unchanged.
+- **Key order does not alter digest:** Shuffle dict key order in a result dictionary. Assert the compared digest is unchanged.
+- **Classification C field mutation does not alter digest:** Mutate `abs_rho_null_1000` or `null_max_1000`. Assert the compared digest is unchanged (these are not digested). The invariant check should catch the mutation separately.
 
 ### 5.4 Mutation test coverage
 
@@ -505,7 +531,7 @@ The mutation tests must cover at minimum:
 - Every V4.4 stochastic control summary field, including all family-specific extras.
 - Every V4.4 deterministic control field, including `cross_slot_hashes`.
 - Every configuration block field.
-- Every top-level output field (§2.4): `overall_verdict`, `interface_invariants`, `finite_numeric_results`, `l20_self_test`, `raw_artifact_validation`.
+- The final-report digest must also be tested: mutating any top-level output field (`overall_verdict`, `interface_invariants`, `finite_numeric_results`, `l20_self_test`, `raw_artifact_validation`) must change the final-report digest.
 
 ---
 
@@ -569,3 +595,28 @@ After CRITIC approval: **TASK BUILDER** (implement the approved design) → **CR
 - Implementing L7/L8/L10 or any M4 component.
 - Modifying `STATE.md` or `docs/rulings/provenance_log.md` (RECORDER/INTEGRATOR custody).
 - Renaming, reinterpreting, or silently replacing any negative result or INSTRUMENT FAILURE label.
+
+---
+
+## 10. CRITIC BF1–BF4 resolution summary
+
+### BF1 — Classification C invariant #1 corrected
+The invariant for `permuted.rho_null_1000_values` is now `[abs(x) for x in rho_null_1000_values] == null_statistics`, not direct element-wise equality. The canonical `null_statistics` stores absolute-valued rhos (because `_v44_summary` is called with `abs_null_rhos` at line 2467); the duplicate stores signed raw rhos. The signed vector and its absolute-valued derivative are now distinguished.
+
+### BF2 — Classification A/C overlap eliminated
+`abs_rho_null_1000` and `null_max_1000` are removed from Classification A family-specific extras (§2.5). They appear ONLY in Classification C. Every field is now assigned to exactly one classification.
+
+### BF3 — Two-digest architecture
+The compared scoring-semantic digest (§2.4 Digest 1) contains only per-law results + configuration — fields independently available from both passes. `overall_verdict`, `interface_invariants`, `finite_numeric_results`, `l20_self_test`, and `raw_artifact_validation` are excluded from the compared digest because they are either computed after the reproducibility check or not re-computed in pass 2. A separate non-compared final-report digest (§2.4 Digest 2) is computed once after reproducibility and artifact validation, providing tamper-evidence for the complete output bundle. The final-report digest cannot affect `overall_verdict`.
+
+### BF4 — Branch pushed to GitHub; SHA verified
+The `architect/m3-reproducibility-contract` branch is pushed to GitHub (`darkside73826779-ship-it/moving-origin-research`). The result SHA is verified via `git ls-remote`. All provenance references in the handoff are corrected to the verified remote SHA.
+
+### NF1/NF4 — Canonicalization rationale documented
+§3.3 now documents why `ensure_ascii=True` was chosen (consistency with `_v44_canonical_json_hash`) and notes that NFC normalization with `ensure_ascii=True` is belt-and-suspenders.
+
+### NF2 — "Where present" fields clarified
+§2.5 and §3.4 now explicitly state that fields marked "where present" are conditionally absent based on arm type or seed-slot count. Their absence is valid and does NOT trigger fail-closed.
+
+### NF3 — `rho_null_1000_values` resolution
+Given BF1's invariant fix, `rho_null_1000_values` remains as Classification C with the corrected absolute-value invariant. The field is not removed (it provides a useful diagnostic cross-check), but its invariant is now mathematically correct.

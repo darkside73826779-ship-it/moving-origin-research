@@ -7,11 +7,59 @@
 
 ---
 
-## What this specification does
+## v1.1 — CRITIC BF1–BF4 resolutions (2026-08-17)
+
+### BF1: Classification C invariant #1 corrected
+
+**Before:** `permuted.rho_null_1000_values` must equal `v44_stochastic_controls.permuted.null_statistics` element-wise.
+
+**After:** `[abs(x) for x in rho_null_1000_values] == null_statistics` element-wise.
+
+**Rationale:** The canonical `null_statistics` stores absolute-valued rhos (because `_v44_summary` is called with `abs_null_rhos` at line 2467). The duplicate `rho_null_1000_values` stores the signed raw Spearman rho values. The signed vector and its absolute-valued derivative are now distinguished. The previous invariant would always fail when any null rho is negative.
+
+### BF2: Classification A/C overlap eliminated
+
+**Before:** `abs_rho_null_1000` and `null_max_1000` appeared in both Classification A (family-specific extras) and Classification C (derived duplicates).
+
+**After:** Both fields are removed from Classification A. They appear ONLY in Classification C. Every field is now assigned to exactly one classification, resolving the ambiguity for fail-closed traversal and mutation tests.
+
+### BF3: Two-digest architecture
+
+**Before:** A single digest included `overall_verdict`, `interface_invariants`, `finite_numeric_results`, `l20_self_test`, and `raw_artifact_validation`. These are not available from both passes and some are computed after the reproducibility check.
+
+**After:**
+- **Digest 1 (compared scoring-semantic digest):** Contains only per-law results + configuration. This is what pass1_digest == pass2_digest compares.
+- **Digest 2 (non-compared final-report digest):** Computed once after reproducibility and artifact validation. Contains the compared digest payload + reproducibility result + all top-level output fields. Provides tamper-evidence, not reproducibility evidence. Cannot affect `overall_verdict`.
+
+Per Rebecca's directive: "a compared scoring-semantic digest containing only fields independently available from both passes, followed by a separate non-compared final-report digest after reproducibility and artifact validation."
+
+### BF4: Branch pushed to GitHub; SHA verified
+
+**Before:** The branch `architect/m3-reproducibility-contract` and result SHA `e8204de` did not exist on GitHub. The specification files were local only.
+
+**After:** The branch is pushed to GitHub. The result SHA is verified via `git ls-remote` against the remote repository. All provenance references in the handoff are corrected to the verified remote SHA.
+
+### NF1/NF4: Canonicalization rationale documented
+
+§3.3 now documents why `ensure_ascii=True` was chosen (consistency with `_v44_canonical_json_hash` at line 2191) and notes that NFC normalization with `ensure_ascii=True` is belt-and-suspenders — it ensures consistent Unicode representation before ASCII escaping.
+
+### NF2: "Where present" fields clarified
+
+§2.5 and §3.4 now explicitly state that fields marked "where present" are conditionally absent based on arm type or seed-slot count. Their absence is valid and does NOT trigger fail-closed. Only the presence of an unclassified (unknown) field triggers fail-closed.
+
+### NF3: `rho_null_1000_values` resolution
+
+Given BF1's invariant fix, `rho_null_1000_values` remains as Classification C with the corrected absolute-value invariant. The field is not removed — it provides a useful diagnostic cross-check between the signed raw rho vector and the absolute-valued canonical null distribution.
+
+---
+
+## v1.0 — Initial specification (2026-08-17)
+
+### What this specification does
 
 Defines a versioned, allowlist-based reproducibility projection (`m3_scoring_semantic_reproducibility_v1`) that replaces the current field-by-field JSON comparison in the `--verify-reproducibility` second pass. Also specifies mode-aware label fixes for the seed exposure ledger and manifest.
 
-## What this specification does NOT do
+### What this specification does NOT do
 
 - Does not modify any locked bar, threshold, scoring predicate, or control.
 - Does not alter candidate-facing scoring logic.
@@ -35,9 +83,9 @@ Defines a versioned, allowlist-based reproducibility projection (`m3_scoring_sem
 **Current:** Two implicit categories — "timing fields to strip" and "everything else."
 
 **New:** Three explicit classifications:
-- **A (digest-included):** Every scoring-relevant value — candidate metrics, control statistics, null distributions, p-values, exceed/tie counts, predicates, verdicts, RNG derivation summaries, non-timing configuration, deterministic control hashes, cross-slot identity evidence, interface invariants, finite-numeric check, L20 self-test, raw-artifact validation status.
+- **A (digest-included):** Every scoring-relevant value — candidate metrics, control statistics, null distributions, p-values, exceed/tie counts, predicates, verdicts, RNG derivation summaries, non-timing configuration, deterministic control hashes, cross-slot identity evidence.
 - **B (explicit non-digest):** Artifact paths, `v44_artifact_support`, `raw_draw_manifest_refs`, `rng_derivation_records` (full artifact records). Each with stated rationale. Treated as optional: present in pass 1, absent in pass 2, both valid. Validated separately where applicable.
-- **C (derived duplicates):** Fields like `permuted.rho_null_1000_values`, `r_squared_null_1000`, `abs_rho_null_1000`, `null_max_1000` that duplicate canonical `null_statistics` or other Classification A fields. Invariant check, not independent digest.
+- **C (derived duplicates):** Fields like `permuted.rho_null_1000_values`, `r_squared_null_1000`, `abs_rho_null_1000`, `null_max_1000` that duplicate canonical `null_statistics` or other Classification A fields. Invariant check, not independent digest. Each field appears in exactly one classification (BF2 resolution).
 
 ### 3. Preserves null_statistics and all Classification A fields in both passes
 
@@ -46,9 +94,12 @@ Defines a versioned, allowlist-based reproducibility projection (`m3_scoring_sem
 **New:** The TASK BUILDER shall ensure Classification A fields are retained in the results dictionary regardless of `artifact_writer` state. Artifact-mode pruning may only remove Classification B fields (`raw_draw_manifest_refs`, `rng_derivation_records`).
 
 Fields that must be preserved (currently popped when writer is present):
-- L1: `null_statistics` (all families), `abs_rho_null_1000`, `paired_age_accessibility_200`, `rho_null_1000x5`, `null_max_1000`, `observed_query_to_entry_assignment_1200`, `observed_realized_rehearsal_counts_200`
+- L1: `null_statistics` (all families), `rho_null_1000x5`, `paired_age_accessibility_200`, `observed_query_to_entry_assignment_1200`, `observed_realized_rehearsal_counts_200`
 - L3: `null_statistics` (all families)
 - L5: `null_statistics`, `null_accuracies_1000`, `null_absolute_departures_1000`, `query_results_200`
+
+Classification C fields must also be preserved for invariant checking:
+- L1: `abs_rho_null_1000`, `null_max_1000`
 
 ### 4. Normalized RNG derivation summaries built at draw time
 
@@ -56,17 +107,17 @@ Fields that must be preserved (currently popped when writer is present):
 
 **New:** A normalized RNG derivation summary (protocol, law/arm, draw role, seed, replicate/subdraw indexes, derived-key/digest, rejection/block/word counts, accepted-transform) is built directly from the RNG draw objects at draw time, independent of artifact writer state. This satisfies Rebecca's requirement that "RNG derivation summaries" be in the projection.
 
-### 5. Top-level configuration and output block
+### 5. Top-level configuration block and two-digest architecture
 
 **Current:** No configuration or top-level output fields are included in the reproducibility comparison.
 
-**New:** A configuration block (projection version, mode, seeds, laws, protocol ID, null replicate count, alpha values, complete locked bars/thresholds/fixture sizes/seed constants, stochastic families, seed policy) is prepended to the digest payload. Top-level output fields that affect the overall verdict (`overall_verdict`, `interface_invariants`, `finite_numeric_results`, `l20_self_test`, `raw_artifact_validation`) are also included as Classification A.
+**New:** A configuration block (projection version, mode, seeds, laws, protocol ID, null replicate count, alpha values, complete locked bars/thresholds/fixture sizes/seed constants, stochastic families, seed policy) is prepended to the compared digest payload. A two-digest architecture (§2.4) separates the compared scoring-semantic digest (per-law results + config only) from the non-compared final-report digest (everything, computed after reproducibility + artifact validation).
 
 ### 6. Output label
 
 **Current:** `"bit_identical": True/False` with scope `"all non-timing fields"`.
 
-**New:** `"certification": "bit-identical scoring-semantic reproducibility"` with `pass1_digest`, `pass2_digest`, `digests_equal`, projection schema version, and any classification/invariant failures.
+**New:** `"certification": "bit-identical scoring-semantic reproducibility"` with `pass1_digest`, `pass2_digest`, `digests_equal`, projection schema version, invariant failures, and `final_report_digest`.
 
 ### 7. Stale label fixes (Task 2)
 
@@ -101,7 +152,7 @@ The Classification A allowlist was derived by tracing every field in the V4.4 re
 
 - O-14 (no re-run-on-failure): No seeds rerun. No scoring seeds exposed.
 - O-15 (development runs diagnostic-only): Mutation tests use synthetic fixtures or development seeds 101–105 only.
-- D1–D5 (Persistence Doctrine): Specification persisted to repo branch; no STATE.md or provenance_log.md modification.
+- D1–D5 (Persistence Doctrine): Specification committed to GitHub branch; no STATE.md or provenance_log.md modification.
 - L9 (hard fence: no learned/nonlinear retrieval): Not touched.
 - L18 (full battery on every claim): Not modified.
 - ≥2 unseen scoring seeds: Not applicable (no scoring run authorized).
