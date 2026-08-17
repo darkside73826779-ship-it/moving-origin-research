@@ -1741,3 +1741,40 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Exact next authorized role:** **Rebecca**, to decide whether to incorporate this custody-only branch. No scoring action is authorized by this entry.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. Reproducibility-contract implementation merged and CRITIC-CLEARED. STATE.md reconciled and canonically attested (Entry 56). Scoring remains BLOCKED; seeds 201–203 and 301–303 must never be rerun.**
+
+
+---
+
+## Entry 57 — Public-repository operating policy publication + STATE.md custody attestation
+
+**Date:** 2026-08-17 · **Actor:** Rebecca Mcclintic (principal ruling); ARCHITECT (policy draft); CRITIC (review); INTEGRATOR (STATE.md + role init); RECORDER (publication, custody, and hash attestation)
+
+- **Gate served:** Public-repository operating policy publication + STATE.md custody attestation following Rebecca's principal ruling and CRITIC CLEAR.
+- **Named base:** `b61ba071584a265315bf2e94ac3a6f556601bceb` (GitHub main, includes PR #23 public-funding-readiness docs; independently verified before publication).
+- **ARCHITECT branch:** `architect/public-repository-policy` at `979d2e7b12d03226d1a0b6315426110fcb7b693e` (CRITIC-CLEARED, Rebecca-approved).
+- **INTEGRATOR branch:** `integrator/public-repo-policy-state-roleinit` at `ad399ee9dc421e77027a12255672ba07c8efea0a` (8 files: STATE.md + 7 role initialization scripts; 85 insertions, 10 deletions).
+- **RECORDER publication branch:** `recorder/public-repo-policy-publication`, branched from main `b61ba07`, merging ARCHITECT + INTEGRATOR branches and adding CRITIC review files.
+- **Artifacts published:**
+  - `PUBLIC_REPOSITORY_POLICY.md` — public-repository operating policy v1.1 (310 lines; 10 requirements, scanning procedure, writing standard, artifact inventory, conflict resolutions)
+  - `PUBLIC_REPOSITORY_POLICY_CHANGELOG.md` — policy changelog (104 lines; gap analysis, changes, preservation statement)
+  - `reviews/critic_public_repository_policy_review.md` — SHA-256 `4dfe15c03a09497499d66c8f1572a6996db46461811364a8097e8b9151eadfd5` (CRITIC initial review, BLOCK, BF1–BF3, NF1–NF4)
+  - `reviews/critic_public_repository_policy_rereview.md` — SHA-256 `095272c5fd1e906c36d907a9f7e390f6631ecdbd84c48895c1541fa2261dfbd1` (CRITIC re-review, CLEAR, BF1–BF3 resolved, NF1–NF4 addressed)
+  - `state/STATE.md` — updated (22 insertions, 10 deletions); role statuses, next_action, open_blockers, changelog
+  - `state/role_initialization/ARCHITECT_INITIALIZATION.md` — +9 lines (public-safety section)
+  - `state/role_initialization/CRITIC_INITIALIZATION.md` — +9 lines (public-safety section)
+  - `state/role_initialization/INTEGRATOR_INITIALIZATION.md` — +9 lines (public-safety section)
+  - `state/role_initialization/JUDGE_INITIALIZATION.md` — +9 lines (public-safety section)
+  - `state/role_initialization/RECORDER_INITIALIZATION.md` — +9 lines (public-safety section)
+  - `state/role_initialization/TASK_BUILDER_INITIALIZATION.md` — +9 lines (public-safety section)
+  - `state/role_initialization/WORKFLOW_COORDINATOR_INITIALIZATION.md` — +9 lines (public-safety section)
+  - `handoffs/ARCHITECT_PUBLIC_REPOSITORY_POLICY_HANDOFF.md` — ARCHITECT handoff (67 lines)
+- **STATE.md committed Git blob:** `dc7e6a7663c2914c97f7541d5ea7fe94d92d80bb`.
+- **STATE.md canonical Git-blob/LF SHA-256:** `800e1c8e042603ac4b231ddb18860f1db4e856dc568efd682f708f613461fb5c` — VERIFIED. Independently computed by RECORDER; matches INTEGRATOR-reported hash. 0 CRLF lines (pure LF).
+- **Rebecca's principal ruling:** Rebecca issued a principal ruling for a prospective public-repository operating policy, effective with the publication-readiness merge. Rebecca approved the policy and three conflict decisions: (1) mandatory pre-publication scan, (2) branch-push self-scan, (3) 38-branch inventory with per-branch Rebecca decision.
+- **Policy scope:** the policy is prospective. All historical files, SHAs, rulings, and evidence are preserved unchanged. No scientific bars, scoring predicates, historical verdicts, or evidence modified. No INSTRUMENT FAILURE labels softened or hidden.
+- **Preserved evidence and protections:** the first M3 scoring run remains **INSTRUMENT FAILURE** (seeds 201–203). The second M3 scoring run remains **INSTRUMENT FAILURE** (seeds 301–303). Seeds 201–203 and 301–303 are retained and must never be rerun. All prior provenance entries (1–56) remain unchanged. O-14, O-15, D1–D5, L9, L18, L15, unseen-seed protections, supervised-execution boundaries, Phase A / Phase B separation, and all standing protections remain intact.
+- **Scope attestation:** the RECORDER published all artifacts, merged ARCHITECT and INTEGRATOR branches, copied CRITIC review documents byte-for-byte (SHA-256 verified), appended this provenance entry only, and did not edit STATE.md (INTEGRATOR is sole writer), specifications, implementation, scoring artifacts, or prior provenance entries. No merge to main was performed or requested — Rebecca is sole merge authority for the publication-readiness merge.
+- **Authorization boundary:** this publication is custody-only. It does not authorize scoring, fresh-seed exposure, reruns, or making the repository public. The repository goes public only after Rebecca's publication-readiness merge and a pre-publication scan.
+- **Next authorized role:** **Rebecca**, for the publication-readiness merge decision.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. Public-repository operating policy v1.1 published (Rebecca-approved, CRITIC-CLEARED). STATE.md + role initialization scripts updated and attested (Entry 57). No merge to main; Rebecca sole merge authority for publication-readiness merge. Seeds 201–203 and 301–303 retained, never rerun.**
