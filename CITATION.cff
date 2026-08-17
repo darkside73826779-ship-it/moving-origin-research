@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this research record or code, please cite the repository and the specific milestone ruling or artifact used."
+title: "Moving Origin Research"
+type: software
+authors:
+  - family-names: "McClintic"
+    given-names: "Rebecca R."
+repository-code: "https://github.com/darkside73826779-ship-it/moving-origin-research"
+url: "https://github.com/darkside73826779-ship-it/moving-origin-research"
+license: "Apache-2.0"
+abstract: "A falsifiable research program evaluating moving-origin temporal self-index mechanisms against pre-specified controls."
+keywords:
+  - temporal indexing
+  - temporal self-modeling
+  - reproducibility
+  - falsification
+  - agent governance
