@@ -1697,3 +1697,27 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Exact next authorized role:** **Rebecca**, to decide whether to incorporate this custody-only branch. No implementation or scoring action is authorized by this entry.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. CRITIC reproducibility-contract reviews published and merged (PR #18, Entry 53). STATE.md reconciled and canonically attested (Entry 54). Implementation and scoring remain BLOCKED; seeds 201–203 and 301–303 must never be rerun.**
+
+
+---
+
+## Entry 55 — M3 reproducibility-contract CRITIC implementation review publication
+
+**Date:** 2026-08-17 · **Actor:** CRITIC (implementation review); TASK BUILDER (BF1 fix); RECORDER (publication and provenance attestation)
+
+- **Gate served:** CRITIC implementation review publication routing — publish initial BLOCK and BF1 re-verification CLEAR reviews of the M3 reproducibility-contract implementation to GitHub.
+- **Named base:** `a5e8a15187c5879cf246453465e03162081ef7c1` (GitHub main, post-PR #19 merge; current at publication time).
+- **TASK BUILDER branch:** `taskbuilder/m3-reproducibility-contract`, HEAD `a156609252df70e7fc18ee2cf7118fac7ecb6f7a` (BF1 fix commit; parent `e42dec56`).
+- **Spec content SHA:** `3c8480cc163251f88db2b70b921f65a31468cc17` (CRITIC-cleared v1.1 on `architect/m3-reproducibility-contract`).
+- **RECORDER publication branch:** `recorder/m3-repro-contract-impl-review-publication`, branched from current main `a5e8a15`.
+- **Artifacts published (byte-for-byte, SHA-256 verified source-to-destination match):**
+  - `reviews/critic_m3_reproducibility_contract_impl_verification.md` — SHA-256 `c7dba7df4e343c1530234b1fd606f1da22a7acd0d8469113f09c01382e4ccbef` (CRITIC initial implementation verification, verdict BLOCK, BF1 — v44_artifact_support in L3/L5 required-field sets)
+  - `reviews/critic_m3_reproducibility_contract_bf1_reverification.md` — SHA-256 `a2748047e05236ef2bbf76a8965ca8935984e2511f5189387c1dd4ce3fdde8be` (CRITIC BF1 re-verification, verdict CLEAR, BF1 resolved, no new blocking findings)
+- **Implementation verification summary:** CRITIC verified TASK BUILDER implementation at `a156609` against CRITIC-cleared spec v1.1 at `3c8480c`. Initial review found BF1 (BLOCK — `v44_artifact_support` included in L3/L5 required-field sets). TASK BUILDER fixed at commit `e42dec56` (removed `v44_artifact_support` from L3/L5 required sets). BF1 re-verification returned CLEAR — implementation matches spec, all 34 new tests + 20 existing tests pass, diagnostic verification (seed 101, L1, --verify-reproducibility → digests_equal=True) clean.
+- **STATE.md (no new INTEGRATOR attestation event):** no INTEGRATOR update occurred since Entry 54 custody attestation. STATE.md SHA-256 remains `cae049ec452459d98554cb4890640ae208493c18143f8c5295fa3e2c8845719f` (unchanged; recorded for reference only).
+- **Preserved evidence and protections:** the first M3 scoring run remains **INSTRUMENT FAILURE** (seeds 201–203). The second M3 scoring run remains **INSTRUMENT FAILURE** (seeds 301–303). Seeds 201–203 and 301–303 are retained and must never be rerun. All prior provenance entries (1–54) remain unchanged. O-14, O-15, D1–D5, L9, L18, L15, unseen-seed protections, supervised-execution boundaries, Phase A / Phase B separation, and all standing protections remain intact.
+- **Scope attestation:** the RECORDER published two CRITIC review documents byte-for-byte without modification, appended this provenance entry only, and did not edit STATE.md, specifications, implementation, scoring artifacts, or any prior provenance entry. No merge to main was performed or requested — Rebecca is sole merge authority.
+- **Authorization boundary:** this publication publishes CRITIC review artifacts to a `recorder/` branch only. It does not authorize scoring, fresh-seed exposure, reruns, or any merge to main. The CRITIC BF1 re-verification CLEAR verdict approves the implementation for Rebecca's merge decision.
+- **Next authorized role:** **Rebecca**, to review and decide whether to merge the implementation branch and this publication branch to main.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. CRITIC reproducibility-contract implementation reviews published to GitHub recorder branch. No merge to main; Rebecca sole merge authority. Seeds 201–203 and 301–303 retained, never rerun.**
