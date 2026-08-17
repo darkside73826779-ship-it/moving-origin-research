@@ -527,16 +527,8 @@ class FailClosedTests(unittest.TestCase):
         with self.assertRaises(rep.ReproducibilityProjectionError):
             rep.compute_scoring_semantic_digest(results, config)
 
-    @unittest.expectedFailure
     def test_missing_required_field_raises(self):
-        """Spec §5.2 requires missing Classification A fields to raise.
-
-        The current implementation only fail-closes on *unclassified*
-        (extra) fields; it does not enforce required-field presence.
-        This test documents the spec requirement.  When the implementation
-        is updated to enforce required-field presence, the
-        ``expectedFailure`` decorator should be removed.
-        """
+        """Spec §5.2: removing a Classification A field must raise."""
         config = _make_config()
         results = {'101': {'L1': _make_l1_result()}}
         del results['101']['L1']['verdict']

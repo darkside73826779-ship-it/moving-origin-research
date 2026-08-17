@@ -284,6 +284,11 @@ _L6_FIELDS_A = frozenset({
     'verdict', 'kill_reasons', 'instrument_failure_reasons',
 })
 
+# Paired age accessibility row schema (L1 permuted)
+_PAIRED_AGE_ACCESSIBILITY_ROW_A = frozenset({
+    'entry_id', 'age', 'accessibility',
+})
+
 # Chain walk results row schema (used in L5 frozen/oracle/shuffled/full_scan)
 _CHAIN_WALK_ROW_A = frozenset({
     'chain_id', 'query_type', 'k', 'visited', 'expected',
@@ -329,6 +334,34 @@ def _check_dict_fields(path: str, d: Dict[str, Any], allowed: frozenset,
         if key not in allowed and key not in where_present:
             raise ReproducibilityProjectionError(
                 f"{path}.{key}", type(d[key]).__name__)
+
+
+def _check_required(path: str, d: Dict[str, Any], required: frozenset) -> None:
+    """Check that all required fields are present."""
+    for field in required:
+        if field not in d:
+            raise ReproducibilityProjectionError(
+                f"{path}.{field}", "MISSING_REQUIRED_FIELD")
+
+
+def _check_list_items(path: str, items: list, row_schema: frozenset) -> None:
+    """Check that all dict items in a list have only classified fields."""
+    for i, item in enumerate(items):
+        if isinstance(item, dict):
+            for key in item:
+                if key not in row_schema:
+                    raise ReproducibilityProjectionError(
+                        f"{path}[{i}].{key}", type(item[key]).__name__)
+
+
+def _check_rng_summaries(path: str, summaries: list) -> None:
+    """Check RNG derivation summary records have only classified fields."""
+    for i, record in enumerate(summaries):
+        if isinstance(record, dict):
+            for key in record:
+                if key not in _RNG_SUMMARY_FIELDS:
+                    raise ReproducibilityProjectionError(
+                        f"{path}[{i}].{key}", type(record[key]).__name__)
 
 
 # ---------------------------------------------------------------------------
@@ -563,7 +596,9 @@ def _traverse_check(path: str, value: Any, law: str) -> None:
 
 
 def _fail_closed_l1(law_result: Dict[str, Any], path: str) -> None:
-    """Check all fields in L1 results are classified."""
+    """Check all fields in L1 results are classified and required fields present."""
+    # Required top-level fields
+    _check_required(path, law_result, _L1_TOP_LEVEL_A)
     # Top-level
     for key in law_result:
         if key in _L1_TOP_LEVEL_A or key in _L1_TOP_LEVEL_B:
@@ -571,6 +606,7 @@ def _fail_closed_l1(law_result: Dict[str, Any], path: str) -> None:
         if key == 'permuted':
             _fail_closed_l1_permuted(law_result[key], f"{path}.permuted")
         elif key == 'empty':
+            _check_required(f"{path}.empty", law_result[key], _L1_EMPTY_A)
             _check_dict_fields(f"{path}.empty", law_result[key], _L1_EMPTY_A)
         elif key in ('candidate', 'oracle', 'frozen', 'fair_naive',
                      'recency_only', 'rehearsal_only', 'shuffled'):
@@ -592,6 +628,7 @@ def _fail_closed_l1(law_result: Dict[str, Any], path: str) -> None:
 
 
 def _fail_closed_l1_arm(arm: Dict[str, Any], path: str, arm_name: str) -> None:
+    _check_required(path, arm, _L1_ARM_A)
     for key in arm:
         if key in _L1_ARM_A:
             continue
@@ -605,6 +642,7 @@ def _fail_closed_l1_arm(arm: Dict[str, Any], path: str, arm_name: str) -> None:
 
 
 def _fail_closed_l1_permuted(permuted: Dict[str, Any], path: str) -> None:
+    _check_required(path, permuted, _L1_PERMUTED_A)
     for key in permuted:
         if key in _L1_PERMUTED_A or key in _L1_PERMUTED_C:
             continue
@@ -616,6 +654,8 @@ def _fail_closed_l1_v44_controls(controls: Dict[str, Any], path: str) -> None:
     for family, summary in controls.items():
         extra_a = _get_l1_family_extra_a(family)
         extra_c = _get_l1_family_extra_c(family)
+        # Required base fields
+        _check_required(f"{path}.{family}", summary, _V44_SUMMARY_A)
         for key in summary:
             if key in _V44_SUMMARY_A or key in _V44_SUMMARY_B:
                 continue
@@ -623,6 +663,14 @@ def _fail_closed_l1_v44_controls(controls: Dict[str, Any], path: str) -> None:
                 continue
             raise ReproducibilityProjectionError(
                 f"{path}.{family}.{key}", type(summary[key]).__name__)
+        # Recursive list-item checks
+        if 'rng_derivation_summaries' in summary:
+            _check_rng_summaries(f"{path}.{family}.rng_derivation_summaries",
+                                summary['rng_derivation_summaries'])
+        if family == 'permuted' and 'paired_age_accessibility_200' in summary:
+            _check_list_items(f"{path}.{family}.paired_age_accessibility_200",
+                             summary['paired_age_accessibility_200'],
+                             _PAIRED_AGE_ACCESSIBILITY_ROW_A)
 
 
 def _get_l1_family_extra_c(family: str) -> frozenset:
@@ -642,9 +690,17 @@ def _fail_closed_l1_v44_det(det: Dict[str, Any], path: str) -> None:
         'oracle': _L1_V44_DET_ORACLE_A,
         'empty': _L1_V44_DET_EMPTY_A,
     }
+    # "where present" fields in deterministic controls
+    det_optional = frozenset({
+        'deterministic_reproduction_equal_across_seed_slots',
+        'cross_slot_hashes', 'all_exact_checks_pass',
+    })
     for arm, schema in schemas.items():
         if arm not in det:
             continue
+        # Required fields = schema minus optional
+        required = schema - det_optional
+        _check_required(f"{path}.{arm}", det[arm], required)
         for key in det[arm]:
             if key in schema:
                 continue
@@ -706,10 +762,18 @@ def _fail_closed_l5(law_result: Dict[str, Any], path: str) -> None:
 
 
 def _fail_closed_l6(law_result: Dict[str, Any], path: str) -> None:
+    _check_required(path, law_result, _L6_FIELDS_A)
     for key in law_result:
         if key not in _L6_FIELDS_A:
             raise ReproducibilityProjectionError(
                 f"{path}.{key}", type(law_result[key]).__name__)
+    # Check list-item schemas
+    if 'reachability_audit' in law_result:
+        _check_list_items(f"{path}.reachability_audit",
+                         law_result['reachability_audit'], _AUDIT_ROW_A)
+    if 'attacks' in law_result:
+        _check_list_items(f"{path}.attacks",
+                         law_result['attacks'], _ATTACK_ROW_A)
 
 
 _FAIL_CLOSED = {
