@@ -15,47 +15,46 @@
 
 | Item | SHA | Status |
 |---|---|---|
-| Base (GitHub main) | `a5e8a15` | Verified — includes PR #18 + PR #19 |
-| Spec content SHA | `3c8480c` | On branch `architect/m3-reproducibility-contract`; CRITIC-verified |
+| Base (GitHub main) | `a5e8a15` | Verified |
+| Spec content SHA | `3c8480c` | CRITIC-verified |
 | Branch | `taskbuilder/m3-reproducibility-contract` | Pushed to GitHub |
-| Result SHA (implementation) | `cb8d3d0` | First implementation commit |
-| Result SHA (required-field fix) | `be4eaa0` | Amended commit with required-field validation |
-| Branch HEAD | `be4eaa0` | Latest |
+| Branch HEAD | `e9c04a3` | Latest |
 
 ## Files changed/created
 
-| File | Action | Description |
-|---|---|---|
-| `src/m3_reproducibility.py` | Created | Reproducibility contract module (classification tables, digests, fail-closed, mode labels) |
-| `src/m3_harness.py` | Modified | Pruning fix, RNG summaries, two-digest architecture, mode-aware labels |
-| `src/test_m3_reproducibility.py` | Created | 18 tests: mutation (§5.1–§5.4), stale label regression (§6.3) |
-| `src/M3_REPRODUCIBILITY_CONTRACT_CHANGES.md` | Created | Implementation changelog |
+| File | Action |
+|---|---|
+| `src/m3_reproducibility.py` | Created — classification tables, digests, fail-closed, mode labels |
+| `src/m3_harness.py` | Modified — pruning fix, RNG summaries, two-digest architecture, mode-aware labels |
+| `src/test_m3_reproducibility.py` | Created — 34 tests |
+| `src/M3_REPRODUCIBILITY_CONTRACT_CHANGES.md` | Created — changelog |
 
 ## What was implemented
 
-1. **`compute_scoring_semantic_digest(results, config)`** (§3.1) — Classification A extraction, Classification C invariant checks, fail-closed traversal with required-field validation, canonical digest
-2. **`compute_final_report_digest(...)`** (§3.2) — non-compared integrity hash over complete output bundle
-3. **Classification A field retention** (§4.2) — `null_statistics` and all Classification A fields retained in both passes; only Classification B fields pruned
-4. **Normalized RNG derivation summaries** (§2.5) — built from `draw.artifact_record(...)` at draw time, independent of `artifact_writer`
-5. **Mode-aware label helper** (§6.2) — `_mode_label(mode, key)` for manifest and ledger
-6. **Mutation tests** (§5.1–§5.4) — automated leaf traversal, fail-closed, invariant, non-digest field, final-report digest
-7. **Stale label regression tests** (§6.3)
-8. **Required-field validation** — `_check_required` verifies all non-"where present" Classification A fields are present; raises `ReproducibilityProjectionError` on missing fields
-9. **Recursive list-item fail-closed** — `_check_list_items` recursively checks fields in list-of-dicts items: `chain_walk_results`, `query_results_200`, `reachability_audit`, `attacks`, `paired_age_accessibility_200`, `rng_derivation_summaries`
+1. `compute_scoring_semantic_digest(results, config)` (§3.1) — Classification A extraction, C invariant checks, fail-closed with required-field validation, canonical digest
+2. `compute_final_report_digest(...)` (§3.2) — non-compared integrity hash
+3. Classification A field retention (§4.2) — only Classification B fields pruned
+4. Normalized RNG derivation summaries (§2.5) — built at draw time
+5. `mode_label(mode, key)` (§6.2) — stale scoring label fix
+6. Required-field validation — checks all non-"where present" Classification A fields are present
+7. Recursive list-item fail-closed — checks fields in chain_walk_results, query_results_200, reachability_audit, attacks, paired_age_accessibility_200, rng_derivation_summaries, l18_arms
+8. Required container/family checks — verifies all required sub-dicts (candidate, v44_stochastic_controls, etc.) and V4.4 families (frozen, permuted, shuffled, etc.) are present
+9. 34 tests covering §5.1–§5.4 and §6.3
 
-## What was verified (diagnostic results)
+## What was verified
 
 - **Import:** Both modules import cleanly
 - **Reproducibility check:** `digests_equal=True` on diagnostic run (seed 101, L1, `--verify-reproducibility`)
-- **Output structure:** Matches §4.3 (checked, certification, pass1_digest, pass2_digest, digests_equal, projection_schema_version, projection_classification_failures, invariant_failures, final_report_digest)
-- **Mode labels:** Development mode correct; scoring mode correct
-- **Fail-closed:** `ReproducibilityProjectionError` raised on unclassified field and on missing required field
-- **Test suite:** All 18 new tests pass (0 expected failures); all 20 existing tests pass; no regressions
-- **Non-scoring per O-15:** Only seed 101 used in diagnostics
+- **Output structure:** Matches §4.3
+- **Mode labels:** Development and scoring mode correct
+- **Fail-closed:** `ReproducibilityProjectionError` raised on unclassified fields, missing required fields, and missing required containers/families
+- **Nested fail-closed:** Errors raised for unexpected/missing fields in list items and row dicts
+- **Test suite:** All 34 new tests pass (0 expected failures); all 20 existing tests pass; no regressions
+- **Non-scoring per O-15:** Only seed 101 development diagnostic used; no scoring or held-out seed execution
 
 ## Additional fix
 
-- **Pre-existing variable shadowing bug:** `null_rhos` from L1 shuffled section overwrote L1 permuted section's value. Fixed by preserving signed rhos in `permuted_null_rhos_signed` before the shuffled section reuses the variable name.
+- Fixed pre-existing `null_rhos` variable shadowing bug in L1 permuted arm
 
 ## Blockers
 
