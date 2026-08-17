@@ -1721,3 +1721,23 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Next authorized role:** **Rebecca**, to review and decide whether to merge the implementation branch and this publication branch to main.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. CRITIC reproducibility-contract implementation reviews published to GitHub recorder branch. No merge to main; Rebecca sole merge authority. Seeds 201–203 and 301–303 retained, never rerun.**
+
+
+---
+
+## Entry 56 — M3 reproducibility-contract implementation STATE.md reconciliation custody and hash attestation
+
+**Date:** 2026-08-17 · **Actor:** INTEGRATOR (sole STATE.md writer); RECORDER (custody and hash attestation)
+
+- **Gate served:** M3 reproducibility-contract implementation STATE.md Reconciliation Custody following PR #20 (CRITIC implementation reviews, Entry 55) and PR #21 (TASK BUILDER implementation, CRITIC-CLEARED).
+- **Named base:** `327c3d7e600402dfffddac456140ba43f447a283` (GitHub main, post-PR #20 and PR #21 merge; independently verified before attestation).
+- **INTEGRATOR source:** `7de308fe06a81fa992a56eeb5ca86641950083c5` on `integrator/m3-repro-contract-impl-state-reconciliation`; direct parent is the named base and the branch is exactly one commit ahead. The source changes only `state/STATE.md` (25 insertions, 12 deletions).
+- **STATE.md committed Git blob:** `5a2c992c849d832fd761c8500b2414d1123394b7`.
+- **STATE.md canonical Git-blob/LF SHA-256:** `ab84fb5bbd53e84deea28a15ed8599e5c32a377f613c060877bfe4a35f3c60e8` — VERIFIED. Independently computed by RECORDER from the INTEGRATOR branch content; matches INTEGRATOR-reported hash. 0 CRLF lines (pure LF).
+- **Reconciliation verification:** the state accurately records PR #20 (CRITIC implementation reviews published, Entry 55), PR #21 (TASK BUILDER implementation merged at `327c3d7`, CRITIC-CLEARED), updated repo hashes (`327c3d7`), updated role statuses for all roles, implementation blocker removed from open_blockers (merged and CRITIC-cleared), remaining blockers are multiplicity documentation and Rebecca's fresh-seed scoring authorization, and updated next action.
+- **Preserved evidence and protections:** the first M3 scoring run remains **INSTRUMENT FAILURE** (seeds 201–203). The second M3 scoring run remains **INSTRUMENT FAILURE** (seeds 301–303). Seeds 201–203 and 301–303 are retained and must never be rerun. Prior L3/L5/L6 PASS evidence remains valid. L1 candidate-facing bars passed with no kill condition. Rebecca Entry 43 and its four-part test remain binding. All timebox counts, caps, dates, and tripwire fields are unchanged. O-14, O-15, D1–D5, L9, L18, L15, unseen-seed protections, supervised-execution boundaries, Phase A / Phase B separation, and all standing protections remain intact.
+- **Authorization boundary:** implementation is merged and CRITIC-CLEARED. Scoring remains **BLOCKED**. No fresh-seed exposure, rerun, or scoring is authorized by the INTEGRATOR reconciliation or this custody entry. Rebecca's separate fresh-seed supervised scoring authorization remains required.
+- **Scope attestation:** the INTEGRATOR result changes only `state/STATE.md`; it alters no scientific standard, verdict, specification, verifier, implementation, scoring artifact, review, or provenance content. RECORDER appended this provenance entry only and did not alter `state/STATE.md`, specifications, verification artifacts, implementation, scoring artifacts, or reviews.
+- **Exact next authorized role:** **Rebecca**, to decide whether to incorporate this custody-only branch. No scoring action is authorized by this entry.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. Reproducibility-contract implementation merged and CRITIC-CLEARED. STATE.md reconciled and canonically attested (Entry 56). Scoring remains BLOCKED; seeds 201–203 and 301–303 must never be rerun.**
