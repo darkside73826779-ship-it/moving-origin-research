@@ -1924,3 +1924,33 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Standing constraints:** O-14, O-15, D1-D5, L9, L18, L15 integration fence, ≥2 unseen scoring seeds, no renaming negatives, Rebecca sole gate/merge authority — all preserved.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained, provisional advancement). Compliance protocol established (G0-5). Audit artifacts committed (R4). STATE.md reconciled and attested. Gate 0 rulings G0-1 through G0-4 remain pending.**
+
+
+---
+
+## Entry 66 — Paper v1.0.1 corrections published to branch
+
+**Date:** 2026-08-18 (date-stamped at creation per §5-P4, Regime B) · **Actor:** Advisor session (patch preparation); RECORDER (publication, P6 verification, and provenance attestation)
+
+- **Gate served:** Paper v1.0.1 correction publication — transcription-only change per Principal directive.
+- **Named base:** `e26d05f7cd4df0ba1cc0069e41f62dce51b87e33` (GitHub main, independently verified).
+- **RECORDER publication branch:** `recorder/paper-v1.0.1-corrections`, branched from main `e26d05f`.
+- **Patch applied:** `paper_v1.0.1_corrections.patch` (from advisor session, authorship preserved). Commit `385443b`. Patch applied via `git am` — not modified, not amended.
+- **Corrections:**
+  - **C1 (§4.1, per audit finding F2):** E1 control-arm list corrected from v1.0 shorthand to the actual six-arm battery as run: frozen-origin, shuffled-cadence, oracle-index, fair-naive, empty, wall-clock-injection. No permuted arm.
+  - **C2 (header, per audit finding F6):** L20 scope statement added to paper opening per constitutional audit law L20.
+- **P6 citation verification (performed before push):**
+  - `specs/e1_spec.md` §3 (lines 297–310): verified — exactly six arms enumerated, no permuted arm. ✓
+  - `specs/e1_spec.md` line 712 (`control_arms` config): verified — `["frozen_origin", "shuffled_cadence", "oracle_index", "fair_naive", "empty", "wall_clock_injection"]`. ✓
+  - `docs/ARCHITECTURAL_CONSTITUTION.md` L20 (line 54): verified — core formula "demonstrates temporal self-modeling competence — not awareness" matches verbatim. ✓
+- **Findings dispositioned (paper-side, pending Principal merge):**
+  - F2 (paper-side): E1 control-arm list corrected. Dispositioned pending Principal merge.
+  - F6 (paper-side): L20 scope statement added. Dispositioned pending Principal merge.
+- **v1.0 preservation:** v1.0 preserved in repository history. No verdict, result, argument, or scientific claim modified.
+- **CRITIC cycle:** Waived by Principal for transcription-only change. Waiver to be stated at merge per Principal authority.
+- **§5 custody line:** Constitution v1 SHA-256 `509f11c316e6ed3abbdca2df4973484dd676eecc87b727f312ee8658bef93b19` — unchanged. Constitution v2 SHA-256 `8e029645f9e0f2b7914c9e74a6b76b8fd18b7a5c2d7a48a664f771906b045aaf` — unchanged.
+- **STATE.md (no new INTEGRATOR attestation event):** no INTEGRATOR update occurred. STATE.md hash unchanged since last attestation (Entry 65). Recorded for reference only.
+- **Preserved evidence and protections:** M3 INSTRUMENT FAILURE retained (seeds 201–203 and 301–303, never rerun). All prior provenance entries (1–65) remain unchanged. O-14, O-15, D1–D5, L9, L18, L15, and all standing protections intact.
+- **Scope attestation:** RECORDER applied the patch without modification, performed P6 verification, and appended this provenance entry. No merge to main performed or requested. Principal verification, review-waiver statement, and merge reserved to Rebecca.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. Paper v1.0.1 corrections published to recorder branch (Entry 66). Findings F2/F6 dispositioned pending Principal merge. CRITIC cycle waived for transcription-only change. No merge to main; Principal verification and merge reserved to Rebecca. Seeds 201–203 and 301–303 retained, never rerun.**
