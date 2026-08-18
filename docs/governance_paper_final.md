@@ -4,7 +4,7 @@
 Independent Researcher
 becca.mcclintic@gmail.com
 
-*Preprint — ready for external review. All citations independently verified.*
+*Preprint v1.0 — August 17, 2026. All citations independently verified.*
 
 ---
 
@@ -110,7 +110,7 @@ The same M3 run separately reported `bit_identical = false` on a reproducibility
 
 **Governance significance:** The system distinguished *fixing the instrument going forward* from *repairing the past*, and refused the second even when the first was complete. This is the "no relabeled negatives" prohibition operating on a subtle case.
 
-### 4.5 Footnote: Detection of silent model substitution
+### 4.5 Supplementary incident: silent model substitution (predecessor system)
 
 In a predecessor system operated by the same principal, a serving-stack change silently substituted a different model (a 32B parameter model in place of the vetted 27B model) behind an unchanged interface, producing confidently defended confabulation downstream. The incident was diagnosed by the principal, and cryptographic preflight checks (SHA-256 verification of model weights before any session) were made a permanent, modeless requirement. This episode predates the public repository and is documented in the predecessor system's internal logs.
 
@@ -140,7 +140,7 @@ The apparatus is heavy: eight roles, an append-only provenance log, lineage atte
 
 ### 5.4 Unattributed code lineage
 
-Implementation code was substantially machine-generated. LLM-generated code can reproduce patterns, idioms, and occasionally near-verbatim structures from training data without an attribution trail, and neither the Principal nor the agents can rule this out by inspection. The program's response is disclosure plus a targeted audit (searching distinctive functions and constants against public code search), with any findings recorded under the repository's NOTICE per its license. Absence of findings is not absence of lineage; the disclosure stands regardless.
+Implementation code was substantially machine-generated. LLM-generated code can reproduce patterns, idioms, and occasionally near-verbatim structures from training data without an attribution trail, and neither the Principal nor the agents can rule this out by inspection. The program's response is disclosure plus a targeted audit (searching distinctive function bodies and unusual constants against public code search), performed 2026-08-17 with no verbatim reproductions of external code identified; any future findings are recorded under the repository's NOTICE per its license. Absence of findings is not absence of lineage; the disclosure stands regardless of audit outcome.
 
 ### 5.5 Gaps in the public record
 
