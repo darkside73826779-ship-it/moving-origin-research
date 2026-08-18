@@ -7,7 +7,7 @@
 ```yaml
 # STATE.md — team operational schema (under Rebecca's M0 addendum, Entry 13 / O-10)
 # Updated by: INTEGRATOR (sole writer). RECORDER records hash at every merge.
-# Last-updated: 2026-08-17T17:56:00-04:00.
+# Last-updated: 2026-08-17T20:56:00-04:00.
 
 milestone: M3                       # M3 V4.4 scoring cycle complete. First scoring run (seeds 201–203) retained as INSTRUMENT FAILURE. Second scoring run (seeds 301–303) retained as INSTRUMENT FAILURE (L3 frozen arm borderline on seed 303, within 4.8% FWFP — genuine, not a spec defect). L1 V4.4 fix worked (one-sided null-of-the-max). L5/L6 PASS on all seeds. No kill conditions fired on any seed across both runs. Candidate passes all candidate-facing bars on all 6 scoring seeds. Reproducibility bit_identical=False (construction bug: artifact_writer not passed to second pass — not non-determinism). Rebecca authorized provisional advancement to M4 with qualified instrument certification. Seeds 201–203 and 301–303 retained, never rerun (O-14). Four-part test (Entry 43) remains binding. O-14, O-15, D1–D5, L9, L18 all binding.
 session_count: 5                    # completed working sessions (M1: 1; M2: 1; M3 spec cycle: 2 — V0→V3 BLOCKED, V4 CLEARED; M3 GO + task spec: 1 — GO ruling, task spec/courier arch prepared, CRITIC narrow BLOCK)
@@ -64,8 +64,8 @@ watch_items:                        # CRITIC carry-forward items, with locus
     m1_relevant: false
 
 repo:
-  commit_hash: "b61ba071584a265315bf2e94ac3a6f556601bceb"   # GitHub main HEAD; PR #23 merged public-funding-readiness docs. PR #22 merged STATE.md custody attestation (Entry 56, SHA-256 ab84fb5b). Includes reproducibility-contract implementation (PR #21, 327c3d7).
-  github_main_verified: "b61ba071584a265315bf2e94ac3a6f556601bceb"   # GitHub main HEAD, VERIFIED 2026-08-17T17:56-04:00 via gh api
+  commit_hash: "eebcbe6"   # GitHub main HEAD; PR #26 merged lineage additions (conceptual lineage, code-provenance disclosure, CITATION.cff references). Entry 58 in provenance log. Includes public-repository policy (PR #24), reproducibility-contract implementation (PR #21, 327c3d7), and local artifact inventory (PR #25).
+  github_main_verified: "eebcbe6"   # GitHub main HEAD, VERIFIED 2026-08-17T20:56-04:00 via gh api
   scoring_branch: "scoring/m3-v44-fresh-seeds-301-303"   # Scoring results branch at 6589fed9a98273fe7a97be0dc0defdf9f9a08aee — contains runs/m3-scoring-v44-301-303/ summary files and RUN_PROVENANCE_AND_LOCAL_RETENTION.md
   cure_commit_hash: "a85ec91f22521164abd2604a1c299c74f0dd67ac"   # E1 provenance-cure re-run commit (manifest commit hash cured from "pending -- no git repo" to real repository hash a85ec91f; JUDGE scored DELIVERED GREEN from cure artifacts — judge_e1_cure_ruling.md)
   e1_run2_scored_commit: "1d13105e8163859d7972705b731ba8c24a272276"   # E1-RUN-2 scored commit (timing fix dceb258 + cosmetic/L20 float fix; JUDGE scored DELIVERED GREEN with provenance discrepancy flagged — manifest showed "pending -- no git repo", round-trip log claimed 1d13105; subsequently cured in cure re-run at a85ec91)
@@ -536,3 +536,12 @@ next_action: "RECORDER publishes PUBLIC_REPOSITORY_POLICY.md + CRITIC reviews + 
   - No specifications, implementation, scoring artifacts, reviews, or provenance log altered. Only state/STATE.md and state/role_initialization/*.md changed. STATE.md hash requires RECORDER custody attestation before merge; no merge performed by INTEGRATOR.
   - Next recipient: RECORDER (publish policy + CRITIC reviews + role init scripts to GitHub, attest STATE.md hash, extend provenance log).
   - Authorized scope: Update state/STATE.md and state/role_initialization/*.md only. No merging to main. No modification of any other file. No scoring, seed execution, or hold-out seed exposure. No implementation or code changes.
+
+- **2026-08-17 (INTEGRATOR) — Public-repository lineage additions merge STATE.md reconciliation (Entry 58):**
+  - **This entry.** INTEGRATOR updated STATE.md to reflect the lineage additions merge (PR #26, Entry 58 in provenance log).
+  - **PR #26:** merged at `e666d92` (docs/lineage-additions → main). Three files modified: README.md (conceptual lineage section with 8 verified citations), AI_CONTRIBUTIONS.md (code lineage disclosure with audit clause — performed 2026-08-17, 0 findings), CITATION.cff (references key with Tulving 1985, Suddendorf & Corballis 2007, Husserl 1991, Friston 2018). CRITIC review: CLEAR (all citations verified, claims discipline maintained). Code-lineage audit: 0 findings. Rebecca explicitly authorized merge.
+  - **Provenance log:** Entry 58 appended at commit `eebcbe6`.
+  - **Updated fields:** `Last-updated`, `repo.commit_hash` (eebcbe6), `repo.github_main_verified` (eebcbe6).
+  - **Key facts preserved:** Seeds 201–203 and 301–303 retained as INSTRUMENT FAILURE, never rerun. No scientific bars, scoring predicates, historical verdicts, or evidence modified. INSTRUMENT FAILURE labels retained. O-14, O-15, D1–D5, L9, L18 all binding.
+  - No specifications, implementation, scoring artifacts, reviews, or provenance log altered (provenance log updated separately by RECORDER). Only state/STATE.md changed.
+  - Next recipient: RECORDER (attest updated STATE.md hash).
