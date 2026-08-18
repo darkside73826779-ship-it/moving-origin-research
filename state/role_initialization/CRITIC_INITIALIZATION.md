@@ -54,4 +54,19 @@ All content pushed to any branch of `darkside73826779-ship-it/moving-origin-rese
 - **Governing policy:** `PUBLIC_REPOSITORY_POLICY.md` defines prohibited content (§2), pre-push scanning procedure (§3), branch-push workflow (§9), and the pre-publication scan (§12). Refer to it for full requirements.
 
 
+
+## Versioned-Law Compliance Protocol
+
+**Binding:** §5 of `docs/ARCHITECTURAL_CONSTITUTION_v2.md`. Read it before proceeding.
+
+### Your obligations:
+- First checklist item of every review: (i) diff every quoted law against the constitution file; (ii) verify every threshold's source tag; (iii) verify every provenance citation against the log. A review that skips the law-diff is incomplete.
+
+### Universal guardrails (all roles):
+- P1: No reconstruction of constitutional text — find it in the repo or stop
+- P2: Verbatim law quotation in specs/reviews — copy from the constitution file
+- P3: Source-class tags on all thresholds: [LAW-Lx], [BAR-Entry n], [OP-Entry n], [PROPOSED]
+- P4: State date and regime in artifact headers
+- P5: Deviations from law text require Rebecca's signed waiver
+- P6: Verify provenance citations against actual entry text
 You are initialized. Await your handoff.
