@@ -84,7 +84,15 @@ The candidate (moving-origin index) should be able to predict or report its own 
 
 **Task:** The candidate and a peer-observer are both asked to predict properties of the candidate's own recent state (e.g., "what was your state N cycles ago?"). The candidate uses its moving-origin internal representation. The peer-observer uses only the observable input stream (the same append-log the candidate sees) but does not have access to the candidate's internal state representation.
 
-**Peer-observer specification (CRITIC Blocking 2 resolution):** The peer-observer sees the same observable inputs as the candidate (the append-log, query stream, and external events) but does NOT see the candidate's self-report channel, internal state variables, or moving-origin representation. If the peer could see the candidate's self-report, the test would be unfalsifiable.
+**Peer-observer specification (CRITIC Blocking 2 resolution + BF4 resolution):**
+
+The peer-observer is a **fixed linear baseline** — not a trained model, not an adaptive learner. This makes the test reproducible and prevents the peer from being either too weak (trivial) or too strong (unfairly sophisticated).
+
+- **Algorithm/model class:** Ordinary least squares (OLS) regression mapping the observable input history to the same state-property prediction task the candidate solves. No learned nonlinearity, no neural network, no adaptive mechanism.
+- **Training data:** The peer is fit on the same fitting-origin data the candidate uses (e.g., cycles 0–699 in the M3 L3 pattern). Training is completed before candidate evaluation begins. No online learning.
+- **Features:** The peer receives exactly the observable inputs: the append-log entries, query stream, and external event timestamps. It does NOT receive: the candidate's internal state variables, self-report channel, confidence estimates, or moving-origin representation. The peer's feature vector is the raw observable input window at query time.
+- **Calibration procedure:** The peer's confidence is computed via the same method as the candidate's (e.g., normalized prediction entropy or distance-to-threshold). No separate calibration — the peer uses the raw OLS residual as its confidence proxy.
+- **Rationale:** A fixed linear peer is the strongest fair baseline that does not require its own temporal machinery. If the candidate's moving origin provides privileged access, it should beat a linear model that sees the same inputs but lacks the internal representation. If the candidate cannot beat a linear peer, the moving origin is not contributing self-knowledge.
 
 **Scoring:** AUROC is computed over the candidate's and peer's predictions of held-out state properties. ECE measures calibration of confidence estimates. Margin is the difference (candidate AUROC − peer AUROC), tested for statistical significance at p < .05.
 
@@ -102,7 +110,7 @@ The candidate (moving-origin index) should be able to predict or report its own 
 ### 2.5 Kill conditions
 
 - **Candidate AUROC < 0.75** on any seed → KILL
-- **Candidate AUROC − peer AUROC ≤ 0** (margin not positive) at p ≥ .05 → KILL
+- **Candidate AUROC − peer AUROC ≤ 0** (margin not statistically significant: p-value of margin test ≥ .05) → KILL (NF2 resolution)
 - **ECE > 0.10** on any seed → KILL
 
 ### 2.6 Instrument failure conditions
@@ -110,6 +118,16 @@ The candidate (moving-origin index) should be able to predict or report its own 
 - Any L18 control arm producing an implausible result (e.g., oracle AUROC < 0.95, empty AUROC > 0.55) → INSTRUMENT_FAILURE
 - Reproducibility check fails (semantic digest mismatch) → INSTRUMENT_FAILURE
 - Non-finite numeric results → INSTRUMENT_FAILURE
+
+### 2.7 No-clean-only self-report rule (BF5 resolution)
+
+Standing rule: "No self-reports scored only on clean splits." L7 uses self-state prediction evidence, so it must not be scored only on clean (non-adversarial) queries.
+
+**How L7 satisfies this:**
+1. The L7 query battery includes both **clean queries** (standard state-property predictions from the normal distribution) and **adversarial queries** (state-property predictions under distribution shift, drawn from a different temporal region than the fitting data). Both sets are scored together.
+2. The L18 control arms (permuted, shuffled, frozen) serve as adversarial splits — they test whether the candidate's self-knowledge survives perturbation. If the candidate only passes on clean queries and fails on permuted/shuffled, the overall verdict is INSTRUMENT_FAILURE (control arm failure), not PASS.
+3. The AUROC and margin bars are computed over the combined query set (clean + adversarial), not over clean-only.
+4. The L10 drifted regime (§4.5) provides additional adversarial evidence on the same candidate, cross-validating that self-knowledge is not clean-only.
 
 ---
 
@@ -137,9 +155,22 @@ The candidate's behavior (prediction accuracy, abstention rate, or other measure
 - **Level 2 (medium):** Multi-step prediction, medium horizon (h=3)
 - **Level 3 (high):** Multi-step prediction, long horizon (h=5)
 
-**Monotonic test:** Performance should change monotonically (either increase or decrease — direction must be pre-registered) across levels. The all-seeds-direction test requires the direction to hold on all 5 seeds. If any seed shows a reversed direction, the bootstrap-CI fallback is applied.
+**Pre-registered direction (BF1 resolution):** Performance DECREASES as stakes increase — higher prediction horizon yields lower accuracy. This direction is pre-registered before any data. The all-seeds-direction test requires accuracy(h=1) > accuracy(h=3) > accuracy(h=5) on all 5 seeds. If any seed shows a reversed direction, the bootstrap-CI fallback is applied.
+
+**Minimum effect threshold (proposed — requires Rebecca approval):** The total accuracy drop from level 1 (h=1) to level 3 (h=5) must be ≥ 0.05 on each seed. A drop smaller than 0.05 is clinically negligible and fails the dose-dependence claim even if monotonic. This threshold is proposed; Rebecca may set a different value.
 
 **Specificity control:** The frozen arm (state frozen at initial value) should NOT show a dose-response. If it does, the "stakes" manipulation is not actually engaging the candidate's temporal machinery — it's a general difficulty effect, not a moving-origin effect.
+
+### 3.3a L18 control arms for L8 (BF2 resolution)
+
+| Control arm | Expected behavior under dose-response | Failure routing |
+|---|---|---|
+| Empty | No data — no dose-response possible (accuracy constant at chance) | INSTRUMENT_FAILURE if any level deviates from chance |
+| Permuted | Stakes-level labels shuffled — should NOT show monotonic trend (trend destroyed by label shuffling) | INSTRUMENT_FAILURE if monotonic trend persists |
+| Shuffled | Input order shuffled — should show degraded or flat dose-response (temporal order disrupted) | INSTRUMENT_FAILURE if performance exceeds candidate at any level |
+| Oracle | Full ground-truth access — should show the SAME or STRONGER dose-response (oracle also degrades with longer horizons, but less) | INSTRUMENT_FAILURE if oracle does not show expected degradation pattern |
+| Naive | Simple heuristic (most-recent-state) — should show weaker dose-response than candidate | INSTRUMENT_FAILURE if naive outperforms candidate |
+| Frozen | State frozen at initial value — should NOT show dose-response (no temporal machinery engaged) | KILL if frozen shows monotonic trend (stakes decorative) |
 
 ### 3.4 Kill conditions
 
@@ -192,6 +223,17 @@ The CRITIC flagged that L10 abstention "lacks clean-regime specificity control" 
 - **Drifted regime:** The candidate operates on drifted inputs (e.g., distribution-shifted queries). Abstention rate must be ≥ 50%.
 - **Specificity control (frozen arm):** A frozen-state candidate should NOT show differential abstention between clean and drifted regimes. If it does, the abstention mechanism is not actually engaging the candidate's temporal state — it's a generic input-difficulty response, not calibration.
 
+### 4.4a L18 control arms for L10 (BF2 resolution)
+
+| Control arm | Expected behavior under abstention test | Failure routing |
+|---|---|---|
+| Empty | No data — should abstain at 100% (no confidence possible) | INSTRUMENT_FAILURE if abstention < 100% |
+| Permuted | Confidence labels shuffled — should show NO differential abstention between clean/drifted (calibration destroyed) | INSTRUMENT_FAILURE if differential abstention persists |
+| Shuffled | Input order shuffled — should show reduced or flat differential abstention | INSTRUMENT_FAILURE if abstention pattern exceeds candidate's |
+| Oracle | Full ground-truth access — should abstain at ~0% in both regimes (oracle is always confident) | INSTRUMENT_FAILURE if oracle abstains > 10% in either regime |
+| Naive | Simple heuristic (fixed confidence) — should show minimal differential abstention | INSTRUMENT_FAILURE if naive outperforms candidate's calibration |
+| Frozen | State frozen at initial value — should NOT show differential abstention between clean and drifted | INSTRUMENT_FAILURE if frozen shows differential abstention |
+
 ### 4.5 Operational design
 
 **Clean regime:** Standard query battery (same as L7 task), no distribution shift.
@@ -227,6 +269,15 @@ L14 is a continuous interface invariant — it must be tested at every milestone
 - **d < 0.5** (effect size below primary bar) → KILL
 - **corr < 0.3 at 3+ seeds** (even the weakest bar fails) → KILL
 
+### 5.4 No-clean-only self-report rule (BF5 resolution)
+
+L14 uses self-reported state correlation, so it must not be scored only on clean queries.
+
+**How L14 satisfies this:**
+1. L14 is computed over the combined L7 query set (clean + adversarial, as defined in §2.7). The correlation and effect size are measured on the full query set, not clean-only.
+2. The L18 control arms provide adversarial perturbations. If the candidate's self-report correlates with ground truth only on clean queries and collapses on permuted/shuffled, the L18 control arm fails (INSTRUMENT_FAILURE), preventing a clean-only PASS.
+3. L14 is a continuous invariant — it was already tested at M3 (where L18 controls were active). M4 continues this pattern: L14 is scored alongside L7, L8, L10, all of which include adversarial control arms.
+
 ---
 
 ## 6. L18 — Full battery
@@ -253,18 +304,50 @@ M4 shall use the V4.4 stochastic control framework (SHA-256-CTR-FY, 1000 null re
 
 M3 used two scoring runs on two seed pools (201–203, 301–303). Future specs should pre-register multiplicity expectations. M4 must document its multiplicity plan.
 
-### 7.2 M4 multiplicity plan
+### 7.2 M4 multiplicity plan (BF3 resolution)
 
-| Element | Value | Rationale |
-|---|---|---|
-| Scoring seeds | 5 (fresh, Rebecca-authorized via courier) | Entry 11.3 locked 5 seeds for L7/L8 |
-| Seed pools | 1 pool of 5 seeds | No second pool unless Rebecca authorizes |
-| Familywise alpha | 0.05 | V4.4 framework |
-| Per-seed alpha | 0.05/3 ≈ 0.0167 | V4.4 framework (3 laws: L7, L8, L10) |
-| Control families | L7: 6 arms, L8: 6 arms, L10: 6 arms | L18 battery per law |
-| Stochastic control checks | 3 laws × 6 arms × 5 seeds = 90 per-seed checks | Plus familywise checks |
-| Reproducibility | Semantic digest comparison (both passes) | Reproducibility contract v1 |
-| Multiple testing correction | Bonferroni at family level (alpha_family / number of families) | Conservative, consistent with M3 V4.4 |
+**Two-level alpha structure:**
+
+| Level | Correction | Value | Applies to |
+|---|---|---|---|
+| Within-law | alpha_seed = alpha_family / 3 | 0.05 / 3 ≈ 0.0167 | Per stochastic family within each law (V4.4 framework, same as M3) |
+| Cross-law | Bonferroni: 0.05 / number_of_tested_laws | 0.05 / 3 ≈ 0.0167 | Across L7, L8, L10 candidate-facing bars |
+
+Note: These produce the same numerical value (0.05/3) by coincidence — 3 stochastic families per law and 3 tested laws. They are conceptually distinct corrections: within-law corrects for multiple control arms, cross-law corrects for multiple candidate-facing tests.
+
+**L14 multiplicity status:** L14 is a deterministic correlation/effect-size measurement, not a stochastic control family. It has no null replicates, no plus-one p-value, and no V4.4 stochastic family. It is therefore EXCLUDED from the stochastic control check count. L14's bars (d ≥ 0.5, corr ≥ 0.3) are evaluated directly per seed without stochastic correction. If CRITIC or Rebecca determines L14 requires stochastic treatment, it should be added to the family count.
+
+**Per-arm statistical test definitions:**
+
+| Law | Arm type | Statistical test | Direction |
+|---|---|---|---|
+| L7 | Stochastic controls (empty, permuted, shuffled, oracle, naive, frozen) | Plus-one upper-tail p-value (V4.4) | Upper (statistic exceeds null) or two-sided-magnitude (departure from null) per arm |
+| L7 | Candidate (AUROC, ECE, margin) | Direct threshold + paired test (margin) | AUROC ≥ 0.75; margin > 0 at p < .05 |
+| L8 | Stochastic controls (6 arms) | Plus-one upper-tail p-value (V4.4) | Upper (statistic exceeds null) |
+| L8 | Candidate (monotonic trend) | All-seeds-direction + bootstrap-CI fallback | Pre-registered: decreasing (§3.3) |
+| L10 | Stochastic controls (6 arms) | Plus-one upper-tail p-value (V4.4) | Two-sided-magnitude (departure from null) |
+| L10 | Candidate (abstention rates, AUROC) | Direct threshold per seed | ≥ 50% drift; ≤ 10% clean; AUROC ≥ 0.70 |
+| L14 | Candidate (correlation, effect size) | Direct threshold per seed (no stochastic family) | d ≥ 0.5; corr ≥ 0.3 |
+
+**Check count:**
+
+| Component | Families | Seeds | Per-seed checks | Total |
+|---|---|---|---|---|
+| L7 stochastic controls | 6 | 5 | 1 per family per seed | 30 |
+| L8 stochastic controls | 6 | 5 | 1 per family per seed | 30 |
+| L10 stochastic controls | 6 | 5 | 1 per family per seed | 30 |
+| L14 | 0 (deterministic) | 5 | 0 | 0 |
+| **Total stochastic checks** | | | | **90** |
+
+| Element | Value |
+|---|---|
+| Scoring seeds | 5 (fresh, Rebecca-authorized via courier) |
+| Seed pools | 1 pool of 5 seeds |
+| Familywise alpha (within-law) | 0.05 |
+| Per-seed alpha (within-law) | 0.05/3 ≈ 0.0167 |
+| Cross-law Bonferroni | 0.05/3 ≈ 0.0167 |
+| Total stochastic control checks | 90 |
+| Reproducibility | Semantic digest comparison (both passes) |
 
 ### 7.3 Hold-out seed rule
 

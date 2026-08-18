@@ -7,6 +7,29 @@
 
 ---
 
+## v1.1 — CRITIC BF1–BF5 + NF1–NF3 resolutions (2026-08-18)
+
+### BF1: L8 direction pre-registered
+§3.3 now pre-registers: performance DECREASES as stakes increase. Minimum effect threshold proposed: total accuracy drop ≥ 0.05 from level 1 to level 3.
+
+### BF2: L18 arm tables added for L8 and L10
+§3.3a: L8 6-arm table. §4.4a: L10 6-arm table. Both with expected behavior and failure routing.
+
+### BF3: Multiplicity table restructured
+Two-level alpha (within-law vs cross-law). L14 excluded from stochastic count (deterministic). Per-arm test definitions. Precise check count table.
+
+### BF4: L7 peer-observer construction specified
+Fixed linear baseline (OLS), same fitting data, observable inputs only, no online learning.
+
+### BF5: No-clean-only self-report rule addressed
+§2.7 (L7) and §5.4 (L14): adversarial queries + L18 arms prevent clean-only scoring.
+
+### NF1: L10 seed count flagged for Rebecca confirmation.
+### NF2: L7 margin kill phrasing clarified.
+### NF3: L8 measurability properly flagged.
+
+---
+
 ## What this specification does
 
 Defines the M4 milestone ("Mirror, Stakes, and Calibration"): what it tests (L7, L8, L10), pre-registered bars and kill conditions, L18 control battery, L14 interface bar, multiplicity plan, open-items scope determination, sequencing plan, timebox proposal, and L15–L17 fence.
