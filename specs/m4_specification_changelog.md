@@ -8,6 +8,44 @@
 
 ---
 
+## v1.3.1 — BF1 remediation + NF1–NF4 annotations (2026-08-18)
+
+CRITIC R2 law-fidelity review returned BLOCK with one P3 violation (BF1: control-arm tolerance thresholds and other numeric values lacking source tags). All F1 corrections verified correct. All law quotes verbatim. All provenance citations verified.
+
+### BF1.a: L8 §3.3 "≥ 1" homeostatic variable lower bound tagged
+
+Added [LAW-L8] tag to "≥ 1" in §3.3, sourced from L8 verbatim: "At least one homeostatic variable…" [LAW-L8, line 26].
+
+### BF1.b: L8 §3.4 control-arm failure routings tagged
+
+Added Source column to L8 control table (§3.4). Five routings tagged [PROPOSED — requires Rebecca sign-off]. Frozen arm KILL routing tagged [LAW-L8] ("stakes decorative" is law text).
+
+### BF1.c: §9.2 timebox tripwires tagged
+
+Added [PROPOSED — requires Rebecca approval] to tripwire values "2" (sessions) and "4" (days), matching adjacent tagged values.
+
+### NF1: L14 trailing whitespace
+
+CRITIC verified L14 quote is byte-identical (trailing space is a constitution whitespace artifact, not a spec error). No change needed.
+
+### NF2: V4.4 alpha_seed citation
+
+Added note citing M3 implementation entries in provenance log for V4.4 alpha_seed specifics.
+
+### NF3: Entry 11.8 graveyard-gate source class
+
+Annotated [BAR-Entry 11.8] as (gate-decision) source class in §2.2.
+
+### NF4: §7.1 derived quantities annotated
+
+Taged "1 pool" as [PROPOSED — derived from single-pool design] and "45" as [PROPOSED — derived: 3 laws × 3 families × 5 seeds].
+
+### Confirmation
+
+No threshold value, bar, kill condition, or scoring predicate changed. Only source-class tags and annotations added.
+
+---
+
 ## v1.3 — F1 reconstruction-infidelity correction + §5 compliance (2026-08-18)
 
 First spec produced under §5 Versioned-Law Compliance Protocol. All law sections now open with verbatim quotes from `docs/ARCHITECTURAL_CONSTITUTION.md` (P2). All thresholds tagged with source class (P3). Regime and date in header (P4). All provenance citations verified against actual entry text (P6).

@@ -69,7 +69,7 @@ Per [BAR-Entry 11.8], L7/M4 is a deferred graveyard gate. Rebecca must sign with
 | Contamination controls | permuted/empty/shuffled mandatory | [LAW-L7] |
 | Seeds | 5 | [BAR-Entry 11.3] |
 | Inferential policy | all-seeds-direction + bootstrap-CI fallback | [BAR-Entry 11.3] |
-| Graveyard gate | Rebecca must sign with prior milestone results | [BAR-Entry 11.8] |
+| Graveyard gate | Rebecca must sign with prior milestone results | [BAR-Entry 11.8] (gate-decision) (NF3) |
 
 ### 2.3 Operational design
 
@@ -130,7 +130,7 @@ The L7 query battery includes clean and adversarial queries (distribution-shifte
 
 The previous v1.2 spec operationalized L8 as prediction-horizon dose-response (h=1/h=3/h=5). This was a reconstruction error — the verbatim law text specifies a different test.
 
-**Homeostatic variable:** Define ≥ 1 homeostatic variable with a regulation target. The candidate maintains this variable (e.g., a resource level, error budget, or calibration metric) that should stay within bounds for healthy operation.
+**Homeostatic variable:** Define ≥ 1 [LAW-L8] homeostatic variable with a regulation target. The candidate maintains this variable (e.g., a resource level, error budget, or calibration metric) that should stay within bounds for healthy operation.
 
 **Calibrated-noise injection:** Inject calibrated noise into the self-model (the L7 mirror component — the candidate's self-state representation) at ≥ 3 dose levels [OP-Entry 11.7]. Dose levels are amounts of perturbation applied to the self-model's state estimation:
 - **Level 1 (low):** Small perturbation — self-model slightly degraded
@@ -147,14 +147,14 @@ The previous v1.2 spec operationalized L8 as prediction-horizon dose-response (h
 
 ### 3.4 L18 control arms for L8
 
-| Control arm | Expected behavior | Failure routing |
-|---|---|---|
-| Empty | No self-model — regulation error constant | INSTRUMENT_FAILURE if any level deviates from baseline |
-| Permuted | Self-model noise labels shuffled — no dose-response | INSTRUMENT_FAILURE if monotonic trend persists |
-| Shuffled | Self-model input order shuffled — degraded dose-response | INSTRUMENT_FAILURE if exceeds candidate at any level |
-| Oracle | Full ground-truth self-model — should show SAME or STRONGER dose-response | INSTRUMENT_FAILURE if no expected degradation pattern |
-| Naive | Fixed heuristic self-model — weaker dose-response | KILL if naive outperforms candidate (mechanism not contributing) |
-| Frozen | Self-model frozen at initial value — no dose-response (no calibration to degrade) | KILL if frozen shows monotonic trend (stakes decorative) |
+| Control arm | Expected behavior | Failure routing | Source |
+|---|---|---|---|
+| Empty | No self-model — regulation error constant | INSTRUMENT_FAILURE if any level deviates from baseline | [PROPOSED — requires Rebecca sign-off] |
+| Permuted | Self-model noise labels shuffled — no dose-response | INSTRUMENT_FAILURE if monotonic trend persists | [PROPOSED — requires Rebecca sign-off] |
+| Shuffled | Self-model input order shuffled — degraded dose-response | INSTRUMENT_FAILURE if exceeds candidate at any level | [PROPOSED — requires Rebecca sign-off] |
+| Oracle | Full ground-truth self-model — should show SAME or STRONGER dose-response | INSTRUMENT_FAILURE if no expected degradation pattern | [PROPOSED — requires Rebecca sign-off] |
+| Naive | Fixed heuristic self-model — weaker dose-response | KILL if naive outperforms candidate (mechanism not contributing) | [PROPOSED — requires Rebecca sign-off] |
+| Frozen | Self-model frozen at initial value — no dose-response (no calibration to degrade) | KILL if frozen shows monotonic trend (stakes decorative) | [LAW-L8] |
 
 ### 3.5 Kill conditions
 
@@ -280,7 +280,7 @@ Full L18 battery at every milestone [LAW-L18]: empty, permuted, shuffled, oracle
 
 ### 6.3 V4.4 stochastic control framework
 
-M4 uses V4.4 framework (SHA-256-CTR-FY, 1000 null replicates, plus-one upper-tail p-value, alpha_family = 0.05, alpha_seed = 0.05/3) [OP-Entry 11.7] as implemented at M3. Reproducibility-contract semantic digest used for reproducibility verification.
+M4 uses V4.4 framework (SHA-256-CTR-FY, 1000 null replicates, plus-one upper-tail p-value, alpha_family = 0.05, alpha_seed = 0.05/3) [OP-Entry 11.7] as implemented at M3 (V4.4 alpha_seed specifics per M3 implementation entries in provenance log). Reproducibility-contract semantic digest used for reproducibility verification.
 
 **Stochastic families per law:** 3 per law (frozen, permuted, shuffled) — these use V4.4 RNG-driven randomization with null distributions. Oracle, naive, empty are deterministic (direct threshold evaluation). Total stochastic checks: 3 laws × 3 families × 5 seeds = 45.
 
@@ -295,11 +295,11 @@ M4 uses V4.4 framework (SHA-256-CTR-FY, 1000 null replicates, plus-one upper-tai
 | Element | Value | Source tag |
 |---|---|---|
 | Scoring seeds | 5 (fresh, Rebecca-authorized via courier) | [BAR-Entry 11.3] |
-| Seed pools | 1 pool of 5 seeds | — |
+| Seed pools | 1 pool of 5 seeds | [PROPOSED — derived from single-pool design] (NF4) |
 | Familywise alpha | 0.05 | [OP-Entry 11.7] |
 | alpha_seed | 0.05/3 ≈ 0.0167 (cross-law Bonferroni) | [OP-Entry 11.7] |
 | Stochastic families per law | 3 (frozen, permuted, shuffled) | [OP-Entry 11.7] |
-| Total stochastic checks | 45 | — |
+| Total stochastic checks | 45 | [PROPOSED — derived: 3 laws × 3 families × 5 seeds] (NF4) |
 | L14 | Deterministic (no stochastic family; direct threshold per seed) | [LAW-L14] |
 | Reproducibility | Semantic digest comparison (both passes) | [OP-Entry 11.7] |
 
@@ -345,8 +345,8 @@ M4 uses V4.4 framework (SHA-256-CTR-FY, 1000 null replicates, plus-one upper-tai
 |---|---|
 | Sessions | 4 [PROPOSED — requires Rebecca approval] |
 | Calendar days | 8 [PROPOSED — requires Rebecca approval] |
-| Tripwire (sessions) | 2 |
-| Tripwire (days) | 4 |
+| Tripwire (sessions) | 2 [PROPOSED — requires Rebecca approval] |
+| Tripwire (days) | 4 [PROPOSED — requires Rebecca approval] |
 
 ---
 
