@@ -1905,3 +1905,22 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Next authorized role:** **Rebecca**, to decide whether to incorporate this custody-only branch. After merge, the workflow proceeds to CRITIC faithfulness check (confirm M1–M3 followed the constitution as amended), then green light to M4.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. Constitution v1 and v2 published to GitHub main. STATE.md and GOVERNANCE_SOURCE_MAP.md reconciled and canonically attested (Entry 64). Seeds 201–203 and 301–303 retained, never rerun.**
+
+
+---
+
+## Entry 65 — Compliance protocol publication, audit artifacts, and STATE.md custody attestation
+
+**Date:** 2026-08-18 · **Actor:** RECORDER (custody and hash attestation); WORKFLOW COORDINATOR (protocol drafting); INTEGRATOR (sole STATE.md writer)
+
+- **Gate served:** Compliance protocol establishment (G0-5 from auditor's resolution ladder) + audit artifact publication (R4) + STATE.md reconciliation.
+- **Named base:** 0abb7af (GitHub main, independently verified).
+- **PR #31 (merge 06e2135):** Appended §5 Versioned-Law Compliance Protocol to docs/ARCHITECTURAL_CONSTITUTION_v2.md. P1-P6 universal rules + per-role obligations. Prospective from 2026-08-18. CRITIC-CLEARED (single-file append, no law text modified, content matches auditor's proposal). G0-5 SATISFIED.
+- **PR #32 (merge 11bdedb):** Committed auditor audit artifacts to audits/ directory (AUDITOR_RETURN_HANDOFF.md, AUDITOR_COMPLIANCE_MATRIX.md, AUDITOR_FINDINGS_SUMMARY.md). R4 complete.
+- **PR #33 (merge 0abb7af):** INTEGRATOR reconciled STATE.md (repo hash → 11bdedb, compliance protocol reference, audit artifacts reference, next_action updated for remaining Gate 0 rulings G0-1 through G0-4) and GOVERNANCE_SOURCE_MAP.md (§5 as auditable source, audits/ as auditable source).
+- **STATE.md SHA-256 (canonical LF):** b3b527b4414259de14c81adb23db93e215e1863e25d1f460e15378550e842747 — VERIFIED.
+- **Preserved evidence:** All historical files, SHAs, rulings, and evidence unchanged. Both scoring runs retained as INSTRUMENT FAILURE. Seeds 201-203 and 301-303 never rerun (O-14). No L15-L17 integration claim.
+- **Authorization boundary:** Gate 0 items G0-1 through G0-4 remain BLOCKED pending Rebecca's rulings. No implementation, scoring, or M4 build authorized by this entry.
+- **Standing constraints:** O-14, O-15, D1-D5, L9, L18, L15 integration fence, ≥2 unseen scoring seeds, no renaming negatives, Rebecca sole gate/merge authority — all preserved.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained, provisional advancement). Compliance protocol established (G0-5). Audit artifacts committed (R4). STATE.md reconciled and attested. Gate 0 rulings G0-1 through G0-4 remain pending.**
