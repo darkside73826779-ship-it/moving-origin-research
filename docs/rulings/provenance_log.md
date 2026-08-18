@@ -1954,3 +1954,23 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Scope attestation:** RECORDER applied the patch without modification, performed P6 verification, and appended this provenance entry. No merge to main performed or requested. Principal verification, review-waiver statement, and merge reserved to Rebecca.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. Paper v1.0.1 corrections published to recorder branch (Entry 66). Findings F2/F6 dispositioned pending Principal merge. CRITIC cycle waived for transcription-only change. No merge to main; Principal verification and merge reserved to Rebecca. Seeds 201–203 and 301–303 retained, never rerun.**
+
+
+---
+
+## Entry 67 — Paper v1.0.1 STATE.md reconciliation custody attestation
+
+**Date:** 2026-08-18 (date-stamped at creation per §5-P4, Regime B) · **Actor:** INTEGRATOR (sole STATE.md writer); RECORDER (custody and hash attestation)
+
+- **Gate served:** Paper v1.0.1 STATE.md reconciliation custody attestation following PR #36 (paper v1.0.1 corrections, Entry 66).
+- **Named base:** `7d8d042dd657e982d07bdcfb16fb509ffc9eb499` (GitHub main, post-PR #36; independently verified before attestation).
+- **INTEGRATOR source:** `e87835a2358941d9ca923ee95654e496ea63dad6` on `integrator/paper-v101-state-reconciliation`; direct parent is the named base, one commit ahead. Changes: `state/STATE.md` only (16 insertions, 7 deletions).
+- **STATE.md committed Git blob:** `27c850fcf0f6a89ba0ec8eb1ac574c20e6e3f22f`.
+- **STATE.md canonical Git-blob/LF SHA-256:** `7c70702a9ae6a3fba2a1948040c1166455bd7c88a04ec8f6dc86671c250acdbc` — VERIFIED. Independently computed by RECORDER; matches INTEGRATOR-reported hash. 0 CRLF lines (pure LF).
+- **Reconciliation verification:** STATE.md updated to reflect paper version v1.0.1 (PR #36, Entry 66). Repo hashes updated to `7d8d042`. Paper version reference updated from v1.0 to v1.0.1. Role statuses updated. Changelog appended with §5-P4 regime dating tag.
+- **§5 custody line:** Constitution v1 SHA-256 `509f11c316e6ed3abbdca2df4973484dd676eecc87b727f312ee8658bef93b19` — unchanged. Constitution v2 SHA-256 `8e029645f9e0f2b7914c9e74a6b76b8fd18b7a5c2d7a48a664f771906b045aaf` — unchanged.
+- **Preserved evidence and protections:** M3 INSTRUMENT FAILURE retained (seeds 201–203 and 301–303, never rerun). All prior provenance entries (1–66) remain unchanged. O-14, O-15, D1–D5, L9, L18, L15, §5 (P1–P6), and all standing protections intact.
+- **Scope attestation:** INTEGRATOR result changes only `state/STATE.md`; no scientific standard, verdict, specification, constitution, implementation, scoring artifact, review, or provenance content altered. RECORDER appended this provenance entry only and did not alter STATE.md.
+- **Next authorized role:** **Rebecca**, to decide whether to incorporate this custody-only branch.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. Paper v1.0.1 corrections published and merged (PR #36, Entry 66). STATE.md reconciled and canonically attested (Entry 67). §5 custody line: constitution SHA-256 unchanged. Seeds 201–203 and 301–303 retained, never rerun.**
