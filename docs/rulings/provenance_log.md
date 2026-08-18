@@ -1821,3 +1821,14 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Preserved evidence:** all prior provenance entries (1–59) remain unchanged. M3 INSTRUMENT FAILURE status preserved. O-14, O-15, D1–D5, L9, L18, and all standing constraints intact.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. Governance paper preprint v1.0 published to main (PR #27, Entry 60). All citations verified, code-lineage audit complete (0 findings). Seeds 201–203 and 301–303 retained, never rerun.**
+
+
+## Entry 61 — STATE.md custody attestation (Entry 60 reconciliation)
+
+- **Gate served:** STATE.md custody attestation following INTEGRATOR reconciliation (Entry 60).
+- **STATE.md committed Git blob:** `780363723a79399a2169ad5ee0643900c95e3e2c`.
+- **STATE.md canonical Git-blob/LF SHA-256:** `51f10c14533ab6db2312ee0fabb2c1298888eb958c8ee907deb0c91ec9e0732f` — VERIFIED. Independently computed. 0 CRLF lines (pure LF).
+- **Reconciliation verified:** the state accurately records Entry 60 (governance paper publication, PR #27 at `bf0c716`, provenance log updated at `999e141`). Updated `repo.commit_hash` (`999e141`), `repo.github_main_verified` (`999e141`), `Last-updated` timestamp, and appended changelog entry. No scientific bars, scoring predicates, historical verdicts, or evidence modified. INSTRUMENT FAILURE labels retained. Seeds 201–203 and 301–303 retained, never rerun. All prior provenance entries (1–60) remain unchanged. O-14, O-15, D1–D5, L9, L18, and all standing constraints intact.
+- **Scope attestation:** the RECORDER appended this provenance entry only and did not edit STATE.md (INTEGRATOR is sole writer), specifications, implementation, scoring artifacts, or prior provenance entries.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. Governance paper v1.0 published (PR #27, Entry 60). STATE.md reconciled and canonically attested (Entry 61). Seeds 201–203 and 301–303 retained, never rerun.**
