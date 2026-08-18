@@ -105,6 +105,16 @@ The informational collapse test (old kill (a), answer-agreement vs naive) is **R
 
 **Persistence Doctrine accounting:** Candidate 1.1 NOT charged as a death. Retry budget: 3 candidates, 3 spent 0, remaining 3. The mechanism (deferred-designation re-resolving index) remains a legitimate first candidate under the revised test. Cause attributed to the TEST, not the candidate or the idea.
 
+### Amendment 2 — E1 L18 battery waiver (Entry 69/70, 2026-08-18)
+
+**Signed by:** Rebecca McClintic (Principal waiver, memorialized per P5; signed at G0-2 ruling, Entry 69)
+
+**Provenance reference:** Entry 69 and Entry 70 (`docs/rulings/provenance_log.md`)
+
+**Amendment 2 (Entry 69/70, 2026-08-18): E1 L18 battery waiver.** The E1 L18 battery operated with 6 arms but no distinct permuted arm. This was disclosed (§N7), pre-registered, and Principal-gated at M2 time. Rebecca signed a waiver memorializing the six-arm E1 battery as accepted. Standing mandate: a distinct permuted arm is required in all future E1-class scoring. Neither relabels E1 GREEN. Law text unchanged.
+
+**Law constraint text:** Unchanged. No L1–L20 law text is modified by this waiver. The waiver memorializes a disclosed, pre-registered, Principal-gated deviation per P5 (deviation memorialization). It registers the waiver and records the standing mandate; it does not alter any law's constraint text.
+
 ---
 
 *v1 of this constitution is preserved at `docs/ARCHITECTURAL_CONSTITUTION.md` (SHA-256 `509f11c316e6ed3abbdca2df4973484dd676eecc87b727f312ee8658bef93b19`). No law text was modified in v2. The amendment log and §5 compliance protocol are the only additions.*

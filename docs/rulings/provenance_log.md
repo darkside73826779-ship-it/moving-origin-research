@@ -2001,3 +2001,19 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **G0-3 ruling — Reviewer for corrected M4 spec:** Standing CRITIC session retired; new CRITIC session to be re-initialized from updated init script (includes §5 compliance protocol). The re-initialized CRITIC constitutes a fresh-context reviewer (new session, no prior involvement in M4 spec review cycles). This satisfies both R2's exit criterion (committed review artifact with law-diff table) and §5.2 coordinator obligation (fresh-context law-fidelity review).
 - **Preserved evidence:** All historical files, SHAs, rulings, and evidence unchanged. Both scoring runs retained as INSTRUMENT FAILURE. Seeds 201–203 and 301–303 never rerun (O-14).
 - **Authorization boundary:** G0-2 and G0-3 rulings recorded. G0-4 and M4 gate remain pending. R3 (RECORDER records F2 ruling in amendment log) to follow. No implementation, scoring, or merge authorized by this entry.
+
+
+---
+
+## Entry 70 — Principal ruling: G0-4 M0_DECISION_SHEET published; O-6 closed; R3 G0-2 waiver recorded
+
+**Date:** 2026-08-18 · **Actor:** Rebecca McClintic (Principal ruling); RECORDER (custody and logging)
+
+- **G0-4 ruling:** Rebecca chose option (i) — recover and publish the M0_DECISION_SHEET. The sheet was recovered from Rebecca's local copy and published to docs/rulings/M0_DECISION_SHEET.md (PR #39 merged). SHA-256: 9593c51bf9a47cd9509100a634578dc3745a177490acda8864012b5b180f2d95. 55 lines. Contains all M0 pre-registration bars including L8 (≥3 noise doses, Spearman ρ ≥ 0.8, slope ≥ 0.2, specificity control), L7 (AUROC ≥ 0.75, ECE ≤ 0.10, 5 seeds), L10 (50%/10% dual bar), L14 (d ≥ 0.5, corr ≥ 0.3), L15 (d ≥ 0.5), and all §9 operationalizations.
+- **O-6 status:** CLOSED. The M0_DECISION_SHEET is now persisted in the repository as a standalone file.
+- **R3 (G0-2 waiver):** The G0-2 ruling (Entry 69) includes a waiver for the E1 six-arm battery (no distinct permuted arm). Per P5 (deviation memorialization), this waiver is recorded in the v2 amendment log below.
+- **L8 bars confirmed:** From the published sheet — ≥3 noise doses [BAR-Entry 11]; Spearman ρ ≥ 0.8 monotonic [BAR-Entry 11]; standardized slope ≥ 0.2 [BAR-Entry 11]; specificity control mandatory (self-irrelevant dose must NOT move regulation error) [BAR-Entry 11]; seeds: 5 [BAR-Entry 11.3]. These bars were referenced in the Principal's M4 gate resolution sequence and confirmed against the published sheet.
+- **Preserved evidence:** All historical files, SHAs, rulings, and evidence unchanged. Both scoring runs retained as INSTRUMENT FAILURE. Seeds 201-203 and 301-303 never rerun (O-14).
+- **Authorization boundary:** G0-4 resolved. G0-5 previously resolved. Steps 3-8 of the M4 gate resolution sequence remain pending. No implementation, scoring, or merge authorized by this entry beyond the publication already completed.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). G0-1 through G0-5 resolved. M0_DECISION_SHEET published. O-6 closed. Remaining: Steps 3-8 of M4 gate resolution sequence.**
