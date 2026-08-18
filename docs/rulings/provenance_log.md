@@ -1885,3 +1885,23 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Next authorized role:** **Rebecca** (merge decision), then **INTEGRATOR** (Step 6: update STATE.md + GOVERNANCE_SOURCE_MAP.md).
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. Constitution v2 (with amendment log) published to GitHub recorder branch (Entry 63). No merge to main; Rebecca sole merge authority. Seeds 201–203 and 301–303 retained, never rerun.**
+
+
+---
+
+## Entry 64 — Constitution publication STATE.md + GOVERNANCE_SOURCE_MAP.md custody attestation
+
+**Date:** 2026-08-18 · **Actor:** INTEGRATOR (sole STATE.md writer); RECORDER (custody and hash attestation)
+
+- **Gate served:** Constitution publication STATE.md + GOVERNANCE_SOURCE_MAP.md reconciliation custody attestation (Step 7 of 7), following PR #28 (constitution v1, Entry 62) and PR #29 (constitution v2, Entry 63).
+- **Named base:** `6e5fa83786760f488bc1aaf0e46f51676d5e29bc` (GitHub main, post-PR #29; independently verified before attestation).
+- **INTEGRATOR source:** `ab0c056bb9d0225c9c9a4de00aad42c0683cca65` on `integrator/constitution-publication-state-update`; direct parent is the named base, one commit ahead. Changes: `state/STATE.md` (19 insertions, 7 deletions) and `GOVERNANCE_SOURCE_MAP.md` (10 insertions, 8 deletions). 2 files changed, 29 insertions, 15 deletions.
+- **STATE.md committed Git blob:** `56e78be0ad78c4d1e26dfcdd0d38f0cfdab10383`.
+- **STATE.md canonical Git-blob/LF SHA-256:** `c77585a015107045418f4a24002f184fd12da9fbcafc7a76e3fc1526b8d090c3` — VERIFIED. Independently computed by RECORDER from the INTEGRATOR branch content; matches INTEGRATOR-reported hash. 0 CRLF lines (pure LF).
+- **GOVERNANCE_SOURCE_MAP.md SHA-256:** `b3e6fbb92f89883ced81d95bee407410bd4c84aad540d12016bb477e1694597e` (as reported by INTEGRATOR).
+- **Reconciliation verification:** STATE.md updated to reflect PR #28 (constitution v1) and PR #29 (constitution v2) merges; repo hashes updated to `6e5fa83`; constitution v1 and v2 SHA-256 references added; role statuses updated; next action updated; changelog appended. GOVERNANCE_SOURCE_MAP.md updated to reflect that the constitution is now persisted on GitHub main at `docs/ARCHITECTURAL_CONSTITUTION.md` and `docs/ARCHITECTURAL_CONSTITUTION_v2.md`.
+- **Preserved evidence and protections:** the first M3 scoring run remains **INSTRUMENT FAILURE** (seeds 201–203). The second M3 scoring run remains **INSTRUMENT FAILURE** (seeds 301–303). Seeds 201–203 and 301–303 are retained and must never be rerun. All prior provenance entries (1–63) remain unchanged. O-14, O-15, D1–D5, L9, L18, L15, unseen-seed protections, supervised-execution boundaries, and all standing protections remain intact.
+- **Scope attestation:** the INTEGRATOR result changes only `state/STATE.md` and `GOVERNANCE_SOURCE_MAP.md`; it alters no scientific standard, verdict, specification, constitution, implementation, scoring artifact, review, or provenance content. RECORDER appended this provenance entry only and did not alter `state/STATE.md`, `GOVERNANCE_SOURCE_MAP.md`, constitution files, specifications, verification artifacts, implementation, scoring artifacts, or reviews.
+- **Next authorized role:** **Rebecca**, to decide whether to incorporate this custody-only branch. After merge, the workflow proceeds to CRITIC faithfulness check (confirm M1–M3 followed the constitution as amended), then green light to M4.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. Constitution v1 and v2 published to GitHub main. STATE.md and GOVERNANCE_SOURCE_MAP.md reconciled and canonically attested (Entry 64). Seeds 201–203 and 301–303 retained, never rerun.**
