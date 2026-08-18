@@ -4,7 +4,9 @@
 Independent Researcher
 becca.mcclintic@gmail.com
 
-*Preprint v1.0 — August 17, 2026. All citations independently verified.*
+*Preprint v1.0.1 — August 18, 2026 (corrections C1–C2; see Corrections note). Original: v1.0, August 17, 2026. All citations independently verified.*
+
+**Scope statement (constitutional audit law L20):** Passing all laws of the governed program demonstrates temporal self-modeling competence — not awareness. This paper's own claims concern research governance only.
 
 ---
 
@@ -88,7 +90,7 @@ The claim that a governance system "works" is unfalsifiable if the system has on
 
 ### 4.1 Context: the governed program
 
-The object-level program tests whether a moving-origin temporal self-index — a continuously updated "now" reference — is operationally distinguishable from frozen, naive, shuffled, permuted, and oracle controls under pre-specified tests. The program explicitly disclaims consciousness, awareness, and AGI framing; the constitution's audit laws make this disclaimer binding on all agents. Two milestones passed their gates: M1 (harness validation) and E1 (candidate correctness, operational distinctness, and load-bearing coupling on five seeds, with oracle agreement 1.0 and approximately constant candidate latency against ~6.89× growth in a fair-naive baseline). These passes are context, not evidence for the governance claim — passes are what a broken governance system would also produce.
+The object-level program tests whether a moving-origin temporal self-index — a continuously updated "now" reference — is operationally distinguishable within a pre-registered six-arm control battery — frozen-origin, shuffled-cadence, oracle-index, fair-naive, empty, and wall-clock-injection arms — under pre-specified tests. The program explicitly disclaims consciousness, awareness, and AGI framing; the constitution's audit laws make this disclaimer binding on all agents. Two milestones passed their gates: M1 (harness validation) and E1 (candidate correctness, operational distinctness, and load-bearing coupling on five seeds, with oracle agreement 1.0 and approximately constant candidate latency against ~6.89× growth in a fair-naive baseline). These passes are context, not evidence for the governance claim — passes are what a broken governance system would also produce.
 
 ### 4.2 Episode 1: Pre-registered termination of a companion program
 
@@ -211,3 +213,13 @@ Zheng, L., et al. (2023). Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena
 ## Data Availability
 
 The governed research program's public repository, including specifications, implementation code, test suites, scoring summaries, rulings, provenance records, and the public-repository operating policy, is available at https://github.com/darkside73826779-ship-it/moving-origin-research. The companion glial substrate repository is available at https://github.com/darkside73826779-ship-it/glial-substrate. Raw scoring artifacts (257,636 files, ~16.3 GB) are retained locally; a committed inventory with checksums and access procedures is provided in the repository. Correspondence: becca.mcclintic@gmail.com.
+
+---
+
+## Corrections (v1.0.1, 2026-08-18)
+
+**C1 (§4.1, per audit finding F2).** v1.0 stated E1's controls as "frozen, naive, shuffled, permuted, and oracle." The versioned-law compliance audit (audits/AUDITOR_RETURN_HANDOFF.md, finding F2) established that the E1 battery comprised six arms with no distinct permuted arm; the control list is corrected to the battery as run. E1's verdict is unaffected; the F2 process finding (waiver never memorialized) is dispositioned separately at Gate 0.
+
+**C2 (header, per audit finding F6).** The scope statement required by constitutional audit law L20 to appear first in any external writeup was present in v1.0 only within §4.1; it is added to the paper's opening.
+
+Both corrections repair statements inaccurate at the time of v1.0's publication; no result, verdict, or argument is modified. Corrections are prospective; v1.0 is preserved in repository history.
