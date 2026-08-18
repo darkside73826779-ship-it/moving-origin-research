@@ -15,3 +15,46 @@ keywords:
   - reproducibility
   - falsification
   - agent governance
+references:
+  - type: article
+    title: "Memory and consciousness"
+    authors:
+      - family-names: "Tulving"
+        given-names: "Endel"
+    year: 1985
+    journal: "Canadian Psychology/Psychologie canadienne"
+    volume: 26
+    issue: 1
+    pages: "1-12"
+    doi: "10.1037/h0080017"
+  - type: article
+    title: "The evolution of foresight: What is mental time travel, and is it unique to humans?"
+    authors:
+      - family-names: "Suddendorf"
+        given-names: "Thomas"
+      - family-names: "Corballis"
+        given-names: "Michael C."
+    year: 2007
+    journal: "Behavioral and Brain Sciences"
+    volume: 30
+    issue: 3
+    pages: "299-313"
+    doi: "10.1017/S0140525X07001975"
+  - type: book
+    title: "On the Phenomenology of the Consciousness of Internal Time (1893-1917)"
+    authors:
+      - family-names: "Husserl"
+        given-names: "Edmund"
+    year: 1991
+    publisher: "Kluwer Academic Publishers"
+    notes: "Translated by John Barnett Brough. Collected Works, Vol. 4."
+  - type: article
+    title: "Am I Self-Conscious? (Or Does Self-Organization Entail Self-Consciousness?)"
+    authors:
+      - family-names: "Friston"
+        given-names: "Karl"
+    year: 2018
+    journal: "Frontiers in Psychology"
+    volume: 9
+    pages: "579"
+    doi: "10.3389/fpsyg.2018.00579"

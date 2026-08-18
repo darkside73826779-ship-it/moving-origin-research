@@ -51,6 +51,33 @@ Open work includes:
 
 See [RESEARCH_STATUS.md](RESEARCH_STATUS.md) for a compact evidence and limitation ledger.
 
+## Conceptual lineage
+
+The moving-origin construct does not originate with this program. It operationalizes
+ideas with established lineage, cited here so the program's contribution is scoped
+correctly — the contribution is the operational test battery and governance record,
+not the underlying concept:
+
+- **Tulving (1985), "Memory and consciousness"** — autonoetic consciousness: episodic
+  remembering as a self located in subjective time. The direct ancestor of a "now"
+  indexed to a system's own history.
+- **Suddendorf & Corballis (2007)** — mental time travel as the standard modern
+  framing of the Tulving lineage.
+- **Husserl, *On the Phenomenology of the Consciousness of Internal Time***
+  (1893–1917; Brough trans. 1991) — the thick present with retention and protention;
+  the source of the "origin that moves" rather than "timeline that is scanned"
+  distinction.
+- **Friston (2018), "Am I Self-Conscious?"** — temporal depth in active inference;
+  the computational bridge between the phenomenological and mechanistic framings.
+- Optionally, for a mechanistic neuroscience anchor: hippocampal time cells
+  (Eichenbaum 2014; see also Buzsáki & Llinás 2017 on brain time) — temporal
+  indexing as mechanism rather than metaphor.
+
+Methodological practices are likewise inherited: pre-registration and registered
+reports (Nosek et al. 2018; Chambers 2013), and the instrument-failure /
+candidate-failure distinction adapted from metrology and clinical-trial data
+monitoring practice rather than from machine learning.
+
 ## Quick start: non-scoring verification
 
 Python 3.11 is required.
