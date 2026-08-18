@@ -7,6 +7,22 @@
 
 ---
 
+## v1.2 — CRITIC BF3 re-resolution + BF6 + NF4/NF5 (2026-08-18)
+
+### BF3: Multiplicity table aligned with V4.4 implementation
+Corrected: alpha_seed = 0.05 / number_of_tested_laws (cross-law Bonferroni, NOT per-family-within-law). Stochastic family membership defined: 3 per law (frozen, permuted, shuffled) — oracle/naive/empty are deterministic. Check count corrected from 90 to 45 stochastic checks (plus 45 deterministic threshold checks).
+
+### BF6: Naive-outperforms-candidate re-routed to KILL
+§3.3a (L8) and §4.4a (L10): naive beating candidate is candidate failure (KILL), not instrument failure. INSTRUMENT_FAILURE reserved for control-arm self-inconsistency (oracle not perfect, empty not at chance, frozen unexpected).
+
+### NF4: Peer calibration wording fixed
+§2.3: Removed contradictory "same method as candidate" language. Peer confidence = normalized absolute OLS residual: `1 / (1 + |residual|)`. Fixed formula, distinct from candidate's method.
+
+### NF5: L7 control table failure routing added
+§2.4: Added failure routing column matching §3.3a and §4.4a detail. Naive beating candidate → KILL. Oracle/empty/frozen violations → INSTRUMENT_FAILURE.
+
+---
+
 ## v1.1 — CRITIC BF1–BF5 + NF1–NF3 resolutions (2026-08-18)
 
 ### BF1: L8 direction pre-registered

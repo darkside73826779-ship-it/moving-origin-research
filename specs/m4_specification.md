@@ -91,21 +91,21 @@ The peer-observer is a **fixed linear baseline** — not a trained model, not an
 - **Algorithm/model class:** Ordinary least squares (OLS) regression mapping the observable input history to the same state-property prediction task the candidate solves. No learned nonlinearity, no neural network, no adaptive mechanism.
 - **Training data:** The peer is fit on the same fitting-origin data the candidate uses (e.g., cycles 0–699 in the M3 L3 pattern). Training is completed before candidate evaluation begins. No online learning.
 - **Features:** The peer receives exactly the observable inputs: the append-log entries, query stream, and external event timestamps. It does NOT receive: the candidate's internal state variables, self-report channel, confidence estimates, or moving-origin representation. The peer's feature vector is the raw observable input window at query time.
-- **Calibration procedure:** The peer's confidence is computed via the same method as the candidate's (e.g., normalized prediction entropy or distance-to-threshold). No separate calibration — the peer uses the raw OLS residual as its confidence proxy.
+- **Calibration procedure:** The peer's confidence is computed as the normalized absolute OLS residual: `confidence = 1 / (1 + |residual|)`. This is a fixed formula, not the same method as the candidate's (which may use moving-origin-specific confidence estimation). The peer does not receive the candidate's confidence estimates or calibration procedure (NF4 resolution).
 - **Rationale:** A fixed linear peer is the strongest fair baseline that does not require its own temporal machinery. If the candidate's moving origin provides privileged access, it should beat a linear model that sees the same inputs but lacks the internal representation. If the candidate cannot beat a linear peer, the moving origin is not contributing self-knowledge.
 
 **Scoring:** AUROC is computed over the candidate's and peer's predictions of held-out state properties. ECE measures calibration of confidence estimates. Margin is the difference (candidate AUROC − peer AUROC), tested for statistical significance at p < .05.
 
 ### 2.4 Controls (L18 battery — constitutionally mandatory per Entry 8 correction 3)
 
-| Control arm | What it tests |
-|---|---|
-| Empty | No data — should produce chance AUROC (0.5) |
-| Permuted | State-property labels shuffled — should collapse to chance |
-| Shuffled | Input order shuffled — should degrade if candidate depends on temporal order |
-| Oracle | Full ground-truth access — should produce AUROC = 1.0 |
-| Naive | Simple heuristic (e.g., most-recent-state) — should produce AUROC > 0.5 but < candidate |
-| Frozen | State frozen at initial value — should produce chance if candidate depends on state updates |
+| Control arm | Expected behavior | Failure routing (NF5 resolution) |
+|---|---|---|
+| Empty | No data — should produce chance AUROC (0.5) | INSTRUMENT_FAILURE if AUROC deviates from 0.5 by > 0.05 |
+| Permuted | State-property labels shuffled — should collapse to chance | INSTRUMENT_FAILURE if AUROC > 0.55 (permuted should not exceed chance) |
+| Shuffled | Input order shuffled — should degrade if candidate depends on temporal order | INSTRUMENT_FAILURE if shuffled AUROC > candidate AUROC (temporal order not load-bearing) |
+| Oracle | Full ground-truth access — should produce AUROC = 1.0 | INSTRUMENT_FAILURE if oracle AUROC < 0.95 |
+| Naive | Simple heuristic (most-recent-state) — should produce AUROC > 0.5 but < candidate | KILL if naive AUROC ≥ candidate AUROC (candidate mechanism not contributing) |
+| Frozen | State frozen at initial value — should produce chance if candidate depends on state updates | INSTRUMENT_FAILURE if frozen AUROC > 0.55 (frozen should not exceed chance) |
 
 ### 2.5 Kill conditions
 
@@ -169,7 +169,7 @@ The candidate's behavior (prediction accuracy, abstention rate, or other measure
 | Permuted | Stakes-level labels shuffled — should NOT show monotonic trend (trend destroyed by label shuffling) | INSTRUMENT_FAILURE if monotonic trend persists |
 | Shuffled | Input order shuffled — should show degraded or flat dose-response (temporal order disrupted) | INSTRUMENT_FAILURE if performance exceeds candidate at any level |
 | Oracle | Full ground-truth access — should show the SAME or STRONGER dose-response (oracle also degrades with longer horizons, but less) | INSTRUMENT_FAILURE if oracle does not show expected degradation pattern |
-| Naive | Simple heuristic (most-recent-state) — should show weaker dose-response than candidate | INSTRUMENT_FAILURE if naive outperforms candidate |
+| Naive | Simple heuristic (most-recent-state) — should show weaker dose-response than candidate | KILL if naive outperforms candidate (candidate mechanism not contributing) |
 | Frozen | State frozen at initial value — should NOT show dose-response (no temporal machinery engaged) | KILL if frozen shows monotonic trend (stakes decorative) |
 
 ### 3.4 Kill conditions
@@ -231,7 +231,7 @@ The CRITIC flagged that L10 abstention "lacks clean-regime specificity control" 
 | Permuted | Confidence labels shuffled — should show NO differential abstention between clean/drifted (calibration destroyed) | INSTRUMENT_FAILURE if differential abstention persists |
 | Shuffled | Input order shuffled — should show reduced or flat differential abstention | INSTRUMENT_FAILURE if abstention pattern exceeds candidate's |
 | Oracle | Full ground-truth access — should abstain at ~0% in both regimes (oracle is always confident) | INSTRUMENT_FAILURE if oracle abstains > 10% in either regime |
-| Naive | Simple heuristic (fixed confidence) — should show minimal differential abstention | INSTRUMENT_FAILURE if naive outperforms candidate's calibration |
+| Naive | Simple heuristic (fixed confidence) — should show minimal differential abstention | KILL if naive outperforms candidate's calibration (candidate mechanism not contributing) |
 | Frozen | State frozen at initial value — should NOT show differential abstention between clean and drifted | INSTRUMENT_FAILURE if frozen shows differential abstention |
 
 ### 4.5 Operational design
@@ -304,49 +304,74 @@ M4 shall use the V4.4 stochastic control framework (SHA-256-CTR-FY, 1000 null re
 
 M3 used two scoring runs on two seed pools (201–203, 301–303). Future specs should pre-register multiplicity expectations. M4 must document its multiplicity plan.
 
-### 7.2 M4 multiplicity plan (BF3 resolution)
+### 7.2 M4 multiplicity plan (BF3 resolution — corrected)
 
-**Two-level alpha structure:**
+**V4.4 alpha structure (aligned with actual implementation):**
+
+The V4.4 framework (`V44_ALPHA_FAMILY = 0.05`, `V44_ALPHA_SEED = V44_ALPHA_FAMILY / 3.0`) uses a cross-law Bonferroni correction: the denominator (3) is the number of tested laws, NOT the number of stochastic families per law. Within each law, each stochastic family's plus-one p-value is compared against `alpha_seed`. There is no additional within-law Bonferroni — the plus-one p-value is already conservative.
+
+At M3, this was: 3 tested laws (L1, L3, L5) → alpha_seed = 0.05/3.
+At M4: 3 tested laws (L7, L8, L10) → alpha_seed = 0.05/3. Same structure, same value.
+
+**Stochastic family membership per law (BF3 correction):**
+
+Not all L18 arms are stochastic families. A stochastic family is an arm that uses V4.4 RNG-driven randomization (permutations, derangements) and computes a null distribution via 1000 null replicates with a plus-one upper-tail p-value. Deterministic arms (oracle, naive, empty) have known expected values and are evaluated directly — no null distribution.
+
+| Law | Stochastic families | Deterministic controls |
+|---|---|---|
+| L7 | frozen, permuted, shuffled (3 families) | oracle, naive, empty |
+| L8 | frozen, permuted, shuffled (3 families) | oracle, naive, empty |
+| L10 | frozen, permuted, shuffled (3 families) | oracle, naive, empty |
+
+This follows the M3 pattern: at M3, L1 had 4 stochastic families (frozen, fair_naive, permuted, shuffled), L3 had 4 (frozen, oracle, permuted, shuffled), L5 had 1 (permuted). The fair_naive arm was stochastic at M3 because it used a random ranking permutation; at M4, the naive arm is a fixed heuristic (most-recent-state) with no randomization, so it is deterministic. The L3 oracle was stochastic at M3 because it used random innovations; at M4, the oracle has full ground-truth access with no randomization, so it is deterministic.
+
+**Alpha correction table:**
 
 | Level | Correction | Value | Applies to |
 |---|---|---|---|
-| Within-law | alpha_seed = alpha_family / 3 | 0.05 / 3 ≈ 0.0167 | Per stochastic family within each law (V4.4 framework, same as M3) |
-| Cross-law | Bonferroni: 0.05 / number_of_tested_laws | 0.05 / 3 ≈ 0.0167 | Across L7, L8, L10 candidate-facing bars |
+| Cross-law (familywise) | alpha_family / number_of_tested_laws | 0.05 / 3 ≈ 0.0167 | All stochastic families across all laws (L7, L8, L10) |
+| Per-family | Plus-one upper-tail p-value vs alpha_seed | — | Each stochastic family's observed statistic vs its 1000-replicate null |
 
-Note: These produce the same numerical value (0.05/3) by coincidence — 3 stochastic families per law and 3 tested laws. They are conceptually distinct corrections: within-law corrects for multiple control arms, cross-law corrects for multiple candidate-facing tests.
+Note: At M3, this same structure produced alpha_seed = 0.05/3 because M3 also tested 3 laws. The value is the same at M4 by coincidence (3 laws in both milestones). The correction is cross-law, not per-family-within-law.
 
-**L14 multiplicity status:** L14 is a deterministic correlation/effect-size measurement, not a stochastic control family. It has no null replicates, no plus-one p-value, and no V4.4 stochastic family. It is therefore EXCLUDED from the stochastic control check count. L14's bars (d ≥ 0.5, corr ≥ 0.3) are evaluated directly per seed without stochastic correction. If CRITIC or Rebecca determines L14 requires stochastic treatment, it should be added to the family count.
+**L14 multiplicity status:** L14 is a deterministic correlation/effect-size measurement, not a stochastic control family. No null replicates, no plus-one p-value. EXCLUDED from stochastic check count. Bars (d ≥ 0.5, corr ≥ 0.3) evaluated directly per seed.
 
 **Per-arm statistical test definitions:**
 
 | Law | Arm type | Statistical test | Direction |
 |---|---|---|---|
-| L7 | Stochastic controls (empty, permuted, shuffled, oracle, naive, frozen) | Plus-one upper-tail p-value (V4.4) | Upper (statistic exceeds null) or two-sided-magnitude (departure from null) per arm |
+| L7 | Stochastic: frozen, permuted, shuffled | Plus-one upper-tail p-value (V4.4) | Upper or two-sided-magnitude per arm |
+| L7 | Deterministic: oracle, naive, empty | Direct threshold check | Oracle AUROC ≥ 0.95; empty AUROC ≈ 0.5; naive AUROC < candidate |
 | L7 | Candidate (AUROC, ECE, margin) | Direct threshold + paired test (margin) | AUROC ≥ 0.75; margin > 0 at p < .05 |
-| L8 | Stochastic controls (6 arms) | Plus-one upper-tail p-value (V4.4) | Upper (statistic exceeds null) |
+| L8 | Stochastic: frozen, permuted, shuffled | Plus-one upper-tail p-value (V4.4) | Upper (statistic exceeds null) |
+| L8 | Deterministic: oracle, naive, empty | Direct threshold check | Oracle shows expected degradation; empty at chance; naive < candidate |
 | L8 | Candidate (monotonic trend) | All-seeds-direction + bootstrap-CI fallback | Pre-registered: decreasing (§3.3) |
-| L10 | Stochastic controls (6 arms) | Plus-one upper-tail p-value (V4.4) | Two-sided-magnitude (departure from null) |
+| L10 | Stochastic: frozen, permuted, shuffled | Plus-one upper-tail p-value (V4.4) | Two-sided-magnitude (departure from null) |
+| L10 | Deterministic: oracle, naive, empty | Direct threshold check | Oracle abstains ~0%; empty abstains 100%; naive < candidate |
 | L10 | Candidate (abstention rates, AUROC) | Direct threshold per seed | ≥ 50% drift; ≤ 10% clean; AUROC ≥ 0.70 |
 | L14 | Candidate (correlation, effect size) | Direct threshold per seed (no stochastic family) | d ≥ 0.5; corr ≥ 0.3 |
 
-**Check count:**
+**Check count (corrected):**
 
-| Component | Families | Seeds | Per-seed checks | Total |
+| Component | Stochastic families | Seeds | Per-seed checks | Total stochastic |
 |---|---|---|---|---|
-| L7 stochastic controls | 6 | 5 | 1 per family per seed | 30 |
-| L8 stochastic controls | 6 | 5 | 1 per family per seed | 30 |
-| L10 stochastic controls | 6 | 5 | 1 per family per seed | 30 |
+| L7 stochastic controls | 3 (frozen, permuted, shuffled) | 5 | 1 per family per seed | 15 |
+| L8 stochastic controls | 3 (frozen, permuted, shuffled) | 5 | 1 per family per seed | 15 |
+| L10 stochastic controls | 3 (frozen, permuted, shuffled) | 5 | 1 per family per seed | 15 |
 | L14 | 0 (deterministic) | 5 | 0 | 0 |
-| **Total stochastic checks** | | | | **90** |
+| **Total stochastic checks** | | | | **45** |
+
+Deterministic control checks (oracle, naive, empty) are evaluated via direct threshold, not p-values. They add 3 laws × 3 deterministic arms × 5 seeds = 45 threshold checks, but these are not V4.4 stochastic checks.
 
 | Element | Value |
 |---|---|
 | Scoring seeds | 5 (fresh, Rebecca-authorized via courier) |
 | Seed pools | 1 pool of 5 seeds |
-| Familywise alpha (within-law) | 0.05 |
-| Per-seed alpha (within-law) | 0.05/3 ≈ 0.0167 |
-| Cross-law Bonferroni | 0.05/3 ≈ 0.0167 |
-| Total stochastic control checks | 90 |
+| Familywise alpha (cross-law) | 0.05 |
+| alpha_seed (per-law Bonferroni) | 0.05/3 ≈ 0.0167 |
+| Stochastic families per law | 3 (frozen, permuted, shuffled) |
+| Total stochastic checks | 45 |
+| Total deterministic threshold checks | 45 |
 | Reproducibility | Semantic digest comparison (both passes) |
 
 ### 7.3 Hold-out seed rule
