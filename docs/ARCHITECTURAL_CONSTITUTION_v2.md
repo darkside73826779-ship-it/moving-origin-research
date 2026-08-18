@@ -107,4 +107,37 @@ The informational collapse test (old kill (a), answer-agreement vs naive) is **R
 
 ---
 
-*v1 of this constitution is preserved at `docs/ARCHITECTURAL_CONSTITUTION.md` (SHA-256 `509f11c316e6ed3abbdca2df4973484dd676eecc87b727f312ee8658bef93b19`). No law text was modified in v2. The amendment log is the only addition.*
+*v1 of this constitution is preserved at `docs/ARCHITECTURAL_CONSTITUTION.md` (SHA-256 `509f11c316e6ed3abbdca2df4973484dd676eecc87b727f312ee8658bef93b19`). No law text was modified in v2. The amendment log and §5 compliance protocol are the only additions.*
+
+---
+
+## §5 Versioned-Law Compliance Protocol
+
+**Effective date:** 2026-08-18 (prospective; does not apply retroactively to existing artifacts)
+
+### 5.1 Universal rules (all roles, all artifacts)
+
+- **P1 — Repo-first law.** No text is binding unless it is committed to the repo. If a role needs binding text it cannot find in the repo, it STOPS and escalates to the COORDINATOR. Reconstruction of constitutional text is forbidden — the constitution is published; reconstruction is unnecessary and therefore prohibited.
+- **P2 — Verbatim quotation.** Any artifact that operationalizes a law (spec, review, harness docstring) opens the relevant section with the law's verbatim text quoted from `docs/ARCHITECTURAL_CONSTITUTION.md` (v2 for Regime B semantics), cited by file and line. Paraphrase never substitutes for the quote.
+- **P3 — Source-class tags.** Every numeric threshold, kill condition, or test criterion carries an inline source tag, one of exactly four: `[LAW-Lx]` (in the constitution's text), `[BAR-Entry n]` (Rebecca-locked pre-registration), `[OP-Entry n]` (adopted operationalization), `[PROPOSED]` (requires Rebecca sign-off; may not gate anything until signed). A number without a tag is a review-blocking defect.
+- **P4 — Regime dating.** Every new artifact states its date and regime in its header. Acts are judged only against their own regime's text; later text is never applied backward.
+- **P5 — Deviation memorialization.** Any deviation from `[LAW]` text — however sensible, however disclosed — is inoperative for scoring until Rebecca has signed a waiver or amendment recorded in the v2 amendment log. Disclosure in a spec is necessary but not sufficient.
+- **P6 — Provenance citation check.** Any claim of the form "Entry n said X" must be verified against the entry's actual text before commit.
+
+### 5.2 Per-role obligations
+
+- **ARCHITECT:** P1/P2/P3 in every spec. A law section that cannot be written from verbatim text is a STOP, not a reconstruction. Gap flags are escalation triggers, not permissions to proceed.
+- **CRITIC:** First checklist item of every review, before substance: (i) diff every quoted law against the constitution file; (ii) verify every threshold's source tag; (iii) verify every provenance citation against the log. A review that skips the law-diff is incomplete. The existing bar-laundering check stays as is.
+- **JUDGE:** Before scoring, verify each applied bar traces to a `[LAW]` or `[BAR]` tag. Refuse to score any run whose bars include untagged or `[PROPOSED]` criteria. (Unchanged: never lower, never soften, negatives retained.)
+- **TASK BUILDER:** Implement only tagged criteria. All protective guards (hold-out seeds, scoring-mode routing) fail-closed. Diagnostic runs stay O-15-labeled, development-pool-only.
+- **INTEGRATOR:** STATE.md entries carry source tags; `locked_bars` may contain only `[LAW]`/`[BAR]`/`[OP]` items, with `[PROPOSED]` quarantined in a separate block. STATE.md keeps its non-constitutional disclaimer.
+- **RECORDER:** Every milestone package includes a custody line verifying the constitution file's SHA-256 unchanged. All new artifacts date-stamped at creation. Amendment log is the sole registry of waivers (P5).
+- **WORKFLOW COORDINATOR:** (i) Enforce Gate 0 ordering in resolution ladders; (ii) route every new milestone spec and every constitutional document through the designated fresh-context law-fidelity review before Rebecca's gate — standing CRITIC review does not substitute for it; (iii) at each milestone gate, commission a lightweight fresh-context compliance spot-check rather than deferring to a single end-of-program audit; (iv) reject any handoff that asks a role to proceed on non-repo text.
+
+### 5.3 What this protocol deliberately does NOT do
+
+It adds no new bars, no new doctrine, and no new document classes beyond the tags and the law-diff step. After open resolution items are closed, the governance layer should be starved of further expansion until M4 produces a scored result. Process is not the product.
+
+### 5.4 Effective date and scope
+
+This protocol is effective prospectively from 2026-08-18. It does not apply retroactively to existing artifacts. Existing artifacts are assessed under the auditor's versioned-law compliance audit, not this protocol. Roles use these rules as guardrails during normal work; the CRITIC performs a quick compliance check to verify, not a from-scratch audit.
