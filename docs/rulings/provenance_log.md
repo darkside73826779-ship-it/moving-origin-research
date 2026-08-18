@@ -1806,3 +1806,18 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Scope attestation:** the RECORDER appended this provenance entry only and did not edit STATE.md (INTEGRATOR is sole writer), specifications, implementation, scoring artifacts, or prior provenance entries.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. Public-repository lineage additions merged (PR #26, Entry 58). STATE.md reconciled and canonically attested (Entry 59). Seeds 201–203 and 301–303 retained, never rerun.**
+
+
+## Entry 60 — Governance paper publication + CRITIC review
+
+- **Gate served:** Governance paper publication to main (PR #27 merged).
+- **Merge commit:** `bf0c716` (PR #27, `docs/governance-paper` branch → main).
+- **Prior main HEAD:** `084d0f0` (Entry 59 STATE.md custody attestation).
+- **Files published:**
+  - `docs/governance_paper_final.md` — governance paper preprint v1.0 (214 lines). Title: "One Human, Eight Roles: Constitutional Multi-Agent Governance for Solo Research." Author: Rebecca R. McClintic. Outside-advisor reviewed. All 14 citations independently verified by CRITIC against actual publications. Three episodes + one supplementary predecessor-system incident. Data availability section with public repo links and contact. File count corrected to 257,636. Code-lineage audit result (0 findings, 2026-08-17) included inline in §5.4.
+  - `reviews/critic_governance_paper_review.md` — CRITIC review of governance paper (145 lines). All 13 original citations + 1 glial substrate reference verified. BF1 (file count 257,647→257,636) resolved. Three [VERIFY] tags resolved (§3.2 verified from code, §4.2 glial repo cited, §4.5 cut to supplementary incident). Claims discipline assessment: PASS. NF1 (OpenClaw removed), NF2 (constitution sections acknowledged in §5.5), NF3 (L20 softened to "audit laws"), NF4 (6.89× precision) addressed.
+- **Rebecca authorization:** Rebecca explicitly authorized the merge.
+- **Scope attestation:** documentation-only. No scientific bars, scoring predicates, historical verdicts, evidence, STATE.md, specifications, or prior provenance entries modified. INSTRUMENT FAILURE labels retained. Seeds 201–203 and 301–303 retained, never rerun.
+- **Preserved evidence:** all prior provenance entries (1–59) remain unchanged. M3 INSTRUMENT FAILURE status preserved. O-14, O-15, D1–D5, L9, L18, and all standing constraints intact.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. Governance paper preprint v1.0 published to main (PR #27, Entry 60). All citations verified, code-lineage audit complete (0 findings). Seeds 201–203 and 301–303 retained, never rerun.**
