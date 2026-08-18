@@ -90,12 +90,12 @@ The peer-observer is a **fixed linear baseline** — not a trained model, not an
 
 | Control arm | Expected behavior | Failure routing |
 |---|---|---|
-| Empty | Chance AUROC (0.5) | INSTRUMENT_FAILURE if deviates > 0.05 |
-| Permuted | Labels shuffled — collapse to chance | INSTRUMENT_FAILURE if AUROC > 0.55 |
-| Shuffled | Input order shuffled — degrade | INSTRUMENT_FAILURE if shuffled AUROC > candidate AUROC |
-| Oracle | Full ground-truth — AUROC ≈ 1.0 | INSTRUMENT_FAILURE if AUROC < 0.95 |
-| Naive | Simple heuristic — above chance, below candidate | KILL if naive AUROC ≥ candidate AUROC |
-| Frozen | State frozen — chance | INSTRUMENT_FAILURE if AUROC > 0.55 |
+| Empty | Chance AUROC (0.5) | INSTRUMENT_FAILURE if deviates > 0.05 [PROPOSED — requires Rebecca sign-off] |
+| Permuted | Labels shuffled — collapse to chance | INSTRUMENT_FAILURE if AUROC > 0.55 [PROPOSED — requires Rebecca sign-off] |
+| Shuffled | Input order shuffled — degrade | INSTRUMENT_FAILURE if shuffled AUROC > candidate AUROC [PROPOSED — requires Rebecca sign-off] |
+| Oracle | Full ground-truth — AUROC ≈ 1.0 | INSTRUMENT_FAILURE if AUROC < 0.95 [PROPOSED — requires Rebecca sign-off] |
+| Naive | Simple heuristic — above chance, below candidate | KILL if naive AUROC ≥ candidate AUROC [PROPOSED — requires Rebecca sign-off] |
+| Frozen | State frozen — chance | INSTRUMENT_FAILURE if AUROC > 0.55 [PROPOSED — requires Rebecca sign-off] |
 
 ### 2.5 Kill conditions
 
@@ -139,7 +139,7 @@ The previous v1.2 spec operationalized L8 as prediction-horizon dose-response (h
 
 **Regulation error measurement:** At each dose level, measure the regulation error of the homeostatic variable — how far it deviates from its target. The law requires regulation error to **rise dose-dependently** [LAW-L8] as self-model calibration is degraded.
 
-**Pre-registered direction:** Regulation error INCREASES as self-model noise dose increases. accuracy(h=1 dose) < accuracy(h=2 dose) < accuracy(h=3 dose) in terms of regulation error magnitude. All-seeds-direction test requires this on all 5 seeds [BAR-Entry 11.3].
+**Pre-registered direction:** Regulation error INCREASES as self-model noise dose increases. regulation_error(h=1 dose) < regulation_error(h=2 dose) < regulation_error(h=3 dose). All-seeds-direction test requires this on all 5 seeds [BAR-Entry 11.3]. (NF1 resolution: replaced "accuracy" with "regulation error" for terminology clarity.)
 
 **"Only then" specificity leg [LAW-L8]:** Inject the same calibrated noise into a NON-self-model component (e.g., the controller's action selection, or the memory store). The homeostatic regulation error must NOT rise when noise is injected into non-self-model components. This is the specificity control — it proves the stakes respond to self-model quality, not to general system perturbation.
 
@@ -204,12 +204,12 @@ The previous v1.2 spec operationalized L8 as prediction-horizon dose-response (h
 
 | Control arm | Expected behavior | Failure routing |
 |---|---|---|
-| Empty | No data — abstain 100% | INSTRUMENT_FAILURE if abstention < 100% |
-| Permuted | Confidence labels shuffled — no differential abstention | INSTRUMENT_FAILURE if differential abstention persists |
-| Shuffled | Input order shuffled — reduced differential abstention | INSTRUMENT_FAILURE if exceeds candidate's pattern |
-| Oracle | Full ground-truth — abstain ~0% in both regimes | INSTRUMENT_FAILURE if abstains > 10% in either regime |
-| Naive | Fixed confidence — minimal differential abstention | KILL if naive outperforms candidate's calibration |
-| Frozen | State frozen — no differential abstention | INSTRUMENT_FAILURE if frozen shows differential abstention |
+| Empty | No data — abstain 100% | INSTRUMENT_FAILURE if abstention < 100% [PROPOSED — requires Rebecca sign-off] |
+| Permuted | Confidence labels shuffled — no differential abstention | INSTRUMENT_FAILURE if differential abstention persists [PROPOSED — requires Rebecca sign-off] |
+| Shuffled | Input order shuffled — reduced differential abstention | INSTRUMENT_FAILURE if exceeds candidate's pattern [PROPOSED — requires Rebecca sign-off] |
+| Oracle | Full ground-truth — abstain ~0% in both regimes | INSTRUMENT_FAILURE if abstains > 10% in either regime [PROPOSED — requires Rebecca sign-off] |
+| Naive | Fixed confidence — minimal differential abstention | KILL if naive outperforms candidate's calibration [PROPOSED — requires Rebecca sign-off] |
+| Frozen | State frozen — no differential abstention | INSTRUMENT_FAILURE if frozen shows differential abstention [PROPOSED — requires Rebecca sign-off] |
 
 ### 4.6 Kill conditions
 
@@ -380,6 +380,7 @@ No L15, L16, or L17 work authorized before M5. This spec does not propose integr
 | L10 seed count | 5 inferred from L7/L8 pattern; L10 not in Entry 11.3 | [PROPOSED] |
 | M4 timebox | Proposed 4 sessions / 8 days | [PROPOSED] |
 | L8 homeostatic variable | Specific variable definition requires confirmation | [PROPOSED] |
+| Control-arm tolerances (L7, L10) | Tolerance thresholds in control tables (e.g., empty AUROC deviation > 0.05, oracle AUROC < 0.95, permuted AUROC > 0.55, etc.) | [PROPOSED — requires Rebecca sign-off] (BF1 resolution) |
 
 **Provenance note (F1.5 correction):** The L7 numeric bars (AUROC ≥ 0.75, ECE ≤ 0.10, margin > 0 at p < .05) are in the constitution's law text [LAW-L7, line 24], not from Entry 5. Entry 5 [verified: provenance_log.md line 87] was the JUDGE's measurability assessment, which classified L7 as "fully numeric (judgeable now)" — it did not create the bars. Entry 8 [verified: provenance_log.md line 134] was the JUDGE's ruling on the plan, which identified corrections (L7 controls mandatory, L10 needs kill condition) — it did not lock bars. Bars were locked by Rebecca in Entry 11 [verified: provenance_log.md line 172].
 
