@@ -1832,3 +1832,29 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Scope attestation:** the RECORDER appended this provenance entry only and did not edit STATE.md (INTEGRATOR is sole writer), specifications, implementation, scoring artifacts, or prior provenance entries.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. Governance paper v1.0 published (PR #27, Entry 60). STATE.md reconciled and canonically attested (Entry 61). Seeds 201–203 and 301–303 retained, never rerun.**
+
+
+---
+
+## Entry 62 — Constitution v1 publication to GitHub
+
+**Date:** 2026-08-18 · **Actor:** Rebecca Mcclintic (constitution authorship and recovery); RECORDER (publication and provenance attestation)
+
+- **Gate served:** Constitution source recovery and v1 publication to GitHub — first step of the constitution publication and versioning workflow.
+- **Named base:** `ac756350d928689d2ca5da15a53110b53a5e62bc` (GitHub main, independently verified before publication).
+- **RECORDER publication branch:** `recorder/constitution-v1-publication`, branched from current main `ac75635`.
+- **Artifact published:**
+  - `docs/ARCHITECTURAL_CONSTITUTION.md` — SHA-256 `509f11c316e6ed3abbdca2df4973484dd676eecc87b727f312ee8658bef93b19` — VERIFIED (byte-for-byte copy from project file repo; matches Rebecca's local copy)
+- **Constitution details:**
+  - **Original date:** 2026-08-15
+  - **Authorship:** "Claude, with Rebecca McClintic"
+  - **Content:** 20 constraint-laws across 4 sections (§1 L1–L10 component laws, §2 L11–L14 interface laws, §3 L15–L17 integration laws, §4 L18–L20 audit laws)
+  - **Recovery:** Originally a session attachment at M0 (Entry 1); not previously persisted to the GitHub repository. Rebecca recovered the file from her local copy and provided it for publication.
+  - **Custody statement:** This is v1 — the original constitution as adopted at M0. A v2 amendment update will follow through the proper team workflow (ARCHITECT → CRITIC → Rebecca → RECORDER).
+- **Constitution-level amendment identified (for v2):** Entry 27 — Rebecca's E1 gate ruling (2026-08-15): L4/E1 test amendment signed. Old kill (a) (answer-equivalence) retired; three-property test adopted (correctness, operational distinctness, load-bearing coupling). Kill (f) promoted to primary correctness kill. Kill (d) promoted to operational-distinctness discriminator. Law constraint text unchanged. No other law text modifications found in the provenance log.
+- **STATE.md (no new INTEGRATOR attestation event):** no INTEGRATOR update occurred since Entry 61 custody attestation. STATE.md SHA-256 remains `51f10c14533ab6db2312ee0fabb2c1298888eb958c8ee907deb0c91ec9e0732f` (unchanged; recorded for reference only).
+- **Preserved evidence and protections:** the first M3 scoring run remains **INSTRUMENT FAILURE** (seeds 201–203). The second M3 scoring run remains **INSTRUMENT FAILURE** (seeds 301–303). Seeds 201–203 and 301–303 are retained and must never be rerun. All prior provenance entries (1–61) remain unchanged. O-14, O-15, D1–D5, L9, L18, L15, unseen-seed protections, supervised-execution boundaries, and all standing protections remain intact.
+- **Scope attestation:** the RECORDER published the constitution document byte-for-byte without modification, appended this provenance entry only, and did not edit STATE.md, specifications, implementation, scoring artifacts, reviews, or any prior provenance entry. No merge to main was performed — Rebecca is sole merge authority.
+- **Next authorized role:** **Rebecca** (merge decision), then **ARCHITECT** (Step 2: create constitution v2 with amendment log).
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. Constitution v1 published to GitHub recorder branch (Entry 62). No merge to main; Rebecca sole merge authority. Seeds 201–203 and 301–303 retained, never rerun.**
