@@ -1858,3 +1858,30 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Next authorized role:** **Rebecca** (merge decision), then **ARCHITECT** (Step 2: create constitution v2 with amendment log).
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. Constitution v1 published to GitHub recorder branch (Entry 62). No merge to main; Rebecca sole merge authority. Seeds 201–203 and 301–303 retained, never rerun.**
+
+
+---
+
+## Entry 63 — Constitution v2 publication to GitHub
+
+**Date:** 2026-08-18 · **Actor:** ARCHITECT (v2 creation); CRITIC (review); Rebecca Mcclintic (approval); RECORDER (publication and provenance attestation)
+
+- **Gate served:** Constitution v2 publication (Step 5 of 7) — Rebecca-approved, CRITIC-CLEARED.
+- **Named base:** `e8bcb1532db394a5082c399f6fcaf7398cb14870` (GitHub main, constitution v1 published via PR #28, Entry 62).
+- **ARCHITECT branch:** `architect/constitution-v2` at `505bbee4f9f6688c7cad8346ca840f780bf8a863` (CRITIC-CLEARED, Rebecca-approved).
+- **RECORDER publication branch:** `recorder/constitution-v2-publication`, branched from main `e8bcb15`, merged ARCHITECT branch.
+- **Artifacts published:**
+  - `docs/ARCHITECTURAL_CONSTITUTION_v2.md` — constitution v2 (110 lines). Contains the original 20 laws (L1–L20) verbatim plus an Amendment Log section.
+  - `handoffs/ARCHITECT_CONSTITUTION_V2_HANDOFF.md` — ARCHITECT handoff (65 lines).
+- **Amendment Log content:**
+  - **Amendment 1 (Entry 27, 2026-08-15):** L4/E1 test amendment — old kill (a) (answer-equivalence vs naive) retired; three-property test adopted (correctness, operational distinctness, load-bearing coupling); kill (f) promoted to primary correctness kill; kill (d) promoted to operational-distinctness discriminator. Signed by Rebecca McClintic. Rationale: fair-naive ≡ oracle theorem. Law constraint text unchanged.
+  - **Entry 29 supersession note:** Entry 29 replaced the slope-ratio collapse trigger with battery-validity approach; slope ratio retained as reported diagnostic only.
+- **CRITIC review:** Initial BLOCK (BF1 — Amendment Log item (ii) truncated Entry 27, omitting Rebecca's signed sentence: "Report both scaling curves. Candidate collapses if its own scaling matches recompute-by-scan (secretly replaying)."). ARCHITECT resolved BF1 at commit `505bbee`. CRITIC re-verification: CLEAR.
+- **Rebecca approval:** Rebecca approved constitution v2 for publication on 2026-08-18 at 13:54 EDT.
+- **v1 reference:** Constitution v1 SHA-256 `509f11c316e6ed3abbdca2df4973484dd676eecc87b727f312ee8658bef93b19` (published via PR #28, Entry 62). v1 law text preserved unchanged in v2.
+- **STATE.md (no new INTEGRATOR attestation event):** no INTEGRATOR update occurred since Entry 61 custody attestation. STATE.md SHA-256 remains `51f10c14533ab6db2312ee0fabb2c1298888eb958c8ee907deb0c91ec9e0732f` (unchanged; recorded for reference only).
+- **Preserved evidence and protections:** the first M3 scoring run remains **INSTRUMENT FAILURE** (seeds 201–203). The second M3 scoring run remains **INSTRUMENT FAILURE** (seeds 301–303). Seeds 201–203 and 301–303 are retained and must never be rerun. All prior provenance entries (1–62) remain unchanged. O-14, O-15, D1–D5, L9, L18, L15, unseen-seed protections, supervised-execution boundaries, and all standing protections remain intact.
+- **Scope attestation:** the RECORDER published the ARCHITECT's v2 constitution and handoff without modification, appended this provenance entry only, and did not edit STATE.md, specifications, implementation, scoring artifacts, reviews, the v1 constitution, or any prior provenance entry. No merge to main was performed or requested — Rebecca is sole merge authority.
+- **Next authorized role:** **Rebecca** (merge decision), then **INTEGRATOR** (Step 6: update STATE.md + GOVERNANCE_SOURCE_MAP.md).
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. Constitution v2 (with amendment log) published to GitHub recorder branch (Entry 63). No merge to main; Rebecca sole merge authority. Seeds 201–203 and 301–303 retained, never rerun.**
