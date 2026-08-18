@@ -1974,3 +1974,30 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Next authorized role:** **Rebecca**, to decide whether to incorporate this custody-only branch.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. Paper v1.0.1 corrections published and merged (PR #36, Entry 66). STATE.md reconciled and canonically attested (Entry 67). §5 custody line: constitution SHA-256 unchanged. Seeds 201–203 and 301–303 retained, never rerun.**
+
+
+---
+
+## Entry 68 — Principal ruling: G0-1 M4 spec correction cycle authorized
+
+**Date:** 2026-08-18 · **Actor:** Rebecca McClintic (Principal ruling)
+
+- **Gate served:** G0-1 from auditor's resolution ladder — M4 spec correction cycle authorization.
+- **Ruling:** Rebecca authorized the M4 spec correction cycle (F1 reconstruction-infidelity correction) on 2026-08-18 at 15:59 EDT. Scope: F1 items 1–6 per the auditor's R1 — (1) respecify L8 from verbatim constitution text; (2) rewrite L14 as three couplings; (3) add L10 reporting rule; (4) add L7 portrait clause; (5) correct §12 provenance; (6) fix W4 stale changelog line.
+- **Context:** The G0-1 authorization was issued off-record during the M4 gate preparation session. This entry memorializes it in the provenance chain, addressing the auditor's root cause finding.
+- **Result:** M4 spec v1.3 produced on branch architect/m4-spec-v1.3 at c0a3413, CRITIC-reviewed (BF1 P3 tags + NF1 wording resolved, CLEAR). First spec produced under §5 Versioned-Law Compliance Protocol.
+- **Preserved evidence:** All historical files, SHAs, rulings, and evidence unchanged. Both scoring runs retained as INSTRUMENT FAILURE. Seeds 201–203 and 301–303 never rerun (O-14). No L15–L17 integration claim.
+- **Authorization boundary:** G0-1 memorialized only. G0-2, G0-3, G0-4, and M4 gate remain pending.
+- **Principal confirmation:** Rebecca confirmed this entry draft is accurate on 2026-08-18 at 17:07 EDT.
+
+
+---
+
+## Entry 69 — Principal rulings: G0-2 (E1 permuted-arm) and G0-3 (M4 spec reviewer)
+
+**Date:** 2026-08-18 · **Actor:** Rebecca McClintic (Principal rulings)
+
+- **G0-2 ruling — E1 permuted-arm gap disposition (F2):** Combined disposition signed: (a) waiver note memorializing the six-arm E1 battery as accepted — records that Rebecca accepted the six-arm E1 battery at M2 time (disclosed, pre-registered, Principal-gated); waiver to be recorded in v2 amendment log per P5; (b) standing mandate of a distinct permuted arm in all future E1-class scoring. Neither option relabels E1 GREEN. E1 verdict stands as delivered.
+- **G0-3 ruling — Reviewer for corrected M4 spec:** Standing CRITIC session retired; new CRITIC session to be re-initialized from updated init script (includes §5 compliance protocol). The re-initialized CRITIC constitutes a fresh-context reviewer (new session, no prior involvement in M4 spec review cycles). This satisfies both R2's exit criterion (committed review artifact with law-diff table) and §5.2 coordinator obligation (fresh-context law-fidelity review).
+- **Preserved evidence:** All historical files, SHAs, rulings, and evidence unchanged. Both scoring runs retained as INSTRUMENT FAILURE. Seeds 201–203 and 301–303 never rerun (O-14).
+- **Authorization boundary:** G0-2 and G0-3 rulings recorded. G0-4 and M4 gate remain pending. R3 (RECORDER records F2 ruling in amendment log) to follow. No implementation, scoring, or merge authorized by this entry.
