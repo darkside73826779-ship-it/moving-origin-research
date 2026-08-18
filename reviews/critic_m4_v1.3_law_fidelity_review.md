@@ -10,19 +10,39 @@
 **Base main at review time:** `956a5e7` (handoff noted `e26d05f`; main has since moved through Entries 66–67 — does not affect this review's read-only scope, which is pinned to spec branch `c0a3413`)
 **Role boundary:** Read-only review. No modification of spec, constitution, STATE.md, provenance log, or any artifact. No scoring, no seed execution, no hold-out exposure, no merge.
 
+> **Revision note (2026-08-18):** This is the operative review. An initial draft issued CLEAR; on re-examination against the handoff's mandatory P3 check ("Verify every threshold carries a P3 source tag… No untagged numbers"), untagged thresholds were reclassified from non-blocking to a blocking P3 source-tag defect. The earlier CLEAR draft is superseded; this review is the R2 artifact of record.
+
 ---
 
 ## Verdict
 
-### **CLEAR**
+### **BLOCK**
 
-No blocking findings. The M4 spec v1.3 is law-fidelity compliant under the §5 Versioned-Law Compliance Protocol (P1–P6). All verbatim law quotations match the constitution byte-for-byte (one whitespace-only non-substance difference on L14). All numeric thresholds carry P3 source-class tags. All provenance citations verified against actual entry text. All six F1 corrections confirmed. Falsifiability, locked bars, the L15–L17 fence, P4 regime dating, and the INSTRUMENT FAILURE label are all preserved. Next authorized role may proceed.
+One blocking finding: **BF1 — P3 source-tag defect.** The spec contains thresholds that carry no P3 source-class tag, failing the handoff's mandatory P3 check ("No untagged numbers"). The law-diff (P2), provenance citations (P6), F1 corrections, locked bars, fences, and INSTRUMENT FAILURE discipline are all preserved and verified — the defect is narrowly scoped to source-class tagging on a small set of thresholds. Returns to the ARCHITECT (originating role) to add the missing tags; the fix is low-cost and does not touch any law text, bar, or scoring predicate.
 
 ---
 
-## 1. Law-diff (P2 — mandatory, performed first)
+## Blocking findings
 
-Each quoted law in the spec was diffed against `docs/ARCHITECTURAL_CONSTITUTION.md` byte-for-byte. Line citations were verified against the constitution file.
+### BF1 — P3 source-class tags missing on several thresholds (P3 violation)
+
+The handoff's Step 1, item 2 makes P3 a mandatory pass criterion: "Verify every threshold carries a P3 source tag: [LAW-Lx], [BAR-Entry n], [OP-Entry n], [PROPOSED]. No untagged numbers." The following thresholds are untagged:
+
+| # | Location | Untagged threshold | Required tag | Note |
+|---|---|---|---|---|
+| BF1.a | §3.3 (line 133) | "Define ≥ 1 homeostatic variable" — the "≥ 1" lower bound | `[LAW-L8]` | Sourced directly from L8 law text ("At least one homeostatic variable…"). The immediately following line ("≥ 3 dose levels [OP-Entry 11.7]") IS tagged, confirming the ARCHITECT applied tags in this section but missed this one. |
+| BF1.b | §3.4 (lines 150–157) | All six L8 control-arm failure routings ("if any level deviates from baseline," "if monotonic trend persists," "if exceeds candidate at any level," "if no expected degradation pattern," "if naive outperforms candidate," "if frozen shows monotonic trend") | `[PROPOSED — requires Rebecca sign-off]` (or explicit source class) | §2.4 (L7) and §4.5 (L10) control arms carry a source-tag column with `[PROPOSED — requires Rebecca sign-off]` and explicit tolerances. §3.4 (L8) has no source column and no tags — inconsistent. The §12 BF1 resolution explicitly scoped numeric tolerances to L7/L10 only, but the failure-routing conditions themselves still require a source-class tag. |
+| BF1.c | §9.2 (lines 347–348) | Timebox tripwires "2" (sessions) and "4" (days) | `[PROPOSED]` | Escalation thresholds. They inherit the enclosing `[PROPOSED — requires Rebecca approval]` timebox framing but lack individual tags, unlike the adjacent "4 sessions" / "8 days" values which ARE tagged. |
+
+**Classification:** spec defect (source-tag / provenance-discipline), not a candidate failure, instrument failure, construction bug, or law-text reconstruction. No locked bar is moved, raised, lowered, renamed, or reinterpreted. No law text reconstructed. The defect is that traceability tags are absent on these thresholds.
+
+**Remediation (for ARCHITECT):** Add the missing P3 source-class tags to the three locations above. Do not change any threshold value, bar, kill condition, or scoring predicate. The §12 BF1 resolution's scope (numeric tolerances for L7/L10) may be extended to cover L8 control-arm tolerances if Rebecca directs, but at minimum each L8 control-arm failure routing must carry a source-class tag.
+
+---
+
+## 1. Law-diff (P2 — mandatory, performed first) — PASS
+
+Each quoted law in the spec was diffed against `docs/ARCHITECTURAL_CONSTITUTION.md` byte-for-byte. Line citations verified against the constitution file.
 
 | Law | Spec § | Const. line | Verbatim match | Line citation | Verdict |
 |---|---|---|---|---|---|
@@ -32,15 +52,13 @@ Each quoted law in the spec was diffed against `docs/ARCHITECTURAL_CONSTITUTION.
 | L14 | §5.1 | 40 | Substantive exact; trailing whitespace omitted | 40 ✓ | PASS (NF1) |
 | L18 | §6.1 | 52 | Exact | 52 ✓ | PASS |
 
-**NF1 (non-blocking):** The L14 quote (§5.1) omits the trailing whitespace present on constitution line 40 ("decorative. " → "decorative."). This is a whitespace-only, non-substantive difference; no law text reconstructed. Recommend the ARCHITECT align trailing whitespace for a strict byte-match in a future revision. Not a P2 violation.
-
-No law text was reconstructed (P1 satisfied). Where the verbatim text is insufficient to fully operationalize a test, the spec flags the gap as a STOP/escalation trigger rather than filling it by reconstruction (§0, consistent with §5.2 ARCHITECT obligation).
+No law text reconstructed (P1 satisfied). Where verbatim text is insufficient to operationalize a test, the spec flags the gap as a STOP/escalation trigger rather than reconstructing (§0, consistent with §5.2 ARCHITECT obligation).
 
 ---
 
-## 2. Source-tag audit (P3)
+## 2. Source-tag audit (P3) — FAIL (BF1)
 
-Every numeric threshold in the spec carries a P3 source-class tag. No untagged numeric thresholds found in any law or bar section.
+Numeric thresholds that ARE correctly tagged (no issue):
 
 | Threshold | Value | Tag | Verdict |
 |---|---|---|---|
@@ -58,43 +76,39 @@ Every numeric threshold in the spec carries a P3 source-class tag. No untagged n
 | L10 seed count | 5 | [PROPOSED] | PASS |
 | L14 effect size | d ≥ 0.5 | [BAR-Entry 11.4] | PASS |
 | L14 correlation | corr ≥ 0.3 @ 3 seeds | [BAR-Entry 14] | PASS |
-| L7/L8 control tolerances | (various) | [PROPOSED] | PASS |
+| L7 control tolerances | (various) | [PROPOSED] | PASS |
 | L10 control tolerances | (various) | [PROPOSED] | PASS |
 | Multiplicity alpha_family | 0.05 | [OP-Entry 11.7] | PASS |
 | Multiplicity alpha_seed | 0.05/3 | [OP-Entry 11.7] | PASS |
-| M4 timebox | 4 sessions / 8 days | [PROPOSED] | PASS |
+| M4 timebox (sessions/days) | 4 / 8 | [PROPOSED] | PASS |
 
-**NF2 (non-blocking — P3 consistency):** The L8 control-arm failure routings (§3.4) lack P3 source-class tags and numeric tolerances, whereas the L7 (§2.4) and L10 (§4.5) control arms carry `[PROPOSED — requires Rebecca sign-off]` tags with explicit tolerances. The §12 BF1 resolution explicitly scoped numeric tolerances to L7 and L10 only. The L8 control arms carry no numeric thresholds (their routings are qualitative: "if any level deviates from baseline," "if monotonic trend persists," etc.), so P3's "no untagged numbers" is not strictly violated, and the arms are structurally present (L18 satisfied). Recommend the ARCHITECT tag the L8 control-arm routings for source-class consistency in a future revision.
+Untagged thresholds → blocking (see BF1): §3.3 "≥ 1 homeostatic variable" (BF1.a); §3.4 L8 control-arm failure routings, no source column (BF1.b); §9.2 timebox tripwires 2 / 4 (BF1.c).
 
-**NF3 (non-blocking — P3 on timebox tripwires):** The timebox tripwire values (§9.2: sessions = 2, days = 4) lack individual source tags. These inherit the enclosing `[PROPOSED — requires Rebecca approval]` framing of the timebox block, so they are implicitly proposed. Non-blocking; recommend explicit tagging for completeness.
+**Note on derived/structural quantities (non-blocking):** §7.1 "Seed pools: 1 pool of 5 seeds" and "Total stochastic checks: 45" are marked "—" (explicitly no source). "1 pool" is a structural design choice and "45" is a derived count (3 laws × 3 families × 5 seeds); the explicit "—" indicates the author acknowledged these are derived rather than source-tagged thresholds. Acceptable, but the ARCHITECt may annotate for clarity.
 
 ---
 
-## 3. Provenance citation verification (P6)
+## 3. Provenance citation verification (P6) — PASS
 
-Every "Entry n said X" claim was verified against `docs/rulings/provenance_log.md` actual entry text. All cited line numbers confirmed against the file.
+Every "Entry n said X" claim verified against `docs/rulings/provenance_log.md` actual entry text. All cited line numbers confirmed.
 
 | Citation | Spec claim | Log verification | Line | Verdict |
 |---|---|---|---|---|
-| Entry 5 | JUDGE measurability assessment; classified L7 "fully numeric (judgeable now)"; assessment only, did NOT create bars | Entry 5 header "JUDGE produced bar measurability assessment"; L7 listed under "Fully numeric (judgeable now)"; "The JUDGE does not propose thresholds" | 87 ✓ | PASS |
-| Entry 8 | JUDGE ruling on plan; identified corrections (L7 controls mandatory, L10 needs kill condition); did NOT lock bars | Entry 8 header "JUDGE produced bar measurability ruling on the plan"; correction 3 "L7 permuted/empty/shuffled controls missing from M4 — constitutionally mandatory"; correction 5 "L10 needs an explicit kill/failure condition"; "no bars invented, lowered, reinterpreted, or raised" | 134 ✓ | PASS |
+| Entry 5 | JUDGE measurability assessment; L7 "fully numeric (judgeable now)"; assessment only, did NOT create bars | Entry 5 header; L7 under "Fully numeric (judgeable now)"; "The JUDGE does not propose thresholds" | 87 ✓ | PASS |
+| Entry 8 | JUDGE ruling on plan; identified corrections (L7 controls mandatory, L10 needs kill condition); did NOT lock bars | Entry 8 header; correction 3 "L7 controls missing from M4 — constitutionally mandatory"; correction 5 "L10 needs an explicit kill/failure condition"; "no bars invented, lowered, reinterpreted, or raised" | 134 ✓ | PASS |
 | Entry 11 | Bars locked by Rebecca | Entry 11 header "Rebecca's adopted M0 decisions"; bars marked LOCKED | 172 ✓ | PASS |
-| Entry 11.3 | Seeds = 5; all-seeds-direction + bootstrap-CI fallback | 11.3 "Seeds raised to 5 … all-seeds-direction + bootstrap-CI fallback" | — | PASS |
-| Entry 11.4 | L14 d ≥ 0.5 | 11.4 "L14 effect-size floor raised to d ≥ 0.5" | — | PASS |
-| Entry 11.6 | L10 abstention 50% drift / 10% clean | 11.6 "L10 abstention dual bar: 50% under drift / 10% clean" | — | PASS |
-| Entry 11.7 | §9 operationalizations adopted (dose levels, alpha structure) | 11.7 "All nine §9 operationalizations ADOPTED" | — | PASS (NF4) |
-| Entry 11.8 | L7 graveyard gate deferred — Rebecca signs with prior results | 11.8 "L7 … gates DEFERRED — Rebecca will sign each with the prior milestone's results in front of her" | — | PASS (NF5) |
-| Entry 14 | Drifted-AUROC ≥ 0.70 floor; corr ≥ 0.3 at 3 seeds; W4 confidence threshold at M4 | Entry 14 item (4) "backstopped by the drifted-AUROC ≥ 0.70 floor"; watch-item 5 "L14 corr ≥ 0.3 at 3 seeds"; watch-item 4 "L10 confidence threshold — pre-register at M4" | 253 ✓ | PASS |
+| Entry 11.3 | Seeds = 5; all-seeds-direction + bootstrap-CI fallback | 11.3 matches | — | PASS |
+| Entry 11.4 | L14 d ≥ 0.5 | 11.4 matches | — | PASS |
+| Entry 11.6 | L10 abstention 50% drift / 10% clean | 11.6 matches | — | PASS |
+| Entry 11.7 | §9 operationalizations adopted (dose levels, alpha structure) | 11.7 "All nine §9 operationalizations ADOPTED" | — | PASS (NF2) |
+| Entry 11.8 | L7 graveyard gate deferred — Rebecca signs with prior results | 11.8 "L7 … DEFERRED — Rebecca will sign each with the prior milestone's results in front of her" | — | PASS (NF3) |
+| Entry 14 | Drifted-AUROC ≥ 0.70 floor; corr ≥ 0.3 at 3 seeds; W4 confidence threshold at M4 | Entry 14 item (4) "drifted-AUROC ≥ 0.70 floor"; watch-item 5 "corr ≥ 0.3 at 3 seeds"; watch-item 4 "L10 confidence threshold — pre-register at M4" | 253 ✓ | PASS |
 | Entry 27 | Amendment 1 — L4/E1 test redefined | Entry 27 "L4 test redefined (constitution amendment signed)"; v2 Amendment Log line 70 "Amendment 1 — L4/E1 test redefined (Entry 27)" | 598 ✓ | PASS |
 | Entry 52 | M3 INSTRUMENT FAILURE retained; provisional advancement; seeds 201–203/301–303 retained, never rerun | Entry 52 "INSTRUMENT FAILURE retained. … provisional advancement to M4"; "Seeds 201-203 and 301-303 retained, never rerun" | 1628 ✓ | PASS |
 
-**NF4 (non-blocking — P6 granularity):** Entry 11.7's log text records only "All nine §9 operationalizations ADOPTED (Closes O-5)" without enumerating them. The specific alpha_seed = 0.05/3 formula and V4.4 framework details (1000 null replicates, plus-one upper-tail, alpha_family = 0.05) therefore cannot be byte-verified against Entry 11.7's text — only the adoption of "§9 operationalizations" is verifiable. Attribution points to the correct entry and is consistent with "as implemented at M3." Non-blocking; the ARCHITECT may cite the M3 implementation entries for the V4.4 specifics in a future revision.
-
-**NF5 (non-blocking — source-class precision):** The graveyard-gate requirement (§2.2) is tagged `[BAR-Entry 11.8]`, but Entry 11.8 is a gate decision (DEFERRED/SIGNED), not a locked bar. The substantive content is correctly cited; the source-class tag is imprecise. Non-blocking.
-
 ---
 
-## 4. F1 correction verification
+## 4. F1 correction verification — PASS
 
 | # | Correction | Requirement | Spec location | Verdict |
 |---|---|---|---|---|
@@ -109,47 +123,49 @@ All F1 corrections confirmed against verbatim law text and provenance log. F1.1 
 
 ---
 
-## 5. Regression + compliance
+## 5. Regression + compliance — PASS
 
 | # | Check | Finding | Verdict |
 |---|---|---|---|
 | 10 | Falsifiability maintained; all laws can fail | L7 (AUROC/margin/ECE/portrait KILLs), L8 (non-monotonic/frozen-shows-response/non-self-model-noise KILLs), L10 (abstention/drifted-AUROC KILLs), L14 (d/corr/readability KILLs) — every tested law has a failure path | PASS |
-| 11 | Locked bars preserved | L10 50%/10% [BAR-Entry 11.6] preserved; L14 d ≥ 0.5 [BAR-Entry 11.4] preserved; L7 0.75/0.10/margin [LAW-L7] preserved; L10 drifted-AUROC ≥ 0.70 [BAR-Entry 14] preserved | PASS |
-| 12 | L15–L17 fence respected | §1.2 + §10: "No L15, L16, or L17 work authorized before M5. This spec does not propose integration tests, mechanisms, or claims." | PASS |
-| 13 | P4 date and regime in header | Header: "Date: 2026-08-18 · Regime: B (post-Entry 27; constitution v1 + Amendment 1; §5 binding)" | PASS |
+| 11 | Locked bars preserved | L10 50%/10% [BAR-Entry 11.6]; L14 d ≥ 0.5 [BAR-Entry 11.4]; L7 0.75/0.10/margin [LAW-L7]; L10 drifted-AUROC ≥ 0.70 [BAR-Entry 14] | PASS |
+| 12 | L15–L17 fence respected | §1.2 + §10: "No L15, L16, or L17 work authorized before M5." | PASS |
+| 13 | P4 date and regime in header | "Date: 2026-08-18 · Regime: B (post-Entry 27; constitution v1 + Amendment 1; §5 binding)" | PASS |
 | 14 | INSTRUMENT FAILURE preserved | §1.2 "INSTRUMENT FAILURE retained"; §11 "No renaming, reinterpreting, or silently replacing any negative result or INSTRUMENT FAILURE label" | PASS |
 
 **Additional compliance confirmations:**
-- **O-14 (no re-run-on-failure):** §1.2 + §11 — "Seeds 201–203 and 301–303 retained, never rerun [BAR-Entry 52, O-14]." Preserved.
-- **O-15 (development diagnostic-only):** §7.2 + §11 — development seeds 101–105 [OP-Entry 11.7, O-15]; "Development runs diagnostic-only [O-15]." Preserved.
-- **Hold-out seed rule:** §7.2 — "≥ 2 seeds unseen in development per scoring run. Development seeds: 101–105." Preserved.
-- **Reproducibility contract:** §6.3 — M4 harness must use repaired semantic digest. Consistent with the two-digest, three-class-field architecture.
-- **L9 / D1–D5 / L18 binding:** §11 acknowledges all standing constraints binding.
-- **No mechanism before test harness / no component promoted as integrated without L15 ablation:** Spec proposes specification only; role boundary (§0) — "The ARCHITECT proposes specification, bars, and sequencing only. No code, no execution, no mechanism implementation, no merge." Respected.
+- **O-14 (no re-run-on-failure):** §1.2 + §11 — "Seeds 201–203 and 301–303 retained, never rerun [BAR-Entry 52, O-14]."
+- **O-15 (development diagnostic-only):** §7.2 + §11 — development seeds 101–105 [OP-Entry 11.7, O-15].
+- **Hold-out seed rule:** §7.2 — "≥ 2 seeds unseen in development per scoring run."
+- **Reproducibility contract:** §6.3 — M4 harness must use repaired semantic digest.
+- **L9 / D1–D5 / L18 binding:** §11 acknowledges all standing constraints binding. (L9 is a continuous invariant listed as binding in §11 but not separately tested in M4; this is a scoping decision consistent with M4's L7/L8/L10/L14 focus, not a fidelity violation.)
+- **No mechanism before test harness / no component promoted as integrated without L15 ablation:** §0 role boundary — "The ARCHITECT proposes specification, bars, and sequencing only. No code, no execution, no mechanism implementation, no merge." Respected.
 
 ---
 
-## 6. Non-blocking findings summary
+## 6. Non-blocking findings
 
 | ID | Finding | Class | Recommendation |
 |---|---|---|---|
 | NF1 | L14 verbatim quote omits trailing whitespace from constitution line 40 | P2 whitespace-only | Align trailing whitespace for strict byte-match |
-| NF2 | L8 control-arm failure routings (§3.4) lack P3 source tags and numeric tolerances, unlike L7 (§2.4) / L10 (§4.5) | P3 consistency | Tag L8 control-arm routings; consider whether qualitative tolerances need Rebecca sign-off |
-| NF3 | Timebox tripwire values (§9.2: 2 / 4) lack individual source tags | P3 completeness | Explicitly tag tripwire values |
-| NF4 | Entry 11.7 log text does not enumerate the nine §9 operationalizations; alpha_seed/V4.4 specifics not byte-verifiable against 11.7 text | P6 granularity | Cite M3 implementation entries for V4.4 specifics |
-| NF5 | Graveyard-gate tag `[BAR-Entry 11.8]` imprecise; 11.8 is a gate decision, not a bar | P3 source-class precision | Use a gate-decision source class or annotate |
+| NF2 | Entry 11.7 log text does not enumerate the nine §9 operationalizations; alpha_seed/V4.4 specifics not byte-verifiable against 11.7 text | P6 granularity | Cite M3 implementation entries for V4.4 specifics |
+| NF3 | Graveyard-gate tag `[BAR-Entry 11.8]` imprecise; 11.8 is a gate decision (DEFERRED), not a bar | P3 source-class precision | Use a gate-decision source class or annotate |
+| NF4 | §7.1 derived quantities "1 pool" / "45" marked "—" | P3 clarity | Annotate as derived for clarity |
 
-None of the above block the gate. All are precision/consistency improvements for a future revision and do not constitute law-text reconstruction, threshold invention, bar movement, or provenance misattribution.
+None of the above block the gate. They are precision/consistency improvements and do not constitute law-text reconstruction, threshold invention, bar movement, or provenance misattribution.
 
 ---
 
 ## 7. Preserved evidence
 
-- All locked bars (L7, L8 dose levels, L10 50/10 + 0.70 floor, L14 d ≥ 0.5 / corr ≥ 0.3) preserved with correct source tags.
+The following remain valid and are NOT invalidated by BF1 (which is a source-tagging defect only):
+- All verbatim law quotations (L7/L8/L10/L14/L18) match the constitution byte-for-byte (P2 PASS).
+- All locked bars (L7 0.75/0.10/margin, L8 ≥3 dose levels, L10 50/10 + 0.70 floor, L14 d ≥ 0.5 / corr ≥ 0.3) preserved with correct values.
+- All provenance citations (Entries 5/8/11.x/14/27/52) verified against log text (P6 PASS).
 - All F1 corrections (L8 respecification, L14 three-coupling, L10 reporting rule, L7 portrait clause, §12 provenance, W4) confirmed.
 - INSTRUMENT FAILURE label and M3 verdicts preserved without reinterpretation.
 - O-14 / O-15 / D1–D5 / L9 / L18 / hold-out seed rules all acknowledged as binding.
-- The prior off-repo CRITIC clear carries no R2 weight (per Principal's resolution sequence Step 3); this in-repo review is the operative R2 artifact.
+- Falsifiability, locked bars, L15–L17 fence, P4 header all preserved.
 
 ---
 
@@ -174,11 +190,12 @@ A pre-push scan was performed on the review file and commit contents before push
 
 - **Gate served:** R2 — law-fidelity review of M4 spec v1.3
 - **Inputs/SHAs reviewed:** spec `architect/m4-spec-v1.3` @ `c0a3413` (`specs/m4_specification.md`, `specs/m4_specification_changelog.md`); constitution v1 `docs/ARCHITECTURAL_CONSTITUTION.md`; constitution v2 `docs/ARCHITECTURAL_CONSTITUTION_v2.md`; provenance `docs/rulings/provenance_log.md`. Base main `956a5e7`.
-- **Verdict:** **CLEAR**
-- **Blocking findings:** None.
-- **Non-blocking findings:** NF1–NF5 (P2 whitespace, P3 consistency on L8 control arms and timebox tripwires, P6 granularity on Entry 11.7 enumeration, P3 source-class precision on Entry 11.8 tag). Recommendations for a future revision; do not block the gate.
-- **Preserved evidence:** All locked bars, F1 corrections, INSTRUMENT FAILURE label, O-14/O-15/D1–D5/L9/L18/hold-out rules preserved (see §7).
+- **Verdict:** **BLOCK**
+- **Blocking findings:** BF1 — P3 source-class tags missing on §3.3 "≥ 1 homeostatic variable," §3.4 L8 control-arm failure routings, and §9.2 timebox tripwires 2/4. Fails the handoff's mandatory P3 check ("No untagged numbers"). Spec defect (source-tag/provenance-discipline); no bar moved, no law text reconstructed.
+- **Non-blocking findings:** NF1–NF4 (P2 whitespace, P6 granularity on Entry 11.7, P3 source-class precision on Entry 11.8 tag, P3 clarity on derived quantities).
+- **Preserved evidence:** law-diff (P2 PASS), provenance (P6 PASS), F1 corrections (PASS), locked bars, INSTRUMENT FAILURE, fences, O-14/O-15/D1–D5/L9/L18/hold-out rules — all preserved (see §7). None invalidated by BF1.
 - **Review committed:** `reviews/critic_m4_v1.3_law_fidelity_review.md` on branch `critic/r2-m4-v1.3-law-fidelity`.
-- **Next authorized role:** WORKFLOW COORDINATOR (for Step 6 sequencing) → per spec §9.1, Step 3 is Rebecca (approve M4 spec + L7 graveyard-gate sign-off + L10 threshold + timebox). The spec's §13 "Next recipient: Reviewer TBD per G0-3" is now resolved by this R2 review; coordinator should route to Rebecca for the approval gate.
-- **Explicitly prohibited for next roles:** No modification of locked bars/thresholds/scoring predicates; no scoring seeds; no rerun of seeds 201–203/301–303; no L15/L16/L17 before M5; no modification of STATE.md or provenance_log.md; no renaming/reinterpreting negative results; no merge to main without Rebecca's explicit authorization.
+- **Exact next authorized role:** ARCHITECT (originating role) — to add the missing P3 source-class tags at the three BF1 locations only, then resubmit for R2 re-review. No change to any threshold value, bar, kill condition, or scoring predicate.
+- **Explicitly prohibited for ARCHITECT during remediation:** No modifying any locked bar, threshold value, kill condition, or scoring predicate (only add source-class tags). No reconstructing law text. No scoring seeds. No rerun of seeds 201–203/301–303. No L15/L16/L17 before M5. No modification of STATE.md or provenance_log.md. No renaming/reinterpreting negative results. No merge to main.
+- **Coordinator note:** After ARCHITECT remediation and a successful R2 re-review (CLEAR), route to Rebecca per spec §9.1 Step 3 (approve M4 spec + L7 graveyard-gate sign-off + L10 threshold + timebox). The spec's §13 "Next recipient: Reviewer TBD per G0-3" is resolved by this R2 review.
 - **Confirmation:** No scoring, no rerun, no hold-out seed exposure, and no unauthorized merge occurred during this review.
