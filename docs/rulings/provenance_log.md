@@ -1778,3 +1778,21 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Next authorized role:** **Rebecca**, for the publication-readiness merge decision.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. Public-repository operating policy v1.1 published (Rebecca-approved, CRITIC-CLEARED). STATE.md + role initialization scripts updated and attested (Entry 57). No merge to main; Rebecca sole merge authority for publication-readiness merge. Seeds 201–203 and 301–303 retained, never rerun.**
+
+## Entry 58 — Public-repository lineage additions merge
+
+- **Gate served:** Public-repository documentation additions (conceptual lineage, code-provenance disclosure, citation references), merged to main per Rebecca's explicit authorization.
+- **Merge commit:** `e666d92` (PR #26, `docs/lineage-additions` branch → main).
+- **Prior main HEAD:** `9ae795f` (Entry 57 publication-readiness state; includes PR #25 local artifact inventory).
+- **CRITIC review:** CLEAR. All 8 citations independently verified against actual publications (Tulving 1985, Suddendorf & Corballis 2007, Husserl 1893-1917/Brough trans. 1991, Friston 2018, Eichenbaum 2014, Buzsáki & Llinás 2017, Nosek et al. 2018, Chambers 2013). Claims discipline maintained — contribution scoped as operational test battery, not underlying concept. No consciousness/AGI overclaiming. No governance conflict.
+- **Code-lineage audit:** Performed 2026-08-17. Searched 8 distinctive function/class names, 4 distinctive string constants, and 3 generic code patterns against GitHub code search and web search. 0 findings — no verbatim reproductions of external code identified. Absence of findings is not absence of lineage.
+- **Files modified:**
+  - `README.md` — added "Conceptual lineage" section after "What is established—and what is not" (26 lines)
+  - `AI_CONTRIBUTIONS.md` — added "Code lineage disclosure" section after the role-names paragraph (12 lines); audit clause states "was performed on 2026-08-17; no verbatim reproductions of external code were identified"
+  - `CITATION.cff` — added `references` key with 4 entries (Tulving 1985, Suddendorf & Corballis 2007, Husserl 1991, Friston 2018)
+- **Rebecca authorization:** Rebecca explicitly authorized the merge ("i want you to record it and merge it"), satisfying the CRITIC rule "Do not merge to main unless Rebecca explicitly authorizes that exact merge."
+- **Public-safety scan:** Pre-publication scan previously run and cleared per Rebecca's confirmation.
+- **Scope attestation:** documentation-only changes. No scientific bars, scoring predicates, historical verdicts, evidence, STATE.md, specifications, or prior provenance entries modified. INSTRUMENT FAILURE labels retained unchanged. Seeds 201–203 and 301–303 retained, never rerun.
+- **Preserved evidence:** all prior provenance entries (1–57) remain unchanged. M3 INSTRUMENT FAILURE status preserved. O-14, O-15, D1–D5, L9, L18, unseen-seed protections, and all standing constraints intact.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained) — provisional advancement to M4 with qualified instrument certification. Public-repository lineage additions merged to main (PR #26, Entry 58). All citations verified, code-lineage audit complete (0 findings). Seeds 201–203 and 301–303 retained, never rerun.**
