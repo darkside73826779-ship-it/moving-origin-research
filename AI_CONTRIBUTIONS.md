@@ -21,4 +21,16 @@ The human principal, Rebecca R. McClintic, retains authority over:
 
 AI-generated output is not treated as independent scientific validation merely because different role names or model sessions produced it. Claims of independent verification in this repository refer to the documented review procedure and recomputation performed, not to institutional or peer-reviewed independence unless explicitly stated.
 
+## Code lineage disclosure
+
+Implementation code in this repository was substantially machine-generated.
+Machine-generated code can reproduce patterns, idioms, and occasionally
+near-verbatim structures from its training data without an attribution trail,
+and neither the principal nor the contributing agents can rule this out by
+inspection. A targeted audit (searching distinctive function bodies and unusual
+constants against public code search) was performed on 2026-08-17;
+no verbatim reproductions of external code were identified. Any future findings
+are recorded in `NOTICE` per the Apache-2.0 license. Absence of findings is not
+absence of lineage; this disclosure stands regardless of audit outcome.
+
 Future funding priorities include independent human statistical review and external replication.
