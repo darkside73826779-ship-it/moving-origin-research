@@ -2017,3 +2017,19 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Authorization boundary:** G0-4 resolved. G0-5 previously resolved. Steps 3-8 of the M4 gate resolution sequence remain pending. No implementation, scoring, or merge authorized by this entry beyond the publication already completed.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). G0-1 through G0-5 resolved. M0_DECISION_SHEET published. O-6 closed. Remaining: Steps 3-8 of M4 gate resolution sequence.**
+
+
+---
+
+## Entry 71 — Step 3 complete: R2 law-fidelity review cycle of M4 spec v1.3 (BLOCK → remediation → CLEAR)
+
+**Date:** 2026-08-18 · **Actors:** CRITIC (re-initialized, fresh-context per G0-3); ARCHITECT (BF1 remediation); WORKFLOW COORDINATOR (routing); Rebecca McClintic (merge authorization)
+
+- **R2 reviewer and exit criterion:** R2 review was performed by the re-initialized, fresh-context CRITIC per G0-3 (Entry 69), satisfying §5.2 and the R2 exit criterion. The review artifacts were committed in-repo as required by Step 3; the prior off-repo CRITIC clear carried no R2 weight.
+- **Review cycle:** (1) The initial R2 review of the spec at `c0a3413` issued a revision note: an initial CLEAR draft was superseded on re-examination against the mandatory P3 check; the operative review is BLOCK with one blocking finding. (2) **BF1:** P3 source-class tags were missing at three locations: §3.3 “≥ 1 homeostatic variable”; §3.4 six L8 control-arm failure routings without a source column; and §9.2 timebox tripwires 2/4. Classification: spec defect (source-tag/provenance-discipline); no bar moved and no law text was reconstructed. (3) Law-diff (P2), provenance citations (P6), F1 corrections, locked bars, fences, and INSTRUMENT FAILURE discipline all PASS. Non-blocking findings: NF1–NF4.
+- **ARCHITECT remediation:** Commit `b316506`; spec branch `architect/m4-spec-v1.3` advanced `c0a3413` → `94dcc43` (spec v1.3.1). The delta was tags-only; NF2/NF3/NF4 annotations were added; NF1 was correctly left unchanged (P1-preserving).
+- **R2 re-review:** CLEAR at `433aef9`. BF1.a/b/c were all verified remediated. Scope-violation check: CLEAN — line-by-line diff confirmed that no threshold value, locked bar, kill condition, scoring predicate, or law text changed.
+- **Merged review artifacts:** Via PR #42 with Rebecca’s authorization, `reviews/critic_m4_v1.3_law_fidelity_review.md` and `reviews/critic_m4_v1.3_r2_rereview.md` were merged to `main`. Main at `21c71e4`.
+- **Status and pending work:** M4 spec v1.3.1 at `94dcc43` is R2-CLEARED. The spec branch is **NOT** merged; it awaits Step 6 (v1.4 amendments) and Step 7 (M4 gate package, Rebecca sign-off). Step 4 (§6.3/L3 sequencing ruling) remains pending with Rebecca; options are drafted at `architect/l3-sequencing-options` `29e02ec`.
+- **Preserved evidence:** Both M3 scoring runs remain retained as INSTRUMENT FAILURE; seeds 201–203/301–303 were never rerun (O-14); all locked bars remain unchanged.
+- **Authorization boundary:** This entry memorializes Step 3 completion only. No build, scoring, or further merge is authorized by this entry.
