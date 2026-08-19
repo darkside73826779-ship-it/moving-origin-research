@@ -8,6 +8,28 @@
 
 ---
 
+## v1.6.1 — CRITIC BLOCK remediation: provenance + tag-state correction (2026-08-18)
+
+CRITIC fresh-context delta re-clear of v1.6 returned BLOCK with three mechanical provenance/tag-state findings. Spec substance, locked bars, kill conditions, scoring predicates, and all nine ruling implementations verified PASS — not altered.
+
+### BF-3: §0 provenance statement updated + Entry 76 cited
+
+Updated §0 "Provenance reviewed through Entry 72" → "through Entry 76." Added Entry 76 as source authority for the nine rulings in §0. Added [Entry 76] source tags on each ruling implementation (§1.3 R6, §2.3 R5, §2.5 R1, §3.3 R3, §4.2 R8, §4.3 R2, §7.5 R4, §7.6 R9, §9.2 R7).
+
+### BF-1: Stale [PROPOSED] tags on L8 items updated
+
+Updated §3.3 lines 190, 203–206 from [PROPOSED — requires Rebecca sign-off] to [Rebecca-approved (Ruling 3, Entry 76)] — consistent with Ruling 3 approval and §12 table.
+
+### BF-2: Stale [PROPOSED] tag on §7.4 B1 updated
+
+Updated §7.4 Option B1 tag from [PROPOSED — requires Rebecca ruling] to [Rebecca-confirmed B1 (Ruling 4, Entry 76)] — consistent with Ruling 4 confirmation and §7.5.
+
+### Confirmation
+
+No spec substance, locked bar, kill condition, scoring predicate, or ruling implementation changed. Only provenance statement, Entry 76 citations, and approval-status tags updated. Law-diff unchanged (byte-exact). Mechanical correction only.
+
+---
+
 ## v1.6 — Rebecca's nine gate rulings implemented (2026-08-18)
 
 All nine Step 7 gate items ruled by Rebecca. Implemented as spec language. No locked bar value changed. L3 pre-scoring gate preserved. O-14/O-15, M3 INSTRUMENT FAILURE, seed custody, L15–L17 fence all preserved.

@@ -14,11 +14,13 @@
 
 **Law text source:** `docs/ARCHITECTURAL_CONSTITUTION.md` on GitHub main (P1 — repo-first law). All law quotations in this spec are verbatim from this file, cited by line number (P2 — verbatim quotation).
 
-**Provenance source:** `docs/rulings/provenance_log.md` on GitHub main. All provenance citations verified against actual entry text before commit (P6). Provenance reviewed through Entry 72.
+**Provenance source:** `docs/rulings/provenance_log.md` on GitHub main. All provenance citations verified against actual entry text before commit (P6). Provenance reviewed through Entry 76 (Rebecca's nine Step 7 gate rulings).
 
 **Constitutional amendments:** Amendment 1 (Entry 27, L4/E1 test redefined) recorded in `docs/ARCHITECTURAL_CONSTITUTION_v2.md` Amendment Log. Amendment 2 (Entry 72, Step 4 ruling) — Option A: M4 scoring gated on L3 resolution; build parallel. No constitution law text amended.
 
 **Step 4 ruling source:** Entry 72 [BAR-Entry 72] — Principal ruling: §6.3/L3 sequencing contradiction resolved — Option A. M4 spec §8 amended per this ruling (Amendment 5 below).
+
+**Step 7 gate rulings source:** Entry 76 [Entry 76 — Principal ruling: Step 7 gate] — Rebecca's nine gate rulings (L7 inference, L10 threshold, L8 severity matching, borderline handling, L7 peer conditions, graveyard-gate scope, timebox, L10 seeds, tolerance calibration). All nine implemented in v1.6 and cited by ruling number below.
 
 **This spec does NOT reconstruct any law text.** Where the constitution's law text is insufficient to fully operationalize a test, the gap is flagged as a STOP/escalation trigger (per §5.2 ARCHITECT obligation), not filled by reconstruction.
 
@@ -47,7 +49,7 @@
 - **Re-running M3:** Seeds 201–203 and 301–303 retained, never rerun [BAR-Entry 52, O-14].
 - **Modifying M3 verdicts:** INSTRUMENT FAILURE retained.
 
-### 1.3 Prerequisite: L7 graveyard-gate sign-off (v1.6 Ruling 6 — implementation-only authorization)
+### 1.3 Prerequisite: L7 graveyard-gate sign-off (v1.6 Ruling 6 — implementation-only authorization) [Entry 76]
 
 Per [BAR-Entry 11.8], L7/M4 is a deferred graveyard gate. Rebecca has signed the graveyard gate for **M4 implementation only** — this authorizes the build (Step 8: INTEGRATOR task-spec extraction → TASK BUILDER implementation) but does NOT authorize scoring.
 
@@ -92,7 +94,7 @@ The peer-observer is a **matched model** — same parameters, same training data
 - **Confidence:** The peer generates its own confidence estimate from its observation channel — same method as candidate but without privileged self-state access. [PROPOSED — requires Rebecca sign-off]
 - **Rationale:** A matched-model peer is the Constitution's requirement ("matched model"). If the candidate's moving origin provides privileged self-state access, it should beat an identical architecture that sees only behavioral outputs. The M0 Decision Sheet locked this specification. [BAR-Entry 11]
 
-**Peer-observer parity conditions (v1.6 Ruling 5):**
+**Peer-observer parity conditions (v1.6 Ruling 5) [Entry 76]:**
 
 Per Rebecca's ruling, the following parity conditions are binding on the candidate and peer:
 - **Identical confidence calibration:** Both candidate and peer use the same pre-registered confidence calibration procedure. [BAR-Entry 11]
@@ -120,7 +122,7 @@ Sources: Constitution L7 line 24 [LAW-L7]; M0 Decision Sheet line 20 [BAR-Entry 
 
 ### 2.5 Kill conditions
 
-**L7 inference policy (v1.6 Ruling 1 — Rebecca's Option C):**
+**L7 inference policy (v1.6 Ruling 1 — Rebecca's Option C) [Entry 76]:**
 
 Per Rebecca's ruling, L7 bars are split into two categories:
 
@@ -185,7 +187,7 @@ The L8 homeostatic-variable definition is a named prerequisite with its own dedi
 **Homeostatic variable:** Define ≥ 1 [LAW-L8] homeostatic variable with a regulation target. The candidate maintains this variable (e.g., a resource level, error budget, or calibration metric) that should stay within bounds for healthy operation.
 
 **Calibrated-noise injection:** Inject calibrated noise into the self-model (the L7 mirror component — the candidate's self-state representation) at ≥ 3 dose levels [BAR-Entry 11]. Dose levels are amounts of perturbation applied to the self-model's state estimation:
-- **Level 0 (zero-noise baseline):** No perturbation — self-model at full calibration. This is the reference point for the dose-response. Regulation error at Level 0 is the baseline; all higher-dose regulation errors are compared against it. [PROPOSED — requires Rebecca sign-off] (v1.5 Finding 4)
+- **Level 0 (zero-noise baseline):** No perturbation — self-model at full calibration. This is the reference point for the dose-response. Regulation error at Level 0 is the baseline; all higher-dose regulation errors are compared against it. [Rebecca-approved (Ruling 3, Entry 76)]
 - **Level 1 (low):** Small perturbation — self-model slightly degraded
 - **Level 2 (medium):** Moderate perturbation — self-model measurably degraded
 - **Level 3 (high):** Large perturbation — self-model significantly degraded
@@ -194,14 +196,14 @@ The L8 homeostatic-variable definition is a named prerequisite with its own dedi
 
 **Pre-registered direction:** Regulation error INCREASES as self-model noise dose increases. regulation_error(h=1 dose) < regulation_error(h=2 dose) < regulation_error(h=3 dose). All-seeds-direction test requires this on all 5 seeds [BAR-Entry 11.3]. (NF1 resolution: replaced "accuracy" with "regulation error" for terminology clarity.)
 
-**"Only then" specificity leg [LAW-L8] (v1.6 Ruling 3 — standardized proximal-component effect):**
+**"Only then" specificity leg [LAW-L8] (v1.6 Ruling 3 — standardized proximal-component effect) [Entry 76]:**
 
 Inject calibrated noise into a NON-self-model component (e.g., the controller's action selection, or the memory store). The severity matching is based on a **pre-registered standardized proximal-component effect**, not raw perturbation magnitude:
 
-1. **Predefine the comparison component:** Which non-self-model component receives the perturbation (selected before any data exists). [PROPOSED — requires Rebecca sign-off] [LAW-L19]
-2. **Predefine the perturbation type and magnitude:** The perturbation is standardized to the self-model dose at each level — the perturbation applied to the non-self-model component is calibrated to produce an equivalent standardized effect on the proximal component as the self-model dose produces on the self-model. [PROPOSED — requires Rebecca sign-off] [LAW-L19]
-3. **Predefine the calibration set:** The set on which the standardized effect is calibrated (separate from scoring seeds). [PROPOSED — requires Rebecca sign-off] [LAW-L19]
-4. **Predefine the tolerance:** The acceptable deviation from exact severity match (the match need not be perfect, but the tolerance is pre-registered). [PROPOSED — requires Rebecca sign-off] [LAW-L19]
+1. **Predefine the comparison component:** Which non-self-model component receives the perturbation (selected before any data exists). [Rebecca-approved (Ruling 3, Entry 76)] [LAW-L19]
+2. **Predefine the perturbation type and magnitude:** The perturbation is standardized to the self-model dose at each level — the perturbation applied to the non-self-model component is calibrated to produce an equivalent standardized effect on the proximal component as the self-model dose produces on the self-model. [Rebecca-approved (Ruling 3, Entry 76)] [LAW-L19]
+3. **Predefine the calibration set:** The set on which the standardized effect is calibrated (separate from scoring seeds). [Rebecca-approved (Ruling 3, Entry 76)] [LAW-L19]
+4. **Predefine the tolerance:** The acceptable deviation from exact severity match (the match need not be perfect, but the tolerance is pre-registered). [Rebecca-approved (Ruling 3, Entry 76)] [LAW-L19]
 
 The homeostatic regulation error must NOT rise when severity-matched noise is injected into non-self-model components. [LAW-L8]
 
@@ -249,10 +251,10 @@ The homeostatic regulation error must NOT rise when severity-matched noise is in
 | Abstention under drift | ≥ 50% | [BAR-Entry 11.6] |
 | Abstention when clean | ≤ 10% | [BAR-Entry 11.6] |
 | Drifted-AUROC floor | ≥ 0.70 | [BAR-Entry 14] (CRITIC falsifiability review) |
-| Seeds | 5 (confirmed by Rebecca, matching L7/L8 5-seed policy) | [BAR-Entry 11.3] (v1.6 Ruling 8) |
+| Seeds | 5 (confirmed by Rebecca, matching L7/L8 5-seed policy) | [BAR-Entry 11.3] (v1.6 Ruling 8) [Entry 76] |
 | Reporting rule | Drifted-regime AUROC is the reported number; clean is a ceiling, not a claim | [LAW-L10] |
 
-### 4.3 Confidence threshold and AUROC definitions (v1.6 Ruling 2 — Rebecca's ruling)
+### 4.3 Confidence threshold and AUROC definitions (v1.6 Ruling 2 — Rebecca's ruling) [Entry 76]
 
 **Confidence definition:** The candidate's confidence estimate is a scalar output in [0, 1] representing the candidate's assessed probability that its prediction is correct. The confidence estimate is generated by the candidate's self-model (L7 mirror component) from its internal state representation. [BAR-Entry 11]
 
@@ -419,7 +421,7 @@ The per-arm audit ensures no single arm's battery is inflated; the milestone-wid
 
 **Draft options for Rebecca's ruling:**
 
-**Option B1 (M3 precedent):** Label retained. If a borderline control fires, the INSTRUMENT_FAILURE or KILL label is retained as-is. Candidate-facing evidence (if any) may support provisional advancement to the next milestone, but the control firing is not reinterpreted, renamed, or silently dismissed. The M3 precedent (Entry 43) followed this pattern: the shuffled-arm firing was retained as INSTRUMENT_FAILURE, and the correction was a post-scoring spec amendment under the four-part test, not a relabeling. [PROPOSED — requires Rebecca ruling]
+**Option B1 (M3 precedent):** Label retained. If a borderline control fires, the INSTRUMENT_FAILURE or KILL label is retained as-is. Candidate-facing evidence (if any) may support provisional advancement to the next milestone, but the control firing is not reinterpreted, renamed, or silently dismissed. The M3 precedent (Entry 43) followed this pattern: the shuffled-arm firing was retained as INSTRUMENT_FAILURE, and the correction was a post-scoring spec amendment under the four-part test, not a relabeling. [Rebecca-confirmed B1 (Ruling 4, Entry 76)]
 
 **Option B2 (Strict KILL):** Any borderline control firing, even within-FWFP, results in KILL with no provisional advancement. The candidate must clear all controls with margin. This is the most conservative option: it eliminates any ambiguity about borderline cases but may kill a candidate that would have survived under a more lenient rule. [PROPOSED — requires Rebecca ruling]
 
@@ -427,7 +429,7 @@ The per-arm audit ensures no single arm's battery is inflated; the milestone-wid
 
 **Pre-registration requirement:** Whichever option Rebecca rules, the ruling is pre-registered in the spec before any data exists. The JUDGE at scoring time applies the pre-registered rule, not an ad-hoc judgment. [LAW-L19]
 
-### 7.5 Borderline numerical definition + B1 handling (v1.6 Ruling 4 — Rebecca confirmed B1)
+### 7.5 Borderline numerical definition + B1 handling (v1.6 Ruling 4 — Rebecca confirmed B1) [Entry 76]
 
 **Numerical definition of "borderline":** A control firing is **borderline** if its p-value falls within a pre-specified margin of the corrected-alpha threshold. The margin is defined as: p ∈ [α_corrected × 0.5, α_corrected], where α_corrected is the arm's corrected alpha from the FWFP closure audit (§7.3). This means a p-value between 50% and 100% of the corrected alpha is borderline. [BAR-Entry 43] [LAW-L19]
 
@@ -444,7 +446,7 @@ If a borderline control fires (as defined above), the following procedure applie
 
 [BAR-Entry 43] [LAW-L19] (Rebecca confirmed B1)
 
-### 7.6 Control-arm tolerance calibration procedure (v1.6 Ruling 9 — Rebecca's ruling)
+### 7.6 Control-arm tolerance calibration procedure (v1.6 Ruling 9 — Rebecca's ruling) [Entry 76]
 
 The control-arm tolerance thresholds in the L7 (§2.4), L8 (§3.4), and L10 (§4.5) control tables are produced by a **pre-registered, candidate-blind, oracle/synthetic-grounded, frozen-before-scoring** procedure:
 
@@ -503,7 +505,7 @@ The control-arm tolerance thresholds in the L7 (§2.4), L8 (§3.4), and L10 (§4
 | 12 | CRITIC | Results review |
 | 13 | Rebecca | M4 delivery gate ruling |
 
-### 9.2 Timebox (v1.6 Ruling 7 — Rebecca-approved)
+### 9.2 Timebox (v1.6 Ruling 7 — Rebecca-approved) [Entry 76]
 
 | Parameter | Value |
 |---|---|
