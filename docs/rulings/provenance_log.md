@@ -2252,3 +2252,23 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Authorization boundary:** this entry memorializes the first cross-family review corpus custody and the Principal's routing directive. The §2 construct-interpretation ruling, ARCHITECT spec v2, and CRITIC review are sequenced per the directive — no work proceeds from this corpus until RECORDER custody is complete and merged. No scoring, no L8 implementation, no merge to main authorized by this entry beyond the corpus publication itself.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). M4 GATE SIGNED — IMPLEMENTATION AUTHORIZED (scoring gated). Step 8 in progress: first cross-family L8 review corpus in custody; §2 ruling → spec v2 → CRITIC review sequenced per Principal directive.**
+
+## Entry 81 — Principal interpretive ruling: §2 construct-interpretation (XF-1, XF-2, XF-3) — narrowed L8 claim adopted
+
+**Date:** 2026-08-19 (ruling decided 00:52 EDT; logged 00:52 EDT) · **Actor:** Rebecca McClintic (Principal interpretive ruling, §5-P5)
+
+- Rebecca ruled on the three FRAME findings from the first cross-family adversarial review (Sol, Entry 80): XF-1 (the proposed homeostat is partly created/operated by the test environment), XF-2 (selective risk is an outcome constraint, not an essential internal variable), and XF-3 (a single memory control cannot support the unrestricted "and only then").
+
+- **RULING: Option A — adopt the advisor's recommendation as written.** An L8 pass certifies externally-closed selective-risk regulation dependent specifically on the mirror relative to the pre-registered control set — NOT intrinsic stakes or organism-equivalent homeostasis. Damasio/Seth is demoted from claim to motivation in spec prose. The "and only then" is operationalized as specificity relative to the pre-registered control panel, expanded to three controls: (1) memory perturbation (existing), (2) feedback-channel perturbation (new), and (3) task-difficulty shift (new).
+
+- This resolves all three FRAME findings by taking the narrower path the reviewer offered: rather than supplying a bridge from selective-risk control to candidate-owned homeostasis (which the reviewer flagged as unestablished), Rebecca explicitly narrowed what an L8 pass claims. The construct is a functional, externally specified homeostat — not an organism-equivalent one. The "and only then" becomes "specific relative to the pre-registered three-control panel" — falsifiable against the panel, not an unrestricted universal claim.
+
+- This ruling merges into gate item G1 and is memorialized as an interpretive ruling per §5-P5. It is a P5-authorized interpretive ruling (deviation from the broader constitutional L8 language, memorialized with Rebecca's sign-off).
+
+- **Sequencing per Principal directive:** this ruling PRECEDES any spec revision. The ARCHITECT does NOT start spec v2 until this ruling issues — the narrowed claim rewrites §1 and §10 of the L8 instantiation spec. XF-4 through XF-9 (the six BLOCKING findings) and riders XF-10/XF-11 route to the ARCHITECT for concrete closure AFTER this ruling (item 3 of the directive). The fresh-context CRITIC reviews spec v2 with the full eight-document chain attached (item 4). §8 artifacts (power analysis + sensitivity map) follow XF-9's requirements (item 5).
+
+- **Preserved evidence:** INSTRUMENT FAILURE retained; seeds 201–203/301–303 never rerun (O-14); all locked bars intact; L3 pre-scoring gate preserved; O-14/O-15/seed custody/L15–L17 fence all preserved.
+
+- **Authorization boundary:** this entry memorializes the §2 construct-interpretation ruling. No spec revision, no implementation, no scoring authorized by this entry. The ARCHITECT spec v2 work is sequenced AFTER this ruling per the directive — it has not yet started.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). M4 GATE SIGNED — IMPLEMENTATION AUTHORIZED (scoring gated). Step 8 in progress: §2 construct-interpretation ruling issued (Entry 81); ARCHITECT spec v2 sequenced next per Principal directive.**
