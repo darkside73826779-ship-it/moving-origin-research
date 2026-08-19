@@ -1,9 +1,9 @@
-# M4 Specification v1.5 — Mirror, Stakes, and Calibration
+# M4 Specification v1.6 — Mirror, Stakes, and Calibration
 
-**Serves:** Rebecca's M4 gate authorization (2026-08-17, G0-1 correction cycle 2026-08-18, Step 6 amendments 2026-08-18, advisor correction cycle 2026-08-18)
-**Status:** ARCHITECT draft v1.5 — advisor correction cycle (six findings: peer baseline, FWFP milestone-wide, L10 threshold definitions, L8 zero-noise + severity-matched specificity, borderline numerical definition, L7 inference reconciliation)
+**Serves:** Rebecca's M4 gate authorization (2026-08-17, G0-1 correction cycle 2026-08-18, Step 6 amendments 2026-08-18, advisor correction cycle 2026-08-18, Step 7 gate rulings 2026-08-18)
+**Status:** ARCHITECT draft v1.6 — Rebecca's nine gate rulings implemented (L7 inference, L10 threshold, L8 severity matching, borderline handling, L7 peer conditions, graveyard-gate scope, timebox, L10 seeds, tolerance calibration)
 **Date:** 2026-08-18 · **Regime:** B (post-Entry 27; constitution v1 + Amendment 1; §5 binding) (P4)
-**Base SHA:** `9dff1e5` (v1.4.1, CRITIC-cleared)
+**Base SHA:** `487843f` (v1.5, CRITIC-cleared)
 **Authority chain:** Rebecca > constitution's laws > approved specifications > this specification > agent judgment
 **Prior context:** M0 GO [OP-Entry 10], M1 GREEN, M2/E1 GREEN/SEALED, M3 INSTRUMENT FAILURE (provisional advancement [BAR-Entry 52]). Provenance log reviewed through Entry 72. STATE.md reviewed. Constitution published in-repo at `docs/ARCHITECTURAL_CONSTITUTION.md` (v1, SHA-256 `509f11c3...`) and `docs/ARCHITECTURAL_CONSTITUTION_v2.md` (v2 with Amendment 1 and §5). Step 4 ruling: Option A (Entry 72) — M4 scoring gated on L3 resolution; build parallel.
 **Role boundary:** The ARCHITECT proposes specification, bars, and sequencing only. No code, no execution, no mechanism implementation, no merge.
@@ -47,9 +47,11 @@
 - **Re-running M3:** Seeds 201–203 and 301–303 retained, never rerun [BAR-Entry 52, O-14].
 - **Modifying M3 verdicts:** INSTRUMENT FAILURE retained.
 
-### 1.3 Prerequisite: L7 graveyard-gate sign-off
+### 1.3 Prerequisite: L7 graveyard-gate sign-off (v1.6 Ruling 6 — implementation-only authorization)
 
-Per [BAR-Entry 11.8], L7/M4 is a deferred graveyard gate. Rebecca must sign with M3 results in front of her before M4 implementation begins.
+Per [BAR-Entry 11.8], L7/M4 is a deferred graveyard gate. Rebecca has signed the graveyard gate for **M4 implementation only** — this authorizes the build (Step 8: INTEGRATOR task-spec extraction → TASK BUILDER implementation) but does NOT authorize scoring.
+
+**Downstream gates retained:** L3 fresh-seed resolution (Option A, Entry 72), FWFP closure audit (Entry 43), CRITIC implementation review, Rebecca's courier-channel scoring authorization. All downstream gates remain in effect. [BAR-Entry 11.8]
 
 ---
 
@@ -90,6 +92,17 @@ The peer-observer is a **matched model** — same parameters, same training data
 - **Confidence:** The peer generates its own confidence estimate from its observation channel — same method as candidate but without privileged self-state access. [PROPOSED — requires Rebecca sign-off]
 - **Rationale:** A matched-model peer is the Constitution's requirement ("matched model"). If the candidate's moving origin provides privileged self-state access, it should beat an identical architecture that sees only behavioral outputs. The M0 Decision Sheet locked this specification. [BAR-Entry 11]
 
+**Peer-observer parity conditions (v1.6 Ruling 5):**
+
+Per Rebecca's ruling, the following parity conditions are binding on the candidate and peer:
+- **Identical confidence calibration:** Both candidate and peer use the same pre-registered confidence calibration procedure. [BAR-Entry 11]
+- **Identical evaluation data:** Both candidate and peer are evaluated on the same evaluation data set. [BAR-Entry 11]
+- **Identical ECE definition:** Both candidate and peer use the same ECE computation (same bins, same binning method). [BAR-Entry 11]
+- **Identical binning:** Both candidate and peer use the same binning for all binned metrics. [BAR-Entry 11]
+- **Paired independently trained instances:** Candidate and peer are trained as a paired set — same data, same architecture, same initialization seed — but independently (the peer does not see the candidate's internal state during training). [BAR-Entry 11]
+
+Sources: Constitution L7 line 24 [LAW-L7]; M0 Decision Sheet line 20 [BAR-Entry 11].
+
 **Prior OLS baseline (v1.1–v1.4):** The fixed OLS baseline is superseded by the matched-model requirement. The OLS baseline was an ARCHITECT design choice that did not match the Constitution's "matched model" language or the M0 Decision Sheet's peer spec. Corrected in v1.5.
 
 **Portrait clause [LAW-L7]:** No margin over the peer = portrait, not mirror — reported as such. If the candidate does not beat the peer, the verdict is KILL (not INSTRUMENT_FAILURE), and the result is reported as "portrait, not mirror."
@@ -107,21 +120,19 @@ The peer-observer is a **matched model** — same parameters, same training data
 
 ### 2.5 Kill conditions
 
-**L7 inference reconciliation (v1.5 Finding 6):**
+**L7 inference policy (v1.6 Ruling 1 — Rebecca's Option C):**
 
-The M0 Decision Sheet (line 29) specifies the inferential policy for laws with p<.05 bars: "Laws with p<.05 bars (L7, L8, L15): 5 seeds, plus fallback criterion = effect direction consistent in all seeds AND pooled bootstrap 95% CI excluding zero" [BAR-Entry 11]. This applies to L7, which has p<.05 bars (AUROC ≥ 0.75, ECE ≤ 0.10, margin > 0 at p < .05) [LAW-L7].
+Per Rebecca's ruling, L7 bars are split into two categories:
 
-**Tension:** The v1.4 §2.5 stated that threshold bars are evaluated per-seed with any-seed-fail → immediate KILL and no fallback. The M0 policy states that L7's p<.05 bars use the 5-seed/bootstrap fallback. These conflict on whether a single-seed threshold-bar failure triggers immediate KILL or falls back to the all-seeds-direction + bootstrap-CI test.
+1. **AUROC and ECE are per-seed threshold bars:** any-seed fail → KILL, no fallback. These are absolute quality bars — the candidate must meet them on every seed. [LAW-L7] [BAR-Entry 11]
 
-**STOP / escalation trigger (§5.2):** Resolving this tension requires substantive interpretation of which L7 bars are "threshold bars" (any-seed KILL) vs "direction tests" (5-seed/bootstrap fallback) — or whether all L7 bars fall under the M0 5-seed/bootstrap policy. This is not resolvable from verbatim law text alone. The Constitution L7 text states the bars (AUROC ≥ 0.75, ECE ≤ 0.10, margin > 0 at p < .05) but does not specify the inferential policy. The M0 Decision Sheet (line 29) specifies the inferential policy but does not distinguish which bars are "threshold" vs "direction." Per §5.2, this is a STOP — the ARCHITECT flags the gap and escalates for Rebecca's ruling rather than resolving by reconstruction.
+2. **Candidate–peer margin is a direction test:** evaluated across 5 paired seeds using all-seed direction consistency and a pooled paired-bootstrap 95% CI excluding zero (the M0 Entry 11.3 fallback policy). The margin must be directionally positive across all seeds AND the pooled bootstrap 95% CI must exclude zero. [BAR-Entry 11.3] (M0 Decision Sheet line 29)
 
-**Escalation question for Rebecca:** Does the M0 inferential policy (5 seeds + all-seeds-direction + bootstrap-CI fallback) apply to ALL L7 bars (AUROC, ECE, margin), or do AUROC and ECE function as per-seed threshold bars (any-seed-fail → KILL) while only the margin test (which is inherently a p<.05 direction test) uses the 5-seed/bootstrap fallback? [PROPOSED — requires Rebecca ruling]
+The v1.4 "Amendment 3" hard rule (no fallback for any L7 bar) is retracted. The v1.5 STOP/escalation is resolved by this ruling. [P5 — authorized by Rebecca's ruling]
 
-**Until Rebecca rules, the conservative default applies:** All L7 bars are evaluated per-seed. Any-seed-fail → KILL. This is the stricter interpretation and preserves the candidate's burden. If Rebecca rules that the M0 5-seed/bootstrap fallback applies, the spec will be amended accordingly.
-
-- Candidate AUROC < 0.75 [LAW-L7] on any seed → KILL (conservative default; Rebecca may rule to apply M0 fallback)
-- Margin not statistically significant (p-value of margin test ≥ .05) [LAW-L7] → KILL (conservative default; Rebecca may rule to apply M0 fallback)
-- ECE > 0.10 [LAW-L7] on any seed → KILL (conservative default; Rebecca may rule to apply M0 fallback)
+- Candidate AUROC < 0.75 [LAW-L7] on any seed → KILL (per-seed threshold bar, no fallback)
+- ECE > 0.10 [LAW-L7] on any seed → KILL (per-seed threshold bar, no fallback)
+- Margin: not directionally positive across all 5 seeds OR pooled bootstrap 95% CI includes zero [BAR-Entry 11.3] → KILL (direction test with M0 fallback policy)
 
 ### 2.6 No-clean-only self-report rule (BF5 resolution, retained)
 
@@ -183,9 +194,18 @@ The L8 homeostatic-variable definition is a named prerequisite with its own dedi
 
 **Pre-registered direction:** Regulation error INCREASES as self-model noise dose increases. regulation_error(h=1 dose) < regulation_error(h=2 dose) < regulation_error(h=3 dose). All-seeds-direction test requires this on all 5 seeds [BAR-Entry 11.3]. (NF1 resolution: replaced "accuracy" with "regulation error" for terminology clarity.)
 
-**"Only then" specificity leg [LAW-L8] (v1.5 Finding 4 — severity-matched):** Inject calibrated noise into a NON-self-model component (e.g., the controller's action selection, or the memory store). The noise injected into the non-self-model component must be **severity-matched** to the self-model dose at each level — the perturbation magnitude applied to the non-self-model component equals the perturbation magnitude applied to the self-model at the same dose level. This ensures the specificity test isolates "responds to self-model quality" from "responds to general perturbation." The homeostatic regulation error must NOT rise when severity-matched noise is injected into non-self-model components. [LAW-L8] [PROPOSED — requires Rebecca sign-off]
+**"Only then" specificity leg [LAW-L8] (v1.6 Ruling 3 — standardized proximal-component effect):**
 
-**Pre-registration:** The severity-matching procedure (how perturbation magnitudes are equated across self-model and non-self-model components) is pre-registered before any data exists. [LAW-L19] [PROPOSED — requires Rebecca sign-off]
+Inject calibrated noise into a NON-self-model component (e.g., the controller's action selection, or the memory store). The severity matching is based on a **pre-registered standardized proximal-component effect**, not raw perturbation magnitude:
+
+1. **Predefine the comparison component:** Which non-self-model component receives the perturbation (selected before any data exists). [PROPOSED — requires Rebecca sign-off] [LAW-L19]
+2. **Predefine the perturbation type and magnitude:** The perturbation is standardized to the self-model dose at each level — the perturbation applied to the non-self-model component is calibrated to produce an equivalent standardized effect on the proximal component as the self-model dose produces on the self-model. [PROPOSED — requires Rebecca sign-off] [LAW-L19]
+3. **Predefine the calibration set:** The set on which the standardized effect is calibrated (separate from scoring seeds). [PROPOSED — requires Rebecca sign-off] [LAW-L19]
+4. **Predefine the tolerance:** The acceptable deviation from exact severity match (the match need not be perfect, but the tolerance is pre-registered). [PROPOSED — requires Rebecca sign-off] [LAW-L19]
+
+The homeostatic regulation error must NOT rise when severity-matched noise is injected into non-self-model components. [LAW-L8]
+
+**Pre-registration:** All four predefinitions above are pre-registered before any data exists. [LAW-L19]
 
 **Supplementary probe (not load-bearing for L8 claim):** The h=1/h=3/h=5 prediction-horizon design from v1.2 may be retained as a supplementary diagnostic probe, but it does not carry the L8 claim.
 
@@ -229,22 +249,26 @@ The L8 homeostatic-variable definition is a named prerequisite with its own dedi
 | Abstention under drift | ≥ 50% | [BAR-Entry 11.6] |
 | Abstention when clean | ≤ 10% | [BAR-Entry 11.6] |
 | Drifted-AUROC floor | ≥ 0.70 | [BAR-Entry 14] (CRITIC falsifiability review) |
-| Seeds | 5 (inferred from L7/L8 pattern; L10 not explicitly in Entry 11.3) | [PROPOSED — requires Rebecca confirmation] |
+| Seeds | 5 (confirmed by Rebecca, matching L7/L8 5-seed policy) | [BAR-Entry 11.3] (v1.6 Ruling 8) |
 | Reporting rule | Drifted-regime AUROC is the reported number; clean is a ceiling, not a claim | [LAW-L10] |
 
-### 4.3 Confidence threshold pre-registration (v1.5 Finding 3 — explicit definitions)
+### 4.3 Confidence threshold and AUROC definitions (v1.6 Ruling 2 — Rebecca's ruling)
 
-**Confidence definition:** The candidate's confidence estimate is a scalar output in [0, 1] representing the candidate's assessed probability that its prediction is correct. The confidence estimate is generated by the candidate's self-model (L7 mirror component) from its internal state representation. [PROPOSED — requires Rebecca sign-off]
+**Confidence definition:** The candidate's confidence estimate is a scalar output in [0, 1] representing the candidate's assessed probability that its prediction is correct. The confidence estimate is generated by the candidate's self-model (L7 mirror component) from its internal state representation. [BAR-Entry 11]
 
-**Threshold calibration method:** The confidence threshold τ is calibrated on a held-out calibration set (separate from scoring seeds) to achieve a target abstention rate under drift. The calibration set is drawn from the same distribution as the development seeds (101–105) but is not used for development. The threshold τ is the value that produces ≥ 50% abstention under drift [BAR-Entry 11.6] on the calibration set. [PROPOSED — requires Rebecca sign-off]
+**Primary drifted AUROC:** Computed over the complete fixed drifted population using **pre-abstention scores** — the candidate's confidence/ranking before abstention is applied. This closes the abstention-exclusion gaming surface: the candidate cannot inflate its AUROC by abstaining on hard cases. [BAR-Entry 14] [LAW-L10]
 
-**Abstained-case treatment in AUROC computation:** Abstained cases are excluded from the AUROC computation. The AUROC is computed over non-abstained cases only. This means: (a) if the candidate abstains on all drifted cases, the drifted-regime AUROC is undefined (reported as N/A, not as 1.0); (b) if the candidate abstains on some cases, the AUROC is computed over the remaining non-abstained cases. The abstention rate is reported alongside the AUROC. [PROPOSED — requires Rebecca sign-off]
+**Answered-case AUROC:** Reported separately (non-abstained drifted cases), but is **not the headline**. The primary metric is the pre-abstention drifted AUROC. [BAR-Entry 14] [LAW-L10]
 
-**AUROC population:** The drifted-regime AUROC is computed over all non-abstained drifted-regime cases across all scoring seeds. The clean-regime AUROC (ceiling) is computed over all non-abstained clean-regime cases. [LAW-L10]
+**All-abstain AUROC:** If the candidate abstains on all drifted cases, the drifted-regime AUROC **fails the ≥ 0.70 floor** [BAR-Entry 14]. All-abstain is not N/A — it is a failure. The candidate cannot escape the AUROC floor by abstaining on everything. [BAR-Entry 14]
 
-**Drifted-AUROC floor (locked bar, preserved):** The drifted-regime AUROC ≥ 0.70 [BAR-Entry 14] is a locked bar. The numerical value 0.70 is NOT linked to τ — the floor is an independent requirement on the AUROC metric, not a calibration target for the threshold. The v1.4 rationale ("τ = 0.70 matches the AUROC floor") is withdrawn as unsupported. [BAR-Entry 14]
+**τ calibration:** Calibrated on held-out calibration data (separate from scoring seeds) to satisfy **both** drift ≥ 50% abstention [BAR-Entry 11.6] AND clean ≤ 10% abstention [BAR-Entry 11.6]. The threshold τ is the value that satisfies both constraints on the calibration set. [BAR-Entry 11.6] [BAR-Entry 11]
 
-**Proposed confidence threshold:** τ is calibrated per the method above. The specific value is determined by the calibration set, not pre-specified. [PROPOSED — requires Rebecca sign-off]
+**AUROC population:** The primary drifted-regime AUROC is computed over the complete fixed drifted-regime population (pre-abstention) across all scoring seeds. The clean-regime AUROC (ceiling) is computed over the complete clean-regime population. [LAW-L10]
+
+**Drifted-AUROC floor (locked bar, preserved):** The drifted-regime AUROC ≥ 0.70 [BAR-Entry 14] is a locked bar — value unchanged. What changes in v1.6 is the population it is computed over (pre-abstention, complete fixed population) and the anti-gaming design (all-abstain = failure). [BAR-Entry 14]
+
+**Confidence threshold:** τ is calibrated per the method above. The specific value is determined by the calibration set, not pre-specified. [BAR-Entry 11.6] [BAR-Entry 11]
 
 ### 4.4 Clean-regime specificity control
 
@@ -403,22 +427,45 @@ The per-arm audit ensures no single arm's battery is inflated; the milestone-wid
 
 **Pre-registration requirement:** Whichever option Rebecca rules, the ruling is pre-registered in the spec before any data exists. The JUDGE at scoring time applies the pre-registered rule, not an ad-hoc judgment. [LAW-L19]
 
-### 7.5 Borderline numerical definition + B1 draft implementation (v1.5 Finding 5)
+### 7.5 Borderline numerical definition + B1 handling (v1.6 Ruling 4 — Rebecca confirmed B1)
 
-**Numerical definition of "borderline":** A control firing is **borderline** if its p-value falls within a pre-specified margin of the corrected-alpha threshold. The margin is defined as: p ∈ [α_corrected × 0.5, α_corrected], where α_corrected is the arm's corrected alpha from the FWFP closure audit (§7.3). This means a p-value between 50% and 100% of the corrected alpha is borderline — close enough to the threshold that the firing could be a statistical artifact rather than a genuine signal. [PROPOSED — requires Rebecca sign-off]
+**Numerical definition of "borderline":** A control firing is **borderline** if its p-value falls within a pre-specified margin of the corrected-alpha threshold. The margin is defined as: p ∈ [α_corrected × 0.5, α_corrected], where α_corrected is the arm's corrected alpha from the FWFP closure audit (§7.3). This means a p-value between 50% and 100% of the corrected alpha is borderline. [BAR-Entry 43] [LAW-L19]
 
-**Pre-registration:** The margin (50% of corrected alpha) is pre-registered before any data exists. The JUDGE at scoring time applies this definition mechanically, not by judgment. [LAW-L19] [PROPOSED — requires Rebecca sign-off]
+**The 0.5α–α band is descriptive only (v1.6 Ruling 4):** The borderline band must NOT change the verdict. A borderline firing is handled per B1 regardless of where in the band it falls. The band is for reporting context, not for altering the outcome. [BAR-Entry 43]
 
-**B1 draft implementation (advisor recommendation; Rebecca rules):**
+**B1 handling (Rebecca confirmed):**
 
 If a borderline control fires (as defined above), the following procedure applies:
 1. The INSTRUMENT_FAILURE or KILL label is **retained as-is**. The control firing is not reinterpreted, renamed, or silently dismissed.
 2. The firing is reported with full context: which arm, which check, p-value, corrected alpha, margin ratio (p / α_corrected), and all-seeds pattern.
 3. Candidate-facing evidence (if any) may support **provisional advancement** to the next milestone, but the control firing remains on the record.
 4. Any correction (e.g., spec amendment, methodological fix) follows the Entry 43 four-part test as a post-scoring action, not a relabeling.
-5. The M3 precedent (Entry 43) is the model: the shuffled-arm firing was retained as INSTRUMENT_FAILURE, and the correction was a post-scoring spec amendment under the four-part test.
+5. The M3 precedent (Entry 43) is the model.
 
-[PROPOSED — requires Rebecca ruling] (advisor recommends B1; Rebecca rules the borderline handling)
+[BAR-Entry 43] [LAW-L19] (Rebecca confirmed B1)
+
+### 7.6 Control-arm tolerance calibration procedure (v1.6 Ruling 9 — Rebecca's ruling)
+
+The control-arm tolerance thresholds in the L7 (§2.4), L8 (§3.4), and L10 (§4.5) control tables are produced by a **pre-registered, candidate-blind, oracle/synthetic-grounded, frozen-before-scoring** procedure:
+
+1. **Pre-registration:** The calibration procedure (method, data source, acceptance criterion) is pre-registered in the spec before any candidate behavior is observed. [LAW-L19] [BAR-Entry 43]
+
+2. **Oracle/synthetic grounding:** Tolerances are calibrated against the oracle arm and synthetic ground-truth (where the true answer is known), NOT against the candidate's diagnostic-seed behavior. The oracle arm provides the positive control; synthetic ground-truth provides known-answer calibration. [BAR-Entry 43] [PROPOSED — requires Rebecca sign-off on method]
+
+3. **Candidate-blind:** The candidate's diagnostic-seed results (seeds 101–105 under O-15) are NOT inputs to the tolerance calibration. Only oracle/synthetic ground-truth is used. The candidate's behavior cannot influence its own control thresholds. [BAR-Entry 43] [O-15]
+
+4. **Frozen before scoring:** Once computed and CRITIC-verified, the tolerances are locked and cannot be adjusted after the candidate runs. Any post-candidate adjustment is prohibited and would be visible in the provenance. [BAR-Entry 43] [LAW-L19]
+
+5. **Role boundary:**
+   - **ARCHITECT** specifies the procedure (method, data source, acceptance criterion).
+   - **TASK BUILDER** computes the actual tolerance numbers under O-15 (diagnostic-only).
+   - **CRITIC** verifies the execution (candidate-blind, oracle-grounded, frozen).
+   - **Rebecca** signs off on the method and criterion, not the numbers.
+   [BAR-Entry 43]
+
+6. **Acceptance criterion:** Each control arm's false-positive rate ≤ a pre-specified threshold. The ARCHITECT specifies the threshold target; the TASK BUILDER computes to satisfy it. The threshold is calibrated to be consistent with the FWFP closure audit's familywise rate (§7.3). [BAR-Entry 43] [PROPOSED — requires Rebecca sign-off on criterion]
+
+**What this adds:** The existing failure-routing rules in the control-arm tables (Empty/Permuted/Shuffled/Oracle/Naive/Frozen) are preserved. What is added is the numerical tolerance calibration procedure that produces the thresholds those routings reference. The [PROPOSED] tags on the existing tolerance values in §2.4, §3.4, and §4.5 are now governed by this procedure — the numbers will be computed by the TASK BUILDER under this procedure, not pre-specified by the ARCHITECT.
 
 ---
 
@@ -442,7 +489,7 @@ If a borderline control fires (as defined above), the following procedure applie
 
 | Step | Role | Deliverable |
 |---|---|---|
-| 1 | ARCHITECT | This specification (v1.5) + changelog + handoff |
+| 1 | ARCHITECT | This specification (v1.6) + changelog + handoff |
 | 2 | CRITIC | Fresh-context delta re-clear with law-diff table |
 | 3 | WORKFLOW COORDINATOR | Step 7 package assembly |
 | 4 | Rebecca | Approve M4 spec + L7 graveyard-gate sign-off + L10 threshold + borderline ruling + timebox |
@@ -456,14 +503,16 @@ If a borderline control fires (as defined above), the following procedure applie
 | 12 | CRITIC | Results review |
 | 13 | Rebecca | M4 delivery gate ruling |
 
-### 9.2 Timebox proposal
+### 9.2 Timebox (v1.6 Ruling 7 — Rebecca-approved)
 
 | Parameter | Value |
 |---|---|
-| Sessions | 4 [PROPOSED — requires Rebecca approval] |
-| Calendar days | 8 [PROPOSED — requires Rebecca approval] |
-| Tripwire (sessions) | 2 [PROPOSED — requires Rebecca approval] |
-| Tripwire (days) | 4 [PROPOSED — requires Rebecca approval] |
+| Sessions | 6 [Rebecca-approved] |
+| Calendar days | 14 [Rebecca-approved] |
+| Tripwire (sessions) | 3 [Rebecca-approved] |
+| Tripwire (days) | 7 [Rebecca-approved] |
+
+**Exclusions:** External-review waiting time and L3-gate waiting time are excluded from the timebox clock. The clock runs on M4 build work only, not on waiting for dependent gates. [Rebecca-approved]
 
 ---
 
@@ -488,23 +537,27 @@ No L15, L16, or L17 work authorized before M5. This spec does not propose integr
 
 ---
 
-## 12. Items requiring Rebecca's decision
+## 12. Items requiring Rebecca's decision (v1.6 — nine rulings resolved)
 
-| Item | What | Source |
+| Item | What | Status |
 |---|---|---|
-| L7 graveyard-gate sign-off | Must sign with M3 results | [BAR-Entry 11.8] |
-| L10 confidence threshold | τ calibrated on held-out set to achieve ≥50% abstention under drift; specific value not pre-specified (v1.5 Finding 3) | [PROPOSED — requires Rebecca sign-off] |
-| L10 confidence/threshold definitions | Confidence definition, calibration method, abstained-case treatment, AUROC population (§4.3) | [PROPOSED — requires Rebecca sign-off] |
-| L10 seed count | 5 inferred from L7/L8 pattern; L10 not in Entry 11.3 | [PROPOSED] |
-| M4 timebox | Proposed 4 sessions / 8 days | [PROPOSED] |
-| L8 homeostatic variable | Elevated to named prerequisite with dedicated reviewer pass (§3.3.1) — no longer a §12 decision item | [PROPOSED] — resolved by §3.3.1 reviewer pass |
-| Control-arm tolerances (L7, L10) | Tolerance thresholds in control tables (e.g., empty AUROC deviation > 0.05, oracle AUROC < 0.95, permuted AUROC > 0.55, etc.) | [PROPOSED — requires Rebecca sign-off] (BF1 resolution) |
-| Borderline control firing handling | How a within-FWFP borderline control firing is labeled and handled at the delivery gate (§7.4, §7.5) | [PROPOSED — requires Rebecca ruling] |
-| Borderline numerical definition | Margin = 50% of corrected alpha; p ∈ [α_corr × 0.5, α_corr] (§7.5) | [PROPOSED — requires Rebecca sign-off] |
-| L7 inference policy | Does M0 5-seed/bootstrap fallback apply to all L7 bars or only direction tests? (§2.5, Finding 6 — STOP/escalation) | [PROPOSED — requires Rebecca ruling] |
-| L7 peer confidence method | How peer generates confidence from observation channel (§2.3) | [PROPOSED — requires Rebecca sign-off] |
-| L8 zero-noise baseline | Level 0 as reference point for dose-response (§3.3) | [PROPOSED — requires Rebecca sign-off] |
-| L8 severity-matched specificity | Procedure for equating perturbation magnitudes across components (§3.3) | [PROPOSED — requires Rebecca sign-off] |
+| L7 graveyard-gate sign-off | Signed for M4 implementation only (not scoring) | [BAR-Entry 11.8] — RESOLVED (Ruling 6) |
+| L10 confidence threshold | τ dual-calibrated (drift ≥50%, clean ≤10%); value determined by calibration | [BAR-Entry 11.6] — RESOLVED (Ruling 2) |
+| L10 confidence/threshold definitions | Pre-abstention AUROC, all-abstain=fail, τ calibration method (§4.3) | [BAR-Entry 14] — RESOLVED (Ruling 2) |
+| L10 seed count | 5 confirmed by Rebecca | [BAR-Entry 11.3] — RESOLVED (Ruling 8) |
+| M4 timebox | 6 sessions / 14 days, tripwire 3/7, excludes waiting time | [Rebecca-approved] — RESOLVED (Ruling 7) |
+| L8 homeostatic variable | Named prerequisite with dedicated reviewer pass (§3.3.1) | RESOLVED by §3.3.1 reviewer pass |
+| Control-arm tolerances | Pre-registered/candidate-blind/oracle-grounded/frozen procedure (§7.6) | [BAR-Entry 43] — RESOLVED (Ruling 9) |
+| Borderline control firing handling | B1 confirmed (label retained, provisional advancement possible) | [BAR-Entry 43] — RESOLVED (Ruling 4) |
+| Borderline numerical definition | p ∈ [α_corr × 0.5, α_corr]; band is descriptive only | [BAR-Entry 43] [LAW-L19] — RESOLVED (Ruling 4) |
+| L7 inference policy | AUROC/ECE per-seed KILL; margin direction test with M0 fallback | [BAR-Entry 11.3] — RESOLVED (Ruling 1) |
+| L7 peer confidence method | Matched-model with identical calibration/eval/ECE/binning + paired training | [BAR-Entry 11] — RESOLVED (Ruling 5) |
+| L8 zero-noise baseline | Level 0 approved as dose-response reference | [Rebecca-approved] — RESOLVED (Ruling 3) |
+| L8 severity-matched specificity | Standardized proximal-component effect (4 predefinitions) | [LAW-L19] — RESOLVED (Ruling 3) |
+
+**Items still requiring Rebecca sign-off (method/criterion, not numbers):**
+- L8 standardized specificity: comparison component, perturbation type, calibration set, tolerance — pre-registered [PROPOSED — requires Rebecca sign-off] (Ruling 3)
+- Tolerance calibration: method and acceptance criterion — [PROPOSED — requires Rebecca sign-off] (Ruling 9)
 
 **Provenance note (F1.5 correction):** The L7 numeric bars (AUROC ≥ 0.75, ECE ≤ 0.10, margin > 0 at p < .05) are in the constitution's law text [LAW-L7, line 24], not from Entry 5. Entry 5 [verified: provenance_log.md line 87] was the JUDGE's measurability assessment, which classified L7 as "fully numeric (judgeable now)" — it did not create the bars. Entry 8 [verified: provenance_log.md line 134] was the JUDGE's ruling on the plan, which identified corrections (L7 controls mandatory, L10 needs kill condition) — it did not lock bars. Bars were locked by Rebecca in Entry 11 [verified: provenance_log.md line 172].
 
@@ -512,7 +565,7 @@ No L15, L16, or L17 work authorized before M5. This spec does not propose integr
 
 ## 13. Implementation handoff
 
-**Next recipient:** CRITIC (fresh-context reviewer) for delta re-clear with law-diff table, then WORKFLOW COORDINATOR for Step 7 package assembly.
+**Next recipient:** CRITIC (fresh-context reviewer) for delta re-clear with law-diff table, then WORKFLOW COORDINATOR for the formal Step 7 gate package to Rebecca for her graveyard-gate signature (implementation-only authorization).
 
 **Explicitly prohibited for TASK BUILDER:**
 - Modifying any locked bar, threshold, or scoring predicate.

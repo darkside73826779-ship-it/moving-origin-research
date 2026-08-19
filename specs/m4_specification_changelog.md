@@ -2,9 +2,59 @@
 
 **Spec:** `specs/m4_specification.md`
 **Date:** 2026-08-18 · **Author:** ARCHITECT
-**Base SHA:** `9dff1e5` (v1.4.1, CRITIC-cleared)
-**Branch:** `architect/m4-spec-v1.5`
+**Base SHA:** `487843f` (v1.5, CRITIC-cleared)
+**Branch:** `architect/m4-spec-v1.6`
 **Regime:** B (post-Entry 27; constitution v1 + Amendment 1; §5 binding) (P4)
+
+---
+
+## v1.6 — Rebecca's nine gate rulings implemented (2026-08-18)
+
+All nine Step 7 gate items ruled by Rebecca. Implemented as spec language. No locked bar value changed. L3 pre-scoring gate preserved. O-14/O-15, M3 INSTRUMENT FAILURE, seed custody, L15–L17 fence all preserved.
+
+### Ruling 1: L7 inference (§2.5)
+
+Replaced v1.5 STOP/escalation with Option C: AUROC and ECE are per-seed threshold bars (any-seed fail → KILL, no fallback); candidate–peer margin is a direction test (5 paired seeds, all-seed direction + pooled paired-bootstrap 95% CI excluding zero). v1.4 Amendment 3 hard rule retracted. [BAR-Entry 11.3] [LAW-L7]
+
+### Ruling 2: L10 threshold and AUROC definitions (§4.3)
+
+Primary drifted AUROC computed over complete fixed drifted population using pre-abstention scores. Answered-case AUROC reported separately (not headline). All-abstain = failure (not N/A). τ dual-calibrated (drift ≥50%, clean ≤10%) on held-out data. Drifted-AUROC floor ≥0.70 [BAR-Entry 14] preserved — value unchanged, population and anti-gaming design changed. [BAR-Entry 14] [BAR-Entry 11.6]
+
+### Ruling 3: L8 zero-noise baseline + severity-matched specificity (§3.3)
+
+Level 0 zero-noise baseline approved as dose-response reference. Severity matching replaced with pre-registered standardized proximal-component effect (4 predefinitions: comparison component, perturbation type/magnitude, calibration set, tolerance). L8 locked bars [BAR-Entry 11] preserved. [LAW-L19]
+
+### Ruling 4: Borderline numerical definition + B1 handling (§7.5)
+
+B1 confirmed (label retained, provisional advancement possible). 0.5α–α band is descriptive only — must NOT change the verdict. Margin pre-registered. [BAR-Entry 43] [LAW-L19]
+
+### Ruling 5: L7 peer confidence method (§2.3)
+
+Added peer-observer parity conditions: identical confidence calibration, identical evaluation data, identical ECE definition, identical binning, paired independently trained instances. [BAR-Entry 11] [LAW-L7]
+
+### Ruling 6: L7 graveyard-gate sign-off (§1.3)
+
+Signed for M4 implementation only — authorizes build, not scoring. All downstream gates retained (L3, FWFP, CRITIC, courier). [BAR-Entry 11.8]
+
+### Ruling 7: M4 timebox (§9.2)
+
+6 sessions / 14 days, tripwire 3 sessions / 7 days. External-review and L3-gate waiting time excluded from clock. [Rebecca-approved]
+
+### Ruling 8: L10 scoring seeds (§4.2)
+
+5 seeds confirmed by Rebecca. Tag updated from [PROPOSED] to [BAR-Entry 11.3]. Value unchanged.
+
+### Ruling 9: Control-arm tolerance calibration (§7.6)
+
+New §7.6: pre-registered, candidate-blind, oracle/synthetic-grounded, frozen-before-scoring procedure. ARCHITECT specifies procedure; TASK BUILDER computes numbers under O-15; CRITIC verifies; Rebecca signs off on method/criterion. Existing failure-routing rules preserved. [BAR-Entry 43] [LAW-L19]
+
+### §12 decision list updated
+
+All nine items marked RESOLVED with ruling number. Two items remain for method/criterion sign-off (L8 specificity predefinitions, tolerance calibration method).
+
+### Confirmation
+
+No locked bar value changed (L7 0.75/0.10/margin, L8 ≥3/ρ≥0.8/slope≥0.2/specificity, L10 50%/10%/0.70 floor, L14 d≥0.5/corr≥0.3). L3 pre-scoring gate preserved. O-14/O-15, M3 INSTRUMENT FAILURE, seed custody, L15–L17 fence all preserved. P1–P6 maintained. P5: all deviations from prior [PROPOSED] items are authorized by Rebecca's nine rulings.
 
 ---
 
