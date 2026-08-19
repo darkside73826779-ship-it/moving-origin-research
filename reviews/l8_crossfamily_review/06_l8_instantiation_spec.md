@@ -285,7 +285,7 @@ where `Cov = (# answered queries in window) / W`.
 - If still tied, select the one with lowest η (most conservative controller)
 `[Sol-XF-9]`
 
-**9. Stress-test misspecification:** Run the power analysis on at least two misspecified profiles (different from the synthetic reference that defines R* and dose) to verify the estimator is not overfit to the reference profile. `[Sol-XF-9]`
+**9. Stress-test misspecification:** Run the power analysis on at least two `[PROPOSED — apparatus parameter]` misspecified profiles (different from the synthetic reference that defines R* and dose) to verify the estimator is not overfit to the reference profile. `[Sol-XF-9]`
 
 **10. Publication:** code, seeds, parameter grid, assumed profiles, estimator, and machine-readable result table are published as committed artifacts before pre-registration freeze. `[Sol-XF-9]` `[LAW-L19]`
 

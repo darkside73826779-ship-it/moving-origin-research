@@ -7,6 +7,31 @@
 
 ---
 
+## v2.2 — Comprehensive P3 sweep (final tag cycle) (2026-08-19)
+
+CRITIC v2.1 re-review returned BLOCK with two blocking P3 defects (untagged validation tolerances in §2 Examples A and B). All three prior fixes (BF-XF5-1, BF-P3-1, BF-L19-1) verified correct. This is a comprehensive P3 sweep — every numeric parameter in the spec now carries a source-class tag.
+
+### Blocking P3 defects fixed
+1. §2 Example A pass tolerance `|β* − 0.2| < 0.05` → tagged `[PROPOSED — apparatus parameter]`
+2. §2 Example B pass tolerance `|β*| < 0.05` → tagged `[PROPOSED — apparatus parameter]`
+
+### Non-blocking P3 observations fixed
+3. `N_w = 4` (lines 35, 37) → tagged `[PROPOSED — apparatus parameter]` for parallelism with `W = 50` `[PROPOSED]`
+4. §8 `β* ≥ 0.2 (locked bar)` → inline `[BAR-Entry 11]` added
+5. §8 `true β* = 0.3` (lines 264, 277) → tagged `[PROPOSED — apparatus parameter]`
+6. §8 "at least two misspecified profiles" → tagged `[PROPOSED — apparatus parameter]`
+7. `C_ref = 0.75` (line 39) → inline `[PROPOSED — apparatus parameter]` added
+
+### Version label and notation
+8. In-document title updated from "v2" to "v2.2"; status line updated
+9. §2 Example A/B: `ε ~ N(0, 0.01)` → `ε ~ N(0, variance 0.01, SD 0.1)` — removes implementer ambiguity (N(μ, σ²) convention)
+
+### Confirmation
+
+Full P3 sweep performed (not point-by-point). Every numeric parameter in the spec now carries a source-class tag. No threshold value, locked bar, estimator algebra, closed finding, or verified fix changed. This sweep was tags, labels, and notation ONLY.
+
+---
+
 ## v2.1 — CRITIC BLOCK remediation: BF-XF5-1 + BF-P3-1 + BF-L19-1 (2026-08-19)
 
 CRITIC fresh-context delta review of v2 returned BLOCK with three targeted findings. Seven of eight findings (XF-4, XF-6, XF-7, XF-8, XF-9, XF-10, XF-11) verified CLOSED; settled XF-1/2/3 reflected per Entry 81. No locked bar, algebraic estimator form, synthetic validation, candidate-blindness, or closed finding touched.
