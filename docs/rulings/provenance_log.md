@@ -2048,3 +2048,18 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Standing consequence (from resolution sequence Step 8):** Even after build authorization, M4 scoring remains additionally gated on L3 calibration resolution regardless of build readiness.
 - **Preserved evidence:** No law text, locked bar, or historical verdict touched. INSTRUMENT FAILURE retained. Seeds 201–203/301–303 never rerun (O-14).
 - **Authorization boundary:** This entry memorializes the Step 4 ruling only. Spec §8 amendment happens in Step 6. No build, scoring, or further merge authorized.
+
+
+---
+
+## Entry 73 — R5/F7b closed: custody attestation of executed M3 harness; F7e date-stamp addendum
+
+**Date:** 2026-08-18 · **Actors:** Rebecca's local executor (read-only verification); Rebecca (transport); WORKFLOW COORDINATOR (routing); RECORDER (provenance attestation)
+
+- **F7b custody verification:** Rebecca's local executor performed a read-only SHA-256 verification of the locally retained executed M3 V4.4 scoring harness, `src/m3_harness.py`, the copy with the three authorized scoring-seed edits per `runs/m3-scoring-v44-301-303/RUN_PROVENANCE_AND_LOCAL_RETENTION.md`.
+- **Local-retention record:** File size: 194,505 bytes. Last modified: 2026-08-16 22:01:12 -04:00. Located in Rebecca's local retention area; absolute path withheld per public-repository policy (no private paths or machine identifiers recorded).
+- **SHA-256 result:** Computed SHA-256: `408450a59aa5bf6354503317412ff62673c5f34c5a5919acccb1bf562d588d60`. Repository-recorded SHA-256 in `runs/m3-scoring-v44-301-303/RUN_PROVENANCE_AND_LOCAL_RETENTION.md`: identical. **VERDICT: MATCH.**
+- **Executed-harness evidence:** The matched file contains all three authorized scoring-seed edits. Roundtrip evidence `m3_scoring_roundtrip_log.txt` was confirmed present locally (41,306,484 bytes).
+- **Verification controls attested:** No files modified, moved, uploaded, or deleted; raw artifact tree not hashed; no substitution of base copy.
+- **F7e addendum:** F7e addendum committed at `docs/rulings/REVIEW_FILE_DATE_ADDENDUM.md`.
+- **F7b status:** **CLOSED.** Attestation chain: local executor → Rebecca (transport) → WORKFLOW COORDINATOR → RECORDER (this entry).
