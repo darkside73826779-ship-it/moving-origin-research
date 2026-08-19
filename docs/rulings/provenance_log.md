@@ -2187,3 +2187,44 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - Authorization boundary: this entry memorializes the M4 gate signature. Implementation (Step 8) is authorized. Scoring is NOT authorized. No seed execution, no hold-out exposure, no L15/L16/L17 before M5.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). M4 GATE SIGNED — IMPLEMENTATION AUTHORIZED (scoring gated). Step 8 begins.**
+
+
+## Entry 79 — Step 8 begins: INTEGRATOR M4 task-spec extraction from spec v1.6.2
+
+**Date:** 2026-08-18 (extracted 23:33 EDT; logged 23:40 EDT) · **Actors:** INTEGRATOR (task-spec extraction); WORKFLOW COORDINATOR (routing, merge authorization); Rebecca McClintic (gate signature Entry 78, merge authorization)
+
+- **First build action of Step 8.** INTEGRATOR extracted the M4 task specification from the committed spec v1.6.2 (`specs/m4_specification.md` on main at `7acf94f`, merged PR #59, CRITIC-CLEARED per Entry 77).
+
+- **Deliverable:** `specs/m4_task_spec.md` (495 lines, 16 sections). Branch `integrator/m4-task-spec-extraction`, commit `d5f7b0f`. Task spec SHA-256 (canonical LF): `c7d414e44b90612c095525a3a17c86f05b5510f0ff9be2a768c74d578db72e8e`. Merged to main via PR #62 (main at `672e7aa`).
+
+- **Task spec contents (16 sections):**
+  1. **Authority and non-authorizations** — implementation-only; five downstream scoring gates retained.
+  2. **Verbatim law quotes and tagged bars** — all 5 laws (L7/L8/L10/L14/L18) verbatim from constitution (P2); locked bars with source tags (P3); `[PROPOSED]` items quarantined.
+  3. **Per-law implementation requirements.**
+  4. **Six control arms and failure routing** for L7/L8/L10.
+  5. **Entry 76 nine gate rulings** — including Ruling 6 graveyard-gate scope, which was omitted from the coordinator handoff bullet list but present in Entry 76 and the spec — INTEGRATOR caught and included it.
+  6. **FWFP closure audit** — per-arm + milestone-wide, ≤5%, TASK BUILDER owner under O-15.
+  7. **L8 homeostatic-variable prerequisite** — named prerequisite with dedicated CRITIC reviewer pass before L8 implementation.
+  8. **L3 pre-scoring gate** — Option A (Entry 72), build parallel.
+  9. **V4.4 stochastic/reproducibility framework.**
+  10. **Seed policy** — development 101–105 (O-15); ≥2 unseen scoring seeds; 201–203/301–303 never rerun (O-14).
+  11. **STOP/escalation triggers.**
+  12. **TASK BUILDER deliverables checklist** (7 deliverables).
+  13. **Explicitly prohibited actions.**
+  14. **Public-repo scan attestation** (clean).
+  15. **Timebox** 6 sessions/14 days, tripwire 3/7 (Ruling 7).
+  16. **Borderline B1 confirmed**, 0.5α–α band descriptive only (Ruling 4).
+
+- **§5 compliance:** P1–P6 all satisfied. Law text sourced from constitution (P1). Verbatim quotes with line citations (P2). Source tags on every threshold (P3). Regime B dating (P4). No deviations; v1.4 Amendment 3 retraction noted as P5-authorized (P5). Entry 76/78 citations verified (P6).
+
+- **INTEGRATOR confirmed:** faithful extraction, no design decisions, no ambiguities requiring STOP/escalation. Public-repo scan clean.
+
+- **Sequencing:** L8 homeostatic-variable prerequisite review conducted by CRITIC before L8 implementation begins. TASK BUILDER may start M4 harness scaffold + non-L8 laws + FWFP closure audit in parallel; L8 implementation waits for CRITIC prerequisite clearance.
+
+- **Status:** M4 task spec on main. Step 8 (build) proceeds to TASK BUILDER. Scoring NOT authorized — five downstream gates retained (L3 resolution, FWFP closure audit, CRITIC implementation review, Rebecca's tolerance-calibration sign-off Ruling 9, courier-channel authorization).
+
+- **Preserved evidence:** INSTRUMENT FAILURE retained; seeds 201–203/301–303 never rerun (O-14); all locked bars intact; L3 pre-scoring gate preserved; O-14/O-15/seed custody/L15–L17 fence all preserved.
+
+- **Authorization boundary:** this entry memorializes the task-spec extraction. Implementation authorized (Entry 78). Scoring NOT authorized.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). M4 GATE SIGNED — IMPLEMENTATION AUTHORIZED (scoring gated). Step 8 in progress: task spec extracted; TASK BUILDER next.**
