@@ -2098,3 +2098,44 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Status:** M4 spec v1.5 at `487843f` on `architect/m4-spec-v1.5` is CRITIC-CLEARED (fresh-context). Spec branch **NOT** merged — awaits Step 7 M4 gate package and Rebecca's rulings on the seven PROPOSED/STOP items.
 - **Preserved evidence:** INSTRUMENT FAILURE retained; seeds 201–203/301–303 never rerun (O-14); all locked bars intact; no law text modified (P1 preserved).
 - **Authorization boundary:** This entry memorializes the advisor correction cycle and CRITIC CLEAR only. No build, scoring, or further merge authorized. Next: revised Step 7 gate package to Rebecca with all ruling items (L7 inference STOP, L10 definitions, L8 baseline/specificity, borderline B1, L7 peer confidence method, L7 graveyard-gate sign-off, M4 timebox).
+
+
+---
+
+
+## Entry 76 — Principal rulings: M4 Step 7 gate — nine items ruled (advisor-assisted)
+
+**Date:** 2026-08-18 (rulings decided 22:54 EDT; logged 23:02 EDT) · **Actors:** Rebecca McClintic (Principal RULINGS, advisor-assisted); Outside Advisor (read-only GitHub review, recommendations); WORKFLOW COORDINATOR (routing, package assembly)
+
+- **Advisor consultation:** Rebecca consulted an outside advisor (read-only GitHub access to the repo) on the seven-item Step 7 gate package (plus two items the advisor flagged as omitted). The advisor reviewed M4 spec v1.5 at `487843f` and CRITIC clearance `91c790a`. The advisor's review does **NOT** discharge §6.3(1) of the governance paper — external human review remains outstanding.
+- **Scope of rulings:** Rebecca ruled on all nine items. The advisor's recommendations were approved as-recommended on items 1–7; item 8 confirmed; item 9 ruled by Rebecca after deliberation (advisor had flagged it; Rebecca held it for deliberation, then ruled per the coordinator's recommendation on the candidate-blind calibration principle).
+
+### The nine rulings
+
+1. **L7 inference (spec §2.5):** APPROVED Option C — AUROC and ECE are per-seed threshold bars (any-seed fail → KILL, no fallback); the candidate–peer margin is a direction test evaluated across 5 paired seeds using all-seed direction consistency and a pooled paired-bootstrap CI (the M0 Entry 11.3 fallback policy). The v1.4 "Amendment 3" hard no-fallback rule is retracted.
+
+2. **L10 confidence threshold and definitions (spec §4.3):** APPROVED — primary drifted AUROC computed over the complete fixed drifted population using pre-abstention scores; answered-case AUROC reported separately; undefined/all-abstain AUROC fails the ≥0.70 floor `[BAR-Entry 14]`; τ calibrated to satisfy both drift ≥50% abstention `[BAR-Entry 11.6]` and clean ≤10% abstention `[BAR-Entry 11.6]` on held-out calibration data. The drifted-AUROC floor ≥0.70 is preserved (bar value unchanged); what changes is the population it's computed over and the anti-gaming design closing the abstention-exclusion gaming surface the CRITIC flagged.
+
+3. **L8 zero-noise baseline + severity-matched specificity (spec §3.3):** APPROVED — Level 0 zero-noise baseline as dose-response reference; replace raw-magnitude severity matching with matching on a pre-registered standardized proximal-component effect (predefine comparison component, perturbation, calibration set, tolerance). L8 locked bars preserved `[BAR-Entry 11]`.
+
+4. **Borderline numerical definition + handling (spec §7.5):** APPROVED B1 (M3 precedent) — label retained; candidate-facing evidence may support provisional advancement; control firing not reinterpreted, renamed, or dismissed. The 0.5α–α band is descriptive only and must NOT change the verdict. `[LAW-L19]` pre-registration preserved.
+
+5. **L7 peer confidence method (spec §2.3):** APPROVED — matched-model baseline (same params/data/architecture, observation channel = behavioral outputs only, self-report channel excluded) conditioned on identical pre-registered confidence calibration, evaluation data, ECE definition, and binning for candidate and peer; paired independently trained instances. Cite Constitution L7 line 24 + M0 sheet line 20.
+
+6. **L7 graveyard-gate sign-off (spec §1.3, §9.1) `[BAR-Entry 11.8]`:** APPROVED — sign for M4 implementation only; scoring NOT authorized; L3 fresh-seed resolution (Option A, Entry 72), FWFP closure audit (Entry 43), CRITIC implementation review, and Rebecca's courier-channel scoring authorization all retained as downstream gates.
+
+7. **M4 timebox (spec §9.2):** APPROVED — 6 sessions / 14 days, tripwire at 3 sessions / 7 days; excludes external-review waiting time and L3-gate waiting time from the timebox clock.
+
+8. **L10 scoring seeds (spec §4.2):** CONFIRMED — five L10 scoring seeds (previously `[PROPOSED — requires Rebecca confirmation]` as inferred from the L7/L8 pattern; L10 not explicitly in Entry 11.3). Value 5 unchanged.
+
+9. **L7/L10 control-arm tolerance calibration (spec §3.4, §4.5):** RULED — tolerance calibration is pre-registered, candidate-blind (the candidate's diagnostic-seed results 101-105 are NOT inputs; only oracle/synthetic ground-truth is), oracle/synthetic-grounded, and frozen before scoring (once computed and CRITIC-verified, tolerances are locked and cannot be adjusted after the candidate runs; any post-candidate adjustment is prohibited and visible in provenance). Role boundary: ARCHITECT specifies the procedure (method, data source, acceptance criterion); TASK BUILDER computes the actual tolerance numbers under O-15 (diagnostic-only); CRITIC verifies the execution; Rebecca signs off on method and criterion, not the numbers. Acceptance criterion: each control arm's false-positive rate ≤ a pre-specified threshold consistent with the FWFP closure audit's familywise rate. This closes the score-chasing surface Rebecca identified (a tolerance calibrated against the candidate's behavior could be tuned to make control arms pass).
+
+### Spec implementation and downstream gates
+
+- **Spec v1.6 in progress:** The nine rulings authorize the ARCHITECT to produce spec v1.6 implementing them (in progress at time of logging — v1.6 at `b22609f` on `architect/m4-spec-v1.6`, CRITIC re-clear pending). The rulings are the gate decisions; v1.6 is the spec implementation of those decisions.
+- **Graveyard-gate signature scope:** Rebecca's graveyard-gate signature (Ruling 6) authorizes M4 implementation only; scoring remains gated on the L3 resolution, the FWFP closure audit, the CRITIC implementation review, Rebecca's tolerance-calibration sign-off (Ruling 9), and the courier-channel authorization.
+
+### Preserved evidence and authorization boundary
+
+- **Preserved evidence:** INSTRUMENT FAILURE retained; seeds 201–203/301–303 never rerun (O-14); all locked bars intact; no law text modified (P1 preserved).
+- **Authorization boundary:** This entry memorializes Rebecca's nine gate rulings. The formal graveyard-gate signature (Ruling 6) and the Step 7 gate package are assembled separately by the COORDINATOR for Rebecca's sign-off after the v1.6 CRITIC CLEAR.
