@@ -255,13 +255,13 @@ where `Cov = (# answered queries in window) / W`.
 
 **v1 defect:** The power analysis and sensitivity map were promised but not yet a reproducible decision procedure — no synthetic data-generating family, effect-size target, nuisance ranges, simulation count, seeds, or selection rule.
 
-**v2 protocol (XF-9 closure):** The spec defines the protocol; the artifacts themselves are produced in item 5 of the Principal's directive (after CRITIC clearance of spec v2).
+**v2 protocol (XF-9 closure):** The spec defines the protocol; the artifacts themselves are produced in item 5 of the Principal's directive (after CRITIC clearance of spec v2.2).
 
 **1. Synthetic data-generating family:**
 - **Mirror profiles:** synthetic confidence profiles with known miscalibration properties. Profile P(α, v) generates per-query confidences with calibration error α (systematic bias) and variance v (logit-space). `[Sol-XF-9]`
 - **Task profiles:** synthetic query-answer pairs with known oracle correctness and variable difficulty. `[Sol-XF-9]`
 
-- Effect-size target (§8): β* ≥ 0.2 (locked bar) `[BAR-Entry 11]`. The power analysis computes the false-kill probability: P(β*_estimated < 0.2 | true β* = 0.3 `[PROPOSED — apparatus parameter]`) at W=50 queries/window, N_w=4 windows/dose, 5 seeds. If false-kill probability exceeds `[PROPOSED]` 0.10, battery size escalates to G3. `[Sol-XF-9]`
+- Effect-size target (§8): β* ≥ 0.2 (locked bar) `[BAR-Entry 11]`. The power analysis computes the false-kill probability: P(β*_estimated < 0.2 | true β* = 0.3) `[PROPOSED — apparatus parameter]` at W=50 queries/window, N_w=4 windows/dose, 5 seeds. If false-kill probability exceeds `[PROPOSED]` 0.10, battery size escalates to G3. `[Sol-XF-9]`
 
 **3. Parameter grid:**
 - `α ∈ {0.0, 0.02, 0.05, 0.1, 0.2}` (calibration error levels)
@@ -309,7 +309,7 @@ L8 and L10 share components (mirror, abstention) and run **separate batteries** 
 
 4. **Coincidence disclosure (NF3):** The selected variable is also the cheapest to build from existing components. The fresh-context reviewer should weigh that coincidence.
 
-5. **Chain disclosure:** This spec descends from advisor v1 → CRITIC BF1–BF5 → advisor v2 → CRITIC CLEAR-with-CF1–CF3 → Sol cross-family review (XF-1–XF-11) → Entry 81 narrowed claim → spec v2. The full eight-document chain accompanies this spec to the external human reviewer **before fresh-seed scoring** (recommended sequencing, §12).
+5. **Chain disclosure:** This spec descends from advisor v1 → CRITIC BF1–BF5 → advisor v2 → CRITIC CLEAR-with-CF1–CF3 → Sol cross-family review (XF-1–XF-11) → Entry 81 narrowed claim → spec v2.2. The full eight-document chain accompanies this spec to the external human reviewer **before fresh-seed scoring** (recommended sequencing, §12).
 
 ---
 
@@ -327,7 +327,7 @@ L8 and L10 share components (mirror, abstention) and run **separate batteries** 
 
 ## §12 Sequencing (binding order)
 
-1. This spec v2 → **fresh-context CRITIC** review (input: this spec + the full eight-document chain, per §10.5 — review starts from the objections, briefed to verify closure of XF-4–XF-9 and CF riders, not to re-litigate settled XF-1/2/3).
+1. This spec v2.2 → **fresh-context CRITIC** review (input: this spec + the full eight-document chain, per §10.5 — review starts from the objections, briefed to verify closure of XF-4–XF-9 and CF riders, not to re-litigate settled XF-1/2/3).
 2. §8 power analysis + sensitivity map produced (candidate-blind, per §8 XF-9 protocol).
 3. **Principal gate:** G2–G5 ruled with §8 artifacts in hand (G1 resolved by Entry 81).
 4. §4 L7/L10 reconciliation check documented; any delta → review cycle.

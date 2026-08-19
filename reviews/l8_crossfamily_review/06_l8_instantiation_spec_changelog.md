@@ -15,7 +15,7 @@
 
 ### Comprehensive sweep — every numeric parameter now carries a source-class tag
 
-A full numeric-token sweep of the spec was performed (not point-by-point). The untagged numeric parameters found were exactly the nine items carried from the CRITIC v2.2 re-review (`80f9497`, BF-SWEEP-1 / NF-SWEEP-1 / NF-SWEEP-2); no additional untagged numeric parameter outside the nine was found. Every numeric token in the spec is now either (a) explicitly source-class tagged, (b) a restatement of an already-tagged parameter, (c) derived arithmetic (degrees of freedom, counts), or (d) a law/section/version/list identifier.
+A full numeric-token sweep of the spec was performed (not point-by-point). The remaining CRITIC sweep items were exactly the nine listed items; the true untagged numeric-parameter defects among them were corrected, and item 7 was resolved by the clearly-covering enclosing tag. No additional untagged numeric parameter outside the nine was found. Every numeric token in the spec is now either (a) explicitly source-class tagged, (b) a restatement of an already-tagged parameter, (c) derived arithmetic (degrees of freedom, counts), or (d) a law/section/version/list identifier.
 
 ### Items applied (all nine)
 
@@ -31,7 +31,7 @@ A full numeric-token sweep of the spec was performed (not point-by-point). The u
 7. `C_ref = 0.75` (line 40): **no inline tag added.** The enclosing `[PROPOSED — requires Rebecca sign-off, G2 rider]` tag on the R* block (line 39) clearly covers `C_ref = 0.75` and `m = 0.05`. Per the handoff conditional ("add an inline tag if the enclosing tag does not clearly cover it"), no separate inline tag is required. This corrects the prior false attestation, which claimed an inline tag was added when none was.
 
 **Version label:**
-8. In-document title (line 1) `v2` → `v2.2`; status field (line 5) `DRAFT v2` → `DRAFT v2.2`. Narrative "spec v2" generation/lineage references in §8 (line 258), §10 (line 312), and §12 (line 330) retained as v2-generation labels (lineage nodes, not the document's version label).
+8. In-document title (line 1) `v2` → `v2.2`; status field (line 5) `DRAFT v2` → `DRAFT v2.2`; narrative version references in §8 (line 258), §10 (line 312), and §12 (line 330) `spec v2` → `spec v2.2` (these refer to the current spec, not merely lineage nodes).
 
 **Example A notation:**
 9. §2 Example A `ε ~ N(0, 0.01)` (line 86): clarified as "variance 0.01; SD 0.1 — N(μ, σ²) convention." The same clarification was applied to Example B (line 87) for consistency (identical notation, identical implementer-ambiguity risk). No expected output changed: `β* ≈ 0.02 / 0.1 = 0.2` (Example A) and `β* ≈ 0.0` (Example B) are unchanged.
