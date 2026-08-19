@@ -2139,3 +2139,31 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 
 - **Preserved evidence:** INSTRUMENT FAILURE retained; seeds 201–203/301–303 never rerun (O-14); all locked bars intact; no law text modified (P1 preserved).
 - **Authorization boundary:** This entry memorializes Rebecca's nine gate rulings. The formal graveyard-gate signature (Ruling 6) and the Step 7 gate package are assembled separately by the COORDINATOR for Rebecca's sign-off after the v1.6 CRITIC CLEAR.
+
+
+---
+
+
+## Entry 77 — M4 spec v1.6 → v1.6.2: nine-rulings implementation and CRITIC review cycle (BLOCK → remediation → residual BLOCK → CLEAR)
+
+**Date:** 2026-08-18 · **Actors:** Rebecca McClintic (nine gate rulings, Entry 76; merge authorization); ARCHITECT (v1.6 nine rulings + two remediation passes); CRITIC (fresh-context, v1.5/v1.6 reviews); WORKFLOW COORDINATOR (routing, handoffs, housekeeping)
+
+- **Source authority for the nine rulings:** Rebecca ruled on all nine Step 7 gate items in Entry 76 (decided 22:54 EDT): (1) L7 inference — Option C: AUROC/ECE are per-seed threshold bars (any-seed fail → KILL, no fallback); candidate–peer margin is a direction test across 5 paired seeds using all-seed direction consistency and pooled paired-bootstrap CI (M0 Entry 11.3 fallback policy); v1.4 "Amendment 3" hard no-fallback rule retracted; (2) L10 — primary drifted AUROC computed over the complete fixed drifted population using pre-abstention scores; answered-case AUROC reported separately (secondary); undefined/all-abstain AUROC fails the ≥0.70 floor; τ calibrated to satisfy both drift ≥50% and clean ≤10% abstention on held-out data; floor 0.70 preserved (closes the abstention-exclusion gaming surface the CRITIC flagged); (3) L8 — Level 0 zero-noise baseline as dose-response reference; standardized proximal-component severity matching (predefined component/perturbation/calibration set/tolerance); (4) borderline B1 label retained; 0.5α–α band descriptive only, must NOT change the verdict; (5) L7 peer — matched-model baseline conditioned on identical confidence calibration/evaluation data/ECE definition/binning, paired independently trained instances; (6) L7 graveyard-gate sign for implementation only, scoring NOT authorized; L3/FWFP/implementation-review/courier gates retained; (7) M4 timebox 6 sessions/14 days, tripwire 3/7, excludes external-review and L3-gate waiting; (8) L10 seeds confirmed at 5; (9) tolerance calibration pre-registered, candidate-blind (candidate's diagnostic seeds 101–105 NOT inputs; oracle/synthetic ground-truth only), frozen before scoring; ARCHITECT specifies procedure / TASK BUILDER computes under O-15 / CRITIC verifies / Rebecca signs off on method-criterion not numbers (closes the score-chasing surface Rebecca identified).
+
+- **ARCHITECT spec v1.6:** ARCHITECT produced spec v1.6 at `b22609f` on `architect/m4-spec-v1.6` implementing all nine rulings. Delta from `487843f` (v1.5): `specs/m4_specification.md` +107/-54; changelog +52/-2; handoff +63. Scope confined to the nine rulings + changelog + handoff.
+
+- **CRITIC v1.6 delta re-clear (fresh-context, same session as the v1.5 review):** The initial CLEAR was revised to **BLOCK** on provenance/tag-state defects — (1) §0 provenance statement stale (said reviewed through Entry 72 while Entries 75–76 exist); (2) Entry 76 not cited as source authority for the nine rulings; (3) stale `[PROPOSED]` tags on Rebecca-approved items (Ruling 3 L8 design elements, Ruling 4 B1). Block class: governance/tag-state, NOT scientific/design. All nine rulings implemented correctly; both anti-gaming discriminants (Ruling 2 abstention, Ruling 9 candidate-blind) pass; law-diff byte-exact; locked bars preserved; no residual score-chasing path. The BLOCK was on approval-state tag hygiene — contradictory approval states cannot be sent to Rebecca for signature.
+
+- **ARCHITECT remediation (v1.6.1):** ARCHITECT remediated at `e9db563`: §0 provenance statement updated, Entry 76 cited as source authority, stale `[PROPOSED]` tags corrected on approved items.
+
+- **CRITIC residual re-clear:** BLOCK with two narrow findings — BF-A line 8 (§0 provenance), BF-B §12 line 561 (stale tags). ARCHITECT fixed at `90a7e56` (v1.6.2): `specs/m4_specification.md` +1/-2, changelog +18/-0. Extremely narrow delta.
+
+- **CRITIC final re-clear:** **CLEAR** at `a5c8e39`. BF-A and BF-B both resolved. Scope-violation check clean (delta `e9db563...90a7e56` touches only line 8 + §12 + changelog). Prior BLOCK items confirmed still closed. Substance unchanged (all nine rulings, both anti-gaming discriminants, law-diff, locked bars all preserved).
+
+- **Review artifacts merged to main via PR #56 (Rebecca's authorization):** `reviews/critic_m4_v1.6_delta_review.md`. Main at `d2abe94`.
+
+- **Status:** M4 spec v1.6.2 at `90a7e56` on `architect/m4-spec-v1.6` is CRITIC-CLEARED (fresh-context, final). Spec branch **NOT** merged — awaits Rebecca's formal Step 7 graveyard-gate signature (implementation-only authorization per Ruling 6).
+
+- **Preserved evidence:** INSTRUMENT FAILURE retained; seeds 201–203/301–303 never rerun (O-14); all locked bars intact (L7 0.75/0.10/margin, L8 ≥3 doses/ρ≥0.8/slope≥0.2/specificity, L10 50%/10%/0.70 floor, L14 d≥0.5/corr≥0.3); no law text modified (P1 preserved); L3 pre-scoring gate (Option A, Entry 72) preserved; O-14/O-15/seed custody/L15–L17 fence all preserved.
+
+- **Authorization boundary:** This entry memorializes the v1.6/v1.6.2 review cycle and CRITIC CLEAR. The formal Step 7 gate package (graveyard-gate signature, implementation-only) is assembled separately by the COORDINATOR for Rebecca's sign-off. No build, scoring, or further merge authorized by this entry.
