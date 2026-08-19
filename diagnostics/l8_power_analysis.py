@@ -1012,83 +1012,300 @@ def simulate_one_seed_misspecified(rng, alpha, v_logit, sigma_dose,
     return deviations.reshape(L_DOSES, N_W)
 
 
-def run_misspecification_stress_test(n_sims=100, n_combos_subset=8):
-    """Run the misspecification stress-test per §8 item 9.
+def run_power_analysis_misspecified(profile_name, n_sims, include_null_control=True,
+                                    progress_every=20):
+    """Run the §8 power analysis over the full 5×3×4×4 = 240 grid under a
+    misspecified profile.
 
-    Runs the power analysis on 2 misspecified profiles on a subset of the
-    parameter grid. Reports whether the estimator and (C_min, eta) selection
-    are stable under misspecification.
+    Mirrors run_power_analysis but uses simulate_one_seed_misspecified instead
+    of simulate_one_seed. The σ_dose calibration reuses
+    calibrate_sigma_dose(alpha, v_mult) from the reference -- we test whether
+    the ESTIMATOR is overfit to the reference profile, not re-calibrating for
+    the misspecified profile. [Sol-XF-9] [PROPOSED -- apparatus parameter, §8 item 9]
+
+    Returns the same structure as run_power_analysis
+    (header, results, sensitivity_map, selection).
+    Candidate-blind (Ruling 9): the misspecified profile uses known oracle
+    ground truth, not candidate output.
+    """
+    t0 = time.time()
+    results = []
+    n_combos = len(ALPHAS) * len(V_MULTS) * len(C_MINS) * len(ETAS)
+    done = 0
+
+    for alpha in ALPHAS:
+        for v_mult in V_MULTS:
+            # Reuse the reference σ_dose calibration (same calibration as
+            # reference -- we test estimator overfit, not re-calibration).
+            #  [PROPOSED -- apparatus parameter, §8 item 9]
+            sigma_dose = calibrate_sigma_dose(alpha, v_mult)
+            v_logit = v_mult * V_REF
+            for c_min in C_MINS:
+                for eta in ETAS:
+                    base_seed = combo_seed(alpha, v_mult, c_min, eta)
+                    # True-effect arm: σ_dose as calibrated (reference calibration).
+                    # Inline the simulation loop using
+                    # simulate_one_seed_misspecified for each seed.
+                    beta_stars = np.full(n_sims, np.nan, dtype=np.float64)
+                    per_seed_betas = np.full((n_sims, N_SEEDS), np.nan, dtype=np.float64)
+                    n_failures = 0
+                    for i in range(n_sims):
+                        d_all = np.zeros((N_SEEDS, L_DOSES, N_W), dtype=np.float64)
+                        for s in range(N_SEEDS):
+                            seed_int = (base_seed + i * N_SEEDS + s) % (2 ** 31)
+                            rng = np.random.default_rng(seed_int)
+                            d_all[s] = simulate_one_seed_misspecified(
+                                rng, alpha, v_logit, sigma_dose, c_min, eta, profile_name)
+                        b, fail = run_level_beta_star(d_all)
+                        if fail:
+                            beta_stars[i] = float("nan")
+                            n_failures += 1
+                        else:
+                            beta_stars[i] = b
+                            for s in range(N_SEEDS):
+                                bs_s, fail_s = beta_star_for_seed(d_all[s])
+                                per_seed_betas[i, s] = bs_s if not fail_s else float("nan")
+                    valid = beta_stars[~np.isnan(beta_stars)]
+                    n_valid = int(valid.size)
+                    # False-kill rate (5-seed mean): P(mean 5-seed β*<0.2).
+                    #  [Sol-XF-9] [PROPOSED -- apparatus parameter, §8 item 9]
+                    if n_valid > 0:
+                        false_kill_rate = float(np.mean(valid < BETA_STAR_BAR))
+                    else:
+                        false_kill_rate = float("nan")
+                    # NF-IMPL-2: Per-seed false-kill rate: P(any of 5 β*_s < 0.2).
+                    if n_valid > 0:
+                        valid_ps = per_seed_betas[~np.isnan(beta_stars)]
+                        if valid_ps.shape[0] > 0:
+                            any_seed_below = np.any(valid_ps < BETA_STAR_BAR, axis=1)
+                            false_kill_rate_per_seed = float(np.mean(any_seed_below))
+                        else:
+                            false_kill_rate_per_seed = float("nan")
+                    else:
+                        false_kill_rate_per_seed = float("nan")
+                    mean_beta = float(valid.mean()) if n_valid else float("nan")
+                    std_beta = float(valid.std()) if n_valid else float("nan")
+
+                    # Null-control arm (false-pass rate): σ_dose=0.0 with the
+                    # same misspecified profile.  [PROPOSED -- apparatus parameter, §8 item 9]
+                    if include_null_control:
+                        beta_stars_null = np.full(n_sims, np.nan, dtype=np.float64)
+                        n_failures_null = 0
+                        for i in range(n_sims):
+                            d_all = np.zeros((N_SEEDS, L_DOSES, N_W), dtype=np.float64)
+                            for s in range(N_SEEDS):
+                                seed_int = (base_seed + i * N_SEEDS + s) % (2 ** 31)
+                                rng = np.random.default_rng(seed_int)
+                                d_all[s] = simulate_one_seed_misspecified(
+                                    rng, alpha, v_logit, sigma_dose=0.0,
+                                    c_min=c_min, eta=eta, profile_name=profile_name)
+                            b, fail = run_level_beta_star(d_all)
+                            if fail:
+                                beta_stars_null[i] = float("nan")
+                                n_failures_null += 1
+                            else:
+                                beta_stars_null[i] = b
+                        valid_null = beta_stars_null[~np.isnan(beta_stars_null)]
+                        if valid_null.size > 0:
+                            false_pass_rate = float(
+                                np.mean(valid_null >= BETA_STAR_BAR))
+                        else:
+                            false_pass_rate = float("nan")
+                        mean_null = float(valid_null.mean()) if valid_null.size else float("nan")
+                    else:
+                        false_pass_rate = float("nan")
+                        mean_null = float("nan")
+                        n_failures_null = 0
+
+                    region = classify_region(false_kill_rate, false_pass_rate) \
+                        if (not math.isnan(false_kill_rate) and
+                            not math.isnan(false_pass_rate)) else "undefined"
+                    min_dist = min_distance_to_boundaries(false_kill_rate,
+                                                           false_pass_rate) \
+                        if region == "informative" else float("nan")
+
+                    results.append({
+                        "alpha": alpha,
+                        "v_mult": v_mult,
+                        "v_logit": v_mult * V_REF,
+                        "c_min": c_min,
+                        "eta": eta,
+                        "profile_name": profile_name,
+                        "sigma_dose_calibrated": sigma_dose,
+                        "n_sims": n_sims,
+                        "n_valid": n_valid,
+                        "n_instrument_failures": int(n_failures),
+                        "n_instrument_failures_null": int(n_failures_null),
+                        "mean_beta_star": mean_beta,
+                        "std_beta_star": std_beta,
+                        "false_kill_rate": false_kill_rate,  # P(mean 5-seed β*<0.2) [Sol-XF-9]
+                        "false_kill_rate_per_seed": false_kill_rate_per_seed,  # P(any seed β*<0.2) [NF-IMPL-2, PROPOSED -- flagged to Rebecca]
+                        "false_pass_rate": false_pass_rate,   # P(β*≥0.2 | null) [PROPOSED -- apparatus parameter, §8.7]
+                        "mean_beta_star_null": mean_null,
+                        "region": region,
+                        "min_distance_to_boundaries": min_dist,
+                        "base_seed": base_seed,
+                    })
+                    done += 1
+                    if done % progress_every == 0:
+                        elapsed = time.time() - t0
+                        rate = done / elapsed if elapsed > 0 else 0.0
+                        eta_s = (n_combos - done) / rate if rate > 0 else float("inf")
+                        print(f"  [progress][{profile_name}] {done}/{n_combos} combos "
+                              f"({100*done/n_combos:.1f}%) "
+                              f"elapsed={elapsed:.1f}s rate={rate:.2f}/s "
+                              f"eta={eta_s:.0f}s", flush=True)
+
+    elapsed = time.time() - t0
+    # Build the sensitivity map (§8.7): aggregate over (α, v) by taking the
+    # mean false-kill and false-pass rates across the 15 (α, v) pairs for each
+    # (C_min, η) cell.  [Sol-XF-9] [PROPOSED -- apparatus parameter, §8 item 9]
+    cells = []
+    for c_min in C_MINS:
+        for eta in ETAS:
+            cell_rows = [r for r in results
+                         if r["c_min"] == c_min and r["eta"] == eta
+                         and not math.isnan(r["false_kill_rate"])
+                         and not math.isnan(r["false_pass_rate"])]
+            if not cell_rows:
+                continue
+            fk = float(np.mean([r["false_kill_rate"] for r in cell_rows]))
+            fp = float(np.mean([r["false_pass_rate"] for r in cell_rows]))
+            region = classify_region(fk, fp)
+            min_dist = min_distance_to_boundaries(fk, fp) if region == "informative" else float("nan")
+            cells.append({
+                "c_min": c_min,
+                "eta": eta,
+                "mean_false_kill_rate": fk,
+                "mean_false_pass_rate": fp,
+                "region": region,
+                "min_distance_to_boundaries": min_dist,
+                "n_av_pairs": len(cell_rows),
+            })
+
+    sensitivity_map = {
+        "description": f"§8.7 sensitivity map over (C_min, η), aggregated across (α, v) pairs under misspecified profile '{profile_name}'  [Sol-XF-9]",
+        "profile_name": profile_name,
+        "boundaries": {
+            "abstention_escape_false_kill_ge": FK_BOUNDARY,  # [PROPOSED -- apparatus parameter, §8.7]
+            "trivial_pass_false_pass_ge": FP_BOUNDARY,     # [PROPOSED -- apparatus parameter, §8.7]
+        },
+        "cells": cells,
+    }
+    selection = select_cmin_eta(sensitivity_map)
+
+    return {
+        "header": {
+            "spec_regime": SPEC_REGIME,
+            "constitution_regime": CONSTITUTION_REGIME,
+            "artifact_date": ARTIFACT_DATE,  # [OP -- artifact date, P4]
+            "profile_name": profile_name,
+            "n_sims_per_combo": n_sims,
+            "n_combos": len(results),
+            "elapsed_seconds": elapsed,
+            "constants": {
+                "W": W, "N_W": N_W, "L_DOSES": L_DOSES, "N_SEEDS": N_SEEDS,
+                "R_STAR": R_STAR, "TRUE_BETA_STAR": TRUE_BETA_STAR,
+                "BETA_STAR_BAR": BETA_STAR_BAR,  # [BAR-Entry 11]
+                "FALSE_KILL_THRESHOLD": FALSE_KILL_THRESHOLD,  # [PROPOSED -- apparatus parameter, §8]
+                "EPS_C": EPS_C, "P_TRUE_MEAN": P_TRUE_MEAN,
+                "BETA_CONC": BETA_CONC, "BETA_A": BETA_A, "BETA_B": BETA_B,
+                "V_REF": V_REF,
+                "TAU_MIN": TAU_MIN, "TAU_MAX": TAU_MAX, "TAU_INIT": TAU_INIT,
+                "CAL_REF_C_MIN": CAL_REF_C_MIN, "CAL_REF_ETA": CAL_REF_ETA,
+                "VAR_X": VAR_X,
+            },
+            "parameter_grid": {
+                "alphas": ALPHAS, "v_mults": V_MULTS,
+                "c_mins": C_MINS, "etas": ETAS,
+                "n_combinations": len(ALPHAS)*len(V_MULTS)*len(C_MINS)*len(ETAS),
+            },
+            "compliance": {
+                "P3_source_tags": "All thresholds carry [LAW-Lx]/[BAR-Entry n]/[OP-Entry n]/[PROPOSED] tags. [§5 P3]",
+                "P4_regime_dating": "Header states spec + constitution regime + artifact date. [§5 P4]",
+                "candidate_blind": "Simulation seeds from parameter-combo hashes only; no candidate data. [Ruling 9, Entry 76]",
+                "estimator_identity": "β* estimator is the identical §2 XF-5 estimator. [Sol-XF-5]",
+                "misspecification_stress_test": "§8 item 9: estimator applied to misspecified data-generating process. [PROPOSED -- apparatus parameter, §8 item 9]",
+            },
+        },
+        "results": results,
+        "sensitivity_map": sensitivity_map,
+        "selection": selection,
+    }
+
+
+def run_misspecification_stress_test(n_sims=10000, reference_selection=None):
+    """Run the full misspecification stress-test per §8 item 9.
+
+    For each misspecified profile, runs the full 240-combo power analysis,
+    builds the sensitivity map, runs the deterministic selection rule,
+    and reports selection stability vs the reference profile.
 
     [Sol-XF-9] [PROPOSED -- apparatus parameter, §8 item 9]
     Candidate-blind (Ruling 9): profiles use known oracle ground truth.
     """
     profiles = ["uniform_difficulty", "bimodal_difficulty"]
-    subset_alphas = [0.0, 0.1, 0.2]
-    subset_v_mults = [0.5, 1.0, 2.0]
-    subset_c_mins = [0.5, 0.7, 0.8]
-    subset_etas = [0.01, 0.1, 0.2]
-    test_combos = []
-    for a in subset_alphas:
-        for v in subset_v_mults:
-            for c in subset_c_mins:
-                for e in subset_etas:
-                    test_combos.append((a, v, c, e))
-    step = max(1, len(test_combos) // n_combos_subset)
-    test_combos = test_combos[::step][:n_combos_subset]
-
-    results = {"profiles": {}, "n_sims": n_sims, "n_combos": len(test_combos)}
-    ref_betas = []
+    results = {"profiles": {}, "n_sims": n_sims, "reference_selection": reference_selection}
 
     for profile_name in profiles:
-        profile_results = []
-        for alpha, v_mult, c_min, eta in test_combos:
-            v_logit = v_mult * V_REF
-            sigma_dose = calibrate_sigma_dose(alpha, v_mult)
-            base_seed = combo_seed(alpha, v_mult, c_min, eta)
+        print(f"  Misspec profile: {profile_name} (n_sims={n_sims})")
+        pa = run_power_analysis_misspecified(profile_name, n_sims=n_sims)
+        selection = pa["selection"]
+        results["profiles"][profile_name] = {
+            "sensitivity_map": pa["sensitivity_map"],
+            "selection": selection,
+            "header": pa["header"],
+            "results_summary": [{"c_min": r["c_min"], "eta": r["eta"],
+                                  "false_kill_rate": r["false_kill_rate"],
+                                  "false_kill_rate_per_seed": r.get("false_kill_rate_per_seed", float("nan")),
+                                  "region": r["region"],
+                                  "mean_beta_star": r["mean_beta_star"]}
+                                 for r in pa["results"]],
+        }
 
-            beta_stars = np.full(n_sims, np.nan)
-            for i in range(n_sims):
-                d_all = np.zeros((N_SEEDS, L_DOSES, N_W))
-                for s in range(N_SEEDS):
-                    seed_int = (base_seed + i * N_SEEDS + s) % (2 ** 31)
-                    rng = np.random.default_rng(seed_int)
-                    d_all[s] = simulate_one_seed_misspecified(
-                        rng, alpha, v_logit, sigma_dose, c_min, eta, profile_name)
-                b, fail = run_level_beta_star(d_all)
-                if fail:
-                    beta_stars[i] = float("nan")
-                else:
-                    beta_stars[i] = b
+    # Selection stability report
+    # select_cmin_eta returns the chosen (C_min, η) nested under the "selected"
+    # key (not modified here per constraints). Normalize to flat
+    # selected_c_min / selected_eta fields so the stability report reads real
+    # values.  [Sol-XF-9] [PROPOSED -- apparatus parameter, §8 item 9]
+    def _flat_sel(s):
+        if not s:
+            return (None, None)
+        if "selected_c_min" in s and "selected_eta" in s:
+            return (s.get("selected_c_min"), s.get("selected_eta"))
+        sel = s.get("selected")
+        if isinstance(sel, dict):
+            return (sel.get("c_min"), sel.get("eta"))
+        return (None, None)
 
-            valid = beta_stars[~np.isnan(beta_stars)]
-            fk = float(np.mean(valid < BETA_STAR_BAR)) if valid.size else float("nan")
-            profile_results.append({
-                "alpha": alpha, "v_mult": v_mult, "c_min": c_min, "eta": eta,
-                "mean_beta_star": float(valid.mean()) if valid.size else float("nan"),
-                "std_beta_star": float(valid.std()) if valid.size else float("nan"),
-                "false_kill_rate": fk,
-                "n_valid": int(valid.size),
-            })
-
-            bs_ref, _, _ = simulate_one_simulation(
-                alpha, v_mult, c_min, eta, sigma_dose,
-                n_sims=n_sims, base_seed=base_seed)
-            valid_ref = bs_ref[~np.isnan(bs_ref)]
-            ref_betas.append(float(valid_ref.mean()) if valid_ref.size else float("nan"))
-
-        results["profiles"][profile_name] = profile_results
+    # Normalize the reference selection (same select_cmin_eta shape) once.
+    ref_c = ref_e = None
+    has_ref = False
+    if reference_selection:
+        ref_c, ref_e = _flat_sel(reference_selection)
+        has_ref = ref_c is not None and ref_e is not None
 
     results["stability"] = {}
-    for pname, pres in results["profiles"].items():
-        diffs = []
-        for i, combo_res in enumerate(pres):
-            if i < len(ref_betas) and not math.isnan(combo_res["mean_beta_star"]) and not math.isnan(ref_betas[i]):
-                diffs.append(abs(combo_res["mean_beta_star"] - ref_betas[i]))
-        mean_diff = float(np.mean(diffs)) if diffs else float("nan")
-        results["stability"][pname] = {
-            "mean_abs_diff_from_reference": mean_diff,
-            "assessment": "stable" if (not math.isnan(mean_diff) and mean_diff < 0.1) else "unstable",
-        }
+    for pname, pdata in results["profiles"].items():
+        sel = pdata["selection"]
+        sel_c, sel_e = _flat_sel(sel)
+        if has_ref:
+            match = (ref_c == sel_c and ref_e == sel_e)
+            results["stability"][pname] = {
+                "selected_c_min": sel_c,
+                "selected_eta": sel_e,
+                "reference_c_min": ref_c,
+                "reference_eta": ref_e,
+                "selection_matches_reference": match,
+                "assessment": "stable" if match else "unstable",
+            }
+        else:
+            results["stability"][pname] = {
+                "selected_c_min": sel_c,
+                "selected_eta": sel_e,
+                "selection_matches_reference": None,
+                "assessment": "no_reference",
+            }
 
     return results
 
@@ -1110,6 +1327,8 @@ def main() -> None:
     parser.add_argument("--out", type=str, default=None,
                         help="Output JSON path for --full. Default "
                              "diagnostics/l8_power_analysis_results.json.")
+    parser.add_argument('--stress-test-sims', type=int, default=10000,
+                        help='Number of simulations per combo for the misspecification stress-test. Default 10000 (full). Reduce for faster stability check.')
     args = parser.parse_args()
 
     print("=" * 78)
@@ -1192,18 +1411,20 @@ def main() -> None:
     else:
         print("\n[Step 3] Skipped full run (pass --full to run 10,000×240).")
 
-    # §8 item 9 — Misspecification stress-test (BF-IMPL-1).
-    print("\n[Step 4] Misspecification stress-test (§8 item 9)")
-    print("  Running power analysis on 2 misspecified profiles...")
-    misspec = run_misspecification_stress_test(n_sims=100, n_combos_subset=8)
-    for pname, pres in misspec["profiles"].items():
-        mean_beta = float(np.mean([r["mean_beta_star"] for r in pres
-                                    if not math.isnan(r["mean_beta_star"])]))
-        print(f"  {pname}: mean β*={mean_beta:.4f} "
-              f"stability={misspec['stability'][pname]['assessment']} "
-              f"(mean abs diff from ref: {misspec['stability'][pname]['mean_abs_diff_from_reference']:.4f})")
+    # §8 item 9 — Misspecification stress-test (BF-IMPL-1, NF-IMPL-4 extension).
+    print("\n[Step 4] Misspecification stress-test (§8 item 9, full sensitivity map)")
+    stress_n = args.stress_test_sims
+    ref_sel = full.get("selection") if args.full else None
+    print(f"  Running full power analysis on 2 misspecified profiles (n_sims={stress_n})...")
+    misspec = run_misspecification_stress_test(n_sims=stress_n, reference_selection=ref_sel)
+    for pname in misspec["profiles"]:
+        s = misspec["stability"][pname]
+        print(f"  {pname}: selection (C_min={s.get('selected_c_min')}, η={s.get('selected_eta')}) "
+              f"-> {s['assessment']}"
+              + (f" (ref: C_min={s.get('reference_c_min')}, η={s.get('reference_eta')})" if ref_sel else ""))
     print(f"  profiles tested: {list(misspec['profiles'].keys())}")
-    print(f"  combos per profile: {misspec['n_combos']}")
+    print(f"  sims per combo: {stress_n}")
+    print(f"  note: full 10,000 per combo triples total runtime (~17h). Use --stress-test-sims 2000 for ~8h.")
     if args.full:
         full["misspecification_stress_test"] = misspec
 
