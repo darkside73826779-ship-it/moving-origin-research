@@ -2,9 +2,144 @@
 
 **Spec:** `specs/m4_specification.md`
 **Date:** 2026-08-18 · **Author:** ARCHITECT
-**Base SHA:** `e26d05f` (GitHub main)
-**Branch:** `architect/m4-spec-v1.3`
+**Base SHA:** `9dff1e5` (v1.4.1, CRITIC-cleared)
+**Branch:** `architect/m4-spec-v1.5`
 **Regime:** B (post-Entry 27; constitution v1 + Amendment 1; §5 binding) (P4)
+
+---
+
+## v1.5 — Advisor correction cycle: six findings (2026-08-18)
+
+Outside advisor reviewed M4 gate package (spec v1.4.1 at `9dff1e5`, CRITIC-cleared) against GitHub repo. Six design-completeness findings — not law-fidelity failures. All locked bars, O-14/O-15, M3 INSTRUMENT FAILURE, seed custody, L15–L17 fence, and L3 pre-scoring gate preserved.
+
+### Finding 1: L7 peer baseline reconciliation (§2.3)
+
+Replaced fixed OLS baseline with matched-model peer per Constitution L7 ("matched model") and M0 Decision Sheet line 20 ("same params/data/architecture, observation channel = behavioral outputs only, self-report channel excluded"). OLS baseline (v1.1–v1.4) was an ARCHITECT design choice that did not match the Constitution or M0 sheet. Corrected. All peer spec items tagged [BAR-Entry 11]. Peer confidence method tagged [PROPOSED].
+
+### Finding 2: FWFP milestone-wide family (§7.3)
+
+Extended FWFP closure deliverable scope from per-arm only to also cover milestone-wide family of ALL control-triggering tests across M4. Both per-arm and milestone-wide FWFP ≤ 5% [BAR-Entry 43] are acceptance criteria. Owner remains TASK BUILDER (O-15).
+
+### Finding 3: L10 threshold definitions (§4.3)
+
+Replaced unsupported τ=0.70 ↔ AUROC 0.70 linkage with explicit definitions: (a) confidence = scalar [0,1] from self-model; (b) threshold calibrated on held-out set to achieve ≥50% abstention under drift; (c) abstained cases excluded from AUROC; (d) AUROC population = non-abstained drifted cases. Drifted-AUROC floor ≥0.70 [BAR-Entry 14] preserved — not linked to τ. τ value not pre-specified; determined by calibration.
+
+### Finding 4: L8 zero-noise baseline + severity-matched specificity (§3.3)
+
+Added Level 0 (zero-noise baseline) as reference point for dose-response. Added severity-matched specificity intervention: noise injected into non-self-model component must equal perturbation magnitude at each dose level. L8 locked bars (≥3 doses, ρ≥0.8, slope≥0.2, specificity, 5 seeds) [BAR-Entry 11] preserved.
+
+### Finding 5: Borderline numerical definition + B1 draft (§7.5)
+
+Added numerical definition: borderline = p ∈ [α_corr × 0.5, α_corr]. Added B1 draft implementation (advisor recommendation): label retained, full context reported, provisional advancement possible, correction via Entry 43 four-part test. Tagged [PROPOSED — requires Rebecca ruling]. Pre-registration per [LAW-L19].
+
+### Finding 6: L7 inference reconciliation (§2.5) — STOP/escalation
+
+Identified tension between v1.4 §2.5 (any-seed KILL, no fallback for threshold bars) and M0 Decision Sheet line 29 (5 seeds + all-seeds-direction + bootstrap-CI fallback for L7). Flagged as STOP per §5.2 — not resolvable from verbatim law text. Escalation question for Rebecca: does M0 fallback apply to all L7 bars or only direction tests? Conservative default (any-seed KILL) applies until Rebecca rules.
+
+### §12 decision list updated
+
+Added: L10 confidence/threshold definitions, borderline numerical definition, L7 inference policy (escalation), L7 peer confidence method, L8 zero-noise baseline, L8 severity-matched specificity.
+
+### Confirmation
+
+No locked bar value changed (L7 0.75/0.10/margin, L8 ≥3/ρ≥0.8/slope≥0.2/specificity, L10 50%/10%/0.70 floor, L14 d≥0.5/corr≥0.3). No kill condition or scoring predicate changed beyond what the six findings require. L3 pre-scoring gate preserved. O-14/O-15, M3 INSTRUMENT FAILURE, seed custody, L15–L17 fence all preserved. P1–P6 maintained. Finding 6 flagged as STOP/escalation per §5.2.
+
+---
+
+## v1.4.1 — BF1 remediation: missing L8 locked bars added + ≥3-doses tag reconciled (2026-08-18)
+
+CRITIC v1.4 delta re-clear returned BLOCK with one finding (BF1): L8 §3.2 locked-bars table omitted two effect-size bars that Rebecca pre-registered in the M0_DECISION_SHEET (line 21, published via G0-4, Entry 70).
+
+### Two missing locked L8 bars added
+
+- **Spearman ρ ≥ 0.8 monotonic** — sourced [BAR-Entry 11] (M0_DECISION_SHEET line 21; Entry 70)
+- **Standardized slope ≥ 0.2** — sourced [BAR-Entry 11] (M0_DECISION_SHEET line 21; Entry 70)
+
+M0_DECISION_SHEET quotation included in §3.2 for fidelity.
+
+### ≥3-doses tag reconciled
+
+Previously tagged [OP-Entry 11.7] (supplemental). Reconciled to [BAR-Entry 11] as primary tag per M0_DECISION_SHEET canonical attribution. [OP-Entry 11.7] retained as §9 operationalization record only.
+
+### Confirmation
+
+No existing threshold value, locked bar, kill condition, or scoring predicate changed. No law text modified. No reconstruction. Only two missing bars added and one tag reconciled.
+
+---
+
+## v1.4 — Step 6 amendments: FWFP closure, borderline pre-registration, L7 fallback, L8 prerequisite, §8 Option A (2026-08-18)
+
+Five amendments per WORKFLOW COORDINATOR Step 6 handoff. No locked bar, kill condition, or scoring predicate changed. No law text modified. No reconstruction.
+
+### Amendment 1: FWFP closure deliverable (§7.3)
+
+Added §7.3 — M4 Pre-Scoring FWFP Closure Audit. Named deliverable with owner (TASK BUILDER), acceptance criteria (6 items), corrected-alpha target (≤ 5% per arm [BAR-Entry 43]), and build-sequence placement (Step 8, pre-scoring). The ARCHITECT specifies the deliverable; computation and correction are TASK BUILDER scope under O-15. Context: current alpha_seed = 0.05/3 across 45 checks does not demonstrate closure (~53% naive familywise; ~37% per-family odds). Entry 43 standing rule: FWFP of each arm's full check battery computed and corrected before scoring.
+
+### Amendment 2: Borderline pre-registration (§7.4)
+
+Added §7.4 — draft options for Rebecca's ruling on how a within-FWFP borderline control firing is labeled and handled at the delivery gate. Three options: B1 (M3 precedent — label retained, provisional advancement possible), B2 (strict KILL), B3 (conditional — Rebecca rules at gate). All tagged [PROPOSED — requires Rebecca ruling]. Pre-registration requirement per [LAW-L19]. No option implemented.
+
+### Amendment 3: L7 fallback clarification (§2.5)
+
+Clarified that the all-seeds-direction + bootstrap-CI fallback [BAR-Entry 11.3] applies only to direction tests (e.g., L8 dose-response monotonicity), NOT to L7 threshold bars (AUROC, ECE, margin). Threshold bars are evaluated per-seed: any-seed-fail → immediate KILL with no fallback. Resolves the tension between §2.2 inferential policy and §2.5 kill conditions.
+
+### Amendment 4: L8 homeostatic-variable named prerequisite (§3.3.1)
+
+Elevated L8 homeostatic-variable definition from a §12 decision item to a named prerequisite (§3.3.1) with its own dedicated reviewer pass. Four criteria: regulable [LAW-L8], target defined [PROPOSED], calibratable noise dose [OP-Entry 11.7], constructible specificity control [LAW-L8]. Reviewer pass by CRITIC before implementation. Removed from §12 decision list.
+
+### Amendment 5: §8 Option A amendment (Step 4 ruling implementation)
+
+Replaced L3 row in §8 per Step 4 ruling [BAR-Entry 72]: L3 disposition changed from "Parallel, not blocking" to "Prerequisite for scoring" — build proceeds in parallel, scoring gated on prospective L3 calibration resolution on fresh seeds per governance paper §6.3(3). Added sequencing note with gate sequence: (1) L3 resolution; (2) scoring authorization via courier; (3) scoring execution. Governance paper stands unamended.
+
+### §9.1 sequencing plan updated
+
+Updated role assignments to reflect new steps: CRITIC delta re-clear (Step 2), WORKFLOW COORDINATOR package assembly (Step 3), L8 prerequisite review (Step 6), FWFP closure audit (Step 7), L3 scoring gate (Step 10).
+
+### §12 decision list updated
+
+Removed L8 homeostatic variable (elevated to §3.3.1). Added borderline control firing handling [PROPOSED — requires Rebecca ruling].
+
+### Confirmation
+
+No threshold value, bar, kill condition, or scoring predicate changed. No law text modified. No reconstruction. All new thresholds tagged [PROPOSED] or appropriate source class. Provenance citations verified (P6).
+
+---
+
+## v1.3.1 — BF1 remediation + NF1–NF4 annotations (2026-08-18)
+
+CRITIC R2 law-fidelity review returned BLOCK with one P3 violation (BF1: control-arm tolerance thresholds and other numeric values lacking source tags). All F1 corrections verified correct. All law quotes verbatim. All provenance citations verified.
+
+### BF1.a: L8 §3.3 "≥ 1" homeostatic variable lower bound tagged
+
+Added [LAW-L8] tag to "≥ 1" in §3.3, sourced from L8 verbatim: "At least one homeostatic variable…" [LAW-L8, line 26].
+
+### BF1.b: L8 §3.4 control-arm failure routings tagged
+
+Added Source column to L8 control table (§3.4). Five routings tagged [PROPOSED — requires Rebecca sign-off]. Frozen arm KILL routing tagged [LAW-L8] ("stakes decorative" is law text).
+
+### BF1.c: §9.2 timebox tripwires tagged
+
+Added [PROPOSED — requires Rebecca approval] to tripwire values "2" (sessions) and "4" (days), matching adjacent tagged values.
+
+### NF1: L14 trailing whitespace
+
+CRITIC verified L14 quote is byte-identical (trailing space is a constitution whitespace artifact, not a spec error). No change needed.
+
+### NF2: V4.4 alpha_seed citation
+
+Added note citing M3 implementation entries in provenance log for V4.4 alpha_seed specifics.
+
+### NF3: Entry 11.8 graveyard-gate source class
+
+Annotated [BAR-Entry 11.8] as (gate-decision) source class in §2.2.
+
+### NF4: §7.1 derived quantities annotated
+
+Taged "1 pool" as [PROPOSED — derived from single-pool design] and "45" as [PROPOSED — derived: 3 laws × 3 families × 5 seeds].
+
+### Confirmation
+
+No threshold value, bar, kill condition, or scoring predicate changed. Only source-class tags and annotations added.
 
 ---
 
