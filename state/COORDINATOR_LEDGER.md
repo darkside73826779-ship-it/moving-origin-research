@@ -6,13 +6,18 @@
 
 ---
 
-## Current state — updated 2026-08-19 13:16 EDT (§8 code CRITIC-cleared; ready for Rebecca's local run)
+## Current state — updated 2026-08-19 15:28 EDT (§8 code fully CRITIC-cleared; ready for Rebecca's local run)
 
-**Ball:** REBECCA — the §8 power analysis code is CRITIC-cleared (`0da3953` on `critic/l8-s8-remediation-rereview`). The code is on `taskbuilder/l8-power-analysis` at `61a2f8d`. Rebecca runs `python diagnostics/l8_power_analysis.py --full` locally to produce the sensitivity map feeding her G2–G5 gate rulings. Estimated ~5.6 hours CPU.
+**Ball:** REBECCA — the §8 power analysis code (including the full misspec stress-test extension) is fully CRITIC-cleared (`ad3a405` on `critic/l8-stress-test-extension-rereview`). Code at `cbe4dfb` on `taskbuilder/l8-power-analysis` (1435 lines). Rebecca runs locally:
+```
+git fetch origin && git checkout taskbuilder/l8-power-analysis
+python diagnostics/l8_power_analysis.py --full
+```
+Use `--stress-test-sims 2000` for the reduced stress-test (~8h total instead of ~17h). Output: `diagnostics/l8_power_analysis_results.json` (relative path, ~200 KB). Produces the reference sensitivity map + misspecification stability report feeding Rebecca's G2–G5 gate rulings.
 
-**Two items for Rebecca to decide before/around the run:**
-1. **NF-IMPL-4 (non-blocking):** the misspec stress-test runs only a subset of 8 combos per misspecified profile and reports mean-β* stability only — not the full 2D sensitivity map + selection on misspecified profiles. The spec's literal §8 item 9 is met. Rebecca confirms whether the partial stress-test suffices for G2–G5, or extends it first.
-2. **NF-IMPL-2 (flagged to Rebecca):** which false-kill aggregation is the G3-escalation input — the 5-seed mean (P(mean of 5 < 0.2), lower) or the per-seed any-seed (P(any of 5 < 0.2), higher, matches the scoring bar)?
+**Still pending Rebecca's decisions:**
+1. **NF-IMPL-2 (false-kill aggregation):** which is the G3-escalation input — 5-seed mean (lower) or per-seed any-seed (higher, matches scoring bar)? Decide when you see both numbers in the output.
+2. **NF-EXT-1 (trivial, optional):** a bare invocation (no `--full`) triggers the full stress-test. You use `--full`, so this doesn't affect you. Could be gated optionally if desired.
 
 **After the local run:** Rebecca's G2–G5 gate rulings on the (C_min, η) operating point + the [PROPOSED] values → pre-registration freeze → §12 step 4 (L7/L10 delta review) → M4 harness build (L8 homeostat, three-control panel, real estimator) → compatibility check (sim's synthetic profiles through the harness's real estimator, diagnostic-only, O-15) → scoring authorization (gated on the five downstream M4 gates).
 
@@ -43,6 +48,8 @@ This hybrid (build sim on spec-text estimator, then verify against the harness's
 
 ## Handoff history (compact — current state overwrites prior; full history in provenance log + git log)
 
+- 2026-08-19 15:28 — §8 stress-test extension CRITIC-cleared (ad3a405); §8 code fully cleared; ball to Rebecca for local run
+- 2026-08-19 15:20 — TASK BUILDER stress-test extension (full 2D sensitivity map + selection on misspecified profiles, NF-IMPL-4 scope extension)
 - 2026-08-19 13:16 — §8 code CRITIC-cleared (remediation re-review, 0da3953); ball to Rebecca for local run. NF-IMPL-2 (false-kill aggregation ruling) + NF-IMPL-4 (partial stress-test) flagged to Rebecca.
 - 2026-08-19 12:53 — TASK BUILDER §8 remediation (BF-IMPL-1 + NF-IMPL-1/2/3)
 - 2026-08-19 12:48 — CRITIC §8 implementation review BLOCK (BF-IMPL-1 misspec stress-test absent + 3 non-blocking)
