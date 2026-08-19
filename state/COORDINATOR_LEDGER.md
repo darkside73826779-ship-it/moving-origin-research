@@ -10,7 +10,16 @@
 
 **Ball:** WORKFLOW COORDINATOR — the CRITIC returned CLEAR on the L8 spec v2.2 fresh ARCHITECT sweep (`4ca797c` on `critic/l8-spec-v2.2-fresh-rereview`). 9/9 items fixed; attestation true; init fix confirmed working. The L8 instantiation spec v2.2 is CRITIC-cleared. The coordinator is routing the next handoff — the ball has not yet passed to the next role.
 
-**Immediate next:** Coordinator routes the §8 artifacts handoff (item 5: candidate-blind power analysis + sensitivity map per XF-9). This is the first real compute — synthetic simulations (10,000 per parameter combination per the XF-9 protocol), candidate-blind, feeding Rebecca's G2–G5 gate rulings on the [PROPOSED] values. Then: Rebecca's G2–G5 rulings → pre-registration freeze → §12 step 4 (L7/L10 delta review) → TASK BUILDER release → build. Scoring remains gated on the five downstream M4 gates.
+**Immediate next:** Coordinator routes the §8 artifacts handoff to the TASK BUILDER (item 5: candidate-blind power analysis + sensitivity map per XF-9). This is the first real compute — synthetic simulations (10,000 per parameter combination per the XF-9 protocol), candidate-blind, feeding Rebecca's G2–G5 gate rulings on the [PROPOSED] values. The TASK BUILDER runs a 100-sim validation batch first to measure per-simulation cost before the full run; if genuinely compute-heavy, escalate to Rebecca's local system (sandbox has 2 vCPUs, 7.8 GB RAM, no GPU — but the workload is synthetic scalar computations, likely CPU-sufficient).
+
+**The hybrid build plan (durable routing decision — survives coordinator initialization):**
+1. Build the §8 simulation (TASK BUILDER, candidate-blind, 100-sim validation first, full 10,000 run, produces the sensitivity map) + R8 fail-closed hold-out guard as secondary deliverable → feeds Rebecca's G2–G5 rulings
+2. Rebecca's G2–G5 gate rulings on the operating point (C_min, η) + the [PROPOSED] values → freezes the parameters
+3. Pre-registration freeze → build the M4 harness (the L8 selective-risk homeostat, the three-control panel, the real estimator)
+4. Compatibility check (diagnostic-only, O-15): the §8 simulation's synthetic profiles and seeds are fed through the harness's REAL estimator (not the sim's standalone function) to verify the harness produces the same β* on the same inputs. This catches interface bugs before any scoring seed is spent — preventing a bug from breaking a scoring run on Rebecca's system (which under O-14 cannot be rerun). Uses the frozen operating point from the G2–G5 rulings so it's a true dry run of the scoring configuration.
+5. Then: scoring authorization (gated on the five downstream M4 gates)
+
+This hybrid (build sim on spec-text estimator, then verify against the harness's real estimator) is Rebecca's design — it catches interface failures in the diagnostic phase where O-15 permits iteration, before the irreversible scoring phase where O-14 forbids reruns.
 
 **L8 spec status:** v2.2 at `c7d7bed` on `architect/l8-instantiation-v2.2-fresh` — CRITIC-cleared (`4ca797c`). The L8 spec is frozen — no further spec-text changes without a signed waiver (P5).
 
