@@ -5,7 +5,7 @@
 **Date:** 2026-08-18 · **Regime:** B (post-Entry 27; constitution v1 + Amendment 1; §5 binding) (P4)
 **Base SHA:** `487843f` (v1.5, CRITIC-cleared)
 **Authority chain:** Rebecca > constitution's laws > approved specifications > this specification > agent judgment
-**Prior context:** M0 GO [OP-Entry 10], M1 GREEN, M2/E1 GREEN/SEALED, M3 INSTRUMENT FAILURE (provisional advancement [BAR-Entry 52]). Provenance log reviewed through Entry 72. STATE.md reviewed. Constitution published in-repo at `docs/ARCHITECTURAL_CONSTITUTION.md` (v1, SHA-256 `509f11c3...`) and `docs/ARCHITECTURAL_CONSTITUTION_v2.md` (v2 with Amendment 1 and §5). Step 4 ruling: Option A (Entry 72) — M4 scoring gated on L3 resolution; build parallel.
+**Prior context:** M0 GO [OP-Entry 10], M1 GREEN, M2/E1 GREEN/SEALED, M3 INSTRUMENT FAILURE (provisional advancement [BAR-Entry 52]). Provenance log reviewed through Entry 76. STATE.md reviewed. Constitution published in-repo at `docs/ARCHITECTURAL_CONSTITUTION.md` (v1, SHA-256 `509f11c3...`) and `docs/ARCHITECTURAL_CONSTITUTION_v2.md` (v2 with Amendment 1 and §5). Step 4 ruling: Option A (Entry 72) — M4 scoring gated on L3 resolution; build parallel.
 **Role boundary:** The ARCHITECT proposes specification, bars, and sequencing only. No code, no execution, no mechanism implementation, no merge.
 
 ---
@@ -558,7 +558,6 @@ No L15, L16, or L17 work authorized before M5. This spec does not propose integr
 | L8 severity-matched specificity | Standardized proximal-component effect (4 predefinitions) | [LAW-L19] — RESOLVED (Ruling 3) |
 
 **Items still requiring Rebecca sign-off (method/criterion, not numbers):**
-- L8 standardized specificity: comparison component, perturbation type, calibration set, tolerance — pre-registered [PROPOSED — requires Rebecca sign-off] (Ruling 3)
 - Tolerance calibration: method and acceptance criterion — [PROPOSED — requires Rebecca sign-off] (Ruling 9)
 
 **Provenance note (F1.5 correction):** The L7 numeric bars (AUROC ≥ 0.75, ECE ≤ 0.10, margin > 0 at p < .05) are in the constitution's law text [LAW-L7, line 24], not from Entry 5. Entry 5 [verified: provenance_log.md line 87] was the JUDGE's measurability assessment, which classified L7 as "fully numeric (judgeable now)" — it did not create the bars. Entry 8 [verified: provenance_log.md line 134] was the JUDGE's ruling on the plan, which identified corrections (L7 controls mandatory, L10 needs kill condition) — it did not lock bars. Bars were locked by Rebecca in Entry 11 [verified: provenance_log.md line 172].

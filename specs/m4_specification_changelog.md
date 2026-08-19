@@ -8,6 +8,24 @@
 
 ---
 
+## v1.6.2 — CRITIC residual BLOCK remediation: line 8 provenance + §12 L8 entry (2026-08-18)
+
+CRITIC residual re-clear found two residuals of the same class as v1.6.1. Both are ultra-narrow mechanical corrections.
+
+### BF-A: Line 8 provenance clause
+
+Line 8 "Provenance log reviewed through Entry 72" → "through Entry 76" — now consistent with §0 line 17.
+
+### BF-B: §12 L8 standardized specificity entry removed
+
+Removed "L8 standardized specificity" from "Items still requiring Rebecca sign-off" list — Ruling 3 (Entry 76) approved the approach; specific values are CRITIC-reviewed under §3.3.1, not separately by Rebecca. Entry contradicted §3.3 lines 203–206 and §12 line 558 (both RESOLVED). Tolerance calibration entry (Ruling 9) left unchanged — correct per Entry 76.
+
+### Confirmation
+
+No spec substance, locked bar, kill condition, scoring predicate, or ruling implementation changed. Two lines changed (line 8 provenance clause, §12 entry removed). Mechanical correction only.
+
+---
+
 ## v1.6.1 — CRITIC BLOCK remediation: provenance + tag-state correction (2026-08-18)
 
 CRITIC fresh-context delta re-clear of v1.6 returned BLOCK with three mechanical provenance/tag-state findings. Spec substance, locked bars, kill conditions, scoring predicates, and all nine ruling implementations verified PASS — not altered.
