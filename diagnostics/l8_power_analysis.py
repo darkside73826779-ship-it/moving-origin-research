@@ -116,7 +116,7 @@ CAL_REF_ETA = 0.1       # [PROPOSED — apparatus parameter, §8 calibration]
 CAL_PILOT_SIMS = 1000   # pilot simulations for σ_dose binary search [PROPOSED — apparatus parameter, §8]
 CAL_TOL = 0.01          # |mean β* - 0.3| < 0.01 calibration tolerance [PROPOSED — apparatus parameter, §8]
 CAL_SIGMA_LO = 1e-4     # binary-search lower bound on σ_dose [PROPOSED — apparatus parameter, §8]
-CAL_SIGMA_HI = 8.0      # binary-search upper bound on σ_dose [PROPOSED — apparatus parameter, §8]
+CAL_SIGMA_HI = 12.0     # binary-search upper bound on σ_dose [PROPOSED — apparatus parameter, §8]
 CAL_MAX_ITERS = 40      # binary-search iterations        [PROPOSED — apparatus parameter, §8]
 
 # Simulation counts (§8).
@@ -614,8 +614,8 @@ def select_cmin_eta(sensitivity_map: Dict) -> Dict:
             "eta": best["eta"],
         },
         "min_distance_to_boundaries": best["min_distance_to_boundaries"],
-        "false_kill_rate": best["false_kill_rate"],
-        "false_pass_rate": best["false_pass_rate"],
+        "mean_false_kill_rate": best["mean_false_kill_rate"],
+        "mean_false_pass_rate": best["mean_false_pass_rate"],
         "n_informative": len(informative),
         "rule": "§8.8: informative ∧ max min-distance to boundaries; tie → highest C_min; tie → lowest η  [Sol-XF-9]",
     }
@@ -878,6 +878,34 @@ def run_validation_batch(n_sims: int = N_SIMS_VALIDATION) -> Dict:
     }
 
 
+def _sanitize_nan(obj):
+    """Recursively replace NaN/Inf floats with None for strict JSON output.
+
+    allow_nan=False rejects NaN/Inf; the simulation can produce NaN for
+    INSTRUMENT_FAILURE cells (no valid measurements). We map those to null
+    so the machine-readable table is valid JSON. The 'n_instrument_failures'
+    field carries the failure count explicitly.
+    """
+    if isinstance(obj, dict):
+        return {k: _sanitize_nan(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_sanitize_nan(v) for v in obj]
+    if isinstance(obj, float):
+        if math.isnan(obj) or math.isinf(obj):
+            return None
+        return obj
+    if isinstance(obj, (np.floating,)):
+        f = float(obj)
+        if math.isnan(f) or math.isinf(f):
+            return None
+        return f
+    if isinstance(obj, (np.integer,)):
+        return int(obj)
+    if isinstance(obj, np.ndarray):
+        return _sanitize_nan(obj.tolist())
+    return obj
+
+
 # ---------------------------------------------------------------------------
 # main()
 # ---------------------------------------------------------------------------
@@ -958,14 +986,15 @@ def main() -> None:
                   f"({sel['selected']['c_min']}, {sel['selected']['eta']}) "
                   f"[§8.8 deterministic rule, Sol-XF-9]")
             print(f"    min-distance={sel['min_distance_to_boundaries']:.4f} "
-                  f"false-kill={sel['false_kill_rate']:.3f} "
-                  f"false-pass={sel['false_pass_rate']:.3f} "
+                  f"false-kill={sel['mean_false_kill_rate']:.3f} "
+                  f"false-pass={sel['mean_false_pass_rate']:.3f} "
                   f"n_informative={sel['n_informative']}")
         else:
             print(f"  No informative cell found: {sel['reason']}")
         # Report false-kill threshold check (§8.1 G3 escalation).
-        max_fk = max(r["false_kill_rate"] for r in full["results"]
-                     if not math.isnan(r["false_kill_rate"]))
+        fk_vals = [r["false_kill_rate"] for r in full["results"]
+                   if not math.isnan(r["false_kill_rate"])]
+        max_fk = max(fk_vals) if fk_vals else float("nan")
         print(f"  max false-kill rate across grid: {max_fk:.4f} "
               f"(threshold {FALSE_KILL_THRESHOLD} -> "
               f"{'ESCALATE to G3' if max_fk > FALSE_KILL_THRESHOLD else 'no escalation'}) "
@@ -973,7 +1002,7 @@ def main() -> None:
         print(f"  full run elapsed: {full['header']['elapsed_seconds']:.1f}s")
         out_path = args.out or "/home/user/workspace/mor-repo/diagnostics/l8_power_analysis_results.json"
         with open(out_path, "w", encoding="utf-8") as f:
-            json.dump(full, f, indent=2, allow_nan=False)
+            json.dump(_sanitize_nan(full), f, indent=2, allow_nan=False)
             f.write("\n")
         print(f"  wrote machine-readable JSON: {out_path}")
     else:
