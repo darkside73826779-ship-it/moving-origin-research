@@ -392,6 +392,12 @@ def simulate_one_simulation(alpha: float, v_mult: float, c_min: float, eta: floa
     n_failures = 0
     v_logit = v_mult * V_REF  # v = mult × v_ref  [Sol-XF-9] [PROPOSED — apparatus parameter, §8]
 
+    # NF-IMPL-2: also track per-seed β* for the per-seed false-kill aggregation.
+    # The L8 scoring bar is per-seed ("standardized slope >= 0.2, per seed",
+    # spec §2). P(any of 5 β*_s < 0.2) matches the per-seed scoring bar;
+    # P(mean of 5 β*_s < 0.2) is the 5-seed mean aggregation. Both are
+    # reported so Rebecca can rule on which is the G3-escalation input.
+    per_seed_betas = np.full((n_sims, N_SEEDS), np.nan, dtype=np.float64)
     for i in range(n_sims):
         # 5 seeds per simulation. Deterministic, candidate-blind.
         d_all = np.zeros((N_SEEDS, L_DOSES, N_W), dtype=np.float64)
@@ -406,7 +412,11 @@ def simulate_one_simulation(alpha: float, v_mult: float, c_min: float, eta: floa
             n_failures += 1
         else:
             beta_stars[i] = b
-    return beta_stars, n_failures
+            # Record per-seed β* for NF-IMPL-2 aggregation
+            for s in range(N_SEEDS):
+                bs_s, fail_s = beta_star_for_seed(d_all[s])
+                per_seed_betas[i, s] = bs_s if not fail_s else float("nan")
+    return beta_stars, n_failures, per_seed_betas
 
 
 # ---------------------------------------------------------------------------
@@ -429,7 +439,7 @@ def calibrate_sigma_dose(alpha: float, v_mult: float) -> float:
     base_seed = combo_seed(alpha, v_mult, CAL_REF_C_MIN, CAL_REF_ETA)
 
     def mean_beta_at(sigma_dose: float) -> float:
-        bs, _ = simulate_one_simulation(alpha, v_mult, CAL_REF_C_MIN,
+        bs, _, _ = simulate_one_simulation(alpha, v_mult, CAL_REF_C_MIN,
                                         CAL_REF_ETA, sigma_dose,
                                         n_sims=CAL_PILOT_SIMS,
                                         base_seed=base_seed)
@@ -654,13 +664,13 @@ def run_power_analysis(n_sims: int, include_null_control: bool = True,
                 for eta in ETAS:
                     base_seed = combo_seed(alpha, v_mult, c_min, eta)
                     # True-effect arm: σ_dose as calibrated.
-                    bs, n_fail = simulate_one_simulation(
+                    bs, n_fail, per_seed = simulate_one_simulation(
                         alpha, v_mult, c_min, eta, sigma_dose,
                         n_sims=n_sims, base_seed=base_seed)
                     valid = bs[~np.isnan(bs)]
                     n_valid = int(valid.size)
-                    # False-kill rate: fraction of simulations where
-                    # β*_estimated < 0.2 when true β* ≥ 0.3.  [Sol-XF-9]
+                    # False-kill rate (5-seed mean): fraction of simulations where
+                    # the 5-seed-mean β*_estimated < 0.2 when true β* ≥ 0.3. [Sol-XF-9]
                     # INSTRUMENT_FAILURE simulations (NaN) are excluded from the
                     # denominator (the apparatus produced no measurement; they
                     # are reported separately, not counted as kills).
@@ -668,12 +678,24 @@ def run_power_analysis(n_sims: int, include_null_control: bool = True,
                         false_kill_rate = float(np.mean(valid < BETA_STAR_BAR))
                     else:
                         false_kill_rate = float("nan")
+                    # NF-IMPL-2: Per-seed false-kill rate: P(any of 5 β*_s < 0.2).
+                    # Matches the per-seed scoring bar (spec §2: "per seed").
+                    # Flagged to Rebecca for ruling on which is the G3 input.
+                    if n_valid > 0:
+                        valid_ps = per_seed[~np.isnan(bs)]  # rows where run-level is valid
+                        if valid_ps.shape[0] > 0:
+                            any_seed_below = np.any(valid_ps < BETA_STAR_BAR, axis=1)
+                            false_kill_rate_per_seed = float(np.mean(any_seed_below))
+                        else:
+                            false_kill_rate_per_seed = float("nan")
+                    else:
+                        false_kill_rate_per_seed = float("nan")
                     mean_beta = float(valid.mean()) if n_valid else float("nan")
                     std_beta = float(valid.std()) if n_valid else float("nan")
 
                     # Null-control arm (false-pass rate) for the sensitivity map.
                     if include_null_control:
-                        bs_null, n_fail_null = simulate_one_simulation(
+                        bs_null, n_fail_null, _ = simulate_one_simulation(
                             alpha, v_mult, c_min, eta, sigma_dose=0.0,
                             n_sims=n_sims, base_seed=base_seed)
                         valid_null = bs_null[~np.isnan(bs_null)]
@@ -708,7 +730,8 @@ def run_power_analysis(n_sims: int, include_null_control: bool = True,
                         "n_instrument_failures_null": int(n_fail_null),
                         "mean_beta_star": mean_beta,
                         "std_beta_star": std_beta,
-                        "false_kill_rate": false_kill_rate,  # P(β*<0.2 | true β*=0.3) [Sol-XF-9]
+                        "false_kill_rate": false_kill_rate,  # P(mean 5-seed β*<0.2) [Sol-XF-9]
+                        "false_kill_rate_per_seed": false_kill_rate_per_seed,  # P(any seed β*<0.2) [NF-IMPL-2, PROPOSED — flagged to Rebecca]
                         "false_pass_rate": false_pass_rate,   # P(β*≥0.2 | null) [PROPOSED — apparatus parameter, §8.7]
                         "mean_beta_star_null": mean_null,
                         "region": region,
@@ -830,7 +853,7 @@ def run_validation_batch(n_sims: int = N_SIMS_VALIDATION) -> Dict:
         t_cal = time.time() - t_cal0
         base_seed = combo_seed(alpha, v_mult, c_min, eta)
         t0 = time.time()
-        bs, n_fail = simulate_one_simulation(alpha, v_mult, c_min, eta,
+        bs, n_fail, per_seed = simulate_one_simulation(alpha, v_mult, c_min, eta,
                                              sigma_dose, n_sims=n_sims,
                                              base_seed=base_seed)
         elapsed = time.time() - t0
@@ -838,6 +861,9 @@ def run_validation_batch(n_sims: int = N_SIMS_VALIDATION) -> Dict:
         total_sims += n_sims
         valid = bs[~np.isnan(bs)]
         fk = float(np.mean(valid < BETA_STAR_BAR)) if valid.size else float("nan")
+        # NF-IMPL-2: per-seed false-kill rate P(any of 5 β*_s < 0.2)
+        valid_ps = per_seed[~np.isnan(bs)]
+        fk_per_seed = float(np.mean(np.any(valid_ps < BETA_STAR_BAR, axis=1))) if valid_ps.shape[0] > 0 else float("nan")
         batch.append({
             "label": combo["label"],
             "alpha": alpha, "v_mult": v_mult, "c_min": c_min, "eta": eta,
@@ -849,6 +875,7 @@ def run_validation_batch(n_sims: int = N_SIMS_VALIDATION) -> Dict:
             "mean_beta_star": float(valid.mean()) if valid.size else float("nan"),
             "std_beta_star": float(valid.std()) if valid.size else float("nan"),
             "false_kill_rate": fk,
+            "false_kill_rate_per_seed": fk_per_seed,
             "elapsed_seconds": elapsed,
             "per_sim_seconds": elapsed / n_sims,
         })
@@ -909,6 +936,163 @@ def _sanitize_nan(obj):
 # ---------------------------------------------------------------------------
 # main()
 # ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# §8 item 9 — Misspecification stress-test (BF-IMPL-1).
+#
+# Run the power analysis on >=2 misspecified profiles different from the
+# synthetic reference that defines R* and dose, to verify the estimator is
+# not overfit to the reference profile. [Sol-XF-9] [PROPOSED — apparatus parameter]
+#
+# Candidate-blind throughout (Ruling 9): misspecified profiles use known oracle
+# ground truth, not candidate output.
+# ---------------------------------------------------------------------------
+
+def simulate_one_seed_misspecified(rng, alpha, v_logit, sigma_dose,
+                                    c_min, eta, profile_name):
+    """Simulate one seed with a misspecified profile.
+
+    Misspecified profiles differ from the reference in task difficulty
+    distribution or dose-response shape. The estimator (§2 XF-5) is
+    applied identically -- only the data-generating process changes.
+    [Sol-XF-9] [PROPOSED -- apparatus parameter, §8 item 9]
+    """
+    if profile_name == "uniform_difficulty":
+        # Misspecified profile 1: uniform task difficulty instead of Beta(4.2, 1.8).
+        # Reference is right-skewed (most queries high correctness).
+        # Uniform(0,1) is flat -- genuinely different distribution.
+        p_true = rng.random(W)
+    elif profile_name == "bimodal_difficulty":
+        # Misspecified profile 2: bimodal difficulty -- 50% easy (p=0.9),
+        # 50% hard (p=0.3). Reference is unimodal.
+        mask = rng.random(W) < 0.5
+        p_true = np.where(mask, 0.9, 0.3)
+    else:
+        raise ValueError(f"unknown misspecified profile: {profile_name}")
+
+    correct = rng.random(W) < p_true
+
+    # Mirror confidence with calibration error alpha and logit-variance v_logit
+    logit_p = np.log(p_true / (1.0 - p_true + EPS_C) + EPS_C)
+    xi = rng.normal(0.0, np.sqrt(v_logit), W)
+    c = 1.0 / (1.0 + np.exp(-(logit_p + alpha + xi)))
+    c = np.clip(c, EPS_C, 1.0 - EPS_C)
+
+    tau = 0.5
+    deviations = np.zeros(L_DOSES * N_W)
+    idx = 0
+    for dose in range(L_DOSES):
+        sigma_l = dose * sigma_dose
+        for w in range(N_W):
+            if sigma_l > 0:
+                xi_dose = rng.normal(0.0, sigma_l, W)
+                logit_c = np.log(c / (1.0 - c + EPS_C) + EPS_C)
+                c_dose = 1.0 / (1.0 + np.exp(-(logit_c + xi_dose)))
+                c_dose = np.clip(c_dose, EPS_C, 1.0 - EPS_C)
+            else:
+                c_dose = c.copy()
+
+            n_min = max(1, int(np.ceil(c_min * W)))
+            order = np.argsort(-c_dose)
+            answered = list(order[:n_min])
+            for j in order[n_min:]:
+                if c_dose[j] > tau:
+                    answered.append(j)
+
+            n_answered = len(answered)
+            if n_answered == 0:
+                r_w = 0.0
+            else:
+                n_incorrect = int(np.sum(~correct[answered]))
+                r_w = n_incorrect / n_answered
+
+            deviations[idx] = r_w - R_STAR
+            idx += 1
+            tau = np.clip(tau + eta * (r_w - R_STAR), 0.01, 0.99)
+
+    return deviations.reshape(L_DOSES, N_W)
+
+
+def run_misspecification_stress_test(n_sims=100, n_combos_subset=8):
+    """Run the misspecification stress-test per §8 item 9.
+
+    Runs the power analysis on 2 misspecified profiles on a subset of the
+    parameter grid. Reports whether the estimator and (C_min, eta) selection
+    are stable under misspecification.
+
+    [Sol-XF-9] [PROPOSED -- apparatus parameter, §8 item 9]
+    Candidate-blind (Ruling 9): profiles use known oracle ground truth.
+    """
+    profiles = ["uniform_difficulty", "bimodal_difficulty"]
+    subset_alphas = [0.0, 0.1, 0.2]
+    subset_v_mults = [0.5, 1.0, 2.0]
+    subset_c_mins = [0.5, 0.7, 0.8]
+    subset_etas = [0.01, 0.1, 0.2]
+    test_combos = []
+    for a in subset_alphas:
+        for v in subset_v_mults:
+            for c in subset_c_mins:
+                for e in subset_etas:
+                    test_combos.append((a, v, c, e))
+    step = max(1, len(test_combos) // n_combos_subset)
+    test_combos = test_combos[::step][:n_combos_subset]
+
+    results = {"profiles": {}, "n_sims": n_sims, "n_combos": len(test_combos)}
+    ref_betas = []
+
+    for profile_name in profiles:
+        profile_results = []
+        for alpha, v_mult, c_min, eta in test_combos:
+            v_logit = v_mult * V_REF
+            sigma_dose = calibrate_sigma_dose(alpha, v_mult)
+            base_seed = combo_seed(alpha, v_mult, c_min, eta)
+
+            beta_stars = np.full(n_sims, np.nan)
+            for i in range(n_sims):
+                d_all = np.zeros((N_SEEDS, L_DOSES, N_W))
+                for s in range(N_SEEDS):
+                    seed_int = (base_seed + i * N_SEEDS + s) % (2 ** 31)
+                    rng = np.random.default_rng(seed_int)
+                    d_all[s] = simulate_one_seed_misspecified(
+                        rng, alpha, v_logit, sigma_dose, c_min, eta, profile_name)
+                b, fail = run_level_beta_star(d_all)
+                if fail:
+                    beta_stars[i] = float("nan")
+                else:
+                    beta_stars[i] = b
+
+            valid = beta_stars[~np.isnan(beta_stars)]
+            fk = float(np.mean(valid < BETA_STAR_BAR)) if valid.size else float("nan")
+            profile_results.append({
+                "alpha": alpha, "v_mult": v_mult, "c_min": c_min, "eta": eta,
+                "mean_beta_star": float(valid.mean()) if valid.size else float("nan"),
+                "std_beta_star": float(valid.std()) if valid.size else float("nan"),
+                "false_kill_rate": fk,
+                "n_valid": int(valid.size),
+            })
+
+            bs_ref, _, _ = simulate_one_simulation(
+                alpha, v_mult, c_min, eta, sigma_dose,
+                n_sims=n_sims, base_seed=base_seed)
+            valid_ref = bs_ref[~np.isnan(bs_ref)]
+            ref_betas.append(float(valid_ref.mean()) if valid_ref.size else float("nan"))
+
+        results["profiles"][profile_name] = profile_results
+
+    results["stability"] = {}
+    for pname, pres in results["profiles"].items():
+        diffs = []
+        for i, combo_res in enumerate(pres):
+            if i < len(ref_betas) and not math.isnan(combo_res["mean_beta_star"]) and not math.isnan(ref_betas[i]):
+                diffs.append(abs(combo_res["mean_beta_star"] - ref_betas[i]))
+        mean_diff = float(np.mean(diffs)) if diffs else float("nan")
+        results["stability"][pname] = {
+            "mean_abs_diff_from_reference": mean_diff,
+            "assessment": "stable" if (not math.isnan(mean_diff) and mean_diff < 0.1) else "unstable",
+        }
+
+    return results
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="L8 §8 power analysis simulation (candidate-blind). "
@@ -963,7 +1147,7 @@ def main() -> None:
         print(f"    α={c['alpha']} v_mult={c['v_mult']} C_min={c['c_min']} "
               f"η={c['eta']} σ_dose={c['sigma_dose_calibrated']:.4f}")
         print(f"    mean β*={c['mean_beta_star']:.4f} std={c['std_beta_star']:.4f} "
-              f"false-kill={c['false_kill_rate']:.3f} "
+              f"false-kill={c['false_kill_rate']:.3f} (per-seed={c['false_kill_rate_per_seed']:.3f}) "
               f"n_instr_fail={c['n_instrument_failures']}")
         print(f"    elapsed={c['elapsed_seconds']:.3f}s "
               f"({c['per_sim_seconds']*1000:.3f} ms/sim) "
@@ -1000,13 +1184,28 @@ def main() -> None:
               f"{'ESCALATE to G3' if max_fk > FALSE_KILL_THRESHOLD else 'no escalation'}) "
               f"[PROPOSED — apparatus parameter, §8]")
         print(f"  full run elapsed: {full['header']['elapsed_seconds']:.1f}s")
-        out_path = args.out or "/home/user/workspace/mor-repo/diagnostics/l8_power_analysis_results.json"
+        out_path = args.out or "diagnostics/l8_power_analysis_results.json"
         with open(out_path, "w", encoding="utf-8") as f:
             json.dump(_sanitize_nan(full), f, indent=2, allow_nan=False)
             f.write("\n")
         print(f"  wrote machine-readable JSON: {out_path}")
     else:
         print("\n[Step 3] Skipped full run (pass --full to run 10,000×240).")
+
+    # §8 item 9 — Misspecification stress-test (BF-IMPL-1).
+    print("\n[Step 4] Misspecification stress-test (§8 item 9)")
+    print("  Running power analysis on 2 misspecified profiles...")
+    misspec = run_misspecification_stress_test(n_sims=100, n_combos_subset=8)
+    for pname, pres in misspec["profiles"].items():
+        mean_beta = float(np.mean([r["mean_beta_star"] for r in pres
+                                    if not math.isnan(r["mean_beta_star"])]))
+        print(f"  {pname}: mean β*={mean_beta:.4f} "
+              f"stability={misspec['stability'][pname]['assessment']} "
+              f"(mean abs diff from ref: {misspec['stability'][pname]['mean_abs_diff_from_reference']:.4f})")
+    print(f"  profiles tested: {list(misspec['profiles'].keys())}")
+    print(f"  combos per profile: {misspec['n_combos']}")
+    if args.full:
+        full["misspecification_stress_test"] = misspec
 
     print("\nDone. Diagnostic-only (O-15). This authorizes NO scoring.")
 
