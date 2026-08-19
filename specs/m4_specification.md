@@ -125,10 +125,16 @@ The L7 query battery includes clean and adversarial queries (distribution-shifte
 
 | Bar | Value | Source tag |
 |---|---|---|
-| Minimum dose levels | ≥ 3 | [OP-Entry 11.7] (adopted from CRITIC Risk 2, Entry 7) |
+| Minimum dose levels | ≥ 3 | [BAR-Entry 11] (M0_DECISION_SHEET line 21; Entry 70) |
+| Spearman ρ (monotonic) | ≥ 0.8 | [BAR-Entry 11] (M0_DECISION_SHEET line 21; Entry 70) |
+| Standardized slope | ≥ 0.2 | [BAR-Entry 11] (M0_DECISION_SHEET line 21; Entry 70) |
 | Monotonic test | All-seeds-direction + bootstrap-CI fallback | [BAR-Entry 11.3] |
 | Seeds | 5 | [BAR-Entry 11.3] |
 | Specificity ("only then") | Self-model degradation must be the cause; non-self-model noise must NOT raise regulation error | [LAW-L8] |
+
+**M0_DECISION_SHEET quotation (line 21, for fidelity):** "**L8** | ≥3 noise doses; Spearman ρ ≥ 0.8 monotonic; standardized slope ≥ 0.2 (ARCHITECT's candidate accepted); specificity control mandatory (self-irrelevant dose must NOT move regulation error). Seeds: 5." [BAR-Entry 11]
+
+**Tag reconciliation note:** The ≥3-doses bar was previously tagged [OP-Entry 11.7] (supplemental). The M0_DECISION_SHEET (published via G0-4, Entry 70) attributes all L8 bars including ≥3 doses to [BAR-Entry 11] as Rebecca-locked bars. The sheet's framing is canonical; [BAR-Entry 11] is now the primary tag. [OP-Entry 11.7] remains as the §9 operationalization record that adopted the ≥3-level requirement from CRITIC Risk 2 (Entry 7) into the spec.
 
 ### 3.3 Operational design (F1.1 correction — respecified from verbatim text)
 

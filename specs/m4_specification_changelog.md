@@ -8,6 +8,27 @@
 
 ---
 
+## v1.4.1 — BF1 remediation: missing L8 locked bars added + ≥3-doses tag reconciled (2026-08-18)
+
+CRITIC v1.4 delta re-clear returned BLOCK with one finding (BF1): L8 §3.2 locked-bars table omitted two effect-size bars that Rebecca pre-registered in the M0_DECISION_SHEET (line 21, published via G0-4, Entry 70).
+
+### Two missing locked L8 bars added
+
+- **Spearman ρ ≥ 0.8 monotonic** — sourced [BAR-Entry 11] (M0_DECISION_SHEET line 21; Entry 70)
+- **Standardized slope ≥ 0.2** — sourced [BAR-Entry 11] (M0_DECISION_SHEET line 21; Entry 70)
+
+M0_DECISION_SHEET quotation included in §3.2 for fidelity.
+
+### ≥3-doses tag reconciled
+
+Previously tagged [OP-Entry 11.7] (supplemental). Reconciled to [BAR-Entry 11] as primary tag per M0_DECISION_SHEET canonical attribution. [OP-Entry 11.7] retained as §9 operationalization record only.
+
+### Confirmation
+
+No existing threshold value, locked bar, kill condition, or scoring predicate changed. No law text modified. No reconstruction. Only two missing bars added and one tag reconciled.
+
+---
+
 ## v1.4 — Step 6 amendments: FWFP closure, borderline pre-registration, L7 fallback, L8 prerequisite, §8 Option A (2026-08-18)
 
 Five amendments per WORKFLOW COORDINATOR Step 6 handoff. No locked bar, kill condition, or scoring predicate changed. No law text modified. No reconstruction.
