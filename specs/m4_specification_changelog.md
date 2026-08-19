@@ -2,9 +2,47 @@
 
 **Spec:** `specs/m4_specification.md`
 **Date:** 2026-08-18 · **Author:** ARCHITECT
-**Base SHA:** `94dcc43` (v1.3.1, R2-CLEARED)
-**Branch:** `architect/m4-spec-v1.4`
+**Base SHA:** `9dff1e5` (v1.4.1, CRITIC-cleared)
+**Branch:** `architect/m4-spec-v1.5`
 **Regime:** B (post-Entry 27; constitution v1 + Amendment 1; §5 binding) (P4)
+
+---
+
+## v1.5 — Advisor correction cycle: six findings (2026-08-18)
+
+Outside advisor reviewed M4 gate package (spec v1.4.1 at `9dff1e5`, CRITIC-cleared) against GitHub repo. Six design-completeness findings — not law-fidelity failures. All locked bars, O-14/O-15, M3 INSTRUMENT FAILURE, seed custody, L15–L17 fence, and L3 pre-scoring gate preserved.
+
+### Finding 1: L7 peer baseline reconciliation (§2.3)
+
+Replaced fixed OLS baseline with matched-model peer per Constitution L7 ("matched model") and M0 Decision Sheet line 20 ("same params/data/architecture, observation channel = behavioral outputs only, self-report channel excluded"). OLS baseline (v1.1–v1.4) was an ARCHITECT design choice that did not match the Constitution or M0 sheet. Corrected. All peer spec items tagged [BAR-Entry 11]. Peer confidence method tagged [PROPOSED].
+
+### Finding 2: FWFP milestone-wide family (§7.3)
+
+Extended FWFP closure deliverable scope from per-arm only to also cover milestone-wide family of ALL control-triggering tests across M4. Both per-arm and milestone-wide FWFP ≤ 5% [BAR-Entry 43] are acceptance criteria. Owner remains TASK BUILDER (O-15).
+
+### Finding 3: L10 threshold definitions (§4.3)
+
+Replaced unsupported τ=0.70 ↔ AUROC 0.70 linkage with explicit definitions: (a) confidence = scalar [0,1] from self-model; (b) threshold calibrated on held-out set to achieve ≥50% abstention under drift; (c) abstained cases excluded from AUROC; (d) AUROC population = non-abstained drifted cases. Drifted-AUROC floor ≥0.70 [BAR-Entry 14] preserved — not linked to τ. τ value not pre-specified; determined by calibration.
+
+### Finding 4: L8 zero-noise baseline + severity-matched specificity (§3.3)
+
+Added Level 0 (zero-noise baseline) as reference point for dose-response. Added severity-matched specificity intervention: noise injected into non-self-model component must equal perturbation magnitude at each dose level. L8 locked bars (≥3 doses, ρ≥0.8, slope≥0.2, specificity, 5 seeds) [BAR-Entry 11] preserved.
+
+### Finding 5: Borderline numerical definition + B1 draft (§7.5)
+
+Added numerical definition: borderline = p ∈ [α_corr × 0.5, α_corr]. Added B1 draft implementation (advisor recommendation): label retained, full context reported, provisional advancement possible, correction via Entry 43 four-part test. Tagged [PROPOSED — requires Rebecca ruling]. Pre-registration per [LAW-L19].
+
+### Finding 6: L7 inference reconciliation (§2.5) — STOP/escalation
+
+Identified tension between v1.4 §2.5 (any-seed KILL, no fallback for threshold bars) and M0 Decision Sheet line 29 (5 seeds + all-seeds-direction + bootstrap-CI fallback for L7). Flagged as STOP per §5.2 — not resolvable from verbatim law text. Escalation question for Rebecca: does M0 fallback apply to all L7 bars or only direction tests? Conservative default (any-seed KILL) applies until Rebecca rules.
+
+### §12 decision list updated
+
+Added: L10 confidence/threshold definitions, borderline numerical definition, L7 inference policy (escalation), L7 peer confidence method, L8 zero-noise baseline, L8 severity-matched specificity.
+
+### Confirmation
+
+No locked bar value changed (L7 0.75/0.10/margin, L8 ≥3/ρ≥0.8/slope≥0.2/specificity, L10 50%/10%/0.70 floor, L14 d≥0.5/corr≥0.3). No kill condition or scoring predicate changed beyond what the six findings require. L3 pre-scoring gate preserved. O-14/O-15, M3 INSTRUMENT FAILURE, seed custody, L15–L17 fence all preserved. P1–P6 maintained. Finding 6 flagged as STOP/escalation per §5.2.
 
 ---
 
