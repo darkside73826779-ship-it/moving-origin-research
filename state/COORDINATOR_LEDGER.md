@@ -6,9 +6,9 @@
 
 ---
 
-## Current state — updated 2026-08-19 11:28 EDT (CRITIC returned CLEAR; ball with coordinator for routing)
+## Current state — updated 2026-08-19 11:48 EDT (ball passed to TASK BUILDER)
 
-**Ball:** WORKFLOW COORDINATOR — the CRITIC returned CLEAR on the L8 spec v2.2 fresh ARCHITECT sweep (`4ca797c` on `critic/l8-spec-v2.2-fresh-rereview`). 9/9 items fixed; attestation true; init fix confirmed working. The L8 instantiation spec v2.2 is CRITIC-cleared. The coordinator is routing the next handoff — the ball has not yet passed to the next role.
+**Ball:** TASK BUILDER — building the §8 power analysis simulation (candidate-blind, 100-sim validation batch first, then full 10,000 run) + R8 fail-closed hold-out guard. Handoff: TASK_BUILDER_S8_POWER_ANALYSIS_HANDOFF.md. The L8 spec v2.2 is CRITIC-cleared and frozen (`4ca797c`); the fresh ARCHITECT init fix is confirmed working. This is the first real compute step — synthetic simulations, diagnostic-only (O-15), feeding Rebecca's G2–G5 gate rulings.
 
 **Immediate next:** Coordinator routes the §8 artifacts handoff to the TASK BUILDER (item 5: candidate-blind power analysis + sensitivity map per XF-9). This is the first real compute — synthetic simulations (10,000 per parameter combination per the XF-9 protocol), candidate-blind, feeding Rebecca's G2–G5 gate rulings on the [PROPOSED] values. The TASK BUILDER runs a 100-sim validation batch first to measure per-simulation cost before the full run; if genuinely compute-heavy, escalate to Rebecca's local system (sandbox has 2 vCPUs, 7.8 GB RAM, no GPU — but the workload is synthetic scalar computations, likely CPU-sufficient).
 
@@ -37,6 +37,9 @@ This hybrid (build sim on spec-text estimator, then verify against the harness's
 
 ## Handoff history (compact — current state overwrites prior; full history in provenance log + git log)
 
+- 2026-08-19 11:48 — ball passed coordinator → TASK BUILDER (§8 power analysis; 100-sim validation first)
+- 2026-08-19 11:28 — first CRITIC CLEAR (ledger push+merge, first use of the coordinator ledger system). L8 spec v2.2 frozen. Hybrid build plan added to ledger.
+- 2026-08-19 11:12 — ball passed fresh ARCHITECT → CRITIC (v2.2 fresh re-review); ledger updated locally
 - 2026-08-19 10:51 — coordinator handoff checkpoint published (PR #68); fresh ARCHITECT initialized with updated init to test the false-attestation fix
 - 2026-08-19 10:40 — CRITIC v2.2 re-review BLOCKed (false attestation: 8/9 items unfixed, changelog claimed all fixed); prior ARCHITECT retired; ARCHITECT init updated (PR #67)
 - 2026-08-19 10:17 — ARCHITECT v2.2 P3 sweep (false attestation)
