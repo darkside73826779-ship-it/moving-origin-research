@@ -2063,3 +2063,20 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Verification controls attested:** No files modified, moved, uploaded, or deleted; raw artifact tree not hashed; no substitution of base copy.
 - **F7e addendum:** F7e addendum committed at `docs/rulings/REVIEW_FILE_DATE_ADDENDUM.md`.
 - **F7b status:** **CLOSED.** Attestation chain: local executor → Rebecca (transport) → WORKFLOW COORDINATOR → RECORDER (this entry).
+
+
+---
+
+
+## Entry 74 — Step 6 complete: M4 spec v1.4 → v1.4.1; delta re-clear cycle (BLOCK → remediation → CLEAR)
+
+**Date:** 2026-08-18 · **Actors:** ARCHITECT (v1.4 amendments + BF1 remediation); CRITIC (delta re-clear + BF1 re-review, fresh-context per G0-3); WORKFLOW COORDINATOR (routing); Rebecca McClintic (merge authorization)
+
+- **Step 6 of the Principal's M4 gate resolution sequence:** ARCHITECT produced spec v1.4 at `8740c46` on `architect/m4-spec-v1.4`, implementing five authorized amendments: (1) FWFP closure deliverable specified (not computed — TASK BUILDER owner, O-15, Step 8 build sequence; Entry 43 standing rule; advisor arithmetic ~53%/~37% cited); (2) borderline pre-registration — three options B1/B2/B3 drafted, tagged `[PROPOSED — requires Rebecca ruling]`, no option self-selected; (3) L7 fallback clarification — threshold bars = any-seed KILL no fallback, direction tests = all-seeds-direction + bootstrap-CI fallback, §2.5 tension resolved; (4) L8 homeostatic-variable named prerequisite elevated from §12 line item with dedicated reviewer pass; (5) §8 Option A amendment per Entry 72 ruling — build parallel, scoring gated on prospective L3 fresh-seed resolution per governance paper §6.3(3).
+- **CRITIC v1.4 delta re-clear:** BLOCK with one finding **BF1** — L8 locked bars Spearman ρ ≥ 0.8 and standardized slope ≥ 0.2 omitted from the spec's L8 §3.2 locked-bars table. Pre-existing since v1.3, newly exposed by G0-4 publication of M0_DECISION_SHEET (Entry 70). Classification: spec-completeness/locked-bar preservation defect; no bar moved/raised/lowered/renamed/reinterpreted — two absent. All five amendments, law-diff (P2), provenance (P6), source tags (P3), delta scope all PASS.
+- **ARCHITECT BF1 remediation:** Commit `9dff1e5`, spec v1.4.1. Added Spearman ρ ≥ 0.8 `[BAR-Entry 11]` and standardized slope ≥ 0.2 `[BAR-Entry 11]` to L8 locked-bars table (values matching M0_DECISION_SHEET line 21 exactly); reconciled ≥3-doses tag to `[BAR-Entry 11]` primary with `[OP-Entry 11.7]` retained as supplemental §9 record; sheet L8 row quoted verbatim; changelog v1.4.1 entry added. Scope: BF1 items + changelog only.
+- **CRITIC BF1 re-review:** CLEAR at `30a5812`. BF1.a/b/c all remediated. Scope-violation check CLEAN — diff `8740c46..9dff1e5` touches only BF1 items + changelog; no other threshold, locked bar, kill condition, scoring predicate, law text, or v1.4 amendment changed. Step 6 exit criterion met.
+- **Review artifacts merged to main via PR #49 (Rebecca's authorization):** `reviews/critic_m4_v1.4_delta_review.md` and `reviews/critic_m4_v1.4_bf1_rereview.md`. Main at `1786ff7`.
+- **Status:** M4 spec v1.4.1 at `9dff1e5` on `architect/m4-spec-v1.4` is CRITIC-CLEARED (delta re-clear + BF1 re-review). Spec branch **NOT** merged — awaits Step 7 M4 gate package and Rebecca's sign-off.
+- **Preserved evidence:** INSTRUMENT FAILURE retained; seeds 201–203/301–303 never rerun (O-14); all locked bars intact (L7 0.75/0.10/margin, L8 ≥3 doses/ρ≥0.8/slope≥0.2/specificity, L10 50%/10%+0.70 floor, L14 d≥0.5/corr≥0.3); no law text modified (P1 preserved).
+- **Authorization boundary:** This entry memorializes Step 6 completion only. No build, scoring, or further merge authorized. Next: Step 7 M4 gate package assembly for Rebecca's ruling.
