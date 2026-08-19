@@ -1,22 +1,24 @@
-# M4 Specification v1.3 — Mirror, Stakes, and Calibration
+# M4 Specification v1.4 — Mirror, Stakes, and Calibration
 
-**Serves:** Rebecca's M4 gate authorization (2026-08-17, G0-1 correction cycle 2026-08-18)
-**Status:** ARCHITECT draft v1.3 — first spec produced under §5 Versioned-Law Compliance Protocol
+**Serves:** Rebecca's M4 gate authorization (2026-08-17, G0-1 correction cycle 2026-08-18, Step 6 amendments 2026-08-18)
+**Status:** ARCHITECT draft v1.4 — Step 6 amendments (FWFP closure deliverable, borderline pre-registration, L7 fallback clarification, L8 homeostatic-variable prerequisite, §8 Option A amendment)
 **Date:** 2026-08-18 · **Regime:** B (post-Entry 27; constitution v1 + Amendment 1; §5 binding) (P4)
-**Base SHA:** `e26d05f` (GitHub main)
+**Base SHA:** `94dcc43` (v1.3.1, R2-CLEARED)
 **Authority chain:** Rebecca > constitution's laws > approved specifications > this specification > agent judgment
-**Prior context:** M0 GO [OP-Entry 10], M1 GREEN, M2/E1 GREEN/SEALED, M3 INSTRUMENT FAILURE (provisional advancement [BAR-Entry 52]). Provenance log reviewed through Entry 62. STATE.md reviewed. Constitution published in-repo at `docs/ARCHITECTURAL_CONSTITUTION.md` (v1, SHA-256 `509f11c3...`) and `docs/ARCHITECTURAL_CONSTITUTION_v2.md` (v2 with Amendment 1 and §5).
+**Prior context:** M0 GO [OP-Entry 10], M1 GREEN, M2/E1 GREEN/SEALED, M3 INSTRUMENT FAILURE (provisional advancement [BAR-Entry 52]). Provenance log reviewed through Entry 72. STATE.md reviewed. Constitution published in-repo at `docs/ARCHITECTURAL_CONSTITUTION.md` (v1, SHA-256 `509f11c3...`) and `docs/ARCHITECTURAL_CONSTITUTION_v2.md` (v2 with Amendment 1 and §5). Step 4 ruling: Option A (Entry 72) — M4 scoring gated on L3 resolution; build parallel.
 **Role boundary:** The ARCHITECT proposes specification, bars, and sequencing only. No code, no execution, no mechanism implementation, no merge.
 
 ---
 
 ## 0. Source basis
 
-**Law text source:** `docs/ARCHITECTURAL_CONSTITUTION.md` on GitHub main at `e26d05f` (P1 — repo-first law). All law quotations in this spec are verbatim from this file, cited by line number (P2 — verbatim quotation).
+**Law text source:** `docs/ARCHITECTURAL_CONSTITUTION.md` on GitHub main (P1 — repo-first law). All law quotations in this spec are verbatim from this file, cited by line number (P2 — verbatim quotation).
 
-**Provenance source:** `docs/rulings/provenance_log.md` on GitHub main. All provenance citations verified against actual entry text before commit (P6).
+**Provenance source:** `docs/rulings/provenance_log.md` on GitHub main. All provenance citations verified against actual entry text before commit (P6). Provenance reviewed through Entry 72.
 
-**Constitutional amendments:** Amendment 1 (Entry 27, L4/E1 test redefined) recorded in `docs/ARCHITECTURAL_CONSTITUTION_v2.md` Amendment Log. No other constitution-level amendments exist (verified Entries 1–62).
+**Constitutional amendments:** Amendment 1 (Entry 27, L4/E1 test redefined) recorded in `docs/ARCHITECTURAL_CONSTITUTION_v2.md` Amendment Log. Amendment 2 (Entry 72, Step 4 ruling) — Option A: M4 scoring gated on L3 resolution; build parallel. No constitution law text amended.
+
+**Step 4 ruling source:** Entry 72 [BAR-Entry 72] — Principal ruling: §6.3/L3 sequencing contradiction resolved — Option A. M4 spec §8 amended per this ruling (Amendment 5 below).
 
 **This spec does NOT reconstruct any law text.** Where the constitution's law text is insufficient to fully operationalize a test, the gap is flagged as a STOP/escalation trigger (per §5.2 ARCHITECT obligation), not filled by reconstruction.
 
@@ -99,6 +101,8 @@ The peer-observer is a **fixed linear baseline** — not a trained model, not an
 
 ### 2.5 Kill conditions
 
+**Threshold bars (AUROC, ECE, margin):** Evaluated per-seed. Any-seed-fail → KILL. The all-seeds-direction + bootstrap-CI fallback [BAR-Entry 11.3] does NOT apply to threshold bars — it applies only to direction tests (e.g., L8 dose-response monotonicity). A threshold bar failure on any single seed is an immediate KILL with no fallback. (Amendment 3 — L7 fallback clarification.)
+
 - Candidate AUROC < 0.75 [LAW-L7] on any seed → KILL
 - Margin not statistically significant (p-value of margin test ≥ .05) [LAW-L7] → KILL
 - ECE > 0.10 [LAW-L7] on any seed → KILL
@@ -129,6 +133,21 @@ The L7 query battery includes clean and adversarial queries (distribution-shifte
 ### 3.3 Operational design (F1.1 correction — respecified from verbatim text)
 
 The previous v1.2 spec operationalized L8 as prediction-horizon dose-response (h=1/h=3/h=5). This was a reconstruction error — the verbatim law text specifies a different test.
+
+#### 3.3.1 L8 homeostatic-variable prerequisite (Amendment 4)
+
+The L8 homeostatic-variable definition is a named prerequisite with its own dedicated reviewer pass. No L8 implementation may proceed until the prerequisite is cleared. The reviewer (CRITIC or Rebecca-delegated) must verify:
+
+| Criterion | Requirement | Source |
+|---|---|---|
+| Regulable | The variable has a defined regulation target and can deviate from it | [LAW-L8] |
+| Target defined | The regulation target is a specific numeric value or bound, not a vague aspiration | [PROPOSED — requires Rebecca sign-off] |
+| Calibratable noise dose | Noise can be injected into the self-model at ≥ 3 distinguishable levels [OP-Entry 11.7] | [OP-Entry 11.7] |
+| Constructible specificity control | A non-self-model component can receive the same noise injection to test the "only then" specificity leg [LAW-L8] | [LAW-L8] |
+
+**Reviewer pass:** Dedicated CRITIC review of the homeostatic-variable design before implementation. The reviewer verifies all four criteria are met. If any criterion is unmet, the prerequisite is BLOCKED and the design is returned to ARCHITECT for revision.
+
+**Placement in build sequence:** After spec approval (Step 7) and before TASK BUILDER implementation (Step 8). The prerequisite review is a sub-step of the build sequence, not a scoring gate.
 
 **Homeostatic variable:** Define ≥ 1 [LAW-L8] homeostatic variable with a regulation target. The candidate maintains this variable (e.g., a resource level, error budget, or calibration metric) that should stay within bounds for healthy operation.
 
@@ -307,6 +326,42 @@ M4 uses V4.4 framework (SHA-256-CTR-FY, 1000 null replicates, plus-one upper-tai
 
 ≥ 2 seeds unseen in development per scoring run. Development seeds: 101–105 [OP-Entry 11.7, O-15].
 
+### 7.3 FWFP closure deliverable (Amendment 1 — Entry 43 standing rule)
+
+**Named deliverable:** M4 Pre-Scoring FWFP Closure Audit
+
+**Standing rule source:** Entry 43 [BAR-Entry 43] — "every scoring spec's closure audit must compute FWFP of each arm's full check battery and correct any control whose FWFP exceeds 5% BEFORE scoring."
+
+**Owner:** TASK BUILDER (computation and correction performed under O-15 diagnostic-only). The ARCHITECT specifies the deliverable; the TASK BUILDER produces it.
+
+**Acceptance criteria:**
+1. Every control arm's full check battery (all stochastic families × all checks per arm) is enumerated.
+2. The FWFP (familywise false-positive rate) of each arm's full check battery is computed by direct enumeration or simulation.
+3. Any arm whose FWFP exceeds 5% is corrected (e.g., by alpha adjustment, directionality restriction, or null-of-the-max procedure per Entry 43 remedy).
+4. The corrected FWFP for every arm is ≤ 5%.
+5. The closure audit is documented in a committed artifact with all computations traceable.
+6. The closure audit is reviewed by CRITIC before scoring authorization.
+
+**Corrected-alpha target:** Every arm's full-battery FWFP ≤ 5% [BAR-Entry 43]. The specific corrected alpha for each arm is determined by the TASK BUILDER's computation, not pre-specified by the ARCHITECT — the ARCHITECT specifies the target (≤ 5%), not the method.
+
+**Context (why this deliverable is required):** The current §7.1 alpha_seed = 0.05/3 across 45 stochastic checks does not by itself demonstrate closure. A naive per-check reading yields ~53% familywise; even per-family ≤ 5% control leaves ≈ 1 − 0.95⁹ ≈ 37% odds of at least one spurious borderline firing across 9 family batteries. The closure audit verifies and corrects this before any scoring run. [BAR-Entry 43]
+
+**Placement in build sequence:** Step 8 (TASK BUILDER implementation), as a pre-scoring sub-step. The closure audit must be completed and CRITIC-cleared before Rebecca authorizes scoring via courier.
+
+### 7.4 Borderline pre-registration (Amendment 2 — draft options for Rebecca's ruling)
+
+**Issue:** A single within-FWFP borderline control firing at M4 (i.e., a control arm that fires at a p-value within the corrected alpha but near the threshold) must have its label and handling pre-registered before any data exists. No ambiguity may remain for the JUDGE at scoring time.
+
+**Draft options for Rebecca's ruling:**
+
+**Option B1 (M3 precedent):** Label retained. If a borderline control fires, the INSTRUMENT_FAILURE or KILL label is retained as-is. Candidate-facing evidence (if any) may support provisional advancement to the next milestone, but the control firing is not reinterpreted, renamed, or silently dismissed. The M3 precedent (Entry 43) followed this pattern: the shuffled-arm firing was retained as INSTRUMENT_FAILURE, and the correction was a post-scoring spec amendment under the four-part test, not a relabeling. [PROPOSED — requires Rebecca ruling]
+
+**Option B2 (Strict KILL):** Any borderline control firing, even within-FWFP, results in KILL with no provisional advancement. The candidate must clear all controls with margin. This is the most conservative option: it eliminates any ambiguity about borderline cases but may kill a candidate that would have survived under a more lenient rule. [PROPOSED — requires Rebecca ruling]
+
+**Option B3 (Conditional):** A borderline control firing triggers a Rebecca gate decision at delivery time. The JUDGE reports the firing with all context (which arm, which check, p-value, corrected alpha, margin). Rebecca rules at the delivery gate whether to retain the label, authorize provisional advancement, or KILL. This defers the decision to the gate rather than pre-registering a fixed rule. [PROPOSED — requires Rebecca ruling]
+
+**Pre-registration requirement:** Whichever option Rebecca rules, the ruling is pre-registered in the spec before any data exists. The JUDGE at scoring time applies the pre-registered rule, not an ad-hoc judgment. [LAW-L19]
+
 ---
 
 ## 8. Open work items — M4 scope
@@ -315,9 +370,11 @@ M4 uses V4.4 framework (SHA-256-CTR-FY, 1000 null replicates, plus-one upper-tai
 |---|---|---|
 | Multiplicity documentation | In scope | §7 |
 | Fresh-seed scoring authorization | Prerequisite | Rebecca must authorize via courier |
-| L3 control calibration resolution | Parallel | M3 L3 issue; M4 tests different laws. Parallel, not blocking. |
+| L3 control calibration resolution | Prerequisite for scoring | M3 L3 issue; M4 tests different laws. Build (implementation, diagnostic runs) proceeds in parallel. M4 scoring is gated on prospective L3 calibration resolution on fresh seeds, per governance paper §6.3(3). [BAR-Entry 72] |
 | Reproducibility contract independent use | In scope | M4 harness must use repaired semantic digest (§6.3) |
 | Full independent recomputation from M3 raw artifact tree | Deferred | Parallel verification, not M4 scope |
+
+**Sequencing note (Amendment 5 — Option A, Step 4 ruling [BAR-Entry 72]):** Per governance paper §6.3(3), no M4 scoring run is authorized until L3 control calibration is resolved prospectively on fresh seeds. M4 build (TASK BUILDER implementation, diagnostic runs under O-15) proceeds in parallel with L3 calibration work. The gate sequence is: (1) L3 resolution on fresh seeds; (2) M4 scoring authorization via Rebecca's courier channel; (3) M4 scoring execution.
 
 ---
 
@@ -327,17 +384,19 @@ M4 uses V4.4 framework (SHA-256-CTR-FY, 1000 null replicates, plus-one upper-tai
 
 | Step | Role | Deliverable |
 |---|---|---|
-| 1 | ARCHITECT | This specification + changelog + handoff |
-| 2 | Reviewer (TBD per G0-3) | Law-fidelity review of v1.3 |
-| 3 | Rebecca | Approve M4 spec + L7 graveyard-gate sign-off + L10 threshold + timebox |
-| 4 | INTEGRATOR | Task spec extraction |
-| 5 | TASK BUILDER | M4 harness implementation |
-| 6 | CRITIC | Implementation verification |
-| 7 | INTEGRATOR | Courier packet |
-| 8 | Rebecca | Supervised scoring execution |
-| 9 | JUDGE | Scoring ruling |
-| 10 | CRITIC | Results review |
-| 11 | Rebecca | M4 delivery gate ruling |
+| 1 | ARCHITECT | This specification (v1.4) + changelog + handoff |
+| 2 | CRITIC | Fresh-context delta re-clear with law-diff table |
+| 3 | WORKFLOW COORDINATOR | Step 7 package assembly |
+| 4 | Rebecca | Approve M4 spec + L7 graveyard-gate sign-off + L10 threshold + borderline ruling + timebox |
+| 5 | INTEGRATOR | Task spec extraction |
+| 6 | CRITIC | L8 homeostatic-variable prerequisite review (§3.3.1) |
+| 7 | TASK BUILDER | M4 harness implementation + FWFP closure audit (§7.3) |
+| 8 | CRITIC | Implementation verification + FWFP closure audit review |
+| 9 | INTEGRATOR | Courier packet |
+| 10 | Rebecca | Supervised scoring execution (gated on L3 resolution [BAR-Entry 72]) |
+| 11 | JUDGE | Scoring ruling |
+| 12 | CRITIC | Results review |
+| 13 | Rebecca | M4 delivery gate ruling |
 
 ### 9.2 Timebox proposal
 
@@ -379,8 +438,9 @@ No L15, L16, or L17 work authorized before M5. This spec does not propose integr
 | L10 confidence threshold | Proposed τ = 0.70 | [PROPOSED] |
 | L10 seed count | 5 inferred from L7/L8 pattern; L10 not in Entry 11.3 | [PROPOSED] |
 | M4 timebox | Proposed 4 sessions / 8 days | [PROPOSED] |
-| L8 homeostatic variable | Specific variable definition requires confirmation | [PROPOSED] |
+| L8 homeostatic variable | Elevated to named prerequisite with dedicated reviewer pass (§3.3.1) — no longer a §12 decision item | [PROPOSED] — resolved by §3.3.1 reviewer pass |
 | Control-arm tolerances (L7, L10) | Tolerance thresholds in control tables (e.g., empty AUROC deviation > 0.05, oracle AUROC < 0.95, permuted AUROC > 0.55, etc.) | [PROPOSED — requires Rebecca sign-off] (BF1 resolution) |
+| Borderline control firing handling | How a within-FWFP borderline control firing is labeled and handled at the delivery gate | [PROPOSED — requires Rebecca ruling] (§7.4) |
 
 **Provenance note (F1.5 correction):** The L7 numeric bars (AUROC ≥ 0.75, ECE ≤ 0.10, margin > 0 at p < .05) are in the constitution's law text [LAW-L7, line 24], not from Entry 5. Entry 5 [verified: provenance_log.md line 87] was the JUDGE's measurability assessment, which classified L7 as "fully numeric (judgeable now)" — it did not create the bars. Entry 8 [verified: provenance_log.md line 134] was the JUDGE's ruling on the plan, which identified corrections (L7 controls mandatory, L10 needs kill condition) — it did not lock bars. Bars were locked by Rebecca in Entry 11 [verified: provenance_log.md line 172].
 
@@ -388,7 +448,7 @@ No L15, L16, or L17 work authorized before M5. This spec does not propose integr
 
 ## 13. Implementation handoff
 
-**Next recipient:** Reviewer TBD per G0-3 ruling (Rebecca has not yet ruled on who reviews the corrected spec).
+**Next recipient:** CRITIC (fresh-context reviewer) for delta re-clear with law-diff table, then WORKFLOW COORDINATOR for Step 7 package assembly.
 
 **Explicitly prohibited for TASK BUILDER:**
 - Modifying any locked bar, threshold, or scoring predicate.

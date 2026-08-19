@@ -2,9 +2,47 @@
 
 **Spec:** `specs/m4_specification.md`
 **Date:** 2026-08-18 · **Author:** ARCHITECT
-**Base SHA:** `e26d05f` (GitHub main)
-**Branch:** `architect/m4-spec-v1.3`
+**Base SHA:** `94dcc43` (v1.3.1, R2-CLEARED)
+**Branch:** `architect/m4-spec-v1.4`
 **Regime:** B (post-Entry 27; constitution v1 + Amendment 1; §5 binding) (P4)
+
+---
+
+## v1.4 — Step 6 amendments: FWFP closure, borderline pre-registration, L7 fallback, L8 prerequisite, §8 Option A (2026-08-18)
+
+Five amendments per WORKFLOW COORDINATOR Step 6 handoff. No locked bar, kill condition, or scoring predicate changed. No law text modified. No reconstruction.
+
+### Amendment 1: FWFP closure deliverable (§7.3)
+
+Added §7.3 — M4 Pre-Scoring FWFP Closure Audit. Named deliverable with owner (TASK BUILDER), acceptance criteria (6 items), corrected-alpha target (≤ 5% per arm [BAR-Entry 43]), and build-sequence placement (Step 8, pre-scoring). The ARCHITECT specifies the deliverable; computation and correction are TASK BUILDER scope under O-15. Context: current alpha_seed = 0.05/3 across 45 checks does not demonstrate closure (~53% naive familywise; ~37% per-family odds). Entry 43 standing rule: FWFP of each arm's full check battery computed and corrected before scoring.
+
+### Amendment 2: Borderline pre-registration (§7.4)
+
+Added §7.4 — draft options for Rebecca's ruling on how a within-FWFP borderline control firing is labeled and handled at the delivery gate. Three options: B1 (M3 precedent — label retained, provisional advancement possible), B2 (strict KILL), B3 (conditional — Rebecca rules at gate). All tagged [PROPOSED — requires Rebecca ruling]. Pre-registration requirement per [LAW-L19]. No option implemented.
+
+### Amendment 3: L7 fallback clarification (§2.5)
+
+Clarified that the all-seeds-direction + bootstrap-CI fallback [BAR-Entry 11.3] applies only to direction tests (e.g., L8 dose-response monotonicity), NOT to L7 threshold bars (AUROC, ECE, margin). Threshold bars are evaluated per-seed: any-seed-fail → immediate KILL with no fallback. Resolves the tension between §2.2 inferential policy and §2.5 kill conditions.
+
+### Amendment 4: L8 homeostatic-variable named prerequisite (§3.3.1)
+
+Elevated L8 homeostatic-variable definition from a §12 decision item to a named prerequisite (§3.3.1) with its own dedicated reviewer pass. Four criteria: regulable [LAW-L8], target defined [PROPOSED], calibratable noise dose [OP-Entry 11.7], constructible specificity control [LAW-L8]. Reviewer pass by CRITIC before implementation. Removed from §12 decision list.
+
+### Amendment 5: §8 Option A amendment (Step 4 ruling implementation)
+
+Replaced L3 row in §8 per Step 4 ruling [BAR-Entry 72]: L3 disposition changed from "Parallel, not blocking" to "Prerequisite for scoring" — build proceeds in parallel, scoring gated on prospective L3 calibration resolution on fresh seeds per governance paper §6.3(3). Added sequencing note with gate sequence: (1) L3 resolution; (2) scoring authorization via courier; (3) scoring execution. Governance paper stands unamended.
+
+### §9.1 sequencing plan updated
+
+Updated role assignments to reflect new steps: CRITIC delta re-clear (Step 2), WORKFLOW COORDINATOR package assembly (Step 3), L8 prerequisite review (Step 6), FWFP closure audit (Step 7), L3 scoring gate (Step 10).
+
+### §12 decision list updated
+
+Removed L8 homeostatic variable (elevated to §3.3.1). Added borderline control firing handling [PROPOSED — requires Rebecca ruling].
+
+### Confirmation
+
+No threshold value, bar, kill condition, or scoring predicate changed. No law text modified. No reconstruction. All new thresholds tagged [PROPOSED] or appropriate source class. Provenance citations verified (P6).
 
 ---
 
