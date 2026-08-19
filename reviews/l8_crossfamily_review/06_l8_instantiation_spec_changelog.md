@@ -7,6 +7,29 @@
 
 ---
 
+## v2.1 — CRITIC BLOCK remediation: BF-XF5-1 + BF-P3-1 + BF-L19-1 (2026-08-19)
+
+CRITIC fresh-context delta review of v2 returned BLOCK with three targeted findings. Seven of eight findings (XF-4, XF-6, XF-7, XF-8, XF-9, XF-10, XF-11) verified CLOSED; settled XF-1/2/3 reflected per Entry 81. No locked bar, algebraic estimator form, synthetic validation, candidate-blindness, or closed finding touched.
+
+### BF-XF5-1: W notation disambiguated (§2, §8)
+
+Introduced `N_w = 4` (windows per dose) as distinct from `W = 50` (queries per window). Regression inputs now reference `w ∈ {1,...,N_w}`. σ_pool df restated as `N_w − 1 = 3` per dose, `L × (N_w − 1) = 12` total. Bootstrap resampling unit restated as window-level deviations with `N_w × L = 16` observations per seed. §8 effect-size target updated to reference W=50 queries/window, N_w=4 windows/dose consistently.
+
+### BF-P3-1: Dose multipliers tagged (§5)
+
+Added `[PROPOSED — apparatus parameter]` source tag to `σ_ℓ ∈ {0.5, 1.0, 2.0}·√v_ref` in §5.
+
+### BF-L19-1: §6.2/§6.3 control arms fully pre-registered (§6.2, §6.3)
+
+§6.2 feedback-channel: potency floor specified as mean |τ_drift| ≥ 0.02. Tagged [PROPOSED — apparatus parameter] [LAW-L19]. INSTRUMENT_FAILURE on potency failure.
+§6.3 task-difficulty: deterministic construction specified (retrieval-chain length multiplier: 1.5×, 2×, 3×). Potency floor specified as oracle accuracy drop ≥ 0.05. Tagged [PROPOSED — apparatus parameter] [LAW-L19]. INSTRUMENT_FAILURE on potency failure. Qualitative "e.g." placeholders replaced.
+
+### Confirmation
+
+No locked bar value changed. No algebraic estimator form changed. No synthetic validation changed. No closed finding disturbed. L3 gate preserved. O-14/O-15, INSTRUMENT FAILURE, seed custody, L15–L17 fence all preserved. P1–P6 maintained.
+
+---
+
 ## v2 — Narrowed claim (Entry 81) + XF-4–XF-9 closure + riders (2026-08-19)
 
 Full rewrite of v1 implementing Rebecca's narrowed claim (Entry 81) and closing all six BLOCKING findings (XF-4–XF-9) and two ADVISORY riders (XF-10, XF-11) from the Sol cross-family review.

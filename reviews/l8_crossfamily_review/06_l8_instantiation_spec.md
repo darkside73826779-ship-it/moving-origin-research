@@ -31,8 +31,10 @@ The "and only then" becomes "specific relative to the pre-registered three-contr
 ## §2 The homeostatic variable and regulation-error statistics (closes CRITIC prerequisite C1, C2; XF-4; XF-5)
 
 **Variable (V):** windowed selective risk — the error rate on queries the system elects to answer, computed per window.
-- Window: W consecutive queries of the L8 battery; `[PROPOSED]` W = 50 (four windows per 200-query battery).
+- **Queries per window:** `W = 50` `[PROPOSED]`. Each window contains 50 consecutive queries of the L8 battery.
+- **Windows per dose:** `N_w = 4`. Each dose level has 4 windows (200 queries total per dose).
 - For window w: `r_w = (# incorrect answered queries in w) / (# answered queries in w)`. Correctness judged against oracle ground truth by the harness.
+- **Replicate unit:** the window. `σ_pool` (below) is computed from window-level deviations; `N_w = 4` replicates per dose level.
 
 **Regulation target (R\*):** `[PROPOSED — requires Rebecca sign-off, G2 rider]`
 `R* = R_ref + m`, where `R_ref` is the selective risk achieved by the synthetic reference mirror (§5) at coverage `C_ref = 0.75` on oracle-graded synthetic profiles, and `m = 0.05` margin. R* is a pre-registered constant, frozen before any candidate data exists. Candidate outputs are not inputs to R* (Ruling 9). `[Entry 76]`
@@ -65,20 +67,20 @@ Instrument failure is appropriate only when an independent validity check shows 
 
 The standardized slope is computed per seed as a linear regression of D on dose, standardized by the pooled within-dose SD of window-level deviations:
 
-**Regression inputs:** For seed s, dose level ℓ ∈ {0, 1, 2, 3}, window w ∈ {1, ..., W}:
+**Regression inputs:** For seed s, dose level ℓ ∈ {0, 1, 2, 3}, window w ∈ {1, ..., N_w} (N_w = 4 windows per dose):
 - `d_{s,ℓ,w} = r_{s,ℓ,w} − R*` (per-window signed deviation)
 - Dose values: `x_ℓ = ℓ` (0, 1, 2, 3)
-- D per dose: `D_{s,ℓ} = mean_w d_{s,ℓ,w}`
+- D per dose: `D_{s,ℓ} = mean_w d_{s,ℓ,w}` (mean over N_w windows)
 
 **Slope numerator:** `β_s = Cov_s(D̄, x) / Var(x)`, where `Cov_s(D̄, x)` is the covariance between the per-dose mean D values and dose levels, and `Var(x) = Var({0,1,2,3})` (fixed, = 1.25 for 4 equally-spaced levels).
 
-**Slope denominator (standardization):** `σ_pool,s = sqrt( Σ_ℓ Σ_w (d_{s,ℓ,w} − D̄_{s,ℓ})² / (Σ_ℓ (W − 1)) )` — the pooled within-dose SD of window-level deviations, with `W − 1` degrees of freedom per dose level and `L × (W − 1)` total df (L = 4 dose levels).
+**Slope denominator (standardization):** `σ_pool,s = sqrt( Σ_ℓ Σ_w (d_{s,ℓ,w} − D̄_{s,ℓ})² / (Σ_ℓ (N_w − 1)) )` — the pooled within-dose SD of window-level deviations, with `N_w − 1 = 3` degrees of freedom per dose level and `L × (N_w − 1) = 4 × 3 = 12` total df (L = 4 dose levels, N_w = 4 windows per dose).
 
 **Standardized slope:** `β*_s = β_s / σ_pool,s`
 
 **Zero-variance behavior:** If `σ_pool,s = 0` (all windows within each dose produce identical d), the standardized slope is undefined. This outcome is **INSTRUMENT_FAILURE** (the battery produced no within-dose variation — the apparatus is not generating meaningful measurements). `[Sol-XF-5]`
 
-**Degrees of freedom for CI:** The bootstrap CI (§2 inferential policy) uses W × L = 200 observations per seed as the resampling unit.
+**Bootstrap resampling unit:** The bootstrap CI (§2 inferential policy) resamples **window-level deviations** (d_{s,ℓ,w}) with `N_w × L = 4 × 4 = 16` observations per seed as the resampling unit. The bootstrap resamples the 16 window-level deviations within each seed, recomputes D̄ per dose, then recomputes β*.
 
 **Synthetic validation (pre-registered):** The estimator is validated on two fixed synthetic examples before any candidate data:
 - **Example A (known positive slope):** d_{ℓ,w} = 0.02 × ℓ + ε, ε ~ N(0, 0.01). Expected β* ≈ 0.02 / 0.1 = 0.2. Pass threshold: |β* − 0.2| < 0.05.
@@ -128,7 +130,7 @@ The per-window outcome-feedback channel is a **harness-provided environment feat
 
 **Channel:** additive Gaussian noise in logit space on the mirror's per-query confidence estimate: `logit(c') = logit(c) + ξ, ξ ~ N(0, σ_ℓ²)`, seeded. Answer content untouched; only the self-signal is corrupted (isolates the L8 causal path).
 
-**Dose levels:** Level 0: σ=0. Levels 1–3: `σ_ℓ ∈ {0.5, 1.0, 2.0}·√v_ref`.
+**Dose levels:** Level 0: σ=0. Levels 1–3: `σ_ℓ ∈ {0.5, 1.0, 2.0}·√v_ref` `[PROPOSED — apparatus parameter]`.
 **v_ref (candidate-blind):** the logit-space variance of the **synthetic reference mirror** — a calibrated confidence profile constructed from oracle ground truth on synthetic task profiles with construction procedure fixed in the pre-registration appendix. No candidate output is an input (Ruling 9). `[Entry 76]`
 
 ### XF-8 resolution — Dose domain and monotonicity validity rules
@@ -171,16 +173,16 @@ Per Entry 81, the specificity test is expanded from one control to a **pre-regis
 
 **Rationale (Entry 81):** If the regulation error rises specifically when the self-model (not the feedback channel) is degraded, then corrupting feedback should NOT produce a dose-dependent rise in regulation error. This control tests whether the homeostat responds to self-model quality specifically or to any information-channel degradation.
 
-**Potency bar:** at every level ℓ ≥ 1, the feedback corruption must produce a measurable effect on the system's threshold adaptation (e.g., mean |τ drift| exceeds a pre-registered floor). `[PROPOSED — requires Rebecca sign-off]`
+**Potency bar:** at every level ℓ ≥ 1, the feedback corruption must produce a measurable effect on the system's threshold adaptation: mean |τ_drift_ℓ| ≥ 0.02 (threshold drift exceeding 0.02 in absolute value across windows at dose ℓ). `[PROPOSED — apparatus parameter]` `[LAW-L19]` A feedback arm whose perturbation fails potency is **INSTRUMENT_FAILURE** (the control never bit; flatness is uninterpretable).
 
 ### §6.3 Task-difficulty shift (new control, per Entry 81)
 
 **Component:** the query battery itself.
-**Perturbation:** shift the task-difficulty distribution of the query battery. Level 0: standard difficulty. Levels 1–3: progressively harder query distributions (e.g., longer retrieval chains, more ambiguous queries, higher distractor density). Difficulty levels pre-registered against oracle-graded synthetic profiles. `[Entry 81]` `[PROPOSED — requires Rebecca sign-off]`
+**Perturbation:** shift the task-difficulty distribution of the query battery. Level 0: standard difficulty. Levels 1–3: progressively harder query distributions constructed deterministically by increasing the mean retrieval-chain length: Level 1 = 1.5× standard chain length, Level 2 = 2× standard chain length, Level 3 = 3× standard chain length. Chain length is the number of hops in the retrieval task; longer chains are harder. The difficulty construction is deterministic and pre-registered against oracle-graded synthetic profiles. `[Entry 81]` `[PROPOSED — apparatus parameter]` `[LAW-L19]`
 
 **Rationale (Entry 81):** If the regulation error rises specifically when the self-model is degraded, then merely making the task harder should NOT produce a dose-dependent rise in regulation error that matches the self-model arm's pattern. Harder tasks may raise absolute error rates, but the *regulation* (deviation from R*) should not show the same dose-dependent trend as self-model degradation.
 
-**Potency bar:** at every level ℓ ≥ 1, the task-difficulty shift must produce a measurable change in baseline difficulty (e.g., oracle accuracy on the battery drops by a pre-registered amount). `[PROPOSED — requires Rebecca sign-off]`
+**Potency bar:** at every level ℓ ≥ 1, the task-difficulty shift must produce a measurable change in baseline difficulty: oracle accuracy on the battery drops by ≥ 0.05 (5 percentage points) relative to Level 0. `[PROPOSED — apparatus parameter]` `[LAW-L19]` A task-difficulty arm whose perturbation fails potency is **INSTRUMENT_FAILURE** (the control never bit; flatness is uninterpretable).
 
 ### XF-6 resolution — Specificity estimand, interval, conjunction for PASS
 
@@ -259,7 +261,7 @@ where `Cov = (# answered queries in window) / W`.
 - **Mirror profiles:** synthetic confidence profiles with known miscalibration properties. Profile P(α, v) generates per-query confidences with calibration error α (systematic bias) and variance v (logit-space). `[Sol-XF-9]`
 - **Task profiles:** synthetic query-answer pairs with known oracle correctness and variable difficulty. `[Sol-XF-9]`
 
-**2. Effect-size target:** The target effect is `β* ≥ 0.2` (the locked slope bar). The power analysis computes the false-kill probability: P(β*_estimated < 0.2 | true β* = 0.3) at W=50, 4 windows/seed, 5 seeds. If false-kill probability exceeds `[PROPOSED]` 0.10, battery size escalates to G3. `[Sol-XF-9]`
+- Effect-size target (§8): β* ≥ 0.2 (locked bar). The power analysis computes the false-kill probability: P(β*_estimated < 0.2 | true β* = 0.3) at W=50 queries/window, N_w=4 windows/dose, 5 seeds. If false-kill probability exceeds `[PROPOSED]` 0.10, battery size escalates to G3. `[Sol-XF-9]`
 
 **3. Parameter grid:**
 - `α ∈ {0.0, 0.02, 0.05, 0.1, 0.2}` (calibration error levels)
