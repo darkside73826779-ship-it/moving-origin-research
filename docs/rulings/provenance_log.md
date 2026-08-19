@@ -2167,3 +2167,23 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Preserved evidence:** INSTRUMENT FAILURE retained; seeds 201–203/301–303 never rerun (O-14); all locked bars intact (L7 0.75/0.10/margin, L8 ≥3 doses/ρ≥0.8/slope≥0.2/specificity, L10 50%/10%/0.70 floor, L14 d≥0.5/corr≥0.3); no law text modified (P1 preserved); L3 pre-scoring gate (Option A, Entry 72) preserved; O-14/O-15/seed custody/L15–L17 fence all preserved.
 
 - **Authorization boundary:** This entry memorializes the v1.6/v1.6.2 review cycle and CRITIC CLEAR. The formal Step 7 gate package (graveyard-gate signature, implementation-only) is assembled separately by the COORDINATOR for Rebecca's sign-off. No build, scoring, or further merge authorized by this entry.
+
+## Entry 78 — Principal gate signature: M4 graveyard-gate SIGNED (implementation-only)
+
+**Date:** 2026-08-18 23:26 EDT · **Actor:** Rebecca McClintic (Principal gate signature)
+
+- Rebecca McClintic signed the L7 graveyard-gate [BAR-Entry 11.8] for M4 implementation only. The signature authorizes M4 build (Step 8: INTEGRATOR task-spec extraction → TASK BUILDER implementation + FWFP closure audit → CRITIC implementation review → courier packet) but does NOT authorize scoring.
+
+- Scoring remains gated on five downstream gates, all retained per Ruling 6: (1) L3 fresh-seed resolution (Option A, Entry 72); (2) FWFP closure audit (Entry 43); (3) CRITIC implementation review; (4) Rebecca's tolerance-calibration sign-off (Ruling 9, Entry 76); (5) Rebecca's courier-channel scoring authorization.
+
+- Spec under gate: M4 spec v1.6.2 at `90a7e56` on `architect/m4-spec-v1.6`, CRITIC-CLEARED (fresh-context, final, Entry 77). All nine gate rulings (Entry 76) implemented and verified.
+
+- The signature was given with M3 results in front of Rebecca (Entry 52 — INSTRUMENT FAILURE retained, provisional advancement to M4). The graveyard-gate duty (Entry 11.8) requires signing with prior-milestone results in hand; this obligation is satisfied.
+
+- Rebecca's authorization: merge spec v1.6.2 to main under her authority; then Step 8 (build authorization) begins.
+
+- Preserved evidence: INSTRUMENT FAILURE retained; seeds 201–203/301–303 never rerun (O-14); all locked bars intact; L3 pre-scoring gate preserved; O-14/O-15/seed custody/L15–L17 fence all preserved.
+
+- Authorization boundary: this entry memorializes the M4 gate signature. Implementation (Step 8) is authorized. Scoring is NOT authorized. No seed execution, no hold-out exposure, no L15/L16/L17 before M5.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). M4 GATE SIGNED — IMPLEMENTATION AUTHORIZED (scoring gated). Step 8 begins.**
