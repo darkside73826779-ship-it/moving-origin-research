@@ -2228,3 +2228,27 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Authorization boundary:** this entry memorializes the task-spec extraction. Implementation authorized (Entry 78). Scoring NOT authorized.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). M4 GATE SIGNED — IMPLEMENTATION AUTHORIZED (scoring gated). Step 8 in progress: task spec extracted; TASK BUILDER next.**
+
+## Entry 80 — First cross-family adversarial review of the L8 design chain (Sol, GPT-family reviewer)
+
+**Date:** 2026-08-19 (review corpus dated 2026-08-19; logged 2026-08-19 00:49 EDT) · **Actors:** Sol (GPT-family cross-family reviewer); L8 advisor chain (consultation, advisor v1/v2, critic reviews BF/CF, instantiation spec); Rebecca McClintic (Principal directive); WORKFLOW COORDINATOR (routing)
+
+- **First cross-family adversarial review artifact in program history.** The L8 design chain completed its first cross-family adversarial review by a GPT-family reviewer ("Sol"). Verdict: FRAME-CHALLENGED — 3 FRAME findings, 6 BLOCKING findings, 2 ADVISORY findings. The core design survives; the frame claim narrows; the spec requires a v2 before pre-registration freeze.
+
+- **Corpus committed verbatim to `reviews/l8_crossfamily_review/` (8 files):** `SOL_CROSSFAMILY_L8_REVIEW.md` (the verbatim review, including its independence caveat), the six chain documents (`01_consultation_package.md`, `02_advisor_proposal_v1.md`, `03_critic_review_1_BF.md`, `04_advisor_proposal_v2.md`, `05_critic_review_2_CF.md`, `06_l8_instantiation_spec.md` as canonical transcripts — not re-transcribed), and `00_briefing.md` (the Sol briefing). All files committed byte-for-byte; no edits, no summary substitution. SHA-256 verified identical to source for all 8 files.
+
+- **CORRELATED-ERROR EVIDENCE:** findings XF-4 and XF-5 are defects that the intra-family chain produced and missed across two review passes. This is a documented instance of the correlated-error problem (governance paper §5.1) — intra-family reviewers shared blind spots that the cross-family reviewer caught. This will be cited in paper v1.1 at M4 conclusion.
+
+- **This review does NOT discharge §6.3(1) of the governance paper** — external human review by a domain expert with no stake in the program remains outstanding. Sol is an AI reviewer (GPT-family); the governance paper §6.2 names the recursion threat and the need for a reviewer whose errors are uncorrelated with the model family, "today, that means a human expert outside the program."
+
+- **Sequencing per Principal directive:** (1) this RECORDER corpus custody [first action, before any work proceeds from it]; (2) Rebecca's §2 construct-interpretation ruling (XF-1/XF-2/XF-3, scheduled before any spec revision); (3) ARCHITECT spec v2, released only after the §2 ruling (closes XF-4–XF-9 per Sol's resolution conditions, plus riders XF-10 and XF-11); (4) fresh-context CRITIC reviews spec v2 with the full eight-document chain attached; (5) sequencing holds on §8 artifacts (power analysis + sensitivity map follow XF-9's requirements — simulation protocol, seeds, selection rule pre-registered before map generation; code and machine-readable results committed; misspecification stress-test included).
+
+- **TASK BUILDER remains blocked for L8.** Scoring authorization remains gated behind all five standing M4 gates. Nothing in this entry authorizes scoring.
+
+- **Timebox note:** this inserts one ruling session and one review cycle ahead of the L8 build. If the M4 tripwire (3 sessions / 7 days) is threatened, report scope — do not compress the review chain.
+
+- **Preserved evidence:** INSTRUMENT FAILURE retained; seeds 201–203/301–303 never rerun (O-14); all locked bars intact; L3 pre-scoring gate preserved; O-14/O-15/seed custody/L15-L17 fence all preserved.
+
+- **Authorization boundary:** this entry memorializes the first cross-family review corpus custody and the Principal's routing directive. The §2 construct-interpretation ruling, ARCHITECT spec v2, and CRITIC review are sequenced per the directive — no work proceeds from this corpus until RECORDER custody is complete and merged. No scoring, no L8 implementation, no merge to main authorized by this entry beyond the corpus publication itself.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). M4 GATE SIGNED — IMPLEMENTATION AUTHORIZED (scoring gated). Step 8 in progress: first cross-family L8 review corpus in custody; §2 ruling → spec v2 → CRITIC review sequenced per Principal directive.**
