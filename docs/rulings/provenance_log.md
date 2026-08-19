@@ -2033,3 +2033,18 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Status and pending work:** M4 spec v1.3.1 at `94dcc43` is R2-CLEARED. The spec branch is **NOT** merged; it awaits Step 6 (v1.4 amendments) and Step 7 (M4 gate package, Rebecca sign-off). Step 4 (§6.3/L3 sequencing ruling) remains pending with Rebecca; options are drafted at `architect/l3-sequencing-options` `29e02ec`.
 - **Preserved evidence:** Both M3 scoring runs remain retained as INSTRUMENT FAILURE; seeds 201–203/301–303 were never rerun (O-14); all locked bars remain unchanged.
 - **Authorization boundary:** This entry memorializes Step 3 completion only. No build, scoring, or further merge is authorized by this entry.
+
+---
+
+## Entry 72 — Principal ruling: Step 4 §6.3/L3 sequencing contradiction resolved — Option A
+
+**Date:** 2026-08-18 · **Actors:** Rebecca McClintic (Principal RULING); ARCHITECT (options drafting); WORKFLOW COORDINATOR (routing)
+
+- **Contradiction:** Governance paper §6.3(3) commits to “resolution of the L3 control calibration prospectively, on fresh seeds, before any newly authorized scoring”; M4 spec §8 disposed L3 as “Parallel, not blocking.” An M4 scoring run is newly authorized scoring — conflict.
+- **Options drafted:** ARCHITECT drafted both options in `docs/options/l3_sequencing_options.md`, on `architect/l3-sequencing-options` at `29e02ec`, merged to `main` via PR #45 under Rebecca’s authorization. **Option A:** amend spec §8 — build parallel, scoring gated on L3 resolution (advisor lean, ARCHITECT recommendation). **Option B:** signed public amendment to paper §6.3 with M4 exception.
+- **Compliance check preceding the ruling:** Neither option was prohibited by standing rules. Option A requires no deviation. Option B was a lawful governed-amendment path (P5-pattern) with reputational cost.
+- **RULING:** Rebecca chose **OPTION A**. M4 spec §8 is to be amended: M4 build (implementation, diagnostic runs under O-15) proceeds in parallel; M4 scoring is gated on prospective L3 calibration resolution on fresh seeds per governance paper §6.3(3). Governance paper stands unamended.
+- **Implementation routing:** The §8 amendment is folded into the Step 6 spec v1.4 amendment trip (single ARCHITECT pass, single reviewer delta re-clear).
+- **Standing consequence (from resolution sequence Step 8):** Even after build authorization, M4 scoring remains additionally gated on L3 calibration resolution regardless of build readiness.
+- **Preserved evidence:** No law text, locked bar, or historical verdict touched. INSTRUMENT FAILURE retained. Seeds 201–203/301–303 never rerun (O-14).
+- **Authorization boundary:** This entry memorializes the Step 4 ruling only. Spec §8 amendment happens in Step 6. No build, scoring, or further merge authorized.
