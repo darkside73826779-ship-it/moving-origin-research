@@ -17,14 +17,15 @@
 |---|---|---|
 | Base (GitHub main) | `e26d05f` | Verified |
 | Branch | `taskbuilder/l8-power-analysis` | Pushed to GitHub |
-| Result SHA | `bf02958` | Implementation commit |
+| Branch HEAD | `c3a5d49` | Latest — includes refined calibration + smoke test |
+| Initial implementation | `bf02958` | First commit (superseded by `c3a5d49`) |
 
 ## Files created/modified
 
-| File | Action | Description |
-|---|---|---|
-| `diagnostics/l8_power_analysis.py` | Created (982 lines) | §8 power analysis simulation |
-| `src/e1_experiment.py` | Modified (+6/-5 lines) | R8 fail-closed hold-out guard |
+| File | Action | Lines | Description |
+|---|---|---|---|
+| `diagnostics/l8_power_analysis.py` | Created | 1015 | §8 power analysis simulation |
+| `src/e1_experiment.py` | Modified | +7 / -5 | R8 fail-closed hold-out guard |
 
 ## §8 Power Analysis — validation results
 
@@ -32,36 +33,39 @@
 
 | Example | Mean β* | Anchor | Tolerance | Verdict |
 |---|---|---|---|---|
-| A (known positive slope) | 0.2114 | 0.2 [BAR-Entry 11] | ±0.05 [PROPOSED] | PASS |
-| B (known zero slope) | 0.0014 | 0.0 | ±0.05 [PROPOSED] | PASS |
+| A (known positive slope) | 0.2114 | 0.2 `[BAR-Entry 11]` | ±0.05 `[PROPOSED]` | PASS |
+| B (known zero slope) | 0.0014 | 0.0 | ±0.05 `[PROPOSED]` | PASS |
 
-The β* estimator correctly recovers known effect sizes on synthetic validation examples.
+The β* estimator correctly recovers known effect sizes on synthetic validation examples. 10,000 trials per example; 0 instrument failures.
 
 ### Step 2: 100-simulation validation batch (3 representative combos)
 
-| Combo | α | v_mult | C_min | η | Mean β* | Std | False-kill | Instr fail |
-|---|---|---|---|---|---|---|---|---|
-| Low-noise | 0.0 | 0.5 | 0.5 | 0.01 | 0.3425 | 0.1215 | 0.110 | 0 |
-| Mid (reference) | 0.1 | 1.0 | 0.7 | 0.1 | 0.2392 | 0.1070 | 0.380 | 0 |
-| High-noise | 0.2 | 2.0 | 0.8 | 0.2 | 0.1159 | 0.1027 | 0.790 | 0 |
+Numbers below are from a fresh run against the latest code at `c3a5d49`:
+
+| Combo | α | v_mult | C_min | η | Mean β* | Std | False-kill | Instr fail | Calib time |
+|---|---|---|---|---|---|---|---|---|---|
+| Low-noise | 0.0 | 0.5 | 0.5 | 0.01 | 0.3680 | 0.1192 | 0.050 | 0 | 34.65s |
+| Mid (reference) | 0.1 | 1.0 | 0.7 | 0.1 | 0.3221 | 0.1111 | 0.140 | 0 |
+| High-noise | 0.2 | 2.0 | 0.8 | 0.2 | 0.2212 | 0.0974 | 0.430 | 0 | 4.37s |
+
+### Calibration details
+
+σ_dose is calibrated per (α, v) pair via binary search at a reference operating point (C_min=0.7, η=0.1) to achieve true β* ≈ 0.3. Calibration time varies significantly by (α, v) pair — from ~4s (extreme corners) to ~35s (low-noise). The `--full` pipeline was verified via a 64-combo smoke test: sensitivity map, deterministic selection rule, and JSON serialization all produce valid output.
+
+The mean β* varies across (C_min, η) combinations — this is expected, as different controller parameters produce different amounts of pipeline noise, which affects both the variance and the mean of β*_estimated. The false-kill rate is the key output, not the mean β* itself.
 
 ### Timing
 
-- Per-simulation time: ~4.5 ms
-- Calibration per (α, v) pair: ~4.6 s
-- Estimated full run (10,000 × 240 combinations × 2 arms): **~6 hours**
+- Per-simulation time: ~4.2 ms
+- Estimated full run (10,000 × 240 combinations × 2 arms): **~5.6 hours** (20,009s)
 - Sandbox limit: 10 minutes per command (2 vCPUs, 7.8 GB RAM)
 
 ### Recommendation
 
-**Escalate to Rebecca's local system for the full run.** The 6-hour estimate far exceeds the sandbox's per-command timeout. Options:
+**Escalate to Rebecca's local system for the full run.** The 5.6-hour estimate far exceeds the sandbox's per-command timeout. Options:
 1. Rebecca runs `python diagnostics/l8_power_analysis.py --full` locally
-2. Split the 240 combinations into batches (each batch ~1.5 min, 40 batches total)
-3. Reduce simulation count (if 5,000 per combo suffices, ~3 hours)
-
-### Calibration note
-
-The σ_dose calibration targets true β* = 0.3 at a reference operating point (C_min=0.7, η=0.1) per (α, v) pair. The mean β* varies across (C_min, η) combinations — this is expected, as different controller parameters produce different amounts of pipeline noise, which affects both the variance and the mean of β*_estimated. The false-kill rate is the key output, not the mean β* itself.
+2. Split into sandbox batches: ~6 combos per batch (84s/combo × 6 = ~8.4 min), 40 batches total — feasible but tight against the 10-min limit
+3. Reduce simulation count (if 5,000 per combo suffices, ~2.8 hours)
 
 ## R8: Fail-closed hold-out guard
 
@@ -72,7 +76,7 @@ The σ_dose calibration targets true β* = 0.3 at a reference operating point (C
 
 ## Compliance
 
-- §5 P1–P6: P3 source tags throughout ([BAR-Entry 11], [PROPOSED], [Sol-XF-5], [Sol-XF-9], [LAW-L19]); P4 regime dating in header
+- §5 P1–P6: P3 source tags throughout (`[BAR-Entry 11]`, `[PROPOSED]`, `[Sol-XF-5]`, `[Sol-XF-9]`, `[LAW-L19]`); P4 regime dating in header
 - Candidate-blind (Ruling 9, Entry 76): simulation seeds are deterministic hashes of parameter combos, NOT candidate diagnostic seeds; no candidate output as input anywhere
 - O-15 (diagnostic-only): synthetic simulation, not scoring; no scoring seeds used
 - No locked bars changed (β* ≥ 0.2 is an input, not an output)
