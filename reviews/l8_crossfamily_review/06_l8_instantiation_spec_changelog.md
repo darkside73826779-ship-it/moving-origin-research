@@ -2,8 +2,51 @@
 
 **Spec:** `reviews/l8_crossfamily_review/06_l8_instantiation_spec.md`
 **Date:** 2026-08-19 · **Author:** ARCHITECT
-**Branch:** `architect/l8-instantiation-v2`
+**Branch:** `architect/l8-instantiation-v2.2-fresh` (v2.2); v2.1/v2 on `architect/l8-instantiation-v2`
 **Regime:** B (post-Entry 81; constitution v1 + Amendments 1–2; §5 binding) (P4)
+
+---
+
+## v2.2 — Comprehensive P3 source-class sweep (2026-08-19)
+
+**Base:** `55ce3f0` (v2.1, CRITIC-cleared baseline for BF-XF5-1 / BF-P3-1 / BF-L19-1). **Not** built on `45fd755` (prior v2.2 false attestation — preserved as evidence on `architect/l8-instantiation-v2`). Fresh comprehensive sweep on new branch `architect/l8-instantiation-v2.2-fresh`.
+
+**Scope:** Tags, labels, and notation ONLY. No threshold value, locked bar, kill condition, scoring predicate, estimator algebra, synthetic-example expected output, candidate-blindness boundary, closed finding, or verified fix changed.
+
+### Comprehensive sweep — every numeric parameter now carries a source-class tag
+
+A full numeric-token sweep of the spec was performed (not point-by-point). The untagged numeric parameters found were exactly the nine items carried from the CRITIC v2.2 re-review (`80f9497`, BF-SWEEP-1 / NF-SWEEP-1 / NF-SWEEP-2); no additional untagged numeric parameter outside the nine was found. Every numeric token in the spec is now either (a) explicitly source-class tagged, (b) a restatement of an already-tagged parameter, (c) derived arithmetic (degrees of freedom, counts), or (d) a law/section/version/list identifier.
+
+### Items applied (all nine)
+
+**Blocking P3 (two):**
+1. §2 Example A pass tolerance `|β* − 0.2| < 0.05` (line 86): added `[PROPOSED — apparatus parameter]` to the ±0.05 tolerance; the 0.2 anchor tagged `[BAR-Entry 11]`.
+2. §2 Example B pass tolerance `|β*| < 0.05` (line 87): added `[PROPOSED — apparatus parameter]`.
+
+**Non-blocking P3 (five):**
+3. `N_w = 4` (lines 35, 37): added `[PROPOSED]` for parallelism with `W = 50` `[PROPOSED]`.
+4. §8 `β* ≥ 0.2 (locked bar)` (line 264): added inline `[BAR-Entry 11]`.
+5. §8 `true β* = 0.3` / `true β* ≥ 0.3` (lines 264, 277): added `[PROPOSED — apparatus parameter]`.
+6. §8 "at least two misspecified profiles" (line 288): added `[PROPOSED — apparatus parameter]` (reads as a protocol criterion).
+7. `C_ref = 0.75` (line 40): **no inline tag added.** The enclosing `[PROPOSED — requires Rebecca sign-off, G2 rider]` tag on the R* block (line 39) clearly covers `C_ref = 0.75` and `m = 0.05`. Per the handoff conditional ("add an inline tag if the enclosing tag does not clearly cover it"), no separate inline tag is required. This corrects the prior false attestation, which claimed an inline tag was added when none was.
+
+**Version label:**
+8. In-document title (line 1) `v2` → `v2.2`; status field (line 5) `DRAFT v2` → `DRAFT v2.2`. Narrative "spec v2" generation/lineage references in §8 (line 258), §10 (line 312), and §12 (line 330) retained as v2-generation labels (lineage nodes, not the document's version label).
+
+**Example A notation:**
+9. §2 Example A `ε ~ N(0, 0.01)` (line 86): clarified as "variance 0.01; SD 0.1 — N(μ, σ²) convention." The same clarification was applied to Example B (line 87) for consistency (identical notation, identical implementer-ambiguity risk). No expected output changed: `β* ≈ 0.02 / 0.1 = 0.2` (Example A) and `β* ≈ 0.0` (Example B) are unchanged.
+
+### Confirmation
+
+- All nine items addressed (two blocking P3 + five non-blocking P3 + version label + Example A notation).
+- No threshold value, locked bar, kill condition, scoring predicate, estimator algebra, synthetic-example expected output, candidate-blindness boundary, closed finding, or verified fix changed. This sweep was tags, labels, and notation ONLY.
+- A full P3 sweep was performed (not point-by-point): every numeric parameter in the spec now carries a source-class tag (inline or via a clearly-covering enclosing tag).
+- P1 (no law reconstruction), P2 (verbatim law), P4 (regime dating), P5 (Entry 81 deviation memorialized), P6 (provenance citations) all maintained.
+- Locked bars preserved: ≥3 dose levels, ρ ≥ 0.8, slope ≥ 0.2, specificity mandatory, 5 seeds. No bar lowered, raised, renamed, or reinterpreted. No negative result or INSTRUMENT_FAILURE label touched.
+
+### Pre-push scan attestation
+
+A pre-push self-scan was performed on all changed content before commit. Scanned for: credentials, API keys, tokens, passwords, secrets, personal contact details, machine identifiers (hostnames, MAC addresses, SIDs, user account names), private absolute paths, environment dumps, and PII. **Findings:** none. Changed content is spec/changelog text, source-class tags, and SHAs only. No private absolute paths, no secrets, no PII. Classified: acceptable. Reference: `PUBLIC_REPOSITORY_POLICY.md` §2/§3/§9.
 
 ---
 

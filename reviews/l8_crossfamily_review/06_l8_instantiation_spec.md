@@ -1,8 +1,8 @@
-# L8 INSTANTIATION SPECIFICATION v2 — Selective-Risk Homeostat (Narrowed Claim)
+# L8 INSTANTIATION SPECIFICATION v2.2 — Selective-Risk Homeostat (Narrowed Claim)
 
 **Component:** M4 / L8 (Stakes coupling) + L14 couplings
 **Author:** ARCHITECT (implementing Rebecca's advisor-session proposal per Entry 81 + Sol cross-family review XF-4–XF-9 resolution conditions)
-**Status:** DRAFT v2 — pending fresh-context CRITIC review → Principal gate → pre-registration freeze → TASK BUILDER release
+**Status:** DRAFT v2.2 — pending fresh-context CRITIC review → Principal gate → pre-registration freeze → TASK BUILDER release
 **Date:** 2026-08-19 · **Regime:** B (post-Entry 81; constitution v1 + Amendments 1–2; §5 binding) (P4)
 **Sources:** Entry 81 (narrowed claim) `[Entry 81]`; Sol cross-family review (XF-4–XF-9, XF-10–XF-11) `[Sol-XF-n]`; advisor proposal v2; CRITIC re-review CF1–CF3; `[LAW-L8]` constitution line 26; `[LAW-L14]` line 40; `[BAR-Entry 11]` M0 sheet; Ruling 3 + Ruling 9 (Entry 76) `[Entry 76]`
 **Standing constraints inherited:** O-14, O-15, §5 P1–P6, L19 pre-registration, Ruling 9 candidate-blindness. Nothing in this spec authorizes scoring.
@@ -32,9 +32,9 @@ The "and only then" becomes "specific relative to the pre-registered three-contr
 
 **Variable (V):** windowed selective risk — the error rate on queries the system elects to answer, computed per window.
 - **Queries per window:** `W = 50` `[PROPOSED]`. Each window contains 50 consecutive queries of the L8 battery.
-- **Windows per dose:** `N_w = 4`. Each dose level has 4 windows (200 queries total per dose).
+- **Windows per dose:** `N_w = 4` `[PROPOSED]`. Each dose level has 4 windows (200 queries total per dose).
 - For window w: `r_w = (# incorrect answered queries in w) / (# answered queries in w)`. Correctness judged against oracle ground truth by the harness.
-- **Replicate unit:** the window. `σ_pool` (below) is computed from window-level deviations; `N_w = 4` replicates per dose level.
+- **Replicate unit:** the window. `σ_pool` (below) is computed from window-level deviations; `N_w = 4` `[PROPOSED]` replicates per dose level.
 
 **Regulation target (R\*):** `[PROPOSED — requires Rebecca sign-off, G2 rider]`
 `R* = R_ref + m`, where `R_ref` is the selective risk achieved by the synthetic reference mirror (§5) at coverage `C_ref = 0.75` on oracle-graded synthetic profiles, and `m = 0.05` margin. R* is a pre-registered constant, frozen before any candidate data exists. Candidate outputs are not inputs to R* (Ruling 9). `[Entry 76]`
@@ -83,8 +83,8 @@ The standardized slope is computed per seed as a linear regression of D on dose,
 **Bootstrap resampling unit:** The bootstrap CI (§2 inferential policy) resamples **window-level deviations** (d_{s,ℓ,w}) with `N_w × L = 4 × 4 = 16` observations per seed as the resampling unit. The bootstrap resamples the 16 window-level deviations within each seed, recomputes D̄ per dose, then recomputes β*.
 
 **Synthetic validation (pre-registered):** The estimator is validated on two fixed synthetic examples before any candidate data:
-- **Example A (known positive slope):** d_{ℓ,w} = 0.02 × ℓ + ε, ε ~ N(0, 0.01). Expected β* ≈ 0.02 / 0.1 = 0.2. Pass threshold: |β* − 0.2| < 0.05.
-- **Example B (known zero slope):** d_{ℓ,w} = ε, ε ~ N(0, 0.01). Expected β* ≈ 0.0. Pass threshold: |β*| < 0.05.
+- **Example A (known positive slope):** d_{ℓ,w} = 0.02 × ℓ + ε, ε ~ N(0, 0.01) (variance 0.01; SD 0.1 — N(μ, σ²) convention). Expected β* ≈ 0.02 / 0.1 = 0.2. Pass threshold: |β* − 0.2| < 0.05 (0.2 anchor: `[BAR-Entry 11]`; ±0.05 tolerance: `[PROPOSED — apparatus parameter]`).
+- **Example B (known zero slope):** d_{ℓ,w} = ε, ε ~ N(0, 0.01) (variance 0.01; SD 0.1 — N(μ, σ²) convention). Expected β* ≈ 0.0. Pass threshold: |β*| < 0.05 `[PROPOSED — apparatus parameter]`.
 
 The candidate-blind power analysis (§8) must use this identical estimator. `[Sol-XF-5]`
 
@@ -261,7 +261,7 @@ where `Cov = (# answered queries in window) / W`.
 - **Mirror profiles:** synthetic confidence profiles with known miscalibration properties. Profile P(α, v) generates per-query confidences with calibration error α (systematic bias) and variance v (logit-space). `[Sol-XF-9]`
 - **Task profiles:** synthetic query-answer pairs with known oracle correctness and variable difficulty. `[Sol-XF-9]`
 
-- Effect-size target (§8): β* ≥ 0.2 (locked bar). The power analysis computes the false-kill probability: P(β*_estimated < 0.2 | true β* = 0.3) at W=50 queries/window, N_w=4 windows/dose, 5 seeds. If false-kill probability exceeds `[PROPOSED]` 0.10, battery size escalates to G3. `[Sol-XF-9]`
+- Effect-size target (§8): β* ≥ 0.2 (locked bar) `[BAR-Entry 11]`. The power analysis computes the false-kill probability: P(β*_estimated < 0.2 | true β* = 0.3 `[PROPOSED — apparatus parameter]`) at W=50 queries/window, N_w=4 windows/dose, 5 seeds. If false-kill probability exceeds `[PROPOSED]` 0.10, battery size escalates to G3. `[Sol-XF-9]`
 
 **3. Parameter grid:**
 - `α ∈ {0.0, 0.02, 0.05, 0.1, 0.2}` (calibration error levels)
@@ -274,7 +274,7 @@ where `Cov = (# answered queries in window) / W`.
 
 **5. Estimator:** the identical β* estimator from §2 XF-5 (same code, same standardization, same zero-variance behavior). `[Sol-XF-9]`
 
-**6. False-kill calculation:** fraction of simulations where `β*_estimated < 0.2` when `true β* ≥ 0.3`, across the parameter grid. `[Sol-XF-9]`
+**6. False-kill calculation:** fraction of simulations where `β*_estimated < 0.2` when `true β* ≥ 0.3` `[PROPOSED — apparatus parameter]`, across the parameter grid. `[Sol-XF-9]`
 
 **7. Sensitivity map:** two-dimensional map over (C_min, η) showing: (a) abstention-escape region (flat curve — false kill), (b) trivial-pass region (any noise moves risk — vacuous pass), (c) informative region. `[Sol-XF-9]`
 
@@ -285,7 +285,7 @@ where `Cov = (# answered queries in window) / W`.
 - If still tied, select the one with lowest η (most conservative controller)
 `[Sol-XF-9]`
 
-**9. Stress-test misspecification:** Run the power analysis on at least two misspecified profiles (different from the synthetic reference that defines R* and dose) to verify the estimator is not overfit to the reference profile. `[Sol-XF-9]`
+**9. Stress-test misspecification:** Run the power analysis on at least two misspecified profiles `[PROPOSED — apparatus parameter]` (different from the synthetic reference that defines R* and dose) to verify the estimator is not overfit to the reference profile. `[Sol-XF-9]`
 
 **10. Publication:** code, seeds, parameter grid, assumed profiles, estimator, and machine-readable result table are published as committed artifacts before pre-registration freeze. `[Sol-XF-9]` `[LAW-L19]`
 
