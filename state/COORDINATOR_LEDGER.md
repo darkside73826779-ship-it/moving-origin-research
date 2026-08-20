@@ -46,19 +46,17 @@ When Rebecca says a role is complete (or any phrasing suggesting it — "archite
 If the ledger, STATE.md, or a return handoff doesn't tell you what to do next: STOP and ask Rebecca. Do not start digging through GitHub main, replaying conversation history, or launching subagents to explore — that is what burned the fresh coordinator's credits. The ledger + STATE.md + the return handoff should be sufficient; if they're not, the right move is to ask Rebecca for a routing instruction, not to reconstruct the state independently.
 
 ---
-## Current state — updated 2026-08-20 01:49 EDT (ARCHITECT + TASK BUILDER SCRAPPED — proved faulty/fallible; awaiting Rebecca's routing instruction on the path forward)
+## Current state — updated 2026-08-20 10:22 EDT (role inits FIXED — binding executability obligation added to ARCHITECT, CRITIC, TASK BUILDER; reinitialize ARCHITECT + CRITIC next)
 
-**Ball:** REBECCA — the ARCHITECT and TASK BUILDER roles/sessions are SCRAPPED. Their work (the v2.3→v2.6 spec chain, the repeated stops/blocks, the back-and-forth Rebecca overruled) was initially productive but proved fallible. Rebecca will rule on the design herself. The 1,000-rep parallel feasibility diagnostic ruling (REBECCA_L8_1000_REP_FEASIBILITY_AUTHORIZATION) stands. Awaiting Rebecca's routing instruction on: what work is retained vs scrapped, what replaces the ARCHITECT/TASK BUILDER, and the next step.
+**Ball:** REBECCA — reinitialize the ARCHITECT + CRITIC (fresh sessions with the updated inits). The three role inits now carry a binding executability obligation (PR #100, main `63c0a66e`): same executable-input categories (fixtures, committed artifact pairs, stochastic fixture realizations — committed arrays OR exact RNG/seed/draw-count/shape/construction-order, result schemas, expected digests) across all three.
 
-**Durable artifacts (verified, candidate for retention — Rebecca decides):**
-- §8 power analysis code (`b139749`) — CRITIC-cleared (BF-MP-1 fixed, verified against the diff); the rerun artifact (`6d455bb`, SHA-256 978f21c0...) — complete, write-order PASS, reproducibility serial==parallel.
-- §8 sim results: selected (0.5,0.2); 5-seed-mean false-kill 6.22% / per-seed any-seed 76.23%; stress-test instability (both misspecified profiles unstable); the reference-point-under-misspec discriminator (robust under 5-seed-mean, less so under any-seed). These feed the G2–G5 gate rulings.
-- Calibration parallelism (spec v1.2 `6979378` + impl `b139749`) — CRITIC-cleared.
-- CRITIC INIT fix (PR #92) — the commit-and-push obligation.
-- Rebecca's ruling + the provenance log (Entries 82–88) + STATE.md reconciliation.
-- The advisor consultation package (corrected) — the two key findings (calibration problem NF-IMPL-2; stress-test instability) for the G2–G5 rulings.
+- **ARCHITECT INIT:** before claiming "deterministic / no implementer invention required," trace every executable input and confirm each is concretely specified. If any is undefined, the spec is NOT deterministic — do not claim it is. (Fixes the v2.6 false-"deterministic" failure — the spec claimed deterministic while the rehearsal fixture, artifact pair, and estimator realizations were undefined.)
+- **CRITIC INIT:** check executability end-to-end, not just internal consistency — a non-executable spec is a BLOCK, not a CLEAR. Do NOT CLEAR "deterministic / no implementer invention required" unless executability is independently confirmed. (Fixes the v2.6 false CLEAR.)
+- **TASK BUILDER INIT:** the stop discipline (inherent) made explicit with the same categories — reinforcing that the stop is correct behavior, the last defense against a false-"deterministic" spec. The role stays scrapped; the obligation is in place for when Rebecca reinstates it.
 
-**Scrappable (the ARCHITECT/TASK BUILDER's fallible work — Rebecca decides):** the v2.3→v2.6 spec chain (§8.9/§8.10/§8.11), the A1/A2/B lifecycle, the elaborate benchmark/extrapolation design (superseded by the 1,000-rep ruling).
+**Root-cause addressed:** the v2.6 spiral was caused by the ARCHITECT under-specifying the executable core while claiming "deterministic" and the CRITIC false-CLEARing by checking internal consistency, not executability. The TASK BUILDER's stop was the one correct behavior (it exposed the gaps). The executability obligation on ARCHITECT + CRITIC catches the gap at spec-production and review, not at implementation.
+
+**Still parked (from last night):** the v2.3→v2.6 spec chain + A1/A2/B lifecycle + elaborate benchmark design are superseded by Rebecca's 1,000-rep ruling. Durable verified artifacts retained: §8 code `b139749` + artifact `6d455bb` (6.22%/76.23% + stress instability), calibration parallelism, CRITIC INIT commit-and-push fix, the 1,000-rep ruling, provenance Entries 82–88. No screening, no scoring, no seed exposure, no merger.
 
 **The v2.4 design (what Rebecca approves):** §8.9 deterministic contract — complete trend-verdict algorithms (Spearman ρ, OLS β, bootstrap T = mean_s(β*_s) with stratum-level resampling, lower bound > 0 conjunction, per-seed 0.2 bar preserved); all-cell battery sweep (20 geometries × 240 cells, worst-cell Wilson acceptance conjunction < 0.10, preferred < 0.05); config/serialization/seed manifests (canonical JSON + SHA-256, candidate-blind synthetic seeds); atomic publication; fault injection + exit contracts (20–23/1/70) + synthetic-only crash recovery; apparatus fixtures + 12-case rehearsal; exact TASK BUILDER routing (import b139749, 6d455bb read-only).
 
@@ -110,7 +108,8 @@ This hybrid (build sim on spec-text estimator, then verify against the harness's
 
 ## Handoff history (compact — current state overwrites prior; full history in provenance log + git log)
 
-- 2026-08-20 01:49 — ARCHITECT + TASK BUILDER SCRAPPED (proved faulty/fallible); awaiting Rebecca's routing instruction on retention/replacement/next step
+- 2026-08-20 10:22 — role inits FIXED (PR #100, main 63c0a66e): binding executability obligation added to ARCHITECT, CRITIC, TASK BUILDER (addresses v2.6 false-deterministic + false-CLEAR). Reinitialize ARCHITECT + CRITIC next; TASK BUILDER init updated, role stays scrapped.
+- 2026-08-20 01:49 — ARCHITECT + TASK BUILDER SCRAPPED (proved faulty/fallible); awaiting Rebecca's routing instruction
 - 2026-08-20 01:38 — REBECCA RULING (REBECCA_L8_1000_REP_FEASIBILITY_AUTHORIZATION, main d6bc5c9+d08cb7e): 1,000-rep parallel feasibility diagnostic replaces the v2.6 60-rep benchmark
 - 2026-08-20 01:12 — Rebecca APPROVED v2.6 (A1/A2 + parallel benchmark); routing to TASK BUILDER (taskbuilder/l8-g2g4-diagnostic-remediation, from e2bd824) [NOTE: superseded by the 1,000-rep ruling]
 - 2026-08-20 01:10 — v2.6 CRITIC CLEAR in-repo (88e238b on critic/l8-g2g4-v2.6-review); INIT fix confirmed working (CRITIC committed v2.5.1 + v2.6 reviews in-repo); ready for Rebecca's v2.6 approval (A1/A2 + parallel benchmark)
