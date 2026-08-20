@@ -46,13 +46,11 @@ When Rebecca says a role is complete (or any phrasing suggesting it — "archite
 If the ledger, STATE.md, or a return handoff doesn't tell you what to do next: STOP and ask Rebecca. Do not start digging through GitHub main, replaying conversation history, or launching subagents to explore — that is what burned the fresh coordinator's credits. The ledger + STATE.md + the return handoff should be sufficient; if they're not, the right move is to ask Rebecca for a routing instruction, not to reconstruct the state independently.
 
 ---
-## Current state — updated 2026-08-20 01:10 EDT (L8 spec v2.6 CRITIC CLEAR — in-repo at 88e238b; INIT fix confirmed working; ready for Rebecca's v2.6 approval)
+## Current state — updated 2026-08-20 01:12 EDT (v2.6 APPROVED — A1/A2 + parallel benchmark authorized; routing to TASK BUILDER)
 
-**Ball:** REBECCA — the L8 spec v2.6 is CRITIC-cleared in-repo (`reviews/critic_l8_g2g4_v2.6_review.md` at `88e238b` on `critic/l8-g2g4-v2.6-review`). The CRITIC INIT fix (PR #92) is confirmed working: the CRITIC committed + pushed both the v2.5.1 and v2.6 reviews in-repo (with scan attestations) instead of returning them as attachments. The A1→A2→evidence lifecycle is non-self-referential; the parallel benchmark contract is deterministic (no implementer invention); the authorization boundary is fail-closed (full screening withdrawn); §5 P1–P6 pass. Three non-blocking editorial findings.
+**Ball:** TASK BUILDER (local frontier GPT) — implementing the CRITIC-cleared, Rebecca-approved L8 spec v2.6 as A1 → A2 → benchmark/rehearsal evidence on `taskbuilder/l8-g2g4-diagnostic-remediation` (from `e2bd824`). Imports `l8_power_analysis.py` from `b139749`; `6d455bb` read-only. Produces A1 (code/tests/fixtures, no config/evidence) → A2 (frozen resolved_config.json, impl_sha=A1) → B (feasibility_benchmark.json + diagnostic_rehearsal.json, impl_sha=A1, config_source_sha=A2). NOT screening evidence, NOT the screen, NOT 10,000-rep.
 
-**Rebecca's v2.6 approval decision (§12 step 3):** approve Commit A1 implementation, Commit A2 frozen configuration, and the fixed parallel feasibility benchmark. After approval, the TASK BUILDER produces A1/A2 + tests + failure rehearsal + parallel repeatability + the 6-case parallel benchmark (6 uncached calibrations, full 5,000-bootstrap, NO screening). Fresh-context CRITIC reviews that evidence, then Rebecca's separate workload ruling: full 9.6M-rep screen / amended-reduced / stop.
-
-**MATERIAL (unchanged):** the 2,000-rep screening remains WITHDRAWN pending the benchmark + CRITIC review + separate Rebecca ruling. No screen, no screening-evidence commit, no 10,000-rep, no scoring, no seed exposure, no merger. The TASK BUILDER remains unauthorized until Rebecca approves v2.6.
+**After TASK BUILDER:** fresh-context CRITIC impl + benchmark review (A1/A2/B stage-isolated? tests + benchmark genuinely pass? evidence free of screening artifacts?) → Rebecca's workload ruling: full 9.6M-rep screen / amended-reduced / stop.
 
 **The v2.4 design (what Rebecca approves):** §8.9 deterministic contract — complete trend-verdict algorithms (Spearman ρ, OLS β, bootstrap T = mean_s(β*_s) with stratum-level resampling, lower bound > 0 conjunction, per-seed 0.2 bar preserved); all-cell battery sweep (20 geometries × 240 cells, worst-cell Wilson acceptance conjunction < 0.10, preferred < 0.05); config/serialization/seed manifests (canonical JSON + SHA-256, candidate-blind synthetic seeds); atomic publication; fault injection + exit contracts (20–23/1/70) + synthetic-only crash recovery; apparatus fixtures + 12-case rehearsal; exact TASK BUILDER routing (import b139749, 6d455bb read-only).
 
@@ -104,6 +102,7 @@ This hybrid (build sim on spec-text estimator, then verify against the harness's
 
 ## Handoff history (compact — current state overwrites prior; full history in provenance log + git log)
 
+- 2026-08-20 01:12 — Rebecca APPROVED v2.6 (A1/A2 + parallel benchmark); routing to TASK BUILDER (taskbuilder/l8-g2g4-diagnostic-remediation, from e2bd824)
 - 2026-08-20 01:10 — v2.6 CRITIC CLEAR in-repo (88e238b on critic/l8-g2g4-v2.6-review); INIT fix confirmed working (CRITIC committed v2.5.1 + v2.6 reviews in-repo); ready for Rebecca's v2.6 approval (A1/A2 + parallel benchmark)
 - 2026-08-20 01:05 — L8 spec v2.6 landed (e2bd824, §8.11): A1/A2/B commit lifecycle (no self-referential SHA) + parallel-only benchmark + parallel repeatability (no serial). CRITIC reviewing v2.6.
 - 2026-08-20 00:48 — v2.5.1 CRITIC CLEAR in-repo (1338d28 on critic/l8-g2g4-v2.5.1-rereview); INIT fix worked (CRITIC committed+pushed); v2.5/v2.5.1 design ready for Rebecca's feasibility-gate decision (Commit A + benchmark first)
