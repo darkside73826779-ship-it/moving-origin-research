@@ -46,13 +46,19 @@ When Rebecca says a role is complete (or any phrasing suggesting it — "archite
 If the ledger, STATE.md, or a return handoff doesn't tell you what to do next: STOP and ask Rebecca. Do not start digging through GitHub main, replaying conversation history, or launching subagents to explore — that is what burned the fresh coordinator's credits. The ledger + STATE.md + the return handoff should be sufficient; if they're not, the right move is to ask Rebecca for a routing instruction, not to reconstruct the state independently.
 
 ---
-## Current state — updated 2026-08-19 22:28 EDT (calibration parallelism spec v1.2 CRITIC-cleared; awaiting Rebecca's approval — should be the last amendment)
+## Current state — updated 2026-08-19 22:52 EDT (calibration parallelism implementation CRITIC-cleared; local rerun prompt prepared, awaiting Rebecca's authorization to run)
 
-**Ball:** REBECCA — the L8 calibration parallelism spec v1.2 (`6979378` on `architect/l8-calibration-parallelism-spec`) is CRITIC-cleared. All three failure-path gaps closed (sanitization fixed-message, `SystemExit(1)` termination, `CalibrationIdentityError` contract). Binding normative code + complete implementation-trace table (§4.2.3) + 14-point test contract (§6) make every failure path deterministic — the TASK BUILDER has nothing to invent. Awaits Rebecca's approval.
+**Ball:** REBECCA — the L8 calibration parallelism implementation (`b139749` on `taskbuilder/l8-power-analysis`) is CRITIC-cleared (implementation review CLEAR). The BF-MP-1 defect is genuinely fixed (discarded worker results, vacuous reproducibility — both resolved and verified against the diff). The local executor rerun prompt is prepared. Rebecca authorizes the rerun and transports the prompt to her local executor:
+```
+git fetch origin && git checkout taskbuilder/l8-power-analysis
+git pull origin taskbuilder/l8-power-analysis
+python diagnostics/l8_power_analysis.py --full --workers N [--stress-test-sims 2000]
+```
+Set `--workers` to CPU core count. Reduced stress-test (`--stress-test-sims 2000`) recommended first. Output: `diagnostics/l8_power_analysis_results.json` (relative path, ~200 KB). Produces the complete artifact (reference sensitivity map + selection + misspecification stability report, both false-kill aggregations) feeding Rebecca's G2–G5 gate rulings.
 
-**After approval:** TASK BUILDER (local frontier GPT) implements the approved spec v1.2 → CRITIC implementation review (code matches spec? genuine reproducibility?) → Rebecca authorizes → rerun locally at full parallelism (`python diagnostics/l8_power_analysis.py --full --workers N`) → complete artifact → G2–G5 gate rulings (with advisor consultation).
+**After the rerun:** advisor consultation package for G2–G5 (calibration problem: 5-seed-mean vs per-seed any-seed false-kill; stress-test instability: selected operating point generalization) → G2–G5 rulings → pre-registration freeze → §12 step 4 (L7/L10 delta review) → M4 harness build → compatibility check → scoring authorization (gated on 5 downstream gates).
 
-**Task builder note (2026-08-19):** the local frontier GPT TASK BUILDER stopped three times rather than implement an under-specified spec (serial-calibration spec request; §4.1/§4.2 contradiction; sanitization/termination/identity-validation gaps) — correctly routing each to the ARCHITECT. This is the specify-vs-produce boundary working and the opposite of the false-attestation pattern. The ARCHITECT's v1.2 (binding normative code + implementation trace) is the direct response: close every gap at once so the TASK BUILDER has nothing to infer.
+**Task builder note (2026-08-19):** the local frontier GPT TASK BUILDER stopped three times rather than implement an under-specified spec (serial-calibration spec request; §4.1/§4.2 contradiction; sanitization/termination/identity-validation gaps) — correctly routing each to the ARCHITECT. The ARCHITECT's v1.2 (binding normative code + implementation trace + 14-point test contract) closed every gap. The TASK BUILDER then implemented cleanly (all verification PASS, genuine reproducibility, BF-MP-1 defect fixed). The CRITIC verified claims against the actual diff and results — the false-attestation pattern did not recur.
 
 **Still pending (from the sim results, for the G2–G5 rulings):**
 1. The calibration problem: 5-seed-mean false-kill 6.22% (lenient) vs per-seed any-seed 76.23% (harsh, matches scoring bar). Advisor consultation needed.
@@ -87,6 +93,8 @@ This hybrid (build sim on spec-text estimator, then verify against the harness's
 
 ## Handoff history (compact — current state overwrites prior; full history in provenance log + git log)
 
+- 2026-08-19 22:52 — calibration parallelism implementation CRITIC-cleared (b139749); BF-MP-1 defect genuinely fixed; local rerun prompt prepared; awaiting Rebecca's authorization
+- 2026-08-19 22:46 — TASK BUILDER implemented spec v1.2 (b139749); all verification PASS (genuine reproducibility, 14-point test contract, multicore confirmed)
 - 2026-08-19 22:28 — calibration parallelism spec v1.2 (6979378) CRITIC-cleared; all three failure-path gaps closed; awaiting Rebecca's approval (should be the last amendment)
 - 2026-08-19 22:24 — ARCHITECT closed failure-path gaps (spec v1.2, 6979378); CRITIC re-review CLEAR
 - 2026-08-19 22:12 — TASK BUILDER stopped on sanitization/termination/identity-validation gaps; routed to ARCHITECT
