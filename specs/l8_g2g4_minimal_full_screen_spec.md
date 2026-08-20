@@ -158,8 +158,8 @@ The prior ARCHITECT STOP (`handoffs/ARCHITECT_L8_FULLSCREEN_STOP_ITEM1_RHO.md`) 
 
 The applicable false-kill target is `FALSE_KILL_THRESHOLD = 0.10` `[PROPOSED — apparatus parameter, §8]` (v2.2 §8: false-kill probability exceeding 0.10 escalates battery size to G3). For each geometry:
 
-- **geometry-level maximum primary false-kill** = `max` over its 240 cells of `complete_verdict_false_kill_rate` (only over cells with no apparatus-invalid repetition; apparatus-invalid cells are excluded and flagged).
-- **meets_target** = `(no apparatus-invalid cells in the geometry) AND (geometry-level maximum primary false-kill ≤ 0.10)`. A geometry with any apparatus-invalid cell cannot qualify. Acceptance applies to an **exact `(W, N_w)` geometry** (not merely total query count `Q`).
+- **geometry-level maximum primary false-kill** = `max` over the geometry's non-apparatus-invalid cells of `complete_verdict_false_kill_rate`; if **no** eligible (non-apparatus-invalid) cells exist, set to `null`. Apparatus-invalid cells are excluded and flagged.
+- **meets_target** = `false` whenever `has_apparatus_invalid_cell` is true (any apparatus-invalid cell disqualifies the geometry); otherwise `(geometry-level maximum primary false-kill ≤ 0.10)`. Acceptance applies to an **exact `(W, N_w)` geometry** (not merely total query count `Q`).
 
 **Minimum acceptable battery** = the first geometry in the §3 ordering whose `meets_target` is true. **Boundary-escalation rule (Rebecca directive, Item 3):** if **no** geometry passes (`meets_target` false for all 20), **OR** the first geometry whose `meets_target` is true lies on a tested boundary, **STOP** and escalate to ARCHITECT/Rebecca — do not auto-accept a boundary solution; return for a ruling. A geometry lies on a **tested boundary** iff its `W` is the minimum (50) or maximum (400) of the `W ∈ {50,100,200,400}` set, **or** its `N_w` is the minimum (4) or maximum (64) of the `N_w ∈ {4,8,16,32,64}` set (i.e., any edge of the `W×N_w` grid). `[PROPOSED — §8.2, Rebecca directive]` (The CRITIC verifies this exact definition of "tested boundary.")
 
@@ -245,9 +245,9 @@ Path: `diagnostics/l8_g2g4_minimal_full_screen.json` `[PROPOSED]`. Exact schema,
     {
       "geometry_index": <int 0..19>, "W": <int>, "N_w": <int>,
       "Q_per_dose": <int W*Nw>, "queries_per_five_seed_run": <int W*Nw*4*5>,
-      "max_primary_false_kill": <float max over 240 cells of complete_verdict_false_kill_rate>,
+      "max_primary_false_kill": <float max over non-apparatus-invalid cells of complete_verdict_false_kill_rate; null if no eligible cells>,
       "has_apparatus_invalid_cell": <bool: any cell in this geometry is apparatus-invalid>,
-      "meets_target": <bool (no apparatus-invalid cells) AND max_primary_false_kill <= 0.10>,
+      "meets_target": <bool: false if has_apparatus_invalid_cell; else max_primary_false_kill <= 0.10>,
       "on_tested_boundary": <bool: W is min(50) or max(400), or N_w is min(4) or max(64)>,
       "cells": [
         { "geometry_index": <int>, "W": <int>, "N_w": <int>,

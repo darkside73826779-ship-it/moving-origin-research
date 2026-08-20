@@ -53,12 +53,12 @@ No implementer invention. The geometry set is pre-registered and copied verbatim
 | per-seed Spearman ρ | Pearson corr of dose ranks (1,2,3,4) vs response midranks; ties=mean of occupied ranks; ρ_s locked predicate ≥0.8 [BAR-Entry 11] | ✓ §5.1 |
 | RHO_BAR | 0.8 [BAR-Entry 11] | ✓ |
 | RHO_COMPARE_EPS | 1e-12 [PROPOSED — §8]; predicate pass iff ρ_s≥0.8 OR abs(ρ_s−0.8)≤RHO_COMPARE_EPS; absorbs binary64 roundoff at exact threshold | ✓ §5.1 |
-| tie detection | exact finite binary64 equality (no separate tie tolerance unless chosen/tested) | ✓ §5.1 |
+| tie detection | exact finite binary64 equality (binding; no separate tie tolerance, no implementer discretion) | ✓ §5.1 |
 | no-softening test | ρ = 0.8 − 2·RHO_COMPARE_EPS must fail (bar not moved) | ✓ §5.5 (2a) |
 | denominators | complete_verdict_false_kill_rate over valid true-effect; null_control_false_pass_rate over valid null-control; apparatus-invalid excluded | ✓ §5.6/§7.1 |
 | schema fields | cell_apparatus_invalid; has_apparatus_invalid_cell; n_valid_true_effect/null_control; n_apparatus_invalid_true_effect/null_control | ✓ §7.1 |
-| geometry-level primary | max over 240 cells of complete_verdict_false_kill_rate (apparatus-invalid cells excluded) | ✓ §5.4 |
-| meets_target | (no apparatus-invalid cells in geometry) AND max_primary_false_kill ≤ 0.10 | ✓ §5.4 |
+| geometry-level primary | max over non-apparatus-invalid cells of complete_verdict_false_kill_rate; null if no eligible cells | ✓ §5.4 |
+| meets_target | false if has_apparatus_invalid_cell; else max_primary_false_kill ≤ 0.10 | ✓ §5.4 |
 | minimum battery | first §3 geometry with meets_target; null if none | ✓ §5.4 |
 
 ## 4. Output (§7)

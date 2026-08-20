@@ -42,6 +42,8 @@ Rebecca authorized the direct per-seed Spearman ρ calculation (`docs/rulings/RE
 
 Locked bars (β* ≥ 0.2, ρ ≥ 0.8, ≥3 doses, 5 seeds) `[BAR-Entry 11]`; verbatim L8 + §5 P1–P6 quotes (E2); 19.2M two-arm / ~90.5 min/1.5–2 h timing (E3); no prohibited machinery beyond the authorized ρ calculation (E5); end-to-end executability re-verified — the complete predicate is now computable via the direct per-seed ρ (E6). No merge to main. TASK BUILDER remains held until fresh-context CRITIC clearance AND Rebecca's geometry-list signature.
 
+> **Historical note:** the sections below ("Remediation" and "Decisions made by ARCHITECT") record the **original pre-amendment** spec state. Where any statement below names `false_kill_rate_per_seed` as PRIMARY or uses "any-seed rate primary" / "scoring-verdict-aligned" wording, it is **superseded** by the "Amendment (Rebecca directive, Item 1)" section above: the current PRIMARY is `complete_verdict_false_kill_rate = P(any seed: β*_s<0.2 OR ρ_s undefined OR ρ_s<0.8)`; `false_kill_rate_per_seed` (β*-only any-seed) and `false_kill_rate` (5-seed mean) are diagnostics. They are retained here as a historical record only.
+
 ## Remediation (CRITIC BLOCK → ARCHITECT, 2026-08-20)
 
 Fresh-context CRITIC BLOCK (`critic/l8-g2g4-minimal-fullscreen` @ `02a7443`) returned to ARCHITECT only. PRIMARY designation (E1) preserved — CRITIC-verified textually grounded (v2.2 line 44). Fixes applied:
