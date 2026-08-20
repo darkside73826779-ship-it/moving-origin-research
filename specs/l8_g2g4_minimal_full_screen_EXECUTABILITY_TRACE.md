@@ -67,9 +67,9 @@ No implementer invention. The geometry set is pre-registered and copied verbatim
 |---|---|---|
 | JSON path | diagnostics/l8_g2g4_minimal_full_screen.json | ✓ §7.1 |
 | schema_version | l8-g2g4-minimal-fullscreen-v1 | ✓ §7.1 |
-| per-cell fields | geometry_index, W, N_w, alpha, v_mult, c_min, eta, base_seed, n_sims_attempted, n_valid, n_instrument_failures, primary_false_kill_rate, diagnostic_false_kill_rate, false_pass_rate, n_instrument_failures_null, mean_beta_star, mean_beta_star_null | ✓ §7.1 (exact) |
-| per-geometry fields | geometry_index, W, N_w, Q_per_dose, queries_per_five_seed_run, max_primary_false_kill, meets_target, cells[240] | ✓ §7.1 |
-| selection fields | false_kill_target, primary_metric, diagnostic_metric, minimum_geometry_satisfying_target, rule, scoring_verdict_alignment_note | ✓ §7.1 |
+| per-cell fields | geometry_index, W, N_w, alpha, v_mult, c_min, eta, base_seed, cell_apparatus_invalid, n_sims_attempted_true_effect, n_valid_true_effect, n_apparatus_invalid_true_effect, n_instrument_failures_true_effect, n_sims_attempted_null_control, n_valid_null_control, n_apparatus_invalid_null_control, n_instrument_failures_null_control, complete_verdict_false_kill_rate, diagnostic_beta_only_any_seed_false_kill_rate, diagnostic_five_seed_mean_false_kill_rate, null_control_false_pass_rate, mean_beta_star, mean_beta_star_null | ✓ §7.1 (exact) |
+| per-geometry fields | geometry_index, W, N_w, Q_per_dose, queries_per_five_seed_run, max_primary_false_kill, has_apparatus_invalid_cell, meets_target, on_tested_boundary, cells[240] | ✓ §7.1 |
+| selection fields | false_kill_target, primary_metric, diagnostic_metrics[], minimum_geometry_satisfying_target, first_passing_on_tested_boundary, rule, scoring_verdict_alignment_note | ✓ §7.1 |
 | NaN handling | sanitized to null | ✓ §7.1 |
 | write | single atomic write after all 20 geometries | ✓ §7.1 |
 | handoff path | diagnostics/l8_g2g4_minimal_full_screen_HANDOFF.md | ✓ §7.2 |
@@ -82,7 +82,7 @@ No implementer invention. The geometry set is pre-registered and copied verbatim
 | Is per-seed Spearman ρ computable? | YES — direct calculation added per Rebecca authorization (Pearson corr of dose ranks (1,2,3,4) vs response midranks; ties=mean of occupied ranks; zero variance→undefined→ρ-predicate failure; non-finite→§5.6 apparatus rules). NOT a quorum/fallback/bootstrap/Wilson procedure. | §5.1/§5.6 |
 | What is the false-kill target? | 0.10; acceptance = max cell primary ≤ 0.10 (exact (W,N_w) geometry; PROPOSED-gated diagnostic selection; Rebecca sign-off required) | §5.4 |
 | Boundary escalation? | STOP if no geometry passes OR first passing geometry on a tested boundary (W∈{50,400} or N_w∈{4,64}) | §5.4 |
-| Deterministic tests? | 7 required cases (perfect monotonicity; adjacent-inversion; tied; constant; decreasing; non-finite; 5-seed aggregation) | §5.5 |
+| Deterministic tests? | 7 required categories (perfect monotonicity; adjacent-inversion; tied; constant; decreasing; non-finite; 5-seed aggregation) plus the no-softening threshold subtest (2a: 0.8−2·eps fails) | §5.5 |
 | Does the seed include geometry? | No; derivation reused unchanged; geometry by data shape | §6.1 |
 | How many arms? | Two (combo + null-control), both 2,000/cell | §5, §7.1 |
 | What is the minimum battery if none meet target? | null → STOP, return to Rebecca; grid not extendable | §5.4 |
