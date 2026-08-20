@@ -46,13 +46,13 @@ When Rebecca says a role is complete (or any phrasing suggesting it — "archite
 If the ledger, STATE.md, or a return handoff doesn't tell you what to do next: STOP and ask Rebecca. Do not start digging through GitHub main, replaying conversation history, or launching subagents to explore — that is what burned the fresh coordinator's credits. The ledger + STATE.md + the return handoff should be sufficient; if they're not, the right move is to ask Rebecca for a routing instruction, not to reconstruct the state independently.
 
 ---
-## Current state — updated 2026-08-19 22:05 EDT (calibration parallelism spec v1.1 CRITIC-cleared + Rebecca-approved; routing to TASK BUILDER)
+## Current state — updated 2026-08-19 22:28 EDT (calibration parallelism spec v1.2 CRITIC-cleared; awaiting Rebecca's approval — should be the last amendment)
 
-**Ball:** TASK BUILDER (local frontier GPT) — implementing the approved calibration parallelism spec v1.1 (`b4419f9` on `architect/l8-calibration-parallelism-spec`; CRITIC-cleared; Rebecca-approved). Option 1: identity-carrying picklable `CalibrationWorkerError` (worker wraps and re-raises; parent reads identity from the exception, no re-execution).
+**Ball:** REBECCA — the L8 calibration parallelism spec v1.2 (`6979378` on `architect/l8-calibration-parallelism-spec`) is CRITIC-cleared. All three failure-path gaps closed (sanitization fixed-message, `SystemExit(1)` termination, `CalibrationIdentityError` contract). Binding normative code + complete implementation-trace table (§4.2.3) + 14-point test contract (§6) make every failure path deterministic — the TASK BUILDER has nothing to invent. Awaits Rebecca's approval.
 
-**After implementation:** CRITIC implementation review (code matches spec? genuine reproducibility?) → Rebecca authorizes → rerun locally at full parallelism (`python diagnostics/l8_power_analysis.py --full --workers N`) → complete artifact → G2–G5 gate rulings (with advisor consultation).
+**After approval:** TASK BUILDER (local frontier GPT) implements the approved spec v1.2 → CRITIC implementation review (code matches spec? genuine reproducibility?) → Rebecca authorizes → rerun locally at full parallelism (`python diagnostics/l8_power_analysis.py --full --workers N`) → complete artifact → G2–G5 gate rulings (with advisor consultation).
 
-**Task builder note (2026-08-19):** the local frontier GPT TASK BUILDER has twice stopped rather than implement an ambiguous/contradictory spec (the serial-calibration spec request; the §4.1/§4.2 contradiction) — correctly routing design decisions to the ARCHITECT instead of inferring. This is the specify-vs-produce boundary working, and it's the opposite of the false-attestation pattern. The implementation handoff carries emphatic verification obligations (verify each edit, inspect git diff, changelog tied to the diff, genuine reproducibility on the consumed parallel output).
+**Task builder note (2026-08-19):** the local frontier GPT TASK BUILDER stopped three times rather than implement an under-specified spec (serial-calibration spec request; §4.1/§4.2 contradiction; sanitization/termination/identity-validation gaps) — correctly routing each to the ARCHITECT. This is the specify-vs-produce boundary working and the opposite of the false-attestation pattern. The ARCHITECT's v1.2 (binding normative code + implementation trace) is the direct response: close every gap at once so the TASK BUILDER has nothing to infer.
 
 **Still pending (from the sim results, for the G2–G5 rulings):**
 1. The calibration problem: 5-seed-mean false-kill 6.22% (lenient) vs per-seed any-seed 76.23% (harsh, matches scoring bar). Advisor consultation needed.
@@ -87,6 +87,9 @@ This hybrid (build sim on spec-text estimator, then verify against the harness's
 
 ## Handoff history (compact — current state overwrites prior; full history in provenance log + git log)
 
+- 2026-08-19 22:28 — calibration parallelism spec v1.2 (6979378) CRITIC-cleared; all three failure-path gaps closed; awaiting Rebecca's approval (should be the last amendment)
+- 2026-08-19 22:24 — ARCHITECT closed failure-path gaps (spec v1.2, 6979378); CRITIC re-review CLEAR
+- 2026-08-19 22:12 — TASK BUILDER stopped on sanitization/termination/identity-validation gaps; routed to ARCHITECT
 - 2026-08-19 22:05 — calibration parallelism spec v1.1 (b4419f9) CRITIC-cleared + Rebecca-approved; routing to TASK BUILDER for implementation. Option 1 (CalibrationWorkerError) chosen.
 - 2026-08-19 22:01 — ARCHITECT resolved §4.1/§4.2 contradiction (spec v1.1, b4419f9); CRITIC re-review CLEAR
 - 2026-08-19 21:55 — TASK BUILDER stopped on contradiction (§4.1 no-catch vs §4.2 failure-record identity); routed to ARCHITECT
