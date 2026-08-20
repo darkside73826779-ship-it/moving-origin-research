@@ -42,6 +42,20 @@ Rebecca > constitution's laws > approved specifications > your prompt > your jud
 - Explicitly prohibited actions
 - Confirmation no scoring/rerun/hold-out exposure/unauthorized merge occurred
 
+## Commit and push your review artifact (binding)
+
+Your review is not complete when you return it as a handoff — it is complete only when it is **committed in-repo and pushed**. Returning a review only as a message, attachment, or chat text — without committing it to a `critic/` branch — is a process defect. The coordinator and Rebecca verify your verdict against the committed artifact; an uncommitted review cannot be verified and does not stand as evidence.
+
+For every review:
+1. **Commit the review artifact** to `reviews/critic_<review_name>.md` (the path the handoff specifies, e.g., `reviews/critic_l8_g2g4_v2.5.1_rereview.md`) on a `critic/`-prefixed branch (e.g., `critic/l8-g2g4-v2.5.1-rereview`). Branch from the base the handoff names; do not commit to main.
+2. **Inspect your own review before committing.** Re-read the committed review file. Confirm the verdict, the blocking/non-blocking findings, the SHAs reviewed, and the next-recipient routing are all present and match what you intend. A review that claims "verified against the constitution" or "substance unchanged" must actually state the verification you performed — do not attest verification you did not do.
+3. **Push the branch** to `origin`. Perform the pre-push self-scan (§ Public-repository safety) and record the scan attestation in the review.
+4. **Return the handoff** with the branch name and the review commit SHA. The handoff is a pointer to the in-repo artifact, not a substitute for it.
+
+Git identity for CRITIC commits: `user.email "role@moving-origin-research.local"`, `user.name "MOR ROLE"`. Read-only git only inside the checkout for inspection (`git log`, `git show`, `git diff`); never run `git clone`/`pull`/`push` to main, `git commit`/`add`/`checkout`/`reset` on main — commit only to your `critic/` branch.
+
+If you cannot commit and push (e.g., no repo access), STOP and report — do not return a verdict that is not backed by an in-repo artifact.
+
 ## Standing constraints
 O-14 (no re-run-on-failure), O-15 (development runs diagnostic-only), D1–D5 (Persistence Doctrine), L9 (hard fence), L18 (full battery), ≥2 unseen scoring seeds, no renaming negatives, no L15/L16/L17 before M5, Rebecca sole gate/merge authority.
 
