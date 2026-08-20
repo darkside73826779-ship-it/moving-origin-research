@@ -1,8 +1,8 @@
-# L8 INSTANTIATION SPECIFICATION v2.4 — Selective-Risk Homeostat (Deterministic Diagnostic Contract)
+# L8 INSTANTIATION SPECIFICATION v2.5 — Selective-Risk Homeostat (Determinism and Feasibility Amendment)
 
 **Component:** M4 / L8 (Stakes coupling) + L14 couplings
 **Author:** ARCHITECT (implementing Rebecca's advisor-session proposal per Entry 81 + Sol cross-family review XF-4–XF-9 resolution conditions)
-**Status:** DRAFT v2.4 — deterministic remediation amendment; pending fresh-context CRITIC → Rebecca approval → TASK BUILDER diagnostic implementation; G2–G4 not frozen and scoring implementation not released
+**Status:** DRAFT v2.5 — second deterministic remediation amendment; pending fresh-context CRITIC → Rebecca approval → TASK BUILDER implementation/feasibility rehearsal; G2–G4 not frozen and screening not released
 **Date:** 2026-08-20 · **Regime:** B (post-Entry 81; constitution v1 + Amendments 1–2; §5 binding) (P4)
 **Sources:** Entry 81 (narrowed claim) `[Entry 81]`; Sol cross-family review (XF-4–XF-9, XF-10–XF-11) `[Sol-XF-n]`; advisor proposal v2; CRITIC re-review CF1–CF3; `[LAW-L8]` constitution line 26; `[LAW-L14]` line 40; `[BAR-Entry 11]` M0 sheet; Ruling 3 + Ruling 9 (Entry 76) `[Entry 76]`
 **Standing constraints inherited:** O-14, O-15, §5 P1–P6, L19 pre-registration, Ruling 9 candidate-blindness. Nothing in this spec authorizes scoring, protected-seed exposure, the 10,000-simulation stress rerun, G2–G4 freeze, final L8 scoring implementation, or merger.
@@ -408,7 +408,109 @@ The rehearsal artifact is `diagnostics/l8_g2g4/diagnostic_rehearsal.json` with s
 
 #### 8.9.7 Repository routing
 
-TASK BUILDER creates `taskbuilder/l8-g2g4-diagnostic-remediation` from the approved ARCHITECT v2.4 result SHA. `[PROPOSED — branch routing]` It imports `diagnostics/l8_power_analysis.py` from `b1397498ca369067e956479e6c2bd6b0793c3e89` as the executable implementation baseline; `6d455bb878f4b52a5b5564afac38d6fb3a20d4b3` is read-only historical result context and is not copied forward as a new result. `[PROPOSED]` If either source path/blob differs from the reviewed SHA, STOP. The TASK BUILDER changes only diagnostic code, tests/fixtures, and `diagnostics/l8_g2g4/` artifacts authorized here; it does not modify the ARCHITECT specification.
+TASK BUILDER creates `taskbuilder/l8-g2g4-diagnostic-remediation` from the approved ARCHITECT v2.5 result SHA. `[PROPOSED — branch routing]` It imports `diagnostics/l8_power_analysis.py` from `b1397498ca369067e956479e6c2bd6b0793c3e89` as the executable implementation baseline; `6d455bb878f4b52a5b5564afac38d6fb3a20d4b3` is read-only historical result context and is not copied forward as a new result. `[PROPOSED]` If either source path/blob differs from the reviewed SHA, STOP. The TASK BUILDER changes only diagnostic code, tests/fixtures, and `diagnostics/l8_g2g4/` artifacts authorized here; it does not modify the ARCHITECT specification.
+
+### 8.10 v2.5 determinism and feasibility amendment
+
+This subsection supersedes conflicting or incomplete text in §8.2 and §8.9. It closes the second TASK BUILDER STOP. All mechanics remain `[PROPOSED]` pending CRITIC review and Rebecca approval.
+
+#### 8.10.1 Bootstrap RNG and seed-manifest scope
+
+Each bootstrap attempt uses **20 independent RNG streams**, one for every `(seed_index,dose_index)` stratum. `[PROPOSED]` `seed_index` is the integer `0..4`; `dose_index` is the integer `0..3`; both are required in the bootstrap identity object. The identity is `{config_digest,W,N_w,alpha,v_mult,c_min,eta,repetition_index,seed_index,dose_index,bootstrap_attempt_index}` with namespace `bootstrap`. Each stream draws exactly `N_w` indices uniformly with replacement from `0..N_w−1`. No replicate-level shared RNG exists.
+
+The seed manifest does not enumerate individual simulation, calibration, or bootstrap seeds. Its exact schema is `{schema_version,derivation,config_digest,simulation_derivation_roots,calibration_derivation_roots,bootstrap_derivation_roots}` with no unknown fields and `schema_version="l8-g2g4-seeds-v2"`. `[PROPOSED]`
+
+- `derivation={hash:"sha256",encoding:"utf-8-nfc",canonicalization:"json-sorted-compact-lf-v1",namespace_separator:"LF",integer_rule:"first-8-bytes-big-endian-mod-2^63-minus-1"}`.
+- Each `simulation_derivation_roots` item is `{W,N_w,alpha,v_mult,c_min,eta,root_digest,repetition_index_range,seed_index_range}` with `repetition_index_range=[0,1999]` and `seed_index_range=[0,4]`. `root_digest` hashes the identity with the varying indices replaced by those literal ranges.
+- Each `calibration_derivation_roots` item is `{W,N_w,alpha,v_mult,root_digest,pilot_repetition_index_range,seed_index_range}` with `pilot_repetition_index_range=[0,999]` and `seed_index_range=[0,4]`.
+- Each `bootstrap_derivation_roots` item is `{W,N_w,alpha,v_mult,c_min,eta,repetition_index,root_digest,attempt_range,seed_index_range,dose_index_range}` where `attempt_range=[0,5499]`, `seed_index_range=[0,4]`, and `dose_index_range=[0,3]`. `root_digest` hashes the identity with the three varying indices replaced by those literal ranges. Every individual seed remains reproducible from the published rule without a manifest containing millions or billions of rows. `[PROPOSED]`
+
+#### 8.10.2 Exact resolved-config values
+
+The following literal values are mandatory:
+
+- `aggregation={primary:"complete-five-seed-verdict-false-kill",diagnostic:"mean-beta-star-below-0.2",predicate_rates:"overlapping-marginal-with-four-bit-mask"}`;
+- `spearman={algorithm:"pearson-correlation-of-ascending-midranks-binary64",tie_rule:"exact-binary64-equality-average-one-based-ranks",undefined_rule:"statistical-fail-retained-in-denominator",threshold:0.8}`;
+- `bootstrap={statistic:"mean-five-seed-beta-star",resampling_strata:"independent-within-seed-dose",valid_replicates:5000,max_attempts:5500,confidence_level:0.95,interval_method:"two-sided-percentile",quantile_method:"linear-h-equals-n-minus-1-times-q",pass_rule:"lower-endpoint-strictly-greater-than-zero"}`;
+- `calibration={per_geometry:true,reference_c_min:0.7,reference_eta:0.1,cache_key_fields:["config_digest","W","N_w","alpha","v_mult","estimator_version","calibration_algorithm_version"]}`;
+- `seed_derivation={hash:"sha256",encoding:"utf-8-nfc",namespace_separator:"LF",integer_rule:"first-8-bytes-big-endian-mod-2^63-minus-1",identity_fields:["config_digest","W","N_w","alpha","v_mult","c_min","eta","repetition_index","seed_index","dose_index","bootstrap_attempt_index"]}`. Fields inapplicable to a namespace are omitted, never null.
+
+`battery_sweep.prohibitions` is the ordered array `[
+"diagnostic-only-o15",
+"no-candidate-data",
+"no-protected-seeds",
+"no-scoring",
+"no-g2-g4-freeze",
+"no-10000-confirmation",
+"no-sensitivity-or-misspecification-rerun",
+"no-merge-authority"
+]`. `[PROPOSED]`
+
+#### 8.10.3 Status vocabulary and apparatus-failure routing
+
+Top-level sweep `status` is exactly one of `COMPLETE`, `NO_FINALIST`, or `ABORTED`; only `COMPLETE` and `NO_FINALIST` may be published as evidence artifacts. Geometry `status` is exactly `ACCEPTABLE`, `PREFERRED`, or `REJECTED`. Cell `status` is exactly `VALID` or `APPARATUS_INVALID`. `[PROPOSED]` Assignment rules: a valid geometry is `PREFERRED` when all cell upper bounds are below 0.05, else `ACCEPTABLE` when all are below 0.10, else `REJECTED`; any apparatus-invalid cell makes its geometry `REJECTED`. A successful sweep with at least one finalist is `COMPLETE`; a successful sweep with none is `NO_FINALIST`. `ABORTED` is stderr/rehearsal vocabulary only and is never promoted as `battery_sweep.json`.
+
+All six apparatus checks are run-level, not repetition-level:
+
+1. `oracle_checksum`: at process startup, run the 32 known-answer fixtures through the production oracle and compare the projected-list digest exactly.
+2. `estimator_fixtures`: immediately after oracle validation, run the fixed positive/zero fixtures and require their existing tolerances.
+3. `config_digest`: before calibration, schema-validate canonical bytes, recompute the config digest, and compare the sidecar and CLI-supplied expected digest.
+4. `dose_calibration`: before screening each geometry, complete and validate all 15 calibration entries under §8.10.4.
+5. `rng_reproducibility`: before full screening, execute the specified small serial/parallel fixture once and require canonical byte equality.
+6. `artifact_integrity`: after staging and before promotion, enforce every completeness/checksum predicate and re-read both staged files.
+
+Failure of checks 1–5 aborts the whole invocation before evidence publication; failure of check 6 aborts promotion and restores/preserves the prior pair. `[PROPOSED]` No published successful artifact may contain an apparatus-invalid repetition, so every published cell has `apparatus_invalid_count=0` and `valid_repetitions=attempted_repetitions`. `instrument_failure_count` is zero in published sweep evidence. Apparatus failures appear only in stderr and the rehearsal artifact. The `APPARATUS_INVALID` cell status is reserved for an in-memory aborted record used by tests; it cannot appear in promoted evidence. Ordinary undefined/statistical outcomes remain false kills, not apparatus failures.
+
+#### 8.10.4 Generalized calibration and cache contract
+
+Generalize the reviewed baseline algorithm without changing its numerical constants. For each `(W,N_w,alpha,v_mult)`, use 1,000 five-seed pilot repetitions at `(C_min,eta)=(0.7,0.1)`, target mean `β*=0.3`, tolerance `0.01`, search interval `[0.0001,12.0]`, and at most 40 bisection iterations. `[PROPOSED]` Simulation and estimator logic are identical to screening except for the pilot count and reference operating point. Evaluate the high endpoint first and clamp high if below target; evaluate low and clamp low if at/above target; otherwise bisect, returning the first midpoint within tolerance or the final midpoint after 40 iterations. Every evaluation reuses the same geometry-aware pilot seed identities (common random numbers across sigma values).
+
+Calibration seed namespace is `calibration`; identity is `{config_digest,W,N_w,alpha,v_mult,pilot_repetition_index,seed_index}`. No `c_min`, `eta`, dose index, or bootstrap index is present. `[PROPOSED]`
+
+Cache path is `diagnostics/l8_g2g4/cache/<config_digest>/calibration_manifest.json` with sidecar `calibration_manifest.sha256`. `[PROPOSED]` Exact top-level schema is `{schema_version,config_digest,estimator_version,calibration_algorithm_version,entries}`; fixed values are `schema_version="l8-g2g4-calibration-v1"`, `estimator_version="xf5-beta-star-v2.4"`, and `calibration_algorithm_version="geometry-bisection-v1"`. Each of the 300 ordered entries contains exactly `{W,N_w,alpha,v_mult,sigma_dose,termination,iterations,final_mean_beta_star,seed_root_digest}`. `termination` is one of `CLAMP_HIGH`, `CLAMP_LOW`, `WITHIN_TOLERANCE`, or `MAX_ITERATIONS`. The manifest and sidecar use §8.9.3 canonicalization/digest rules.
+
+Cache reuse requires schema validity, sidecar match, exact config/estimator/algorithm identity, exactly 300 unique ordered entries, finite sigma values in range, permitted termination, and recomputed seed-root equality. Any mismatch raises `DiagnosticConfigMismatchError` before screening; no partial cache is used. Cache publication uses the pair transaction in §8.10.6.
+
+#### 8.10.5 Exact rehearsal fixtures and injection mapping
+
+`fixture_digests` is exactly `{known_answers_v1,estimator_positive_v1,estimator_zero_v1,serial_parallel_v1}`, each value lowercase SHA-256 hex. `[PROPOSED]`
+
+The twelve rehearsal cases use the following fixed setup. Before each case, copy a committed valid small-fixture artifact pair into an isolated temporary directory as the prior pair; `prior_artifact_digest` is its JSON digest. Expected/observed scalar values are JSON strings, numbers, booleans, or null; compound values are canonical JSON strings. `preserved_files` lists relative paths in lexical order. `[PROPOSED]`
+
+| case_id | injected boundary/method | assertion IDs | expected exception / exit | required preservation |
+|---|---|---|---|
+| incomplete_output | hook `before_artifact_section` omits `finalists` | `schema_reject`, `no_promote`, `prior_pair_equal` | `DiagnosticSchemaError` / 20 | prior JSON+sidecar, failed temp |
+| malformed_json | hook `after_temp_write` replaces final byte with `{` | `parse_reject`, `no_promote`, `prior_pair_equal` | `DiagnosticSchemaError` / 20 | prior pair, failed temp |
+| truncated_temp | hook `after_temp_write` truncates at half length | `parse_reject`, `no_promote`, `prior_pair_equal` | `DiagnosticSchemaError` / 20 | prior pair, failed temp |
+| serial_parallel | hook `before_parallel_collect` reverses one result | `byte_mismatch`, `seed_order_mismatch`, `no_screen` | `DiagnosticNondeterminismError` / 23 | prior pair only |
+| aggregation_mismatch | validator input mutates `aggregation.primary` after digest | `digest_mismatch`, `before_calibration` | `DiagnosticConfigMismatchError` / 22 | prior pair only |
+| W_mismatch | validator input mutates first geometry `W` after digest | `digest_mismatch`, `before_calibration` | same / 22 | prior pair only |
+| N_w_mismatch | validator input mutates first geometry `N_w` after digest | same IDs | same / 22 | prior pair only |
+| dose_grid_mismatch | validator input mutates `dose_levels` after digest | same IDs | same / 22 | prior pair only |
+| seed_manifest_mismatch | validator input changes first seed digest | `seed_digest_mismatch`, `before_calibration` | same / 22 | prior pair only |
+| estimator_version_mismatch | validator input changes estimator version | `version_mismatch`, `before_calibration` | same / 22 | prior pair only |
+| calibration_worker_crash | hook `after_calibration` raises worker error before manifest promotion | `exit_one`, `no_screen`, `no_promote` | `CalibrationWorkerError` / 1 | prior pair, failed calibration temp |
+| calibration_identity_crash | hook `after_calibration` duplicates one identity before validation | `identity_reject`, `exit_one`, `no_screen` | `CalibrationIdentityError` / 1 | prior pair, failed calibration temp |
+
+Validator-input mutation is dependency injection into the production validator, not a CLI flag or environment backdoor. The five hook boundaries remain the only executable fault hooks; cases that test validators call production validators with mutated in-memory inputs and need no hook.
+
+#### 8.10.6 Transactional JSON-plus-sidecar publication
+
+Treat JSON and sidecar as one recoverable pair under an exclusive destination lock. `[PROPOSED]` Stage and validate both `.tmp` files first. If a prior complete pair exists, atomically rename JSON and sidecar to `.previous.json` and `.previous.sha256` under the lock. Promote staged JSON, then staged sidecar. Re-read and validate the promoted pair. Only after success rename prior files to timestamped audit backups; do not delete them.
+
+If any operation fails after either prior file moved or new JSON promoted, restore both prior files with `os.replace` while holding the lock, move every new/staged file to `.failed.<UTC-basic-timestamp>.<sha256-prefix>`, re-read the restored pair, then raise the applicable exception. If restoration itself fails, raise `DiagnosticChecksumError` exit 21, retain all files, and emit `manual_recovery_required=true`; no complete-artifact attestation is emitted. With no prior pair, remove nothing: quarantine all staged/promoted fragments and leave the canonical destinations absent.
+
+#### 8.10.7 Implementation/evidence commit lifecycle
+
+TASK BUILDER uses two commits. Commit A contains code, tests, fixtures, and frozen configuration but no generated screening/rehearsal evidence. `[PROPOSED]` After CRITIC verifies Commit A and Rebecca authorizes the permitted diagnostic run, evidence is generated with `implementation_sha` equal to Commit A's full SHA. Commit B contains only generated diagnostic evidence, manifests/sidecars, and the handoff; it does not modify implementation or configuration. `[PROPOSED]` Therefore artifacts never claim the SHA of their own containing commit. Any implementation/config change requires a new Commit A and invalidates prior evidence.
+
+#### 8.10.8 Feasibility gate — screening authorization withdrawn pending benchmark
+
+The full design entails 20 geometries × 240 cells × 2,000 repetitions = 9.6 million cell repetitions and, absent short-circuiting, up to 48 billion bootstrap replicates. `[PROPOSED — workload accounting]` This is materially larger than the reviewed baseline and is not authorized merely because “2,000-repetition screening” was previously stated.
+
+Commit A must include a deterministic feasibility benchmark mode that runs **no scientific screening**: 10 repetitions at the three fixed cells `(alpha,v_mult,C_min,eta)={(0.0,0.5,0.5,0.01),(0.05,1.0,0.7,0.1),(0.2,2.0,0.8,0.2)}` for geometries `(W,N_w)=(50,4)` and `(400,64)`, with the full 5,000-valid-bootstrap verdict. `[PROPOSED]` Report wall time, CPU time, peak memory, bootstrap attempts, and deterministic extrapolations for the 9.6-million-repetition screen. This benchmark is O-15 synthetic diagnostic rehearsal, not battery evidence.
+
+Route the benchmark and implementation review to fresh-context CRITIC and Rebecca. Rebecca must then separately choose one of: authorize the full screen; approve an amended sequential/reduced design; or stop. `[PROPOSED — feasibility gate]` Until that ruling, TASK BUILDER may implement and test Commit A only; it may not execute the 2,000-repetition screen, create Commit B screening evidence, or describe screening as authorized.
 
 ---
 
@@ -448,16 +550,17 @@ L8 and L10 share components (mirror, abstention) and run **separate batteries** 
 
 ## §12 Sequencing (binding order)
 
-1. ARCHITECT v2.4 deterministic remediation amendment and changelog committed; no computation.
-2. Fresh-context CRITIC reviews v2.4, beginning with §5 P1–P6 compliance and determinism of §8.9.
-3. Rebecca decides whether to approve the proposed diagnostic method and authorize TASK BUILDER diagnostic implementation/2,000-repetition screening. No approval is inferred.
-4. If authorized, TASK BUILDER implements only the all-seeds estimand, battery sweep, failure-injection tests, and diagnostic rehearsal in §8. It does not implement final L8 scoring, run 10,000-repetition confirmation, or run the deferred map.
-5. Fresh-context CRITIC reviews the implementation delta, 2,000-repetition screening artifact, and rehearsal evidence. Return the revised design, screening analysis, and CRITIC ruling to Rebecca. Only Rebecca may freeze aggregation or battery size or decide G2/G3.
-6. After Rebecca freezes aggregation and battery geometry, TASK BUILDER recomputes the sensitivity and misspecification maps under §8.3–§8.5; fresh-context CRITIC reviews; Rebecca alone decides G4.
-7. §4 L7/L10 reconciliation check documented; any delta triggers a review cycle.
-8. Pre-registration freeze (L19): all `[PROPOSED]` values resolved, appendix committed, hash-attested.
-9. Final L8 scoring implementation release requires a separate Rebecca authorization. Protected seeds remain unexposed.
-10. Scoring remains gated behind the five standing M4 gates (L3, FWFP, CRITIC, tolerance-calibration, courier). Nothing herein authorizes scoring.
+1. ARCHITECT v2.5 determinism/feasibility amendment and changelog committed; no computation.
+2. Fresh-context CRITIC reviews v2.5, beginning with §5 P1–P6 compliance, §8.10 determinism, and workload feasibility.
+3. Rebecca decides whether to approve Commit A implementation plus the fixed feasibility benchmark. The 2,000-repetition screen is not authorized at this step.
+4. If authorized, TASK BUILDER produces Commit A, tests it, and runs only the fixed feasibility benchmark; no screening evidence or Commit B.
+5. Fresh-context CRITIC reviews Commit A, tests, failure rehearsal, and benchmark. Rebecca then decides whether to authorize the full screen, amend/reduce it, or stop.
+6. Only if separately authorized, TASK BUILDER runs screening and produces Commit B evidence; fresh-context CRITIC reviews it. Return design, screening analysis, and CRITIC ruling to Rebecca. Only Rebecca may freeze aggregation or battery size or decide G2/G3.
+7. After Rebecca freezes aggregation and battery geometry, TASK BUILDER recomputes the sensitivity and misspecification maps under §8.3–§8.5; fresh-context CRITIC reviews; Rebecca alone decides G4.
+8. §4 L7/L10 reconciliation check documented; any delta triggers a review cycle.
+9. Pre-registration freeze (L19): all `[PROPOSED]` values resolved, appendix committed, hash-attested.
+10. Final L8 scoring implementation release requires a separate Rebecca authorization. Protected seeds remain unexposed.
+11. Scoring remains gated behind the five standing M4 gates (L3, FWFP, CRITIC, tolerance-calibration, courier). Nothing herein authorizes scoring.
 
 ---
 

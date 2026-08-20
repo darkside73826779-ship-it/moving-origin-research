@@ -1,5 +1,7 @@
 # ARCHITECT → Fresh-Context CRITIC Handoff — L8 G2–G4 v2.4
 
+> **SUPERSEDED:** The second TASK BUILDER STOP identified residual determinism and feasibility gaps. Review v2.5 and its dedicated handoff instead. This v2.4 handoff authorizes nothing.
+
 **Date:** 2026-08-20 · **Regime:** B (constitution v2 §5 binding)
 
 **Gate served:** Deterministic diagnostic-remediation design before implementation or compute

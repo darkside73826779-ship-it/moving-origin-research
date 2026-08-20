@@ -2,8 +2,24 @@
 
 **Spec:** `reviews/l8_crossfamily_review/06_l8_instantiation_spec.md`
 **Date:** 2026-08-20 · **Author:** ARCHITECT
-**Branch:** `architect/l8-g2g4-remediation` (v2.4/v2.3); `architect/l8-instantiation-v2.2-fresh` (v2.2); v2.1/v2 on `architect/l8-instantiation-v2`
+**Branch:** `architect/l8-g2g4-remediation` (v2.5/v2.4/v2.3); `architect/l8-instantiation-v2.2-fresh` (v2.2); v2.1/v2 on `architect/l8-instantiation-v2`
 **Regime:** B (post-Entry 81; constitution v1 + Amendments 1–2; §5 binding) (P4)
+
+---
+
+## v2.5 — Second TASK BUILDER STOP: determinism and feasibility (2026-08-20)
+
+**Base:** `4463cbc1799a6c41512bfef2be28315bea84d475`. **Gate served:** deterministic implementation contract and feasibility review before screening.
+
+- Fixed bootstrap RNG at one stream per `(attempt,seed,dose)` and defined seed-manifest scope without enumerating billions of bootstrap seeds. `[PROPOSED]`
+- Supplied literal config values, nested seed-derivation schema, prohibition array, status vocabulary, and assignment rules. `[PROPOSED]`
+- Made apparatus checks run-level and fail-closed: a failed apparatus check aborts publication; it is never diluted into per-repetition counts. `[PROPOSED]`
+- Generalized the reviewed calibration algorithm across geometry, with exact seeds, manifest/cache schema, digest, validation, and reuse rules. `[PROPOSED]`
+- Defined rehearsal fixture-digest schema, all twelve exact case setups, injection boundaries, assertion IDs, exit contracts, and preservation requirements. `[PROPOSED]`
+- Added recoverable JSON-plus-sidecar pair publication and explicit Commit A (implementation) / Commit B (evidence) lifecycle. `[PROPOSED]`
+- Recorded workload: 9.6 million cell repetitions and up to 48 billion bootstrap replicates. Added a fixed feasibility benchmark and withdrew full-screen authorization pending benchmark review and a separate Rebecca ruling. `[PROPOSED]`
+
+No implementation, benchmark, screening, simulation, artifact, scoring, protected-seed access, G2–G4 decision, or merge occurred. Locked bars remain unchanged. `[BAR-Entry 11]` `[BAR-Entry 11.3]`
 
 ---
 
