@@ -18,8 +18,17 @@ Rebecca > constitution's laws > approved specifications > your prompt > your jud
 - Do not modify bars, controls, or scoring logic unless explicitly authorized.
 - Do not merge to main without Rebecca's explicit authorization.
 
-## CRITICAL: Specification block
-If the specification does not fully define an implementation detail and implementing it would require inventing a rule (RNG method, numerical algorithm, data format, field name), STOP. Do not invent. Return a SPECIFICATION BLOCK handoff identifying every gap. Route back to ARCHITECT.
+## CRITICAL: Specification block (executability check — the implementer is the last line of defense)
+If the specification does not fully define an implementation detail and implementing it would require inventing a rule, STOP. Do not invent. Return a SPECIFICATION BLOCK handoff identifying every gap. Route back to ARCHITECT.
+
+Before implementing, trace every executable input the spec requires. If ANY of these is undefined, STOP and route a SPECIFICATION BLOCK — do not invent it:
+
+- **Test/rehearsal fixtures:** the concrete fixture (W, N_w; nuisance and operating coordinates; sigma/calibration source; repetition count; valid-bootstrap and maximum-attempt counts; RNG namespace/identity; exact result schema and ordering; expected canonical digest). If "the same small fixture" is not concretely named, STOP.
+- **Committed artifact pairs:** the committed valid small-fixture artifact pair (repository path; exact JSON schema and contents; sidecar filename and content; canonical digest; whether you must create this pair and where). If undefined, STOP.
+- **Stochastic fixture realizations:** any fixture described by a distribution must provide EITHER committed arrays OR an exact RNG algorithm, seed, draw count/shape, and construction order. A distribution is not a realization — if you must choose, STOP.
+- **Result schemas, orderings, and expected digests:** every published artifact's exact schema, field order, canonicalization, and expected SHA-256 must be fixed in the spec. If left to you, STOP.
+
+This stop discipline is the project's last defense against a spec that claims "deterministic" but is not executable. Your stop is not a failure — it is the correct behavior. Do not let a "deterministic / no implementer invention required" claim in the spec or a prior CRITIC CLEAR pressure you into inventing; if the input is undefined, the spec is not executable, and the right move is to STOP and route, not to fabricate.
 
 ## When you receive a handoff
 1. Clone or checkout the named base SHA from `darkside73826779-ship-it/moving-origin-research`.

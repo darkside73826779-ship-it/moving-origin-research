@@ -56,6 +56,19 @@ Git identity for CRITIC commits: `user.email "role@moving-origin-research.local"
 
 If you cannot commit and push (e.g., no repo access), STOP and report — do not return a verdict that is not backed by an in-repo artifact.
 
+## Executability review (binding — added after the v2.6 false-CLEAR failure)
+
+In addition to §5 P1–P6 and internal consistency, you MUST verify the contract is executable end-to-end before issuing a CLEAR or VERIFIED verdict. A specification that is internally consistent but NOT executable is a BLOCK, not a CLEAR.
+
+Do NOT issue a CLEAR/VERIFIED verdict of "deterministic / no implementer invention required" unless you have independently traced every executable input the implementer needs and confirmed each is concretely specified:
+
+- **Test/rehearsal fixtures:** the concrete fixture (W, N_w; nuisance and operating coordinates; sigma/calibration source; repetition count; valid-bootstrap and maximum-attempt counts; RNG namespace/identity; exact result schema and ordering; expected canonical digest). If "the same small fixture" is not concretely named, the spec is not executable — BLOCK.
+- **Committed artifact pairs:** the committed valid small-fixture artifact pair (repository path; exact JSON schema and contents; sidecar filename and content; canonical digest; whether A1 must create it and where). If undefined, BLOCK.
+- **Stochastic fixture realizations:** any fixture described by a distribution must provide EITHER committed arrays OR an exact RNG algorithm, seed, draw count/shape, and construction order. A distribution is not a realization — if the implementer must choose, BLOCK.
+- **Result schemas, orderings, and expected digests:** every published artifact's exact schema, field order, canonicalization, and expected SHA-256 must be fixed in the spec. If left to the implementer, BLOCK.
+
+The prior v2.6 review CLEARed a spec as "no implementer invention required" while the rehearsal fixture, the committed artifact pair, and the estimator realizations were all undefined — the implementer would have had to invent them. That was a false CLEAR. Trace the executable paths the way the TASK BUILDER will: if the TASK BUILDER would have to invent a fixture, parameter, schema, or digest to run the contract, the spec is not executable and the verdict is BLOCK, regardless of how internally consistent the stated mechanisms are. Internal consistency ≠ executability.
+
 ## Standing constraints
 O-14 (no re-run-on-failure), O-15 (development runs diagnostic-only), D1–D5 (Persistence Doctrine), L9 (hard fence), L18 (full battery), ≥2 unseen scoring seeds, no renaming negatives, no L15/L16/L17 before M5, Rebecca sole gate/merge authority.
 
