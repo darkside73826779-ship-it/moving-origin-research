@@ -7,6 +7,69 @@
 
 ---
 
+## v1.2 — Close failure-path determinism gaps (2026-08-19)
+
+**Base:** advances from v1.1 (`b4419f9`) on `architect/l8-calibration-parallelism-spec`. No rebase; same branch.
+
+**Gaps found by the TASK BUILDER (third stop, not implemented):** v1.1 left three failure-path mechanisms under-specified, so the TASK BUILDER would have had to invent rules. v1.2 closes all three in one pass so the spec leaves the TASK BUILDER nothing to infer.
+
+### Gap 1 — Error sanitization made deterministic
+
+`exception_message` is now fixed at exactly `"calibration worker failed"`; `exception_type` = `type(original).__name__`. The worker catches `Exception` only (not `BaseException`) and raises `CalibrationWorkerError(...) from None`. The original exception's message, `repr`, traceback, `__cause__`, `__context__`, `args`, and object are never stored, serialized, logged, or attached. No regex sanitizer or redaction rule is permitted. Rationale: task identity is already carried by `ordinal`/`alpha`/`v_mult`; a fixed message is deterministic, picklable, JSON-safe, and platform-independent; a regex sanitizer would need its own spec and could still have omissions.
+
+### Gap 2 — Termination mechanism named
+
+The parent raises `SystemExit(1)` `[PROPOSED — diagnostic termination mechanism]` immediately after emitting the failure record. It is the sole non-zero termination mechanism; no alternate exit code, return, or exception is permitted.
+
+### Gap 3 — Identity-validation failure contract specified
+
+A new top-level picklable `CalibrationIdentityError` (fixed message `"calibration identity validation failed"`) is the sole contract for identity-validation failures, raised by `_validate_calibration_identities`. The identity failure record has exactly seven fields (`phase`, `analysis_label`, `message`, `mismatch_kinds`, `expected_count`, `seen_count`, `canonical_identities`). `mismatch_kinds` is a sorted list (subset of `["duplicate","missing","unexpected"]` in that fixed order) because duplicate/missing/unexpected may co-occur. `canonical_identities` are the frozen, already-published synthetic apparatus parameters `ALPHAS × V_MULTS` (`[PROPOSED — apparatus parameter, §8]`) — public-safe, not candidate data (Ruling 9); raw returned records and raw unexpected values are NOT logged. `seen_count` is the number of returned result records (not unique identities), so duplicates are visible (15 canonical + 1 duplicate → `seen_count` = 16). Malformed returned records (non-dict, missing `alpha`/`v_mult`, or non-canonical values) are treated as `unexpected` (caught via `TypeError`/`KeyError` around key extraction) and never logged raw. `CalibrationIdentityError` passes all four data fields plus the fixed message to `Exception.__init__` so it survives `pickle.dumps`/`pickle.loads` with fields preserved.
+
+### Parent boundary + normative code
+
+A shared `_run_calibration_phase(analysis_label, workers) -> dict` is the parent-owned failure boundary used by the reference and each misspecified analysis: it builds the work list, opens the calibration pool, calls `pool.map(_worker_calibration, work_items)`, validates identities, catches `(CalibrationWorkerError, CalibrationIdentityError)`, emits the corresponding failure record (one JSON line to `sys.stderr` via `json.dumps(record, sort_keys=True)`), and raises `SystemExit(1)`; returns the table only on full success. Normative code blocks for `CalibrationWorkerError` + `_worker_calibration` (§4.2.1) and `CalibrationIdentityError` + `_validate_calibration_identities` + `_run_calibration_phase` + `_emit_calibration_failure` (§4.2.2) are binding — the TASK BUILDER may not alter the field set, fixed messages, `from None`, `Exception`-only catches, `SystemExit(1)` termination, or the stderr JSON sink.
+
+### Implementation trace (new §4.2.3)
+
+A trace table is added for every failure path (worker exception, identity validation, partial-result prevention, termination): input-identity location, object crossing the process boundary, picklability under spawn, exact text reaching logs, parent exception/exit, partial-results-to-simulation prevention point, and the unit-test assertion contract.
+
+### Test contract (§6 expanded to 14 items)
+
+The 10 TASK BUILDER failure-path tests are adopted (pickle round-trip; worker-failure identity; `exception_type`; fixed message under hostile input; original message absent; 7-field record; `SystemExit(1)` termination; no simulation after failure; `CalibrationIdentityError` contract; happy-path equality) plus the v1.1 reproducibility/protected-logic/process-observation/no-scoring items.
+
+### Mechanisms chosen
+
+- Fixed worker message: `"calibration worker failed"`.
+- Termination type: `SystemExit(1)` `[PROPOSED — diagnostic termination mechanism]`.
+- Identity-error class: top-level picklable `CalibrationIdentityError` (fixed message `"calibration identity validation failed"`).
+- Logging sink: one JSON line to `sys.stderr` via `json.dumps(record, sort_keys=True) + "\n"` then `sys.stderr.flush()`.
+
+### Preserved
+
+- **No-retry (O-14):** identity is carried by the exception; no re-execution to discover failure identity.
+- **Fail-closed:** first exception terminates; completed results discarded; no partial calibration table; no simulation after calibration failure.
+- **Calibration algorithm, combo seeds, estimator, false-kill formulas, null control, sensitivity map, selection rule, misspecified profiles, R8 guard, write-order fix, three NF-IMPL fixes, BF-MP-1 multiprocessing, 15-element domain, `pool.map` dispatch:** unchanged.
+- **Candidate-blindness (Ruling 9):** the exception/failure-record channel carries only apparatus-parameter identity + fixed public-safe messages + frozen canonical identities; no candidate data.
+- **Reproducibility (§4.9):** unaffected — happy path unchanged.
+
+### New parameters introduced
+
+No new scientific apparatus parameters or performance bars. New `[PROPOSED]`-tagged diagnostic implementation criteria: the `SystemExit(1)` termination mechanism `[PROPOSED — diagnostic termination mechanism]` (joining the v1 cap and process-observation check). `expected_count`/`seen_count` are diagnostic record fields derived from the frozen calibration domain, not thresholds or bars. P3 unchanged.
+
+### §5 P1–P6
+
+- P1/P2: PASS — no new law text; existing verbatim quotes retained.
+- P3: PASS — no new scientific parameters; `SystemExit(1)` tagged `[PROPOSED — diagnostic termination mechanism]`; `expected_count`/`seen_count` are diagnostic fields not bars.
+- P4: PASS — header states 2026-08-19, Regime B.
+- P5: N/A — no deviation from `[LAW]` text.
+- P6: PASS — citations unchanged.
+
+### Pre-push scan attestation
+
+A pre-push self-scan was performed on the amended content before commit. Scanned for credentials, API keys, tokens, passwords, secrets, personal contact details, machine identifiers, private absolute paths, environment dumps, and PII. **Findings:** none — only descriptive attestation/sanitization prose matched (the words "hostnames"/"MAC addresses"/"private absolute path" inside the spec's own sanitization rules and the changelog's attestation paragraph). No actual hostnames, private paths, secrets, or PII. Classified: acceptable. Reference: `PUBLIC_REPOSITORY_POLICY.md` §2/§3/§9.
+
+---
+
 ## v1.1 — §4.1/§4.2 contradiction resolution (2026-08-19)
 
 **Base:** advances from v1 (`90d8835`) on `architect/l8-calibration-parallelism-spec`. No rebase; same branch.
