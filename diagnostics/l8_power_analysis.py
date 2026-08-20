@@ -37,6 +37,8 @@ import argparse
 import hashlib
 import json
 import math
+import multiprocessing
+import os
 import time
 from typing import Dict, List, Tuple
 
@@ -634,6 +636,124 @@ def select_cmin_eta(sensitivity_map: Dict) -> Dict:
 # ---------------------------------------------------------------------------
 # Full power-analysis run over the 240-combination grid (§8).
 # ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# Multiprocessing worker (Fix 1: CPU parallelism).
+#
+# Each worker runs one (combo, profile) pair independently. Results depend
+# only on the combo seed (deterministic, candidate-blind), not on which
+# worker executes them. Results are collected by combo-identity, not
+# completion order. [PROPOSED -- apparatus parameter, scalable parallelism]
+# ---------------------------------------------------------------------------
+
+def _worker_combo(args):
+    """Worker function: run one (combo, profile) pair and return result dict.
+
+    Args is a tuple: (alpha, v_mult, c_min, eta, sigma_dose, n_sims,
+                      base_seed, profile_name_or_None)
+    """
+    alpha, v_mult, c_min, eta, sigma_dose, n_sims, base_seed, profile_name = args
+    v_logit = v_mult * V_REF
+
+    if profile_name is None:
+        # Reference profile
+        bs, n_fail, per_seed = simulate_one_simulation(
+            alpha, v_mult, c_min, eta, sigma_dose,
+            n_sims=n_sims, base_seed=base_seed)
+    else:
+        # Misspecified profile — inline simulation loop
+        bs = np.full(n_sims, np.nan, dtype=np.float64)
+        per_seed = np.full((n_sims, N_SEEDS), np.nan, dtype=np.float64)
+        n_fail = 0
+        for i in range(n_sims):
+            d_all = np.zeros((N_SEEDS, L_DOSES, N_W), dtype=np.float64)
+            for s in range(N_SEEDS):
+                seed_int = (base_seed + i * N_SEEDS + s) % (2 ** 31)
+                rng = np.random.default_rng(seed_int)
+                d_all[s] = simulate_one_seed_misspecified(
+                    rng, alpha, v_logit, sigma_dose, c_min, eta, profile_name)
+            b, fail = run_level_beta_star(d_all)
+            if fail:
+                bs[i] = float("nan")
+                n_fail += 1
+            else:
+                bs[i] = b
+                for s in range(N_SEEDS):
+                    bs_s, fail_s = beta_star_for_seed(d_all[s])
+                    per_seed[i, s] = bs_s if not fail_s else float("nan")
+
+    valid = bs[~np.isnan(bs)]
+    n_valid = int(valid.size)
+
+    # False-kill rate (5-seed mean) [Sol-XF-9]
+    if n_valid > 0:
+        false_kill_rate = float(np.mean(valid < BETA_STAR_BAR))
+    else:
+        false_kill_rate = float("nan")
+
+    # NF-IMPL-2: Per-seed false-kill rate [PROPOSED -- flagged to Rebecca]
+    if n_valid > 0:
+        valid_ps = per_seed[~np.isnan(bs)]
+        if valid_ps.shape[0] > 0:
+            false_kill_rate_per_seed = float(np.mean(np.any(valid_ps < BETA_STAR_BAR, axis=1)))
+        else:
+            false_kill_rate_per_seed = float("nan")
+    else:
+        false_kill_rate_per_seed = float("nan")
+
+    return {
+        "alpha": alpha, "v_mult": v_mult, "c_min": c_min, "eta": eta,
+        "sigma_dose": sigma_dose, "n_sims": n_sims, "base_seed": base_seed,
+        "n_valid": n_valid, "n_instrument_failures": int(n_fail),
+        "mean_beta_star": float(valid.mean()) if n_valid else float("nan"),
+        "std_beta_star": float(valid.std()) if n_valid else float("nan"),
+        "false_kill_rate": false_kill_rate,
+        "false_kill_rate_per_seed": false_kill_rate_per_seed,
+        "bs_valid": valid,  # for null-control computation in main process
+        "profile_name": profile_name,
+    }
+
+
+def _worker_null_control(args):
+    """Worker for null-control arm (sigma_dose=0.0)."""
+    alpha, v_mult, c_min, eta, n_sims, base_seed, profile_name = args
+    v_logit = v_mult * V_REF
+
+    if profile_name is None:
+        bs_null, n_fail_null, _ = simulate_one_simulation(
+            alpha, v_mult, c_min, eta, sigma_dose=0.0,
+            n_sims=n_sims, base_seed=base_seed)
+    else:
+        bs_null = np.full(n_sims, np.nan, dtype=np.float64)
+        n_fail_null = 0
+        for i in range(n_sims):
+            d_all = np.zeros((N_SEEDS, L_DOSES, N_W), dtype=np.float64)
+            for s in range(N_SEEDS):
+                seed_int = (base_seed + i * N_SEEDS + s) % (2 ** 31)
+                rng = np.random.default_rng(seed_int)
+                d_all[s] = simulate_one_seed_misspecified(
+                    rng, alpha, v_logit, 0.0, c_min, eta, profile_name)
+            b, fail = run_level_beta_star(d_all)
+            if fail:
+                bs_null[i] = float("nan")
+                n_fail_null += 1
+            else:
+                bs_null[i] = b
+
+    valid_null = bs_null[~np.isnan(bs_null)]
+    if valid_null.size > 0:
+        false_pass_rate = float(np.mean(valid_null >= BETA_STAR_BAR))
+        mean_null = float(valid_null.mean())
+    else:
+        false_pass_rate = float("nan")
+        mean_null = float("nan")
+    return {
+        "false_pass_rate": false_pass_rate,
+        "mean_beta_star_null": mean_null,
+        "n_instrument_failures_null": int(n_fail_null),
+    }
+
+
+
 def run_power_analysis(n_sims: int, include_null_control: bool = True,
                        progress_every: int = 20) -> Dict:
     """Run the §8 power analysis over the full 5×3×4×4 = 240 grid.
@@ -1013,7 +1133,7 @@ def simulate_one_seed_misspecified(rng, alpha, v_logit, sigma_dose,
 
 
 def run_power_analysis_misspecified(profile_name, n_sims, include_null_control=True,
-                                    progress_every=20):
+                                       progress_every=20, workers=None):
     """Run the §8 power analysis over the full 5×3×4×4 = 240 grid under a
     misspecified profile.
 
@@ -1033,12 +1153,46 @@ def run_power_analysis_misspecified(profile_name, n_sims, include_null_control=T
     n_combos = len(ALPHAS) * len(V_MULTS) * len(C_MINS) * len(ETAS)
     done = 0
 
+    # Pre-calibrate σ_dose for all (α, v) pairs (reuse reference calibration).
+    calibrations = {}
     for alpha in ALPHAS:
         for v_mult in V_MULTS:
-            # Reuse the reference σ_dose calibration (same calibration as
-            # reference -- we test estimator overfit, not re-calibration).
-            #  [PROPOSED -- apparatus parameter, §8 item 9]
-            sigma_dose = calibrate_sigma_dose(alpha, v_mult)
+            calibrations[(alpha, v_mult)] = calibrate_sigma_dose(alpha, v_mult)
+
+    # Build work items with the misspecified profile name.
+    work_items = []
+    null_items = [] if include_null_control else None
+    for alpha in ALPHAS:
+        for v_mult in V_MULTS:
+            sigma_dose = calibrations[(alpha, v_mult)]
+            for c_min in C_MINS:
+                for eta in ETAS:
+                    base_seed = combo_seed(alpha, v_mult, c_min, eta)
+                    work_items.append((alpha, v_mult, c_min, eta,
+                                       sigma_dose, n_sims, base_seed, profile_name))
+                    if include_null_control:
+                        null_items.append((alpha, v_mult, c_min, eta,
+                                           n_sims, base_seed, profile_name))
+
+    n_workers = workers or os.cpu_count() or 1
+    n_combos = len(work_items)
+    print(f"    [misspec:{profile_name}] {n_combos} combos on {n_workers} workers...")
+
+    if n_workers > 1:
+        with multiprocessing.Pool(processes=n_workers) as pool:
+            combo_results = pool.map(_worker_combo, work_items)
+            if include_null_control:
+                null_results = pool.map(_worker_null_control, null_items)
+            else:
+                null_results = [{}] * n_combos
+    else:
+        combo_results = [_worker_combo(w) for w in work_items]
+        null_results = [_worker_null_control(w) for w in null_items] if include_null_control else [{}] * n_combos
+
+    # Build results list
+    for alpha in ALPHAS:
+        for v_mult in V_MULTS:
+            sigma_dose = calibrations[(alpha, v_mult)]
             v_logit = v_mult * V_REF
             for c_min in C_MINS:
                 for eta in ETAS:
@@ -1234,7 +1388,7 @@ def run_power_analysis_misspecified(profile_name, n_sims, include_null_control=T
     }
 
 
-def run_misspecification_stress_test(n_sims=10000, reference_selection=None):
+def run_misspecification_stress_test(n_sims=10000, reference_selection=None, workers=None):
     """Run the full misspecification stress-test per §8 item 9.
 
     For each misspecified profile, runs the full 240-combo power analysis,
@@ -1326,7 +1480,11 @@ def main() -> None:
                              "validation batch. Default 100.")
     parser.add_argument("--out", type=str, default=None,
                         help="Output JSON path for --full. Default "
-                             "diagnostics/l8_power_analysis_results.json.")
+                        "diagnostics/l8_power_analysis_results.json.")
+    parser.add_argument("--workers", type=int, default=None,
+                        help="Number of multiprocessing workers. Default: os.cpu_count(). "
+                             "Set to 1 for single-threaded (reproducibility verification). "
+                             "[PROPOSED -- apparatus parameter, scalable parallelism]")
     parser.add_argument('--stress-test-sims', type=int, default=10000,
                         help='Number of simulations per combo for the misspecification stress-test. Default 10000 (full). Reduce for faster stability check.')
     args = parser.parse_args()
@@ -1403,11 +1561,6 @@ def main() -> None:
               f"{'ESCALATE to G3' if max_fk > FALSE_KILL_THRESHOLD else 'no escalation'}) "
               f"[PROPOSED — apparatus parameter, §8]")
         print(f"  full run elapsed: {full['header']['elapsed_seconds']:.1f}s")
-        out_path = args.out or "diagnostics/l8_power_analysis_results.json"
-        with open(out_path, "w", encoding="utf-8") as f:
-            json.dump(_sanitize_nan(full), f, indent=2, allow_nan=False)
-            f.write("\n")
-        print(f"  wrote machine-readable JSON: {out_path}")
     else:
         print("\n[Step 3] Skipped full run (pass --full to run 10,000×240).")
 
@@ -1416,7 +1569,7 @@ def main() -> None:
     stress_n = args.stress_test_sims
     ref_sel = full.get("selection") if args.full else None
     print(f"  Running full power analysis on 2 misspecified profiles (n_sims={stress_n})...")
-    misspec = run_misspecification_stress_test(n_sims=stress_n, reference_selection=ref_sel)
+    misspec = run_misspecification_stress_test(n_sims=stress_n, reference_selection=ref_sel, workers=args.workers)
     for pname in misspec["profiles"]:
         s = misspec["stability"][pname]
         print(f"  {pname}: selection (C_min={s.get('selected_c_min')}, η={s.get('selected_eta')}) "
@@ -1427,6 +1580,14 @@ def main() -> None:
     print(f"  note: full 10,000 per combo triples total runtime (~17h). Use --stress-test-sims 2000 for ~8h.")
     if args.full:
         full["misspecification_stress_test"] = misspec
+
+    # Write JSON after all steps (reference + stress-test) are complete.
+    if args.full:
+        out_path = args.out or "diagnostics/l8_power_analysis_results.json"
+        with open(out_path, "w", encoding="utf-8") as f:
+            json.dump(_sanitize_nan(full), f, indent=2, allow_nan=False)
+            f.write("\n")
+        print(f"  wrote machine-readable JSON: {out_path}")
 
     print("\nDone. Diagnostic-only (O-15). This authorizes NO scoring.")
 
