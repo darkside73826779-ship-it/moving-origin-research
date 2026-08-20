@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-20 · **Regime:** B · **Branch:** `architect/l8-g2g4-minimal-fullscreen`
 **Base:** `main` at `f4e22317ebe0e3e1a7dbee0b81ef8c3fb9839b2b`
-**Files changed:** created `specs/l8_g2g4_minimal_full_screen_spec.md`; created `specs/l8_g2g4_minimal_full_screen_TASKBUILDER_HANDOFF.md`; created `specs/l8_g2g4_minimal_full_screen_EXECUTABILITY_TRACE.md`.
+**Files changed:** created `specs/l8_g2g4_minimal_full_screen_spec.md`; created `specs/l8_g2g4_minimal_full_screen_CHANGELOG.md` (this file); created `specs/l8_g2g4_minimal_full_screen_TASKBUILDER_HANDOFF.md`; created `specs/l8_g2g4_minimal_full_screen_EXECUTABILITY_TRACE.md`.
 
 ## What this is
 
@@ -10,7 +10,7 @@ A minimal executable specification for the L8 G2–G4 full battery-geometry scre
 
 ## Decisions made by ARCHITECT (each tied to source text)
 
-1. **20 geometries** copied verbatim from §8.2 of the L8 crossfamily spec — the Cartesian product `W ∈ {50,100,200,400}` × `N_w ∈ {4,8,16,32,64}`, ordered by `Q = W·N_w` asc, then larger `N_w`, then smaller `W`. Not redesigned. (Source: `06_l8_instantiation_spec.md` c7d7bed/v2.4 §8.2 lines 276–280.)
+1. **20 geometries** copied verbatim from §8.2 of the L8 crossfamily spec — the Cartesian product `W ∈ {50,100,200,400}` × `N_w ∈ {4,8,16,32,64}`, ordered by `Q = W·N_w` asc, then larger `N_w`, then smaller `W`. Not redesigned. (Source: `06_l8_instantiation_spec.md` at `4463cbc` v2.4 §8.2 lines 276–280 — the only located repo source of the pre-registered 20-geometry list. The v2.4 Wilson/bootstrap §8.9 machinery in the same commit is prohibited and not invoked. Geometry-list authority flagged for CRITIC/Rebecca confirmation.)
 2. **240 cells = 15 nuisance × 16 operating** copied exactly from `b139749` / v2.2 §8.3: `α ∈ {0.0,0.02,0.05,0.1,0.2}` × `v_mult ∈ {0.5,1.0,2.0}` × `C_min ∈ {0.5,0.6,0.7,0.8}` × `η ∈ {0.01,0.05,0.1,0.2}`.
 3. **2,000 simulations per cell per arm**; **16 workers**; **~1.5–2 h** — Rebecca-established per the WORKFLOW COORDINATOR handoff.
 4. **Direct false-kill calculation only; no bootstrap.** Uses `false_kill_rate` (5-seed mean) and `false_kill_rate_per_seed` (any-seed) as computed at `b139749`.
@@ -30,6 +30,7 @@ No bootstrap, no Wilson intervals, no `predicate_false_kill_rates`/`failure_mask
 ## Provenance
 
 - Frozen L8 v2.2 spec: `c7d7bed6...` (`reviews/l8_crossfamily_review/06_l8_instantiation_spec.md`).
+- Pre-registered 20-geometry list: `4463cbc` v2.4 §8.2 (same path; only located repo source; v2.4 §8.9 machinery prohibited).
 - Verified code: `diagnostics/l8_power_analysis.py` at `b1397498...`.
 - Reference artifact: `6d455bb8...` (SHA-256 `978f21c0...`).
 - Rebecca L8 feasibility ruling: `d08cb7e...` (superseded in part; this spec closes its two open execution details: 2,000 sims/cell/arm, and no bootstrap).

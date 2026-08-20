@@ -12,6 +12,7 @@
 | GitHub repository | `darkside73826779-ship-it/moving-origin-research` |
 | Main when issued | `f4e22317ebe0e3e1a7dbee0b81ef8c3fb9839b2b` |
 | Frozen L8 v2.2 spec | `c7d7bed6b259fb5163fb610098ea12aed1d3d65e` on `architect/l8-instantiation-v2.2-fresh`; path `reviews/l8_crossfamily_review/06_l8_instantiation_spec.md` |
+| Pre-registered 20-geometry list (§8.2) | `4463cbc` on `architect/l8-g2g4-remediation`; same path `reviews/l8_crossfamily_review/06_l8_instantiation_spec.md` (v2.4). This is the **only located repo source** of the pre-registered 20-geometry list; the v2.4 Wilson/bootstrap §8.9 machinery in the same commit is **prohibited** and is not invoked. Geometry-list authority flagged for CRITIC/Rebecca confirmation. |
 | Verified executable code baseline | `diagnostics/l8_power_analysis.py` at `b1397498ca369067e956479e6c2bd6b0793c3e89` on `taskbuilder/l8-power-analysis` |
 | Verified reference artifact | `diagnostics/l8_power_analysis_results.json` at `6d455bb878f4b52a5b5564afac38d6fb3a20d4b3` (SHA-256 `978f21c061dbee40fe3dd6d80f8b4c5abec3e13ea9babf4c361b6ba34b5e4b21`) |
 | Rebecca L8 feasibility ruling | `docs/rulings/REBECCA_L8_1000_REP_FEASIBILITY_AUTHORIZATION.md` at `d08cb7eefec67609a3ea3cee0eb20da22f78c40a` (superseded in part — see §1.3) |
@@ -29,9 +30,16 @@ A minimal, executable specification for one full screen: 20 battery geometries �
 
 *Source: `docs/ARCHITECTURAL_CONSTITUTION_v2.md`, line 28 `[LAW-L8]` (v2 Regime B semantics; v1 text at `docs/ARCHITECTURAL_CONSTITUTION.md` line 26 is unchanged).*
 
-> **§5 Versioned-Law Compliance Protocol — P1–P6.** P1: No text is binding unless committed to the repo; reconstruction of constitutional text is forbidden. P2: Verbatim quotation of any operationalized law, cited by file and line. P3: Every numeric threshold/kill condition/test criterion carries an inline source tag, one of exactly four: `[LAW-Lx]`, `[BAR-Entry n]`, `[OP-Entry n]`, `[PROPOSED]`. P4: Every new artifact states its date and regime. P5: Any deviation from `[LAW]` text is inoperative for scoring until Rebecca signs a waiver/amendment. P6: Provenance citations verified against entry text.
+> **§5 Versioned-Law Compliance Protocol — 5.1 Universal rules (all roles, all artifacts), quoted verbatim:**
+>
+> - **P1 — Repo-first law.** No text is binding unless it is committed to the repo. If a role needs binding text it cannot find in the repo, it STOPS and escalates to the COORDINATOR. Reconstruction of constitutional text is forbidden — the constitution is published; reconstruction is unnecessary and therefore prohibited.
+> - **P2 — Verbatim quotation.** Any artifact that operationalizes a law (spec, review, harness docstring) opens the relevant section with the law's verbatim text quoted from `docs/ARCHITECTURAL_CONSTITUTION.md` (v2 for Regime B semantics), cited by file and line. Paraphrase never substitutes for the quote.
+> - **P3 — Source-class tags.** Every numeric threshold, kill condition, or test criterion carries an inline source tag, one of exactly four: `[LAW-Lx]` (in the constitution's text), `[BAR-Entry n]` (Rebecca-locked pre-registration), `[OP-Entry n]` (adopted operationalization), `[PROPOSED]` (requires Rebecca sign-off; may not gate anything until signed). A number without a tag is a review-blocking defect.
+> - **P4 — Regime dating.** Every new artifact states its date and regime in its header. Acts are judged only against their own regime's text; later text is never applied backward.
+> - **P5 — Deviation memorialization.** Any deviation from `[LAW]` text — however sensible, however disclosed — is inoperative for scoring until Rebecca has signed a waiver or amendment recorded in the v2 amendment log. Disclosure in a spec is necessary but not sufficient.
+> - **P6 — Provenance citation check.** Any claim of the form "Entry n said X" must be verified against the entry's actual text before commit.
 
-*Source: `docs/ARCHITECTURAL_CONSTITUTION_v2.md`, §5 (lines 124–135) `[LAW-§5]`.*
+*Source: `docs/ARCHITECTURAL_CONSTITUTION_v2.md`, §5 5.1 (lines 130–135) `[LAW-§5]`. (ARCHITECT per-role obligation, §5 5.2 line 139: "P1/P2/P3 in every spec. A law section that cannot be written from verbatim text is a STOP, not a reconstruction.")*
 
 ### 1.3 Relationship to prior rulings and superseded machinery
 
@@ -50,10 +58,13 @@ Exactly this full screen (all values `[PROPOSED — apparatus parameter, §8.2/�
 | Simulations per cell (combo arm) | 2,000 | `[PROPOSED — §8.2]` |
 | Workers | 16 | `[PROPOSED — Rebecca-established]` |
 | Total combo-arm simulations | 20 × 240 × 2,000 = 9,600,000 | `[PROPOSED — §8.2]` |
+| Total actual simulations (both arms) | 20 × 240 × 2,000 × 2 = 19,200,000 (combo 9.6M + null-control 9.6M) | `[PROPOSED — §8.2]` |
 | Estimated wall-clock | ~1.5–2 h (linear estimate 4 × 22.63 min ≈ 90.5 min + overhead) | `[PROPOSED — §8]` |
 | Parallel execution path | `multiprocessing.Pool`, chunksize 1, results keyed by cell identity not completion order (as verified at `b139749`) | `[PROPOSED — b139749 verified]` |
 
 **Reference timing basis (P6 — verified against `6d455bb`):** `n_sims_per_combo=10000`, `n_combos=240`, `elapsed_seconds=1357.6829717159271` (22.63 min). The reference run executes two arms per cell (combo + null-control; see §5); the 4× linear estimate (90.5 min) holds because the reference also ran two arms. Operational estimate including overhead: 1.5–2 h.
+
+**Workload accounting (flagged for CRITIC/Rebecca confirmation):** Rebecca's established count is 20 × 240 × 2,000 = 9.6M, which is the **combo-arm** count. The false-pass rate requires the preserved null-control arm (§5), which adds a matched 9.6M, for 19.2M actual arm-simulations. The 1.5–2 h timing estimate holds because the verified reference run (`6d455bb`) also executed both arms in 22.63 min, so 4× the reference is ~90.5 min. CRITIC/Rebecca must confirm this two-arm workload accounting is the intended reading; if Rebecca intended a single 2,000-per-cell budget shared across arms, the false-pass rate must be dropped or recomputed and this spec amended.
 
 ## 3. Battery geometries (§8.2 — copied verbatim from the pre-registered list)
 
