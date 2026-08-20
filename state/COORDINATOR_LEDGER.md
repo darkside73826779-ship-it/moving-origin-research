@@ -46,13 +46,13 @@ When Rebecca says a role is complete (or any phrasing suggesting it — "archite
 If the ledger, STATE.md, or a return handoff doesn't tell you what to do next: STOP and ask Rebecca. Do not start digging through GitHub main, replaying conversation history, or launching subagents to explore — that is what burned the fresh coordinator's credits. The ledger + STATE.md + the return handoff should be sufficient; if they're not, the right move is to ask Rebecca for a routing instruction, not to reconstruct the state independently.
 
 ---
-## Current state — updated 2026-08-19 23:56 EDT (ARCHITECT remediation design COMPLETE at 2819bf7; TASK BUILDER implementing locally)
+## Current state — updated 2026-08-20 00:10 EDT (L8 spec v2.4 CRITIC-cleared; awaiting Rebecca's approval of the diagnostic method + 2,000-rep screening authorization)
 
-**Ball:** TASK BUILDER (local frontier GPT) — implementing the ARCHITECT's G2–G4 remediation design (L8 spec v2.3 at `2819bf7` on `architect/l8-g2g4-remediation`). The design amended `reviews/l8_crossfamily_review/06_l8_instantiation_spec.md` (v2.3) + changelog, and produced `handoffs/ARCHITECT_L8_G2G4_REMEDIATION_TASKBUILDER_HANDOFF.md`. Commit: "Specify L8 verdict-aligned battery remediation."
+**Ball:** REBECCA — the L8 spec v2.4 "Define deterministic L8 diagnostic contract" (`4463cbc` on `architect/l8-g2g4-remediation`) is CRITIC-cleared. All 7 subsections of §8.9 are deterministic (the TASK BUILDER has nothing to invent). The bootstrap lower-bound > 0 does NOT replace the per-seed 0.2 bar; INSTRUMENT FAILURE is apparatus-validity-only (no per-seed reclassification). Awaits Rebecca's approval of the diagnostic method + authorization of 2,000-rep screening.
 
-**After TASK BUILDER:** fresh-context CRITIC implementation review → Rebecca (before any G2–G4 decision). The TASK BUILDER implements the battery-size sweep, failure-injection tests, and diagnostic rehearsal (Items 3, 7) — NOT the recompute (Item 4, design only) and NOT the 10,000-sim stress rerun.
+**After approval:** TASK BUILDER implements on `taskbuilder/l8-g2g4-diagnostic-remediation` (all-seeds estimand, battery sweep, failure-injection tests, diagnostic rehearsal — NOT final L8 scoring, NOT 10,000-rep confirmation, NOT the deferred map) → fresh-context CRITIC impl review → Rebecca (decide G2/G3).
 
-**Still held:** G2–G4 NOT frozen; protected seeds NOT exposed; 10,000-sim stress rerun NOT authorized; no scoring, no merger. Design and diagnostic work only.
+**The v2.4 design (what Rebecca approves):** §8.9 deterministic contract — complete trend-verdict algorithms (Spearman ρ, OLS β, bootstrap T = mean_s(β*_s) with stratum-level resampling, lower bound > 0 conjunction, per-seed 0.2 bar preserved); all-cell battery sweep (20 geometries × 240 cells, worst-cell Wilson acceptance conjunction < 0.10, preferred < 0.05); config/serialization/seed manifests (canonical JSON + SHA-256, candidate-blind synthetic seeds); atomic publication; fault injection + exit contracts (20–23/1/70) + synthetic-only crash recovery; apparatus fixtures + 12-case rehearsal; exact TASK BUILDER routing (import b139749, 6d455bb read-only).
 
 **The remediation (7 items, routed ARCHITECT → TASK BUILDER → fresh-context CRITIC → Rebecca):**
 1. Verify the exact scoring verdict rule (5-seed-mean vs all-seeds-independently-passing); align spec, harness, power-analysis estimand exactly.
@@ -102,7 +102,9 @@ This hybrid (build sim on spec-text estimator, then verify against the harness's
 
 ## Handoff history (compact — current state overwrites prior; full history in provenance log + git log)
 
-- 2026-08-19 23:56 — ARCHITECT remediation design COMPLETE (2819bf7 on architect/l8-g2g4-remediation); L8 spec v2.3 + changelog + TASK BUILDER handoff; TASK BUILDER implementing locally
+- 2026-08-20 00:10 — L8 spec v2.4 (4463cbc) CRITIC-cleared; all 7 §8.9 subsections deterministic; bootstrap > 0 doesn't replace 0.2 bar; INSTRUMENT FAILURE apparatus-only; awaiting Rebecca's approval + 2,000-rep screening authorization
+- 2026-08-20 00:06 — TASK BUILDER stopped on v2.3 (diagnostic contract under-specified); ARCHITECT resolved with v2.4 (4463cbc) + CRITIC handoff; v2.3 TASK BUILDER handoff marked superseded
+- 2026-08-19 23:56 — ARCHITECT remediation design v2.3 COMPLETE (2819bf7); TASK BUILDER implementing locally
 - 2026-08-19 23:42 — Rebecca directed G2–G4 remediation (7 items); G2–G4 NOT frozen; advisor package corrected; routing ARCHITECT → TASK BUILDER → CRITIC → Rebecca. No stress rerun, no scoring, no seed exposure.
 - 2026-08-19 23:31 — L8 power analysis rerun COMPLETE (6d455bb); reproduces prior numbers; 7.51x speedup; both false-kill aggregations + stress-test instability unchanged; preparing advisor consultation
 - 2026-08-19 22:53 — local rerun authorized + running on Rebecca's executor (b139749, --full --workers 16)
