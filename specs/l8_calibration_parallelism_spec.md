@@ -1,8 +1,8 @@
-# L8 §8 Calibration Parallelism Specification v1 — Diagnostic Scheduling Optimization
+# L8 §8 Calibration Parallelism Specification v1.1 — Diagnostic Scheduling Optimization
 
 **Component:** M4 / L8 §8 power analysis (`diagnostics/l8_power_analysis.py`)
 **Author:** ARCHITECT
-**Status:** DRAFT v1 — pending CRITIC design review → Rebecca approval → TASK BUILDER implementation → CRITIC code review → Rebecca authorization
+**Status:** DRAFT v1.1 — pending CRITIC re-review (§4.1/§4.2 contradiction resolution) → Rebecca re-approval → TASK BUILDER implementation → CRITIC code review → Rebecca authorization
 **Date:** 2026-08-19 · **Regime:** B (post-Entry 81; constitution v1 + Amendments 1–2; §5 binding) (P4)
 **Base code SHA:** `7e296ec` on `taskbuilder/l8-power-analysis` (functional multiprocessing remediation, BF-MP-1 remediation baseline per Coordinator handoff). This spec branches from `7e296ec`; it does not modify the frozen L8 instantiation spec v2.2 (`c7d7bed` on `architect/l8-instantiation-v2.2-fresh`, cited as input source only). `7e296ec` and `c7d7bed` are divergent; they are not merged to produce this spec.
 **Sources:** `diagnostics/l8_power_analysis.py` at `7e296ec` `[Code-7e296ec]`; frozen L8 instantiation spec v2.2 at `c7d7bed` `[Spec-c7d7bed]`; CRITIC multiprocessing re-review at `cade0c5` `[Critic-cade0c5]`; constitution v2 §5 `docs/ARCHITECTURAL_CONSTITUTION_v2.md` `[Const-v2]`; Rebecca M3 GO ruling `docs/rulings/REBECCA_M3_GO.md` `[Ruling-M3-GO]`; Ruling 9 (candidate-blindness) Entry 76 `[Entry 76]`.
@@ -64,7 +64,7 @@ For each analysis (reference and each misspecified profile), the current code at
 - A **top-level, picklable** worker function named **`_worker_calibration`** wraps `calibrate_sigma_dose`. (Name is fixed; the TASK BUILDER may not choose an alternative.)
 - **Input record:** a tuple `(ordinal: int, alpha: float, v_mult: float)` where `ordinal` is the deterministic dispatch index over the canonical nested-loop order `(alpha in ALPHAS, v_mult in V_MULTS)`. The ordinal is a defensive identity field only; it does not feed any scientific computation.
 - **Output (success):** a JSON-serializable dict with exact keys `ordinal`, `alpha`, `v_mult`, `sigma_dose`, carrying the same identity plus the calibrated `sigma_dose` float. No alternative output shape is permitted.
-- **Exceptions:** the worker is a thin wrapper. It must NOT catch exceptions and must NOT convert them into usable partial results. Any exception from `calibrate_sigma_dose` propagates and is treated as a calibration failure (see §4.2). The worker returns no `sigma_dose` on failure.
+- **Exceptions (wrap-and-re-raise):** the worker is a thin wrapper. It MUST catch exceptions **only** around the call to `calibrate_sigma_dose(alpha, v_mult)` and **only** to re-raise a top-level, picklable **`CalibrationWorkerError`** carrying the failed task's identity and a sanitized error descriptor (see §4.2.1). It MUST NOT swallow the exception, MUST NOT return a result on failure, MUST NOT return `sigma_dose`, MUST NOT convert the exception into a usable calibration result, and MUST NOT retry. The re-raised `CalibrationWorkerError` propagates through `pool.map` to the parent and is treated as a calibration failure (see §4.2).
 
 ### 4.2 Failure semantics
 
@@ -72,7 +72,15 @@ For each analysis (reference and each misspecified profile), the current code at
 - **No retry.** O-14 forbids re-run-on-failure. No calibration or simulation may be retried after a failure.
 - **Discard completed results.** Already-completed calibration results are discarded; no partial calibration table may be constructed or used.
 - **No simulation after calibration failure.** No simulation work item may be built or dispatched after a calibration failure.
-- **Failure record.** A sanitized, machine-readable failure record with exact fields `{"phase": "calibration", "analysis_label": <reference|misspec:profile>, "ordinal": <int>, "alpha": <float>, "v_mult": <float>, "exception_type": <str>, "exception_message": <str>}` is written to the O-15 diagnostic log only. It is sanitized (no traceback, no private absolute paths, no hostnames/SIDs/PII), log-only, and must not be written into the artifact JSON schema.
+- **Failure record.** A sanitized, machine-readable failure record with exact fields `{"phase": "calibration", "analysis_label": <reference|misspec:profile>, "ordinal": <int>, "alpha": <float>, "v_mult": <float>, "exception_type": <str>, "exception_message": <str>}` is written to the O-15 diagnostic log only. The parent sources `ordinal`, `alpha`, `v_mult`, `exception_type`, and `exception_message` from the propagated `CalibrationWorkerError` object (see §4.2.1) — not from `repr(e)`, traceback text, or re-execution. It is sanitized (no traceback, no remote-worker traceback, no private absolute paths, no hostnames/SIDs/PII), log-only, and must not be written into the artifact JSON schema. The parent catches `CalibrationWorkerError` solely to emit this record and then terminate fail-closed (non-zero); it must not produce a calibration result, must not log traceback text, and must not retry or infer identity by re-execution.
+
+### 4.2.1 CalibrationWorkerError contract (exception identity channel)
+
+- **Class.** A top-level, picklable exception class named **`CalibrationWorkerError`** (name fixed; the TASK BUILDER may not choose an alternative) is the sole channel by which a failed calibration task's identity reaches the parent. It is raised by `_worker_calibration` (§4.1) and caught by the parent (§4.2).
+- **Constructor fields.** `CalibrationWorkerError(ordinal: int, alpha: float, v_mult: float, exception_type: str, exception_message: str)` — JSON-safe, sanitized fields only. `exception_type` is the original exception's class name; `exception_message` is a sanitized message string (no traceback, no private paths, no hostnames/SIDs/PII).
+- **Picklability.** The class and its fields MUST be picklable (Python multiprocessing serializes the exception object to propagate it from worker to parent). It MUST NOT carry non-picklable objects (e.g., numpy arrays, file handles, traceback objects).
+- **Sanitization source.** The parent MUST build the §4.2 failure record from the `CalibrationWorkerError` fields only — never from `repr(e)`, `str(e.__cause__)`, or traceback text, because multiprocessing may attach remote-worker traceback text that can contain private paths or identifiers.
+- **No inference by re-execution.** Identity is carried by the exception; the parent MUST NOT identify a failed task by re-running or probing work items (O-14).
 
 ### 4.3 Pool lifecycle
 
@@ -133,7 +141,7 @@ The TASK BUILDER's candidate redesign (`[Handoff]` §"candidate redesign") is **
 | # | TASK BUILDER proposal | Disposition |
 |---|---|---|
 | 1 | Build calibration work items in deterministic nested-loop order over `(alpha, v_mult)` | **Adopted.** Work items carry a deterministic `ordinal` (§4.1) for defensive identity validation. |
-| 2 | Execute one `calibrate_sigma_dose(alpha, v_mult)` call per work item in a multiprocessing pool | **Adopted.** Worker is top-level picklable; no exception catching; no partial result (§4.1, §4.2). |
+| 2 | Execute one `calibrate_sigma_dose(alpha, v_mult)` call per work item in a multiprocessing pool | **Adopted.** Worker is top-level picklable `_worker_calibration`; on failure it narrowly wraps the original exception and re-raises picklable `CalibrationWorkerError` carrying identity (§4.1, §4.2.1); no swallowing, no partial result (§4.2). |
 | 3 | Each worker returns an immutable record containing `alpha`, `v_mult`, `sigma_dose` | **Adopted.** Record also carries `ordinal` (§4.1). |
 | 4 | Collect with order-preserving `pool.map`; reconstruct lookup keyed by exact `(alpha, v_mult)` identity | **Adopted.** Plus mandatory exact-set-equality identity validation, fail-closed before simulation (§4.6). |
 | 5 | Build 240 simulation work items only after every calibration completes successfully | **Adopted.** Plus: separate calibration pool closed/joined before simulation pool; no nested pools locked (§4.3); no simulation after calibration failure (§4.2). |
@@ -150,7 +158,7 @@ The TASK BUILDER's candidate redesign (`[Handoff]` §"candidate redesign") is **
 The TASK BUILDER's recommended verification list is **adopted with modifications** (sharpened reproducibility standard; no scoring). All verification is O-15 diagnostic-only.
 
 1. **Dispatch-once / consume-once.** A unit test proving all 15 calibration identities are dispatched exactly once and consumed exactly once.
-2. **Fail-closed tests.** Tests for: a missing result, a duplicate identity, an unexpected identity, and a worker exception — each asserting fail-closed behavior and no partial calibration table and no simulation dispatch.
+2. **Fail-closed tests.** Tests for: a missing result, a duplicate identity, an unexpected identity, and a worker exception (raising `CalibrationWorkerError`) — each asserting the parent emits the exact §4.2 failure record with correct identity sourced from the exception, fails closed, discards all calibration results, and dispatches no simulation.
 3. **Single-vs-multi diagnostic.** A genuine single-vs-multi diagnostic using the actual consumed calibration table (not a vacuous comparison). The prior BF-MP-1 defect (worker outputs discarded, making the reproducibility test vacuous) must not recur (`[Critic-cade0c5]`).
 4. **Calibration value equality.** Exact Python `==` equality of all 15 `sigma_dose` values between `workers=1` and `workers=N` (§4.9a).
 5. **Artifact byte identity.** Byte-identical serialized artifact (post-`_sanitize_nan`, `indent=2`, `allow_nan=False`) between `workers=1` and `workers=N`, excluding `header.elapsed_seconds` (§4.9b).
