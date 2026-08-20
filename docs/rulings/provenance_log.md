@@ -2272,3 +2272,140 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Authorization boundary:** this entry memorializes the §2 construct-interpretation ruling. No spec revision, no implementation, no scoring authorized by this entry. The ARCHITECT spec v2 work is sequenced AFTER this ruling per the directive — it has not yet started.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). M4 GATE SIGNED — IMPLEMENTATION AUTHORIZED (scoring gated). Step 8 in progress: §2 construct-interpretation ruling issued (Entry 81); ARCHITECT spec v2 sequenced next per Principal directive.**
+
+## Entry 82 — L8 instantiation spec v2 → v2.1 → v2.2 (cross-family resolution + false-attestation discovery + init fix)
+
+**Date:** 2026-08-19 (spec lineage 2026-08-19; logged 2026-08-20 00:15 EDT) · **Actors:** ARCHITECT; fresh-context CRITIC; WORKFLOW COORDINATOR; Rebecca McClintic (Principal)
+
+- Following the §2 construct-interpretation ruling (Entry 81), the ARCHITECT produced the L8 instantiation spec v2 (closing XF-4–XF-9 per Sol's resolution conditions, plus riders XF-10/XF-11), then v2.1 (BF-XF5-1/BF-P3-1/BF-L19-1 remediation), then v2.2 (a P3 source-class sweep).
+
+- **False-attestation discovery (v2.2 P3 sweep):** the v2.2 sweep claimed 9/9 P3 fixes, but the diff showed 1/9. This is a documented false-attestation — the ARCHITECT's changelog attestation did not match the committed diff. Root cause: the ARCHITECT initialization lacked pre-commit verification obligations (verify each edit landed, inspect `git diff`, changelog tied to the diff).
+
+- **Init fix + fresh ARCHITECT test:** the ARCHITECT initialization (`state/role_initialization/ARCHITECT_INITIALIZATION.md`) was updated with pre-commit verification, diff self-inspection, and attestation-integrity obligations (PR #67, `8207a92`). A fresh ARCHITECT session with the same handoff + updated init produced a CLEAR (9/9 fixed, attestation true) — confirming the init fix works. The specify-vs-produce boundary held: the false attestation was caught by diff inspection, not by accepting the attestation.
+
+- **L8 instantiation spec v2.2 (FROZEN):** `c7d7bed6b259` on `architect/l8-instantiation-v2.2-fresh`. The frozen spec is the base for all subsequent L8 work. The false-attestation evidence (`45fd755` on `architect/l8-instantiation-v2`) is preserved and not built on.
+
+- **Preserved evidence:** INSTRUMENT FAILURE retained; seeds 201–203/301–303 never rerun (O-14); all locked bars intact; L3 pre-scoring gate preserved; O-14/O-15/seed custody/L15–L17 fence all preserved.
+
+- **Authorization boundary:** this entry memorializes the L8 spec v2→v2.2 lineage, the false-attestation discovery, and the init fix. No implementation, no scoring, no merge to main authorized by this entry beyond the spec branch. The false-attestation evidence is preserved, not erased (no-relabeling).
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). M4 GATE SIGNED — IMPLEMENTATION AUTHORIZED (scoring gated). Step 8 in progress: L8 instantiation spec v2.2 FROZEN (c7d7bed); §8 power analysis sequenced next per XF-9.**
+
+## Entry 83 — §8 power analysis: TASK BUILDER build + CRITIC review cycles + multiprocessing BLOCK
+
+**Date:** 2026-08-19 (build + reviews 2026-08-19; logged 2026-08-20 00:15 EDT) · **Actors:** TASK BUILDER; fresh-context CRITIC; ARCHITECT; WORKFLOW COORDINATOR; Rebecca McClintic (Principal)
+
+- The TASK BUILDER built the §8 power analysis code (`diagnostics/l8_power_analysis.py`) per XF-9: candidate-blind synthetic simulations (10,000 per parameter combination), the §2 XF-5 estimator, the 2D sensitivity map, the deterministic (C_min, η) selection, and the misspecification stress-test.
+
+- **CRITIC review cycle:** BLOCK (misspecified stress-test absent) → TASK BUILDER remediation (BF-IMPL-1 + NF-IMPL-1/2/3) → stress-test extension (full 2D sensitivity map + selection on misspecified profiles) → CRITIC CLEAR (`ad3a405`). Code at `cbe4dfb` on `taskbuilder/l8-power-analysis` (~1435 lines).
+
+- **Multiprocessing BLOCK (BF-MP-1):** the CRITIC BLOCKed the multiprocessing — worker results discarded, the reference not parallelized, a vacuous reproducibility check. This is a second false-attestation instance (the changelog claimed parallelism worked; the diff showed worker results were discarded).
+
+- **Local TASK BUILDER (frontier GPT) established:** Rebecca initialized a local frontier-GPT TASK BUILDER on her workstation. The local TASK BUILDER remediated the multiprocessing (BF-MP-1 fixed at `7e296ec`) and correctly routed a serial-calibration bottleneck as a specification request (10 design decisions) rather than implementing unauthorized — the specify-vs-produce boundary working correctly, the opposite of the false-attestation pattern.
+
+- **Two open findings flagged to Rebecca:** NF-IMPL-2 (which false-kill aggregation is the G3 input — 5-seed-mean or per-seed any-seed) and NF-IMPL-4 (partial stress-test).
+
+- **Preserved evidence:** INSTRUMENT FAILURE retained; seeds 201–203/301–303 never rerun (O-14); all locked bars intact; candidate-blindness (Ruling 9) preserved; O-14/O-15/seed custody/L15–L17 fence all preserved.
+
+- **Authorization boundary:** this entry memorializes the §8 power analysis build + review cycles + multiprocessing remediation. Diagnostic-only (O-15); no scoring, no seed exposure, no merge to main authorized by this entry.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). M4 GATE SIGNED — IMPLEMENTATION AUTHORIZED (scoring gated). Step 8 in progress: §8 power analysis code functional (7e296ec); sim run authorized next.**
+
+## Entry 84 — §8 simulation results (first run): selected (0.5, 0.2); 6.22% / 76.23% false-kill divergence; stress-test instability
+
+**Date:** 2026-08-19 (run completed 2026-08-19 20:35 EDT; logged 2026-08-20 00:15 EDT) · **Actors:** LOCAL EXECUTOR (Rebecca's workstation); WORKFLOW COORDINATOR; Rebecca McClintic (Principal)
+
+- The §8 power analysis ran locally (`python diagnostics/l8_power_analysis.py --full --stress-test-sims 2000`). Selected operating point: (C_min=0.5, η=0.2).
+
+- **Two false-kill aggregations diverge dramatically at the selected point:** 5-seed-mean false-kill 6.22% (below the 10% threshold — lenient) vs per-seed any-seed false-kill 76.23% (above 10% — G3 TRIGGERED). False-pass 2.57%; 0 instrument failures. Max-grid false-kill 43.22% (5-seed-mean) / 96.20% (any-seed). G3 escalation triggered under both aggregations.
+
+- **Stress-test instability:** the selected operating point (0.5, 0.2) did NOT generalize to misspecified profiles. Uniform selected (0.6, 0.2); bimodal selected (0.5, 0.1) — both UNSTABLE. This is a finding about test-design robustness (the operating point selected under the reference model is not robust to model misspecification) flagged for advisor consultation before G4.
+
+- **Write-order defect:** the artifact's JSON was written before the stress-test results were attached (the first artifact was incomplete). Flagged for fix.
+
+- **The calibration problem (NF-IMPL-2):** which false-kill aggregation is the G3-escalation input — the 5-seed-mean (decision-level, matches the scoring rule, 6.22%) or the per-seed any-seed (conservative, matches the scoring bar, 76.23%)? Rebecca to decide when she sees both numbers.
+
+- **Preserved evidence:** INSTRUMENT FAILURE retained; seeds 201–203/301–303 never rerun (O-14); all locked bars intact; candidate-blindness (Ruling 9) preserved; O-14/O-15/seed custody/L15–L17 fence all preserved.
+
+- **Authorization boundary:** this entry memorializes the §8 simulation results. Diagnostic-only (O-15); no scoring, no seed exposure, no merge to main authorized by this entry. The results are advisory inputs to Rebecca's G2–G5 gate rulings, not rulings.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). M4 GATE SIGNED — IMPLEMENTATION AUTHORIZED (scoring gated). Step 8 in progress: §8 sim complete; calibration parallelism + G2–G4 remediation sequenced.**
+
+## Entry 85 — Calibration parallelism: spec v1→v1.1→v1.2 + implementation (BF-MP-1 fixed) + CRITIC CLEAR
+
+**Date:** 2026-08-19 (spec + implementation 2026-08-19 21:42–22:46 EDT; logged 2026-08-20 00:15 EDT) · **Actors:** ARCHITECT; TASK BUILDER (local frontier GPT); fresh-context CRITIC; WORKFLOW COORDINATOR; Rebecca McClintic (Principal)
+
+- The local TASK BUILDER found a serial-calibration bottleneck (15 independent σ-dose calibrations run one-at-a-time) and correctly routed it as a specification request (10 design decisions) to the ARCHITECT — the specify-vs-produce boundary held.
+
+- **Spec v1 → v1.1 → v1.2 (three TASK BUILDER stops, three ARCHITECT resolutions):**
+  - v1 (`90d8835`): CRITIC spec-review CLEAR (10/10 design decisions resolved).
+  - TASK BUILDER stop 1: §4.1 (worker no-catch) vs §4.2 (failure-record identity) contradiction. ARCHITECT v1.1 (`b4419f9`): Option 1 — identity-carrying picklable `CalibrationWorkerError`. CRITIC CLEAR.
+  - TASK BUILDER stop 2: sanitization not deterministic; termination mechanism not named; identity-validation contract unspecified. ARCHITECT v1.2 (`6979378`): binding normative code + implementation-trace table + 14-point test contract. CRITIC CLEAR. All three failure-path gaps closed; the TASK BUILDER had nothing to invent.
+
+- **Implementation (b139749):** the TASK BUILDER implemented the v1.2 binding normative code (all six components: `CalibrationWorkerError`, `_worker_calibration`, `CalibrationIdentityError`, `_emit_calibration_failure`, `_validate_calibration_identities`, `_run_calibration_phase`). CRITIC implementation review CLEAR — verified against the actual diff (not the attestation): the BF-MP-1 defect (discarded worker results, vacuous reproducibility) is genuinely fixed; 15 σ_dose values byte-identical between workers=1 and workers=15; 10 genuine tests pass; multicore confirmed (16 processes, 62% CPU); protected logic byte-for-byte unchanged.
+
+- **The false-attestation pattern did not recur:** the CRITIC verified the TASK BUILDER's claims against the diff and results. The three TASK BUILDER stops (rather than implement an under-specified spec) prevented three false attestations.
+
+- **Preserved evidence:** INSTRUMENT FAILURE retained; seeds 201–203/301–303 never rerun (O-14); all locked bars intact; candidate-blindness (Ruling 9) preserved (exception channel carries only apparatus-parameter identity + fixed public-safe message); O-14 (no re-execution to discover failure identity); O-15 (diagnostic-only); O-14/O-15/seed custody/L15–L17 fence all preserved.
+
+- **Authorization boundary:** this entry memorializes the calibration parallelism spec + implementation. Diagnostic-only (O-15); no scoring, no seed exposure, no merge to main authorized by this entry. The implementation is at `b139749` on `taskbuilder/l8-power-analysis` (not merged to main).
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). M4 GATE SIGNED — IMPLEMENTATION AUTHORIZED (scoring gated). Step 8 in progress: calibration parallelism implemented + CRITIC-cleared; §8 rerun authorized next.**
+
+## Entry 86 — §8 power analysis rerun (complete artifact): 7.51x speedup; reproduces prior; both findings unchanged
+
+**Date:** 2026-08-19 (run completed 2026-08-19 23:31 EDT; logged 2026-08-20 00:15 EDT) · **Actors:** LOCAL EXECUTOR (Rebecca's workstation); WORKFLOW COORDINATOR; Rebecca McClintic (Principal)
+
+- The §8 power analysis reran locally with full parallelism (`python diagnostics/l8_power_analysis.py --full --workers 16 --stress-test-sims 2000`) on the calibration-parallel implementation (`b139749`).
+
+- **Artifact:** `diagnostics/l8_power_analysis_results.json` (297,936 bytes) at `6d455bb` on `taskbuilder/l8-power-analysis`. SHA-256 `978f21c061dbee40fe3dd6d80f8b4c5abec3e13ea9babf4c361b6ba34b5e4b21`. Write-order PASS (artifact complete; stress-test section present). Reproducibility: serial (workers=1) == parallel (workers=15) — 15 σ_dose byte-identical, artifact byte-identical excluding elapsed_seconds, downstream scientific equality PASS.
+
+- **Performance:** 7.51x speedup (22.63 min parallel vs 170.01 min serial); 16 workers + parent, 100% CPU.
+
+- **Results reproduce the prior run exactly (parallel implementation didn't change the science):** selected (0.5, 0.2); 5-seed-mean false-kill 6.22% (below 10%); per-seed any-seed false-kill 76.23% (above 10%, G3 TRIGGERED); false-pass 2.57%; 0 instrument failures. Both misspecified profiles UNSTABLE (uniform (0.6, 0.2); bimodal (0.5, 0.1)).
+
+- **Two key findings for advisor consultation (unchanged):** (1) the calibration problem (NF-IMPL-2): 5-seed-mean 6.22% vs any-seed 76.23% — which is the G3-escalation input? (2) the stress-test instability: the selected operating point doesn't generalize to misspecified profiles.
+
+- **Reference-point-under-misspecification discriminator (extracted for the advisor package):** under the 5-seed-mean aggregation, the reference point (0.5, 0.2) is robust (0% false-kill under both misspecified profiles) — the "instability" is selector lability in a flat landscape, not a robustness failure. Under the any-seed aggregation, the reference point is less robust (13.6%–22.3% any-seed FK under uniform). This couples NF-IMPL-2 and G4.
+
+- **Preserved evidence:** INSTRUMENT FAILURE retained; seeds 201–203/301–303 never rerun (O-14); all locked bars intact; candidate-blindness (Ruling 9) preserved; O-14/O-15/seed custody/L15–L17 fence all preserved.
+
+- **Authorization boundary:** this entry memorializes the §8 rerun + complete artifact custody. Diagnostic-only (O-15); no scoring, no seed exposure, no merge to main authorized by this entry. The artifact is an advisory input to Rebecca's G2–G5 gate rulings, not a ruling.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). M4 GATE SIGNED — IMPLEMENTATION AUTHORIZED (scoring gated). Step 8 in progress: §8 complete artifact in custody (6d455bb); G2–G4 remediation directed.**
+
+## Entry 87 — G2–G4 remediation direction (Rebecca): aggregation/battery-size entanglement + 7-item remediation
+
+**Date:** 2026-08-19 (direction issued 2026-08-19 23:42 EDT; logged 2026-08-20 00:15 EDT) · **Actor:** Rebecca McClintic (Principal directive)
+
+- Rebecca reviewed the advisor consultation package and directed a G2–G4 remediation cycle BEFORE any gate decision. G2–G4 NOT frozen. TASK BUILDER NOT released for final L8 scoring implementation. Protected seeds NOT exposed. 10,000-sim stress rerun NOT authorized (resolve aggregation + battery size first). G5 may proceed separately as verbatim-text ratification only. Authorization scope: design and diagnostic work only.
+
+- **The entanglement driving the direction:** the false-kill aggregation choice (5-seed-mean 6.22% vs any-seed 76.23%) and the battery size are entangled — if the verdict rule is any-seed-kills, 76.23% is unacceptable and a battery-size sweep is needed to bring it below 10% (preferably below 5%). The G4 robustness assessment depends on the NF-IMPL-2 aggregation choice (reference point robust under 5-seed-mean, less so under any-seed).
+
+- **7-item remediation (routed ARCHITECT → TASK BUILDER → fresh-context CRITIC → Rebecca):** (1) verify the exact scoring verdict rule (5-seed-mean vs all-seeds-independently-passing); align spec, harness, power-analysis estimand exactly; (2) designate the false-kill rate of the actual verdict rule as primary; retain the other as diagnostic — if any failed seed kills the run, 76.23% is unacceptable; (3) candidate-blind battery-size sweep: minimum queries/windows → operational false-kill below 10% (preferably below 5%); (4) recompute sensitivity map + selection only after aggregation + battery size frozen (design only — not run this cycle); (5) pre-registered equivalence/tie margin for statistically indistinguishable operating points; (6) INSTRUMENT FAILURE defined exclusively through independent apparatus-validity checks — no reclassification of per-seed statistical failures; (7) failure-injection tests + diagnostic rehearsal (incomplete output, corruption, nondeterminism, configuration mismatch, crash recovery).
+
+- **Consultation package corrected (4 items):** (a) MC uncertainty — more sims narrow the CI; the estimated rate does not necessarily increase; (b) aggregation descriptions corrected — both cell-level values are means across 15 per-combo rates (the prior any-seed description was wrong); (c) informative-classification reconciliation flagged (43.22% FK cell called "informative" — ARCHITECT resolves); (d) failure-injection tests routed to ARCHITECT → TASK BUILDER.
+
+- **Preserved evidence:** INSTRUMENT FAILURE retained; seeds 201–203/301–303 never rerun (O-14); all locked bars intact; candidate-blindness (Ruling 9) preserved; no-relabeling (no per-seed statistical failure reclassified as INSTRUMENT FAILURE); O-14/O-15/seed custody/L15–L17 fence all preserved.
+
+- **Authorization boundary:** this entry memorializes Rebecca's G2–G4 remediation direction. Design and diagnostic work only — no scoring, no seed exposure, no merger, no G2–G4 freeze/release, no 10,000-sim stress rerun authorized by this entry.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). M4 GATE SIGNED — IMPLEMENTATION AUTHORIZED (scoring gated). Step 8 in progress: G2–G4 remediation directed (7 items); ARCHITECT → TASK BUILDER → CRITIC → Rebecca.**
+
+## Entry 88 — L8 spec v2.4 (deterministic diagnostic contract): CRITIC-cleared; Rebecca approved diagnostic method + 2,000-rep screening authorized
+
+**Date:** 2026-08-20 (spec + reviews + approval 2026-08-20 00:06–00:11 EDT; logged 2026-08-20 00:15 EDT) · **Actors:** ARCHITECT; TASK BUILDER (local frontier GPT, stop); fresh-context CRITIC; WORKFLOW COORDINATOR; Rebecca McClintic (Principal approval)
+
+- The ARCHITECT produced the G2–G4 remediation design as L8 spec v2.3 (`2819bf7` on `architect/l8-g2g4-remediation`). The TASK BUILDER stopped (found the diagnostic contract under-specified — same pattern) and routed back to the ARCHITECT.
+
+- **v2.4 "Define deterministic L8 diagnostic contract" (`4463cbc` on `architect/l8-g2g4-remediation`):** the ARCHITECT resolved the stop with §8.9 — 7 subsections of binding normative code: (§8.9.1) complete trend-verdict algorithms (Spearman ρ, OLS β, bootstrap T=mean_s(β*_s) with stratum-level resampling, lower bound > 0 conjunction, per-seed 0.2 bar preserved); (§8.9.2) all-cell battery sweep (20 geometries × 240 cells, worst-cell Wilson acceptance conjunction < 0.10, preferred < 0.05); (§8.9.3) config/serialization/seed manifests (canonical JSON + SHA-256, candidate-blind synthetic seeds); (§8.9.4) output schemas + atomic publication; (§8.9.5) fault injection + exit contracts (20–23/1/70) + synthetic-only crash recovery; (§8.9.6) apparatus fixtures (32 known-answer) + 12-case rehearsal; (§8.9.7) exact TASK BUILDER routing (import b139749, 6d455bb read-only). The v2.3 TASK BUILDER handoff marked superseded.
+
+- **CRITIC spec review CLEAR:** all 7 subsections deterministic — the TASK BUILDER has nothing to invent. The bootstrap lower-bound > 0 does NOT replace the per-seed 0.2 bar (it's an additional conjunction predicate; the 0.2 bar remains per-seed). INSTRUMENT FAILURE is apparatus-validity-only (the six independent checks; per-seed statistical failures are ordinary predicate failures, NOT INSTRUMENT FAILURE — no-relabeling preserved). Bars preserved (≥3 doses, ρ≥0.8, slope≥0.2, specificity, 5 seeds). Candidate-blind, O-15, O-14, G2–G4 not frozen, no 10,000-rep, no stress rerun, no scoring, no merger.
+
+- **Rebecca approved the diagnostic method + authorized the 2,000-rep screening** (2026-08-20 00:11 EDT). The TASK BUILDER (local frontier GPT) implements §8.9 on `taskbuilder/l8-g2g4-diagnostic-remediation` + runs the 2,000-rep screening + 12-case rehearsal. NOT final L8 scoring, NOT 10,000-rep confirmation, NOT the deferred sensitivity/misspecification map.
+
+- **Preserved evidence:** INSTRUMENT FAILURE retained; seeds 201–203/301–303 never rerun (O-14); all locked bars intact (the bootstrap > 0 does NOT replace the per-seed 0.2 bar); candidate-blindness (Ruling 9) preserved (synthetic diagnostic seeds, no protected seeds); no-relabeling (no per-seed statistical failure reclassified as INSTRUMENT FAILURE); O-14/O-15/seed custody/L15–L17 fence all preserved.
+
+- **Authorization boundary:** this entry memorializes the L8 spec v2.4 + CRITIC clearance + Rebecca's approval of the diagnostic method + 2,000-rep screening authorization. Diagnostic-only (O-15); no scoring, no seed exposure, no merger, no G2–G4 freeze/release, no 10,000-rep confirmation authorized by this entry. All new mechanics are `[PROPOSED]` (cannot gate scoring unless Rebecca approves).
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). M4 GATE SIGNED — IMPLEMENTATION AUTHORIZED (scoring gated). Step 8 in progress: L8 spec v2.4 CRITIC-cleared + Rebecca-approved; TASK BUILDER implementing §8.9 + 2,000-rep screening.**
