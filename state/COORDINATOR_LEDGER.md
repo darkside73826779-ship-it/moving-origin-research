@@ -102,6 +102,7 @@ This hybrid (build sim on spec-text estimator, then verify against the harness's
 
 ## Handoff history (compact — current state overwrites prior; full history in provenance log + git log)
 
+- 2026-08-20 00:45 — CRITIC INIT fix MERGED (PR #92, edf7a78): binding commit-and-push obligation added (reviews must be in-repo on a critic/ branch, not attachments). One-time handoff sent to current CRITIC to commit its v2.5.1 review.
 - 2026-08-20 00:37 — v2.5 CRITIC BLOCK (P6 provenance pointers: L8 line 26→28, L14 line 40→42); ARCHITECT corrected to v2.5.1 (081df58); ball back to CRITIC re-review. v2.5 substance unchanged; screening still withdrawn.
 - 2026-08-20 00:29 — L8 spec v2.5 landed (5209f33, §8.10, 2nd STOP closed); 2,000-rep screening authorization WITHDRAWN pending feasibility gate (9.6M cell reps / up to 48B bootstrap replicates); CRITIC reviewing v2.5
 - 2026-08-20 00:26 — RECORDER+INTEGRATOR backlog catchup MERGED (PR #88, eead511): provenance Entries 82-88 + STATE.md reconciliation. Provenance log now through Entry 88; STATE.md current to v2.4 approval.
