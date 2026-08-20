@@ -46,9 +46,13 @@ When Rebecca says a role is complete (or any phrasing suggesting it — "archite
 If the ledger, STATE.md, or a return handoff doesn't tell you what to do next: STOP and ask Rebecca. Do not start digging through GitHub main, replaying conversation history, or launching subagents to explore — that is what burned the fresh coordinator's credits. The ledger + STATE.md + the return handoff should be sufficient; if they're not, the right move is to ask Rebecca for a routing instruction, not to reconstruct the state independently.
 
 ---
-## Current state — updated 2026-08-19 23:42 EDT (G2–G4 REMEDIATION directed; advisor package corrected; routing ARCHITECT → TASK BUILDER → CRITIC → Rebecca)
+## Current state — updated 2026-08-19 23:56 EDT (ARCHITECT remediation design COMPLETE at 2819bf7; TASK BUILDER implementing locally)
 
-**Ball:** ARCHITECT — Rebecca directed a G2–G4 remediation cycle BEFORE any gate decision. G2–G4 NOT frozen. TASK BUILDER NOT released for final L8 scoring implementation. Protected seeds NOT exposed. 10,000-sim stress rerun NOT authorized yet (resolve aggregation + battery size first). G5 may proceed separately as verbatim-text ratification only. Authorization scope: design and diagnostic work only — NOT scoring, NOT seed exposure, NOT merger.
+**Ball:** TASK BUILDER (local frontier GPT) — implementing the ARCHITECT's G2–G4 remediation design (L8 spec v2.3 at `2819bf7` on `architect/l8-g2g4-remediation`). The design amended `reviews/l8_crossfamily_review/06_l8_instantiation_spec.md` (v2.3) + changelog, and produced `handoffs/ARCHITECT_L8_G2G4_REMEDIATION_TASKBUILDER_HANDOFF.md`. Commit: "Specify L8 verdict-aligned battery remediation."
+
+**After TASK BUILDER:** fresh-context CRITIC implementation review → Rebecca (before any G2–G4 decision). The TASK BUILDER implements the battery-size sweep, failure-injection tests, and diagnostic rehearsal (Items 3, 7) — NOT the recompute (Item 4, design only) and NOT the 10,000-sim stress rerun.
+
+**Still held:** G2–G4 NOT frozen; protected seeds NOT exposed; 10,000-sim stress rerun NOT authorized; no scoring, no merger. Design and diagnostic work only.
 
 **The remediation (7 items, routed ARCHITECT → TASK BUILDER → fresh-context CRITIC → Rebecca):**
 1. Verify the exact scoring verdict rule (5-seed-mean vs all-seeds-independently-passing); align spec, harness, power-analysis estimand exactly.
@@ -98,6 +102,7 @@ This hybrid (build sim on spec-text estimator, then verify against the harness's
 
 ## Handoff history (compact — current state overwrites prior; full history in provenance log + git log)
 
+- 2026-08-19 23:56 — ARCHITECT remediation design COMPLETE (2819bf7 on architect/l8-g2g4-remediation); L8 spec v2.3 + changelog + TASK BUILDER handoff; TASK BUILDER implementing locally
 - 2026-08-19 23:42 — Rebecca directed G2–G4 remediation (7 items); G2–G4 NOT frozen; advisor package corrected; routing ARCHITECT → TASK BUILDER → CRITIC → Rebecca. No stress rerun, no scoring, no seed exposure.
 - 2026-08-19 23:31 — L8 power analysis rerun COMPLETE (6d455bb); reproduces prior numbers; 7.51x speedup; both false-kill aggregations + stress-test instability unchanged; preparing advisor consultation
 - 2026-08-19 22:53 — local rerun authorized + running on Rebecca's executor (b139749, --full --workers 16)
