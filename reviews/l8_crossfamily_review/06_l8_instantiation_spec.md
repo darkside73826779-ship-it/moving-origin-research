@@ -1,8 +1,8 @@
-# L8 INSTANTIATION SPECIFICATION v2.5.1 — Selective-Risk Homeostat (CRITIC Provenance Remediation)
+# L8 INSTANTIATION SPECIFICATION v2.6 — Selective-Risk Homeostat (Commit Identity and Benchmark Contract)
 
 **Component:** M4 / L8 (Stakes coupling) + L14 couplings
 **Author:** ARCHITECT (implementing Rebecca's advisor-session proposal per Entry 81 + Sol cross-family review XF-4–XF-9 resolution conditions)
-**Status:** DRAFT v2.5.1 — v2.5 substance unchanged; law-line provenance corrected; pending fresh-context CRITIC re-review → Rebecca approval → TASK BUILDER implementation/feasibility rehearsal; G2–G4 not frozen and screening not released
+**Status:** DRAFT v2.6 — Commit A identity and feasibility benchmark contract completed; pending fresh-context CRITIC → Rebecca approval → TASK BUILDER staged implementation/benchmark; G2–G4 not frozen and screening not released
 **Date:** 2026-08-20 · **Regime:** B (post-Entry 81; constitution v1 + Amendments 1–2; §5 binding) (P4)
 **Sources:** Entry 81 (narrowed claim) `[Entry 81]`; Sol cross-family review (XF-4–XF-9, XF-10–XF-11) `[Sol-XF-n]`; advisor proposal v2; CRITIC re-review CF1–CF3; `[LAW-L8]` `docs/ARCHITECTURAL_CONSTITUTION_v2.md` line 28; `[LAW-L14]` line 42; `[BAR-Entry 11]` M0 sheet; Ruling 3 + Ruling 9 (Entry 76) `[Entry 76]`
 **Standing constraints inherited:** O-14, O-15, §5 P1–P6, L19 pre-registration, Ruling 9 candidate-blindness. Nothing in this spec authorizes scoring, protected-seed exposure, the 10,000-simulation stress rerun, G2–G4 freeze, final L8 scoring implementation, or merger.
@@ -311,7 +311,7 @@ INSTRUMENT FAILURE means an independently demonstrated apparatus fault, never an
 
 - known-answer label and oracle checksum validation fails `[PROPOSED]`;
 - estimator validation on fixed synthetic fixtures fails its pre-registered expected-value/tolerance contract `[PROPOSED]`;
-- RNG reproducibility differs between serial and parallel execution after removal of the explicitly excluded timing field `[PROPOSED]`;
+- RNG reproducibility differs between two executions of the frozen parallel scoring path after removal of the explicitly excluded timing field `[PROPOSED]`;
 - the resolved configuration manifest or digest differs from the frozen aggregation, battery geometry, dose grid, seed manifest, or estimator version `[PROPOSED]`;
 - artifact integrity fails (schema, completeness, atomic-write checksum, or parse validation) `[PROPOSED]`; or
 - the pre-candidate synthetic dose/calibration apparatus fails its pre-registered convergence or potency validation `[PROPOSED]`.
@@ -324,7 +324,7 @@ Before CRITIC review, TASK BUILDER SHALL add genuine automated tests with assert
 
 1. **Incomplete output:** suppress a required section; assert schema failure, nonzero exit, no artifact promoted, and no success attestation. `[PROPOSED]`
 2. **Corruption/partial write:** inject malformed JSON and a truncated temporary file; assert parse/checksum failure and preservation of the last complete artifact through atomic temp-file-then-rename publication. `[PROPOSED]`
-3. **Nondeterminism:** run the same small synthetic fixture serially and in parallel; after removing only `elapsed_seconds`, assert byte-identical canonical JSON and identical resolved seeds. `[PROPOSED]`
+3. **Nondeterminism:** run the same small synthetic fixture twice through the frozen parallel scoring path; after removing only `elapsed_seconds`, assert byte-identical canonical JSON and identical resolved seeds. `[PROPOSED]`
 4. **Configuration mismatch:** separately alter aggregation, `W`, `N_w`, dose grid, and seed manifest; assert each digest mismatch fails closed before simulation begins. `[PROPOSED]`
 5. **Crash recovery:** inject calibration worker and identity failures; assert `CalibrationWorkerError`/`CalibrationIdentityError` route to exit code 1, no partial result table is published, no post-calibration simulation executes, and a later fresh diagnostic invocation starts from the frozen manifest rather than silently resuming partial state. `[PROPOSED]`
 
@@ -404,7 +404,7 @@ Independent checks use fixed synthetic fixtures committed under `tests/fixtures/
 
 Configuration mismatch tests mutate, one at a time, `aggregation`, `W`, `N_w`, dose levels, seed derivation, and estimator version after digest creation; each must raise `DiagnosticConfigMismatchError` before calibration or simulation. `[PROPOSED]` Artifact completeness uses every predicate in §8.9.4. Serial/parallel comparison canonicalizes complete small-fixture result objects after removing exactly the top-level `elapsed_seconds` field; byte equality, config digest equality, ordered seed-manifest equality, and checksum equality are required. `[PROPOSED]`
 
-The rehearsal artifact is `diagnostics/l8_g2g4/diagnostic_rehearsal.json` with sidecar `diagnostic_rehearsal.sha256`. `[PROPOSED]` Required fields are `schema_version`, `artifact_date`, `regime`, `design_sha`, `implementation_sha`, `config_digest`, `fixture_digests`, `overall_status`, and ordered `cases`. Each case contains exactly `case_id`, `injected_boundary`, `expected_exception`, `expected_exit_code`, `observed_exception`, `observed_exit_code`, `assertions`, `prior_artifact_digest`, `result_artifact_digest`, `preserved_files`, and `status`. `[PROPOSED]` Each `assertions` entry is exactly `{assertion_id,expected,observed,status}`; `preserved_files` is an ordered array of relative repository paths; digests are lowercase SHA-256 hex or JSON null when no artifact exists. Required `case_id` values are ordered as `incomplete_output`, `malformed_json`, `truncated_temp`, `serial_parallel`, `aggregation_mismatch`, `W_mismatch`, `N_w_mismatch`, `dose_grid_mismatch`, `seed_manifest_mismatch`, `estimator_version_mismatch`, `calibration_worker_crash`, and `calibration_identity_crash`. `[PROPOSED]` `overall_status="PASS"` only when every required case passes every assertion; otherwise it is `FAIL`. Publication follows §8.9.4.
+The rehearsal artifact is `diagnostics/l8_g2g4/diagnostic_rehearsal.json` with sidecar `diagnostic_rehearsal.sha256`. `[PROPOSED]` Required fields are `schema_version`, `artifact_date`, `regime`, `design_sha`, `implementation_sha`, `config_digest`, `fixture_digests`, `overall_status`, and ordered `cases`. Each case contains exactly `case_id`, `injected_boundary`, `expected_exception`, `expected_exit_code`, `observed_exception`, `observed_exit_code`, `assertions`, `prior_artifact_digest`, `result_artifact_digest`, `preserved_files`, and `status`. `[PROPOSED]` Each `assertions` entry is exactly `{assertion_id,expected,observed,status}`; `preserved_files` is an ordered array of relative repository paths; digests are lowercase SHA-256 hex or JSON null when no artifact exists. Required `case_id` values are ordered as `incomplete_output`, `malformed_json`, `truncated_temp`, `parallel_repeatability`, `aggregation_mismatch`, `W_mismatch`, `N_w_mismatch`, `dose_grid_mismatch`, `seed_manifest_mismatch`, `estimator_version_mismatch`, `calibration_worker_crash`, and `calibration_identity_crash`. `[PROPOSED]` `overall_status="PASS"` only when every required case passes every assertion; otherwise it is `FAIL`. Publication follows §8.9.4.
 
 #### 8.9.7 Repository routing
 
@@ -456,7 +456,7 @@ All six apparatus checks are run-level, not repetition-level:
 2. `estimator_fixtures`: immediately after oracle validation, run the fixed positive/zero fixtures and require their existing tolerances.
 3. `config_digest`: before calibration, schema-validate canonical bytes, recompute the config digest, and compare the sidecar and CLI-supplied expected digest.
 4. `dose_calibration`: before screening each geometry, complete and validate all 15 calibration entries under §8.10.4.
-5. `rng_reproducibility`: before full screening, execute the specified small serial/parallel fixture once and require canonical byte equality.
+5. `rng_reproducibility`: before full screening, execute the specified small fixture twice through the frozen parallel path and require canonical byte equality.
 6. `artifact_integrity`: after staging and before promotion, enforce every completeness/checksum predicate and re-read both staged files.
 
 Failure of checks 1–5 aborts the whole invocation before evidence publication; failure of check 6 aborts promotion and restores/preserves the prior pair. `[PROPOSED]` No published successful artifact may contain an apparatus-invalid repetition, so every published cell has `apparatus_invalid_count=0` and `valid_repetitions=attempted_repetitions`. `instrument_failure_count` is zero in published sweep evidence. Apparatus failures appear only in stderr and the rehearsal artifact. The `APPARATUS_INVALID` cell status is reserved for an in-memory aborted record used by tests; it cannot appear in promoted evidence. Ordinary undefined/statistical outcomes remain false kills, not apparatus failures.
@@ -473,7 +473,7 @@ Cache reuse requires schema validity, sidecar match, exact config/estimator/algo
 
 #### 8.10.5 Exact rehearsal fixtures and injection mapping
 
-`fixture_digests` is exactly `{known_answers_v1,estimator_positive_v1,estimator_zero_v1,serial_parallel_v1}`, each value lowercase SHA-256 hex. `[PROPOSED]`
+`fixture_digests` is exactly `{known_answers_v1,estimator_positive_v1,estimator_zero_v1,parallel_repeatability_v1}`, each value lowercase SHA-256 hex. `[PROPOSED]`
 
 The twelve rehearsal cases use the following fixed setup. Before each case, copy a committed valid small-fixture artifact pair into an isolated temporary directory as the prior pair; `prior_artifact_digest` is its JSON digest. Expected/observed scalar values are JSON strings, numbers, booleans, or null; compound values are canonical JSON strings. `preserved_files` lists relative paths in lexical order. `[PROPOSED]`
 
@@ -482,7 +482,7 @@ The twelve rehearsal cases use the following fixed setup. Before each case, copy
 | incomplete_output | hook `before_artifact_section` omits `finalists` | `schema_reject`, `no_promote`, `prior_pair_equal` | `DiagnosticSchemaError` / 20 | prior JSON+sidecar, failed temp |
 | malformed_json | hook `after_temp_write` replaces final byte with `{` | `parse_reject`, `no_promote`, `prior_pair_equal` | `DiagnosticSchemaError` / 20 | prior pair, failed temp |
 | truncated_temp | hook `after_temp_write` truncates at half length | `parse_reject`, `no_promote`, `prior_pair_equal` | `DiagnosticSchemaError` / 20 | prior pair, failed temp |
-| serial_parallel | hook `before_parallel_collect` reverses one result | `byte_mismatch`, `seed_order_mismatch`, `no_screen` | `DiagnosticNondeterminismError` / 23 | prior pair only |
+| parallel_repeatability | hook `before_parallel_collect` reverses one result in the second parallel execution | `byte_mismatch`, `seed_order_mismatch`, `no_screen` | `DiagnosticNondeterminismError` / 23 | prior pair only |
 | aggregation_mismatch | validator input mutates `aggregation.primary` after digest | `digest_mismatch`, `before_calibration` | `DiagnosticConfigMismatchError` / 22 | prior pair only |
 | W_mismatch | validator input mutates first geometry `W` after digest | `digest_mismatch`, `before_calibration` | same / 22 | prior pair only |
 | N_w_mismatch | validator input mutates first geometry `N_w` after digest | same IDs | same / 22 | prior pair only |
@@ -502,7 +502,7 @@ If any operation fails after either prior file moved or new JSON promoted, resto
 
 #### 8.10.7 Implementation/evidence commit lifecycle
 
-TASK BUILDER uses two commits. Commit A contains code, tests, fixtures, and frozen configuration but no generated screening/rehearsal evidence. `[PROPOSED]` After CRITIC verifies Commit A and Rebecca authorizes the permitted diagnostic run, evidence is generated with `implementation_sha` equal to Commit A's full SHA. Commit B contains only generated diagnostic evidence, manifests/sidecars, and the handoff; it does not modify implementation or configuration. `[PROPOSED]` Therefore artifacts never claim the SHA of their own containing commit. Any implementation/config change requires a new Commit A and invalidates prior evidence.
+The implementation/evidence lifecycle is defined exclusively by §8.11.1 (A1 implementation, A2 frozen configuration, then evidence). `[PROPOSED]`
 
 #### 8.10.8 Feasibility gate — screening authorization withdrawn pending benchmark
 
@@ -511,6 +511,66 @@ The full design entails 20 geometries × 240 cells × 2,000 repetitions = 9.6 mi
 Commit A must include a deterministic feasibility benchmark mode that runs **no scientific screening**: 10 repetitions at the three fixed cells `(alpha,v_mult,C_min,eta)={(0.0,0.5,0.5,0.01),(0.05,1.0,0.7,0.1),(0.2,2.0,0.8,0.2)}` for geometries `(W,N_w)=(50,4)` and `(400,64)`, with the full 5,000-valid-bootstrap verdict. `[PROPOSED]` Report wall time, CPU time, peak memory, bootstrap attempts, and deterministic extrapolations for the 9.6-million-repetition screen. This benchmark is O-15 synthetic diagnostic rehearsal, not battery evidence.
 
 Route the benchmark and implementation review to fresh-context CRITIC and Rebecca. Rebecca must then separately choose one of: authorize the full screen; approve an amended sequential/reduced design; or stop. `[PROPOSED — feasibility gate]` Until that ruling, TASK BUILDER may implement and test Commit A only; it may not execute the 2,000-repetition screen, create Commit B screening evidence, or describe screening as authorized.
+
+### 8.11 v2.6 Commit identity and parallel feasibility-benchmark contract
+
+This subsection supersedes conflicting lifecycle and benchmark text in §8.9.7, §8.10.5, §8.10.7, and §8.10.8. All mechanics are `[PROPOSED]` pending CRITIC review and Rebecca approval.
+
+#### 8.11.1 Non-self-referential commit lifecycle
+
+TASK BUILDER uses three stages:
+
+1. **Commit A1 — implementation:** code, tests, and fixtures only; no `resolved_config.json` and no generated evidence.
+2. **Commit A2 — frozen configuration:** adds `resolved_config.json` and its sidecar only. Its `implementation_sha` is Commit A1's full Git SHA; its `config_parent_sha` is also Commit A1's full SHA. Commit A2 makes no code/test/fixture change. `config_commit_sha` is not stored inside the config.
+3. **Commit B — evidence:** generated rehearsal/benchmark artifacts and handoff only. Every artifact stores `implementation_sha=A1`, `config_digest` from A2, and `config_source_sha=A2`. Commit B makes no implementation or configuration change.
+
+CRITIC verifies that `git diff A1..A2` contains only the frozen config pair and that `git diff A2..B` contains only authorized evidence/handoff files. Any implementation change after A1 or configuration change after A2 invalidates the evidence and requires new staged commits. `[PROPOSED]`
+
+#### 8.11.2 Parallelism parity — no serial benchmark or serial reproducibility pass
+
+Benchmark and reproducibility checks use the same multiprocessing contract intended for screening and scoring: `backend="multiprocessing.Pool"`, `start_method="spawn"`, `chunksize=1`, and `worker_count=min(32,logical_cpu_count)`, where `logical_cpu_count=os.cpu_count()` and a null or value below one is a configuration failure. `[PROPOSED]` The resolved integer is frozen in `resolved_config.parallelism={mode:"scoring-parity",backend:"multiprocessing.Pool",start_method:"spawn",chunksize:1,logical_cpu_count:<resolved>,worker_count:<resolved>}`. Screening and scoring must use that frozen worker count unless Rebecca approves a later amendment.
+
+No serial feasibility benchmark is run. The former cross-mode reproducibility check is superseded by **parallel repeatability**: execute the same small fixture twice through the frozen multiprocessing path and require byte-identical canonical results after removing exactly `elapsed_seconds`. `[PROPOSED]` The rehearsal `case_id` is `parallel_repeatability`; inject the mismatch at `before_parallel_collect` on the second parallel execution. All other assertions and exit 23 remain.
+
+#### 8.11.3 Benchmark inputs, RNG, and calibration timing
+
+The benchmark contains the six fixed cases formed by geometries `(50,4)` and `(400,64)` crossed with the three sentinel cells already specified in §8.10.8. Each case runs 10 complete five-seed repetitions, including up to 5,500 bootstrap attempts, through the frozen multiprocessing path. `[PROPOSED]`
+
+Benchmark simulation RNG namespace is `feasibility-benchmark`; identity is `{config_digest,W,N_w,alpha,v_mult,c_min,eta,repetition_index,seed_index}`. Bootstrap streams retain namespace `bootstrap` but add `run_mode:"feasibility-benchmark"` to their identity. Calibration RNG namespace is `feasibility-calibration`; identity is `{config_digest,W,N_w,alpha,v_mult,pilot_repetition_index,seed_index}`. `[PROPOSED]`
+
+Run six full, uncached geometry/nuisance calibrations—one for each benchmark case's `(W,N_w,alpha,v_mult)`—using §8.10.4. Calibration runs first and is timed/reported separately. Benchmark case timing excludes calibration and cache I/O but includes simulation, bootstrap, worker dispatch/collection, and result canonicalization. `[PROPOSED]` The six resulting sigma values are used only by their matching cases and are not promoted as the 300-entry screening cache.
+
+#### 8.11.4 Time and memory measurement
+
+Parent wall time uses `time.perf_counter_ns()` around the entire six-case parallel batch, including pool creation/destruction. `[PROPOSED]` Each worker returns `process_cpu_ns=time.process_time_ns(end)−time.process_time_ns(start)` for its assigned case. Parent CPU is measured by the same function around the batch. `total_process_tree_cpu_ns = parent_cpu_ns + sum(worker process_cpu_ns)`; no system-wide CPU time is used.
+
+Peak memory is sampled aggregate resident-set size (RSS), not Python allocation peak. A parent sampler polls every 10 milliseconds from immediately before pool creation through pool join, using `psutil.Process(parent_pid).memory_info().rss` plus RSS for all recursive live children, deduplicated by PID. `[PROPOSED]` `peak_aggregate_rss_bytes` is the maximum sampled sum; `memory_sampling_interval_ms=10`; missing/disappeared processes contribute zero only after a second lookup confirms they exited. The benchmark records `psutil_version` and platform string. Failure to sample is `DiagnosticSchemaError` exit 20; no estimate substitutes.
+
+#### 8.11.5 Deterministic extrapolation
+
+Each worker reports `case_service_wall_ns` around its ten repetitions. For case `i`, `service_seconds_per_repetition_i = case_service_wall_ns/(10×10^9)`. `[PROPOSED]` Let `s_max=max_i(service_seconds_per_repetition_i)`, `s_mean=mean_i(...)`, `B=parent_batch_wall_seconds`, `S=sum_i(case_service_wall_seconds)`, and `P=resolved worker_count`. Define observed parallel efficiency `E=min(1,S/(P×B))`; if `E≤0`, the benchmark fails schema validation.
+
+Primary conservative screening projection is `projected_screen_wall_seconds = (9,600,000×s_max)/(P×E)`. `[PROPOSED]` Diagnostic central projection replaces `s_max` with `s_mean`. Calibration projection uses the six measured full-calibration service times: `projected_calibration_wall_seconds=(300×max_calibration_service_seconds)/(P×E)`. Total conservative projection is the sum of screening and calibration projections. No geometry weighting, six-case raw mean, or alternative extrapolation may be substituted.
+
+#### 8.11.6 Exact benchmark artifact
+
+Publish `diagnostics/l8_g2g4/feasibility_benchmark.json` with sidecar `feasibility_benchmark.sha256`. `[PROPOSED]` It uses §8.9.3 canonical JSON, SHA-256 sidecar format, schema/unknown-field rejection, and the transactional pair publication/restore rules of §8.10.6.
+
+Top-level fields are exactly `{schema_version,artifact_date,regime,design_sha,implementation_sha,config_source_sha,config_digest,estimator_version,status,parallelism,calibration_cases,benchmark_cases,measurements,extrapolations,prohibitions}` with `schema_version="l8-g2g4-feasibility-v1"` and `status` exactly `COMPLETE` or `ABORTED`; only `COMPLETE` is promoted. `[PROPOSED]`
+
+- `artifact_date` is UTC `YYYY-MM-DD`; `regime` is the exact string from the approved spec header; SHA fields are 40-lowercase-hex; digests are 64-lowercase-hex.
+- `parallelism` is exactly the frozen object from §8.11.2 plus `{parallel_repeatability_status}`.
+- Each of six ordered `calibration_cases` is exactly `{case_id,W,N_w,alpha,v_mult,sigma_dose,termination,iterations,service_wall_ns,process_cpu_ns,status}`.
+- Each of six ordered `benchmark_cases` is exactly `{case_id,W,N_w,alpha,v_mult,c_min,eta,repetitions,valid_bootstrap_replicates,max_bootstrap_attempts,case_service_wall_ns,process_cpu_ns,service_seconds_per_repetition,status}`.
+- `measurements={parent_batch_wall_ns,parent_cpu_ns,total_process_tree_cpu_ns,peak_aggregate_rss_bytes,memory_sampling_interval_ms,psutil_version,platform}`.
+- `extrapolations={s_max_seconds_per_repetition,s_mean_seconds_per_repetition,parallel_efficiency,projected_screen_wall_seconds_conservative,projected_screen_wall_seconds_central,projected_calibration_wall_seconds,projected_total_wall_seconds_conservative}`.
+- `prohibitions` is the exact ordered array from §8.10.2 plus `"no-screening-from-benchmark-approval"` as its final element.
+
+All six calibration cases and six benchmark cases must be `PASS`; parallel repeatability must be `PASS`; all counts/coordinates must match the frozen config; formulas must recompute within `1e-12` relative tolerance; timing integers must be positive; memory must be positive; unknown fields fail. `[PROPOSED]`
+
+#### 8.11.7 Authorization boundary
+
+Rebecca's approval of v2.6 authorizes A1/A2 implementation, tests, failure rehearsal, two parallel-repeatability fixture executions, six uncached calibrations, and the six-case parallel feasibility benchmark only. `[PROPOSED]` It does not authorize the 2,000-repetition screen, Commit B screening evidence, 10,000 confirmation, sensitivity/misspecification work, scoring, or protected seeds. Benchmark results return through fresh-context CRITIC to Rebecca for the separate workload ruling.
 
 ---
 
@@ -552,10 +612,10 @@ L8 and L10 share components (mirror, abstention) and run **separate batteries** 
 
 1. ARCHITECT v2.5 determinism/feasibility amendment and changelog committed; no computation.
 2. Fresh-context CRITIC reviews v2.5, beginning with §5 P1–P6 compliance, §8.10 determinism, and workload feasibility.
-3. Rebecca decides whether to approve Commit A implementation plus the fixed feasibility benchmark. The 2,000-repetition screen is not authorized at this step.
-4. If authorized, TASK BUILDER produces Commit A, tests it, and runs only the fixed feasibility benchmark; no screening evidence or Commit B.
-5. Fresh-context CRITIC reviews Commit A, tests, failure rehearsal, and benchmark. Rebecca then decides whether to authorize the full screen, amend/reduce it, or stop.
-6. Only if separately authorized, TASK BUILDER runs screening and produces Commit B evidence; fresh-context CRITIC reviews it. Return design, screening analysis, and CRITIC ruling to Rebecca. Only Rebecca may freeze aggregation or battery size or decide G2/G3.
+3. Rebecca decides whether to approve Commit A1 implementation, Commit A2 frozen configuration, and the fixed parallel feasibility benchmark. The 2,000-repetition screen is not authorized at this step.
+4. If authorized, TASK BUILDER produces A1/A2, tests them, and runs only the fixed parallel benchmark/rehearsal evidence commit; no screening evidence.
+5. Fresh-context CRITIC reviews A1/A2, tests, failure rehearsal, parallel repeatability, and benchmark. Rebecca then decides whether to authorize the full screen, amend/reduce it, or stop.
+6. Only if separately authorized, TASK BUILDER runs screening and produces a separate screening-evidence commit; fresh-context CRITIC reviews it. Return design, screening analysis, and CRITIC ruling to Rebecca. Only Rebecca may freeze aggregation or battery size or decide G2/G3.
 7. After Rebecca freezes aggregation and battery geometry, TASK BUILDER recomputes the sensitivity and misspecification maps under §8.3–§8.5; fresh-context CRITIC reviews; Rebecca alone decides G4.
 8. §4 L7/L10 reconciliation check documented; any delta triggers a review cycle.
 9. Pre-registration freeze (L19): all `[PROPOSED]` values resolved, appendix committed, hash-attested.

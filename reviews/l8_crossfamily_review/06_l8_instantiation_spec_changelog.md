@@ -2,8 +2,23 @@
 
 **Spec:** `reviews/l8_crossfamily_review/06_l8_instantiation_spec.md`
 **Date:** 2026-08-20 · **Author:** ARCHITECT
-**Branch:** `architect/l8-g2g4-remediation` (v2.5.1/v2.5/v2.4/v2.3); `architect/l8-instantiation-v2.2-fresh` (v2.2); v2.1/v2 on `architect/l8-instantiation-v2`
+**Branch:** `architect/l8-g2g4-remediation` (v2.6/v2.5.1/v2.5/v2.4/v2.3); `architect/l8-instantiation-v2.2-fresh` (v2.2); v2.1/v2 on `architect/l8-instantiation-v2`
 **Regime:** B (post-Entry 81; constitution v1 + Amendments 1–2; §5 binding) (P4)
+
+---
+
+## v2.6 — Commit identity and parallel benchmark contract (2026-08-20)
+
+**Base:** `081df58131d880e2a1180ef508c35467415f07e4`. **Gate served:** Commit A implementation plus feasibility-benchmark specification.
+
+- Replaced impossible self-referential Commit A with A1 implementation → A2 frozen configuration → evidence commit. Artifacts identify A1 and A2 without containing their own commit SHA. `[PROPOSED]`
+- Defined `feasibility_benchmark.json`, sidecar, exact nested schemas, fixed statuses/prohibitions, validation, canonicalization, and transactional publication. `[PROPOSED]`
+- Preserved parallel/scoring-path parity: multiprocessing pool, spawn, chunksize one, frozen `min(32,logical_cpu_count)` worker rule. No serial benchmark is required. `[PROPOSED]`
+- Replaced serial-versus-parallel validation with two-run parallel repeatability on the scoring-parity path. `[PROPOSED]`
+- Defined benchmark/calibration RNG identities, six uncached calibrations, calibration timing separation, parent/worker CPU accounting, 10 ms aggregate process-tree RSS sampling, and exact conservative/central extrapolation formulas. `[PROPOSED]`
+- Kept the full 2,000-repetition screen withdrawn pending benchmark evidence, fresh-context CRITIC review, and a separate Rebecca ruling.
+
+No implementation, calibration, repeatability run, benchmark, screening, scoring, protected-seed exposure, G2–G4 ruling, or merge occurred. Locked bars remain unchanged. `[BAR-Entry 11]` `[BAR-Entry 11.3]`
 
 ---
 

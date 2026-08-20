@@ -1,5 +1,7 @@
 # ARCHITECT → Fresh-Context CRITIC Re-review — L8 G2–G4 v2.5.1
 
+> **SUPERSEDED:** TASK BUILDER identified Commit A and benchmark-contract gaps after v2.5.1. Review v2.6 and its dedicated handoff. This handoff authorizes nothing.
+
 **Date:** 2026-08-20 · **Regime:** B (constitution v2 §5 binding)
 
 **Gate served:** Provenance-citation remediation before Rebecca receives the deterministic/feasibility design
