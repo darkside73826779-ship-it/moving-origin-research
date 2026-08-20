@@ -1,11 +1,11 @@
-# L8 INSTANTIATION SPECIFICATION v2.2 — Selective-Risk Homeostat (Narrowed Claim)
+# L8 INSTANTIATION SPECIFICATION v2.3 — Selective-Risk Homeostat (G2–G4 Remediation)
 
 **Component:** M4 / L8 (Stakes coupling) + L14 couplings
 **Author:** ARCHITECT (implementing Rebecca's advisor-session proposal per Entry 81 + Sol cross-family review XF-4–XF-9 resolution conditions)
-**Status:** DRAFT v2.2 — pending fresh-context CRITIC review → Principal gate → pre-registration freeze → TASK BUILDER release
+**Status:** DRAFT v2.3 — remediation design only; pending TASK BUILDER diagnostic implementation → fresh-context CRITIC → Rebecca; G2–G4 not frozen and scoring implementation not released
 **Date:** 2026-08-19 · **Regime:** B (post-Entry 81; constitution v1 + Amendments 1–2; §5 binding) (P4)
 **Sources:** Entry 81 (narrowed claim) `[Entry 81]`; Sol cross-family review (XF-4–XF-9, XF-10–XF-11) `[Sol-XF-n]`; advisor proposal v2; CRITIC re-review CF1–CF3; `[LAW-L8]` constitution line 26; `[LAW-L14]` line 40; `[BAR-Entry 11]` M0 sheet; Ruling 3 + Ruling 9 (Entry 76) `[Entry 76]`
-**Standing constraints inherited:** O-14, O-15, §5 P1–P6, L19 pre-registration, Ruling 9 candidate-blindness. Nothing in this spec authorizes scoring.
+**Standing constraints inherited:** O-14, O-15, §5 P1–P6, L19 pre-registration, Ruling 9 candidate-blindness. Nothing in this spec authorizes scoring, protected-seed exposure, the 10,000-simulation stress rerun, G2–G4 freeze, final L8 scoring implementation, or merger.
 
 ---
 
@@ -78,7 +78,7 @@ The standardized slope is computed per seed as a linear regression of D on dose,
 
 **Standardized slope:** `β*_s = β_s / σ_pool,s`
 
-**Zero-variance behavior:** If `σ_pool,s = 0` (all windows within each dose produce identical d), the standardized slope is undefined. This outcome is **INSTRUMENT_FAILURE** (the battery produced no within-dose variation — the apparatus is not generating meaningful measurements). `[Sol-XF-5]`
+**Zero-variance behavior (v2.3 correction):** If `σ_pool,s = 0` in an ordinary candidate or control observation, `β*_s` is undefined and that seed does not clear the trend verdict; it is an ordinary statistical FAIL, not INSTRUMENT FAILURE. INSTRUMENT FAILURE is available only when an independent apparatus-validity check in §8.6 demonstrates a fault. `[PROPOSED — remediation operationalization]`
 
 **Bootstrap resampling unit:** The bootstrap CI (§2 inferential policy) resamples **window-level deviations** (d_{s,ℓ,w}) with `N_w × L = 4 × 4 = 16` observations per seed as the resampling unit. The bootstrap resamples the 16 window-level deviations within each seed, recomputes D̄ per dose, then recomputes β*.
 
@@ -149,7 +149,7 @@ The per-window outcome-feedback channel is a **harness-provided environment feat
 
 5. **Monotonicity tolerance:** violations of strict monotonicity up to `δ_mono = 0.005` are tolerated (within numerical noise). Violations exceeding `δ_mono` trigger: `[Sol-XF-8]` `[PROPOSED — apparatus parameter]`
 
-6. **Disposition on violation:** If the calibration metric fails monotonicity or minimum potency, the outcome is **INSTRUMENT_FAILURE** (the dose manipulation did not produce a valid degradation — the apparatus cannot test the dose-response). This is an apparatus failure, not a candidate failure, because the dose mechanism is harness-controlled and candidate-blind. `[Sol-XF-8]`
+6. **Disposition on independent pre-candidate validation:** If the synthetic-reference calibration metric fails monotonicity or minimum potency before any candidate/control observation, the independent apparatus check fails and the outcome is **INSTRUMENT FAILURE**. The same statistical pattern in an ordinary seed is not reclassified and follows §8.6. `[PROPOSED — v2.3 clarification of Sol-XF-8]`
 
 7. **No candidate-output tuning:** Doses are never tuned from candidate outputs. The `σ_ℓ` values are fixed from v_ref and frozen before scoring. `[Sol-XF-8]` `[Entry 76]`
 
@@ -164,7 +164,7 @@ Per Entry 81, the specificity test is expanded from one control to a **pre-regis
 **Component:** the memory store (world-mapping vs self-mapping contrast per the law's Damasio/Seth lineage — now demoted to motivation per Entry 81).
 **Perturbation:** seeded corruption of retrieved content at severity-matched doses. Severity matching per Ruling 3: memory dose at level ℓ is matched to mirror dose ℓ by **equal standardized effect on the component's own output** — retrieval-fidelity degradation on oracle-answerable queries, standardized by its Level-0 SD from synthetic profiles. Matching tolerance: `[PROPOSED]` ±0.25 standardized units, pre-registered. `[Entry 76]`
 
-**Potency bar (BF5 — mandatory):** at every level ℓ ≥ 1, the matched memory dose must degrade raw retrieval fidelity by ≥ `[PROPOSED]` 0.5 standardized units. A specificity arm whose perturbation fails potency is **INSTRUMENT_FAILURE** (the control never bit; flatness is uninterpretable).
+**Potency bar (BF5 — mandatory):** at every level ℓ ≥ 1, the matched memory dose must degrade raw retrieval fidelity by ≥ `[PROPOSED]` 0.5 standardized units. Failure on an independent pre-candidate synthetic apparatus fixture is INSTRUMENT FAILURE; failure in an ordinary arm/seed is a statistical FAIL and is not reclassified. `[PROPOSED — v2.3 disposition]`
 
 ### §6.2 Feedback-channel perturbation (new control, per Entry 81)
 
@@ -173,7 +173,7 @@ Per Entry 81, the specificity test is expanded from one control to a **pre-regis
 
 **Rationale (Entry 81):** If the regulation error rises specifically when the self-model (not the feedback channel) is degraded, then corrupting feedback should NOT produce a dose-dependent rise in regulation error. This control tests whether the homeostat responds to self-model quality specifically or to any information-channel degradation.
 
-**Potency bar:** at every level ℓ ≥ 1, the feedback corruption must produce a measurable effect on the system's threshold adaptation: mean |τ_drift_ℓ| ≥ 0.02 (threshold drift exceeding 0.02 in absolute value across windows at dose ℓ). `[PROPOSED — apparatus parameter]` `[LAW-L19]` A feedback arm whose perturbation fails potency is **INSTRUMENT_FAILURE** (the control never bit; flatness is uninterpretable).
+**Potency bar:** at every level ℓ ≥ 1, the feedback corruption must produce a measurable effect on the system's threshold adaptation: mean |τ_drift_ℓ| ≥ 0.02 (threshold drift exceeding 0.02 in absolute value across windows at dose ℓ). `[PROPOSED — apparatus parameter]` `[LAW-L19]` Failure on an independent pre-candidate synthetic apparatus fixture is INSTRUMENT FAILURE; ordinary arm/seed failure is statistical FAIL. `[PROPOSED — v2.3 disposition]`
 
 ### §6.3 Task-difficulty shift (new control, per Entry 81)
 
@@ -182,7 +182,7 @@ Per Entry 81, the specificity test is expanded from one control to a **pre-regis
 
 **Rationale (Entry 81):** If the regulation error rises specifically when the self-model is degraded, then merely making the task harder should NOT produce a dose-dependent rise in regulation error that matches the self-model arm's pattern. Harder tasks may raise absolute error rates, but the *regulation* (deviation from R*) should not show the same dose-dependent trend as self-model degradation.
 
-**Potency bar:** at every level ℓ ≥ 1, the task-difficulty shift must produce a measurable change in baseline difficulty: oracle accuracy on the battery drops by ≥ 0.05 (5 percentage points) relative to Level 0. `[PROPOSED — apparatus parameter]` `[LAW-L19]` A task-difficulty arm whose perturbation fails potency is **INSTRUMENT_FAILURE** (the control never bit; flatness is uninterpretable).
+**Potency bar:** at every level ℓ ≥ 1, the task-difficulty shift must produce a measurable change in baseline difficulty: oracle accuracy on the battery drops by ≥ 0.05 (5 percentage points) relative to Level 0. `[PROPOSED — apparatus parameter]` `[LAW-L19]` Failure on an independent pre-candidate synthetic apparatus fixture is INSTRUMENT FAILURE; ordinary arm/seed failure is statistical FAIL. `[PROPOSED — v2.3 disposition]`
 
 ### XF-6 resolution — Specificity estimand, interval, conjunction for PASS
 
@@ -198,7 +198,7 @@ Per Entry 81, the specificity test is expanded from one control to a **pre-regis
 
 **Interval method:** pooled paired-bootstrap (5,000 resamples, seed-level pairing), 95% CI, two-sided. `[PROPOSED — apparatus parameter]`
 
-**Missing/degenerate cases:** If a control arm's `σ_pool,s = 0` (undefined slope), that control arm's specificity check is INSTRUMENT_FAILURE for that seed (the control arm produced no variation). `[Sol-XF-6]`
+**Missing/degenerate cases (v2.3 correction):** If a control arm's `σ_pool,s = 0`, that seed fails the applicable statistical condition. It is not INSTRUMENT FAILURE absent an independently established §8.6 apparatus fault. `[PROPOSED — remediation operationalization]`
 
 **Complete conjunction for PASS:** All three conditions must hold:
 1. `Δβ_s > 0` for all 5 seeds, for each of the three control arms
@@ -249,45 +249,90 @@ where `Cov = (# answered queries in window) / W`.
 
 ---
 
-## §8 Power analysis and sensitivity map — protocol and selection rule (XF-9 closure)
+## §8 G2–G4 remediation protocol — verdict alignment, battery sweep, and deferred selection
 
-### XF-9 resolution — Pre-registered simulation protocol and deterministic selection rule
+### 8.1 Exact L8 trend verdict and primary estimand
 
-**v1 defect:** The power analysis and sensitivity map were promised but not yet a reproducible decision procedure — no synthetic data-generating family, effect-size target, nuisance ranges, simulation count, seeds, or selection rule.
+The governing verdict is **all-seeds independently passing, plus the pooled interval condition**; it is not a five-seed-mean threshold. Entry 11.3 states “Seeds raised to 5 for L7, L8, L15, with the all-seeds-direction + bootstrap-CI fallback.” `[BAR-Entry 11.3]` The committed M4 specification and task specification implement this as a KILL when the dose-response is non-monotonic on any seed and require all-seed direction. The L8 v2.2 statement that the locked Spearman and standardized-slope bars run “per seed” remains controlling. `[BAR-Entry 11]` `[BAR-Entry 11.3]`
 
-**v2 protocol (XF-9 closure):** The spec defines the protocol; the artifacts themselves are produced in item 5 of the Principal's directive (after CRITIC clearance of spec v2.2).
+For every simulated five-seed run, the harness and power analysis SHALL execute the same complete trend predicate used by scoring:
 
-**1. Synthetic data-generating family:**
-- **Mirror profiles:** synthetic confidence profiles with known miscalibration properties. Profile P(α, v) generates per-query confidences with calibration error α (systematic bias) and variance v (logit-space). `[Sol-XF-9]`
-- **Task profiles:** synthetic query-answer pairs with known oracle correctness and variable difficulty. `[Sol-XF-9]`
+1. compute `ρ_s` and `β*_s` separately for each of the five seeds;
+2. require `ρ_s ≥ 0.8` for every seed `[BAR-Entry 11]`;
+3. require `β*_s ≥ 0.2` for every seed `[BAR-Entry 11]`;
+4. require positive dose-response direction on every seed and the pre-registered pooled bootstrap interval condition from Entry 11.3 `[BAR-Entry 11.3]`; and
+5. count the simulated run as a false kill if any required trend predicate fails while the synthetic ground truth satisfies the pre-registered positive-effect profile. `[PROPOSED — power-analysis estimand]`
 
-- Effect-size target (§8): β* ≥ 0.2 (locked bar) `[BAR-Entry 11]`. The power analysis computes the false-kill probability: P(β*_estimated < 0.2 | true β* = 0.3) `[PROPOSED — apparatus parameter]` at W=50 queries/window, N_w=4 windows/dose, 5 seeds. If false-kill probability exceeds `[PROPOSED]` 0.10, battery size escalates to G3. `[Sol-XF-9]`
+The **primary false-kill rate** is `number of valid simulated five-seed runs failing that complete verdict / number of valid simulated five-seed runs`. `[PROPOSED — G3 operating criterion]` The former five-seed-mean measure is retained as `diagnostic_false_kill_rate_mean_beta` and may not gate battery size or selection. `[PROPOSED — diagnostic only]`
 
-**3. Parameter grid:**
-- `α ∈ {0.0, 0.02, 0.05, 0.1, 0.2}` (calibration error levels)
-- `v ∈ {0.5, 1.0, 2.0} × v_ref` (matching dose levels)
-- `C_min ∈ {0.5, 0.6, 0.7, 0.8}` (coverage floor)
-- `η ∈ {0.01, 0.05, 0.1, 0.2}` (controller gain)
-`[Sol-XF-9]` `[PROPOSED — apparatus parameters]`
+The existing artifact's labels are corrected as follows: for each `(α,v,C_min,η)` combination, `false_kill_rate` is the fraction of repetitions whose mean `β*` across five seeds is below 0.2; `false_kill_rate_per_seed` is the fraction whose five-seed vector contains at least one `β*_s < 0.2`. A sensitivity-map cell is the arithmetic mean of the 15 corresponding per-combination rates across the five `α` values and three `v` multipliers. Thus the selected cell's reported 6.22% and 76.23% are both means across 15 decision-level rates; neither is a fraction of parameter combinations. The 76.23% measure is closer to the governing aggregation but remains incomplete because it omits `ρ` and the pooled interval. `[PROPOSED — verified diagnostic description]`
 
-**4. Number of simulations:** 10,000 per parameter combination, with deterministic seeds (seed = hash(parameter_combo) mod 2^31). `[Sol-XF-9]` `[PROPOSED — apparatus parameter]`
+### 8.2 Candidate-blind battery-size sweep
 
-**5. Estimator:** the identical β* estimator from §2 XF-5 (same code, same standardization, same zero-variance behavior). `[Sol-XF-9]`
+The TASK BUILDER SHALL implement a synthetic/oracle-only sweep. Candidate outputs, candidate diagnostic seeds 101–105, protected seeds, and prior candidate results are forbidden inputs. `[OP-Entry 76]` (Ruling 9) All runs are O-15 diagnostic-only and cannot alter or excuse any prior result. `[BAR-Entry 52]` (O-14)
 
-**6. False-kill calculation:** fraction of simulations where `β*_estimated < 0.2` when `true β* ≥ 0.3` `[PROPOSED — apparatus parameter]`, across the parameter grid. `[Sol-XF-9]`
+The locked dose requirement is preserved: four levels `{0,1,2,3}` remain; the sweep SHALL NOT reduce the number of noise doses below the locked minimum of three. `[BAR-Entry 11]`
 
-**7. Sensitivity map:** two-dimensional map over (C_min, η) showing: (a) abstention-escape region (flat curve — false kill), (b) trivial-pass region (any noise moves risk — vacuous pass), (c) informative region. `[Sol-XF-9]`
+Sweep geometry (all values proposed apparatus parameters):
 
-**8. Deterministic selection rule for (C_min, η):** From the sensitivity map, select the (C_min, η) pair that:
-- Is in the informative region (neither abstention-escape nor trivial-pass)
-- Maximizes the minimum distance to region boundaries (most robust operating point)
-- If multiple pairs tie, select the one with highest C_min (strongest coverage requirement)
-- If still tied, select the one with lowest η (most conservative controller)
-`[Sol-XF-9]`
+- queries per window `W ∈ {50, 100, 200, 400}` `[PROPOSED]`;
+- windows per dose `N_w ∈ {4, 8, 16, 32, 64}` `[PROPOSED]`;
+- evaluate the Cartesian product, ordered by total queries per dose `Q = W × N_w`, then by larger `N_w`, then by smaller `W` `[PROPOSED]`;
+- retain the v2.2 synthetic reference family, nuisance grid, five-seed grouping, identical estimator, and deterministic combo-derived simulation seeds `[PROPOSED]`; and
+- use a staged Monte Carlo budget of 2,000 repetitions per combination for screening and 10,000 repetitions only for finalist geometries after aggregation is CRITIC-verified `[PROPOSED]`. This finalist confirmation is not the prohibited full sensitivity/misspecification stress rerun.
 
-**9. Stress-test misspecification:** Run the power analysis on at least two misspecified profiles `[PROPOSED — apparatus parameter]` (different from the synthetic reference that defines R* and dose) to verify the estimator is not overfit to the reference profile. `[Sol-XF-9]`
+For every geometry, report the primary complete-verdict false-kill rate, its two-sided Wilson 95% interval, the mean-β diagnostic, each predicate-specific failure rate (`ρ`, `β*`, direction, pooled interval), instrument-failure count, and cost in queries per dose and per five-seed run. `[PROPOSED]`
 
-**10. Publication:** code, seeds, parameter grid, assumed profiles, estimator, and machine-readable result table are published as committed artifacts before pre-registration freeze. `[Sol-XF-9]` `[LAW-L19]`
+Operational acceptance is the upper bound of the primary 95% interval below 0.10 `[PROPOSED]`; the preferred target is an upper bound below 0.05 `[PROPOSED]`. The minimum acceptable battery is the first geometry in the ordering above that meets the <0.10 criterion. If one or more geometries meet the preferred <0.05 criterion at the same minimum `Q`, restrict selection to those geometries. If no tested geometry meets <0.10, STOP and return the sweep to ARCHITECT/Rebecca; TASK BUILDER may not extend the grid or invent a battery. `[PROPOSED]`
+
+### 8.3 Sensitivity-map classification reconciliation
+
+The old “informative” boundary `false-kill < 0.50` is retired for operational selection. It allowed a cell with 43.22% false-kill to be called informative even though nearly half of true-positive runs would be killed. Such a cell may be statistically nondegenerate but is **operationally unacceptable**.
+
+The recomputed map SHALL use four non-overlapping labels: `apparatus-invalid` when §8.6 fails; `operationally-unacceptable` when the primary false-kill interval upper bound is ≥0.10; `trivial-pass` when the pre-registered null false-pass boundary is met; and `operationally-informative` only when apparatus checks pass, the primary upper bound is <0.10, and the null false-pass boundary is not met. `[PROPOSED]` The <0.05 preferred subset is reported separately and does not silently replace the <0.10 acceptance criterion. `[PROPOSED]`
+
+### 8.4 Deferred sensitivity map and `(C_min, η)` selection
+
+No sensitivity map, misspecification stress map, or `(C_min,η)` selection may be recomputed in this remediation run. After Rebecca freezes (a) the all-seeds verdict aggregation and (b) the battery geometry, TASK BUILDER may run the existing candidate-blind nuisance grid at that frozen geometry, using the complete-verdict primary estimand and §8.3 labels. `[PROPOSED — sequencing gate]`
+
+The later recomputation SHALL preserve the v2.2 grids `α ∈ {0.0,0.02,0.05,0.1,0.2}`, `v ∈ {0.5,1.0,2.0}×v_ref`, `C_min ∈ {0.5,0.6,0.7,0.8}`, and `η ∈ {0.01,0.05,0.1,0.2}`, plus the two misspecified profiles, unless Rebecca separately approves an amendment. `[PROPOSED — preserved apparatus grid]`
+
+### 8.5 Pre-registered equivalence set and selector
+
+Before the deferred recomputation, freeze the equivalence margin `δ_eq = 0.01` absolute false-kill probability `[PROPOSED]`. Let `p_i` be a cell's primary false-kill estimate and `CI_i` its two-sided Wilson 95% interval `[PROPOSED]`. Two operationally-informative cells are indistinguishable when `|p_i-p_j| ≤ δ_eq` **and** their 95% intervals overlap. `[PROPOSED]`
+
+Construct the equivalence set from all operationally-informative cells indistinguishable from the cell with the lowest primary false-kill estimate. Do not rank within this set by sub-margin Monte Carlo noise. Select the highest `C_min` (strongest coverage requirement); if still tied, select the lowest `η` (most conservative controller). `[PROPOSED]` Report the complete equivalence set, estimates, intervals, and selected secondary criterion. If the relation is non-transitive, use membership relative to the single lowest-rate reference cell rather than pairwise chaining. `[PROPOSED]`
+
+More simulations narrow Monte Carlo uncertainty; they do not necessarily increase the estimated false-kill rate. The equivalence rule is frozen before the later recomputation and may not be fitted to observed cell ordering. `[PROPOSED]`
+
+### 8.6 Exclusive INSTRUMENT FAILURE definition
+
+INSTRUMENT FAILURE means an independently demonstrated apparatus fault, never an unfavorable candidate/control statistic. It is available only when at least one pre-registered check, run independently of the ordinary seed verdict, fails:
+
+- known-answer label and oracle checksum validation fails `[PROPOSED]`;
+- estimator validation on fixed synthetic fixtures fails its pre-registered expected-value/tolerance contract `[PROPOSED]`;
+- RNG reproducibility differs between serial and parallel execution after removal of the explicitly excluded timing field `[PROPOSED]`;
+- the resolved configuration manifest or digest differs from the frozen aggregation, battery geometry, dose grid, seed manifest, or estimator version `[PROPOSED]`;
+- artifact integrity fails (schema, completeness, atomic-write checksum, or parse validation) `[PROPOSED]`; or
+- the pre-candidate synthetic dose/calibration apparatus fails its pre-registered convergence or potency validation `[PROPOSED]`.
+
+An ordinary per-seed failure of `ρ`, `β*`, direction, interval, specificity, potency, baseline, or zero-variance behavior is a statistical FAIL/KILL under its applicable rule and SHALL NOT be reclassified. `[PROPOSED — no-relabeling rule]` Once a scoring failure exists, O-14/D1/D5 prohibit rerun, rescoring, or reframing it to avoid the negative. `[BAR-Entry 52]` (O-14) `[OP-Entry 12]` (D1/D5)
+
+### 8.7 Failure-injection tests and complete diagnostic rehearsal
+
+Before CRITIC review, TASK BUILDER SHALL add genuine automated tests with assertions and perform one candidate-blind diagnostic rehearsal covering:
+
+1. **Incomplete output:** suppress a required section; assert schema failure, nonzero exit, no artifact promoted, and no success attestation. `[PROPOSED]`
+2. **Corruption/partial write:** inject malformed JSON and a truncated temporary file; assert parse/checksum failure and preservation of the last complete artifact through atomic temp-file-then-rename publication. `[PROPOSED]`
+3. **Nondeterminism:** run the same small synthetic fixture serially and in parallel; after removing only `elapsed_seconds`, assert byte-identical canonical JSON and identical resolved seeds. `[PROPOSED]`
+4. **Configuration mismatch:** separately alter aggregation, `W`, `N_w`, dose grid, and seed manifest; assert each digest mismatch fails closed before simulation begins. `[PROPOSED]`
+5. **Crash recovery:** inject calibration worker and identity failures; assert `CalibrationWorkerError`/`CalibrationIdentityError` route to exit code 1, no partial result table is published, no post-calibration simulation executes, and a later fresh diagnostic invocation starts from the frozen manifest rather than silently resuming partial state. `[PROPOSED]`
+
+The rehearsal report SHALL list injected fault, expected assertion, observed exit/disposition, artifact path/hash, and pass/fail. No test may be a no-op, unconditional pass, or mock that bypasses the production error path. `[PROPOSED]`
+
+### 8.8 Publication and prohibited computation
+
+Publish code, simulation-seed derivation, frozen manifests, sweep table, uncertainty intervals, test results, and rehearsal report as committed diagnostic artifacts before any G2–G4 request. `[LAW-L19]` Do not run the prior full 10,000-simulation sensitivity/misspecification stress analysis until aggregation and battery size are frozen. No artifact from this cycle is scoring evidence. `[O-15]`
 
 ---
 
@@ -318,24 +363,25 @@ L8 and L10 share components (mirror, abstention) and run **separate batteries** 
 | # | Item | Decision |
 |---|---|---|
 | G1 | Interpretive: "regulation" = loop-closure reading; narrowed claim adopted | RESOLVED — Entry 81 `[Entry 81]` |
-| G2 | Regulation-error definition: hinge for baseline gate, signed deviation for trend bars; W=50; ε_gate | Ruling on locked-bar terms `[PROPOSED — requires Rebecca sign-off]` |
-| G3 | Battery size, IF power analysis (§8.1) shows false-kill > threshold | 200 / escalated size `[PROPOSED]` |
-| G4 | C_min and η (+ bounds), selected from the §8 sensitivity map's informative region via deterministic selection rule | Constants (selected per §8 XF-9 rule) `[PROPOSED — requires Rebecca sign-off]` |
+| G2 | Regulation-error definition plus exact all-seeds verdict aggregation | OPEN — v2.3 §8.1 must be implemented diagnostically, CRITIC-reviewed, and ruled by Rebecca `[PROPOSED]` |
+| G3 | Minimum battery geometry under the primary complete-verdict false-kill criterion | OPEN — candidate-blind sweep §8.2; <0.10 required, <0.05 preferred `[PROPOSED]` |
+| G4 | C_min and η (+ bounds), selected only after aggregation and battery freeze | DEFERRED — no recomputation or selection in this cycle `[PROPOSED]` |
 | G5 | CF1 riders: memory-arm mechanism prediction + pre-committed boundary-condition classification (§6.4) + three-control panel (§6.2, §6.3) | Ratify verbatim `[Entry 81]` |
 
 ---
 
 ## §12 Sequencing (binding order)
 
-1. This spec v2.2 → **fresh-context CRITIC** review (input: this spec + the full eight-document chain, per §10.5 — review starts from the objections, briefed to verify closure of XF-4–XF-9 and CF riders, not to re-litigate settled XF-1/2/3).
-2. §8 power analysis + sensitivity map produced (candidate-blind, per §8 XF-9 protocol).
-3. **Principal gate:** G2–G5 ruled with §8 artifacts in hand (G1 resolved by Entry 81).
-4. §4 L7/L10 reconciliation check documented; any delta → review cycle.
-5. Pre-registration freeze (L19): all `[PROPOSED]` values resolved, appendix committed, hash-attested.
-6. TASK BUILDER released for L8 implementation.
-7. **External human review of the L8 design chain (recommended before any fresh-seed exposure)** — L8 is the constitution's most philosophically loaded law; a design flaw found post-scoring costs unrecoverable seeds.
-8. Scoring remains gated behind the five standing M4 gates (L3, FWFP, CRITIC, tolerance-calibration, courier). Nothing herein authorizes scoring.
+1. ARCHITECT v2.3 remediation design and changelog committed; no computation.
+2. TASK BUILDER implements only the all-seeds estimand, battery sweep, failure-injection tests, and diagnostic rehearsal in §8.1–§8.2 and §8.6–§8.7. It does not implement final L8 scoring or run the deferred map.
+3. Fresh-context CRITIC reviews the v2.3 design, implementation delta, sweep artifact, and rehearsal evidence, beginning with §5 P1–P6 compliance.
+4. Return the revised design, power analysis/sweep, and CRITIC ruling to Rebecca. Only Rebecca may freeze aggregation or battery size or decide G2/G3.
+5. After Rebecca freezes aggregation and battery geometry, TASK BUILDER recomputes the sensitivity and misspecification maps under §8.3–§8.5; fresh-context CRITIC reviews; Rebecca alone decides G4.
+6. §4 L7/L10 reconciliation check documented; any delta triggers a review cycle.
+7. Pre-registration freeze (L19): all `[PROPOSED]` values resolved, appendix committed, hash-attested.
+8. Final L8 scoring implementation release requires a separate Rebecca authorization. Protected seeds remain unexposed.
+9. Scoring remains gated behind the five standing M4 gates (L3, FWFP, CRITIC, tolerance-calibration, courier). Nothing herein authorizes scoring.
 
 ---
 
-*Every `[PROPOSED]` tag is a number offered for ruling, not a decision made. Per the CRITIC's standing distinction: this document specifies constructs; the TASK BUILDER receives no design decisions. The narrowed claim (Entry 81) is a P5-authorized interpretive ruling — the deviation from broader constitutional L8 language is memorialized with Rebecca's sign-off.*
+*Every `[PROPOSED]` tag is a number offered for ruling, not a decision made. The TASK BUILDER receives diagnostic implementation instructions only. The narrowed claim (Entry 81) is a P5-authorized interpretive ruling — the deviation from broader constitutional L8 language is memorialized with Rebecca's sign-off.*

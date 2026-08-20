@@ -2,8 +2,44 @@
 
 **Spec:** `reviews/l8_crossfamily_review/06_l8_instantiation_spec.md`
 **Date:** 2026-08-19 · **Author:** ARCHITECT
-**Branch:** `architect/l8-instantiation-v2.2-fresh` (v2.2); v2.1/v2 on `architect/l8-instantiation-v2`
+**Branch:** `architect/l8-g2g4-remediation` (v2.3); `architect/l8-instantiation-v2.2-fresh` (v2.2); v2.1/v2 on `architect/l8-instantiation-v2`
 **Regime:** B (post-Entry 81; constitution v1 + Amendments 1–2; §5 binding) (P4)
+
+---
+
+## v2.3 — L8 G2–G4 aggregation and battery-size remediation (2026-08-19)
+
+**Base:** `c7d7bed6b259` (v2.2). **Gate served:** remediation design before any G2–G4 decision.
+
+### Verdict and estimand alignment
+
+- Verified from M0 Entry 11.3, M4 spec §3.2/§3.5, and M4 task spec §3.2 that L8 uses all-seeds-direction across five seeds, not a five-seed-mean threshold. `[BAR-Entry 11.3]`
+- Defined the complete simulated trend verdict as the conjunction of per-seed Spearman, per-seed standardized-slope, all-seed direction, and pooled bootstrap interval conditions. `[BAR-Entry 11]` `[BAR-Entry 11.3]`
+- Made false kill of that complete five-seed verdict primary. Retained the five-seed-mean false-kill measure as diagnostic only. `[PROPOSED]`
+- Corrected both aggregation descriptions: each cell value is the mean across 15 `(α,v)` combination-level decision rates; the any-seed quantity is not the fraction of combinations with any failure.
+
+### Battery-size sweep and deferred map
+
+- Added candidate-blind `W × N_w` sweep, ordered by total queries per dose, with operational false-kill upper-bound target below 10% and preferred target below 5%. `[PROPOSED]`
+- Preserved four dose levels and all locked L8 bars. `[BAR-Entry 11]`
+- Deferred sensitivity/misspecification-map recomputation and `(C_min,η)` selection until Rebecca freezes verdict aggregation and battery geometry.
+- Replaced the operational use of the 50% “informative” false-kill boundary; a 43.22% false-kill cell is now explicitly operationally unacceptable. `[PROPOSED]`
+
+### Equivalence, apparatus failure, and diagnostic integrity
+
+- Added pre-registered `δ_eq = 0.01` absolute false-kill equivalence margin plus overlapping 95% intervals, with highest-coverage then lowest-gain selection inside the equivalence set. `[PROPOSED]`
+- Restricted INSTRUMENT FAILURE to independent apparatus-validity failures. Ordinary per-seed statistical failures and zero variance are not reclassified. `[PROPOSED]`
+- Added failure-injection and diagnostic-rehearsal contracts for incomplete output, corruption/partial writes, serial/parallel nondeterminism, configuration mismatch, and crash recovery. `[PROPOSED]`
+- Corrected the Monte Carlo statement: more simulations narrow uncertainty; the point estimate need not increase.
+
+### Sequencing and authorization
+
+- Route is ARCHITECT → TASK BUILDER diagnostic implementation/sweep → fresh-context CRITIC → Rebecca.
+- G2–G4 remain open. No protected seeds, scoring, final L8 scoring implementation, 10,000-simulation stress rerun, freeze, merge, or TASK BUILDER release beyond the diagnostic remediation scope is authorized.
+
+### Locked-bar confirmation
+
+No locked bar was lowered, raised, renamed, or replaced: ≥3 noise doses, Spearman `ρ ≥ 0.8`, standardized slope `≥ 0.2`, specificity mandatory, and five seeds are preserved. `[BAR-Entry 11]` `[BAR-Entry 11.3]`
 
 ---
 
