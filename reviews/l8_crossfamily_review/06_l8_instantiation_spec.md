@@ -1,8 +1,8 @@
-# L8 INSTANTIATION SPECIFICATION v2.7 — Selective-Risk Homeostat (Authorized 1,000-Rep Feasibility Closure)
+# L8 INSTANTIATION SPECIFICATION v2.7.1 — Selective-Risk Homeostat (Rebecca-Cleared Feasibility Execution)
 
 **Component:** M4 / L8 (Stakes coupling) + L14 couplings
 **Author:** ARCHITECT (implementing Rebecca's advisor-session proposal per Entry 81 + Sol cross-family review XF-4–XF-9 resolution conditions)
-**Status:** DRAFT v2.7 — final deterministic closure for Rebecca-authorized 1,000-repetition parallel feasibility diagnostic; pending one fresh-context CRITIC review → Rebecca clearance → TASK BUILDER staged implementation/execution; G2–G4 not frozen and screening not released
+**Status:** v2.7.1 — Rebecca cleared staged diagnostic implementation/execution under the merged 1,000-repetition authorization; G2–G4 not frozen and screening not released
 **Date:** 2026-08-20 · **Regime:** B (post-Entry 81; constitution v1 + Amendments 1–2; §5 binding) (P4)
 **Sources:** Entry 81 (narrowed claim) `[Entry 81]`; Sol cross-family review (XF-4–XF-9, XF-10–XF-11) `[Sol-XF-n]`; advisor proposal v2; CRITIC re-review CF1–CF3; `[LAW-L8]` `docs/ARCHITECTURAL_CONSTITUTION_v2.md` line 28; `[LAW-L14]` line 42; `[BAR-Entry 11]` M0 sheet; Ruling 3 + Ruling 9 (Entry 76) `[Entry 76]`
 **Standing constraints inherited:** O-14, O-15, §5 P1–P6, L19 pre-registration, Ruling 9 candidate-blindness. Nothing in this spec authorizes scoring, protected-seed exposure, the 10,000-simulation stress rerun, G2–G4 freeze, final L8 scoring implementation, or merger.
@@ -679,16 +679,15 @@ L8 and L10 share components (mirror, abstention) and run **separate batteries** 
 ## §12 Sequencing (binding order)
 
 1. ARCHITECT v2.7 final three-item closure and changelog committed; no computation.
-2. One fresh-context CRITIC reviews v2.7, beginning with §5 P1–P6 compliance and exact closure of allocation, bootstrap depth, and fixtures.
-3. Rebecca clears the executable closure under the authorization recorded at `d08cb7eefec67609a3ea3cee0eb20da22f78c40a`. The screening run remains unauthorized.
-4. If cleared, TASK BUILDER produces A1/A2, tests them, and runs only the fixed rehearsal/repeatability and 1,000-repetition parallel feasibility evidence commit; no screening evidence.
-5. Fresh-context CRITIC reviews A1/A2, tests, failure rehearsal, parallel repeatability, and benchmark. Rebecca then decides whether to authorize the full screen, amend/reduce it, or stop.
-6. Only if separately authorized, TASK BUILDER runs screening and produces a separate screening-evidence commit; fresh-context CRITIC reviews it. Return design, screening analysis, and CRITIC ruling to Rebecca. Only Rebecca may freeze aggregation or battery size or decide G2/G3.
-7. After Rebecca freezes aggregation and battery geometry, TASK BUILDER recomputes the sensitivity and misspecification maps under §8.3–§8.5; fresh-context CRITIC reviews; Rebecca alone decides G4.
-8. §4 L7/L10 reconciliation check documented; any delta triggers a review cycle.
-9. Pre-registration freeze (L19): all `[PROPOSED]` values resolved, appendix committed, hash-attested.
-10. Final L8 scoring implementation release requires a separate Rebecca authorization. Protected seeds remain unexposed.
-11. Scoring remains gated behind the five standing M4 gates (L3, FWFP, CRITIC, tolerance-calibration, courier). Nothing herein authorizes scoring.
+2. Rebecca directly cleared this executable closure on 2026-08-20 under her merged authorization at `d08cb7eefec67609a3ea3cee0eb20da22f78c40a`. The screening run remains unauthorized.
+3. TASK BUILDER produces A1/A2, tests them, and runs only the fixed rehearsal/repeatability and 1,000-repetition parallel feasibility evidence commit; no screening evidence.
+4. Fresh-context CRITIC reviews A1/A2, tests, failure rehearsal, parallel repeatability, and benchmark. Rebecca then decides whether to authorize the full screen, amend/reduce it, or stop.
+5. Only if separately authorized, TASK BUILDER runs screening and produces a separate screening-evidence commit; fresh-context CRITIC reviews it. Return design, screening analysis, and CRITIC ruling to Rebecca. Only Rebecca may freeze aggregation or battery size or decide G2/G3.
+6. After Rebecca freezes aggregation and battery geometry, TASK BUILDER recomputes the sensitivity and misspecification maps under §8.3–§8.5; fresh-context CRITIC reviews; Rebecca alone decides G4.
+7. §4 L7/L10 reconciliation check documented; any delta triggers a review cycle.
+8. Pre-registration freeze (L19): all `[PROPOSED]` values resolved, appendix committed, hash-attested.
+9. Final L8 scoring implementation release requires a separate Rebecca authorization. Protected seeds remain unexposed.
+10. Scoring remains gated behind the five standing M4 gates (L3, FWFP, CRITIC, tolerance-calibration, courier). Nothing herein authorizes scoring.
 
 ---
 

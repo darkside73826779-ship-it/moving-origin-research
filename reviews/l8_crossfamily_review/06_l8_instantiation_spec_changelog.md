@@ -2,8 +2,20 @@
 
 **Spec:** `reviews/l8_crossfamily_review/06_l8_instantiation_spec.md`
 **Date:** 2026-08-20 · **Author:** ARCHITECT
-**Branch:** `architect/l8-g2g4-remediation` (v2.7/v2.6/v2.5.1/v2.5/v2.4/v2.3); `architect/l8-instantiation-v2.2-fresh` (v2.2); v2.1/v2 on `architect/l8-instantiation-v2`
+**Branch:** `architect/l8-g2g4-remediation` (v2.7.1/v2.7/v2.6/v2.5.1/v2.5/v2.4/v2.3); `architect/l8-instantiation-v2.2-fresh` (v2.2); v2.1/v2 on `architect/l8-instantiation-v2`
 **Regime:** B (post-Entry 81; constitution v1 + Amendments 1–2; §5 binding) (P4)
+
+---
+
+## v2.7.1 — Rebecca clearance routing update (2026-08-20)
+
+**Base:** `4e31eddf50819b1b9b0c67a1911ebfc53d3effbd`. Rebecca directly cleared the executable 1,000-repetition feasibility closure under the merged authorization at `d08cb7eefec67609a3ea3cee0eb20da22f78c40a`.
+
+- Updated status and sequencing to release TASK BUILDER for A1/A2 implementation, fixed rehearsal/repeatability, six calibrations, and the exactly 1,000-repetition parallel feasibility diagnostic.
+- Retained the post-execution fresh-context CRITIC review before any subsequent Rebecca decision.
+- Screening, scoring, protected-seed access, G2–G4 freeze, confirmation, sensitivity/stress rerun, and merge remain unauthorized.
+
+No implementation, diagnostic execution, scoring, protected-seed exposure, or merge occurred in this routing update.
 
 ---
 

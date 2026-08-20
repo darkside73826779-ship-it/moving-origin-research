@@ -1,5 +1,7 @@
 # ARCHITECT → Fresh-Context CRITIC Handoff — L8 G2–G4 v2.7
 
+> **SUPERSEDED FOR PRE-EXECUTION ROUTING:** Rebecca directly cleared v2.7.1. TASK BUILDER now follows the v2.7.1 execution handoff; fresh-context CRITIC review occurs after the authorized diagnostic evidence is produced.
+
 **Date:** 2026-08-20 · **Regime:** B (constitution v2 §5 binding)
 
 **Gate served:** Final deterministic closure for the authorized L8 1,000-repetition parallel feasibility diagnostic
