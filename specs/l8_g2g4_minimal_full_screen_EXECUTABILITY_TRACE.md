@@ -47,8 +47,9 @@ No implementer invention. The geometry set is pre-registered and copied verbatim
 | false_kill_rate_per_seed (any-seed) | P(any β*_s < 0.2) | ✓ §5.1 (b139749) |
 | BETA_STAR_BAR | 0.2 [BAR-Entry 11] | ✓ |
 | FALSE_KILL_THRESHOLD | 0.10 [PROPOSED — §8] | ✓ |
-| primary metric | false_kill_rate_per_seed (β*-predicate direct rate; lower bound on complete-verdict rate, §5.2 scope) | ✓ §5.2 |
-| diagnostic metric | false_kill_rate (5-seed mean) | ✓ §5.2 |
+| primary metric | complete_verdict_false_kill_rate = P(any seed: β*_s<0.2 OR ρ_s undefined OR ρ_s<0.8) | ✓ §5.1/§5.2 |
+| diagnostic metrics | diagnostic_beta_only_any_seed_false_kill_rate (β*-only any-seed); diagnostic_five_seed_mean_false_kill_rate (5-seed mean) | ✓ §5.1 |
+| null-control false-pass | null_control_false_pass_rate = fraction every seed satisfies both predicates | ✓ §5.1 |
 | geometry-level primary | max over 240 cells of false_kill_rate_per_seed | ✓ §5.4 |
 | meets_target | max_primary_false_kill ≤ 0.10 | ✓ §5.4 |
 | minimum battery | first §3 geometry with meets_target; null if none | ✓ §5.4 |
@@ -70,8 +71,11 @@ No implementer invention. The geometry set is pre-registered and copied verbatim
 
 | Rule | Closure | Where |
 |---|---|---|
-| Which false-kill rate is primary? | false_kill_rate_per_seed (per-seed locked bar, v2.2 line 44); **β*-predicate direct rate only — a lower bound on the complete-verdict rate** (also needs ρ≥0.8/seed; v2.4 §8.1 adds direction+bootstrap, omitted) | §5.2 |
-| What is the false-kill target? | 0.10; acceptance = max cell primary ≤ 0.10 (PROPOSED-gated diagnostic selection; Rebecca sign-off required) | §5.4 |
+| Which false-kill rate is primary? | complete_verdict_false_kill_rate = P(any seed: β*_s<0.2 OR ρ_s undefined OR ρ_s<0.8) — the complete frozen-v2.2 any-seed predicate (β* AND ρ). Authorized by Rebecca (ρ calculation added; b139749 had no ρ). | §5.1/§5.2 |
+| Is per-seed Spearman ρ computable? | YES — direct calculation added per Rebecca authorization (Pearson corr of dose ranks (1,2,3,4) vs response midranks; ties=mean of occupied ranks; zero variance→undefined→ρ-predicate failure; non-finite→§5.6 apparatus rules). NOT a quorum/fallback/bootstrap/Wilson procedure. | §5.1/§5.6 |
+| What is the false-kill target? | 0.10; acceptance = max cell primary ≤ 0.10 (exact (W,N_w) geometry; PROPOSED-gated diagnostic selection; Rebecca sign-off required) | §5.4 |
+| Boundary escalation? | STOP if no geometry passes OR first passing geometry on a tested boundary (W∈{50,400} or N_w∈{4,64}) | §5.4 |
+| Deterministic tests? | 7 required cases (perfect monotonicity; adjacent-inversion; tied; constant; decreasing; non-finite; 5-seed aggregation) | §5.5 |
 | Does the seed include geometry? | No; derivation reused unchanged; geometry by data shape | §6.1 |
 | How many arms? | Two (combo + null-control), both 2,000/cell | §5, §7.1 |
 | What is the minimum battery if none meet target? | null → STOP, return to Rebecca; grid not extendable | §5.4 |
@@ -82,4 +86,4 @@ Confirmed absent from the spec: bootstrap; Wilson intervals; `predicate_false_ki
 
 ## 7. Verdict
 
-Every executable input is explicit. The specification is executable end-to-end with no implementer invention required. Two flagged items routed for CRITIC/Rebecca confirmation: (1) the primary/diagnostic designation resolves the `b139749` "PROPOSED — flagged to Rebecca" label by applying the frozen v2.2 "per seed" locked-bar text, making `false_kill_rate_per_seed` primary (CRITIC-verified E1); (2) per B2, the primary metric is the **β*-predicate direct** rate — a lower bound on the complete scoring-verdict false-kill rate (which also requires ρ≥0.8/seed; v2.4 §8.1 adds direction+bootstrap, omitted) — not the complete-verdict rate. Rebecca's §5.3 review is of the β*-predicate direct rate as the primary battery-sizing metric.
+Every executable input is explicit. The specification is executable end-to-end with no implementer invention required. The complete-verdict primary predicate is now computable: `b139749` provides per-seed `β*_s` and the dose-level summaries `D̄_{s,ℓ}`; the direct per-seed Spearman ρ calculation (§5.1, Rebecca-authorized) is added to compute `ρ_s`, and `complete_verdict_false_kill_rate = P(any seed: β*_s<0.2 OR ρ_s undefined OR ρ_s<0.8)` is computable directly (no bootstrap/Wilson/quorum/fallback). Flagged for CRITIC/Rebecca review: (1) the per-seed ρ definition (§5.1) and apparatus-validity rules (§5.6); (2) the complete-verdict primary designation (§5.2); (3) the boundary-escalation rule and "tested boundary" definition (§5.4); (4) the 7 deterministic tests (§5.5). Locked bars unchanged.

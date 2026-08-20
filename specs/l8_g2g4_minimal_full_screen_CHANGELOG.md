@@ -8,6 +8,29 @@
 
 A minimal executable specification for the L8 G2–G4 full battery-geometry screen: 20 geometries × 240 cells × 2,000 simulations per cell, evaluated with the existing direct false-kill calculation at `b139749`. Candidate-blind, O-15 diagnostic-only. Authorizes NO scoring.
 
+## Amendment (Rebecca directive, 2026-08-20) — Item 1 (primary metric) + Item 3 (geometry authority)
+
+Rebecca authorized the direct per-seed Spearman ρ calculation (`docs/rulings/REBECCA_L8_FULLSCREEN_ITEM1_RHO_AUTHORIZATION.md`), resolving the prior ARCHITECT STOP (`handoffs/ARCHITECT_L8_FULLSCREEN_STOP_ITEM1_RHO.md` — `b139749` computes β* but not ρ). Changes applied:
+
+### Item 1 — primary metric completed to the full frozen-v2.2 predicate
+
+- **§5.1:** added the direct per-seed Spearman ρ calculation: inputs = the four dose-level regulation-error summaries `D̄_{s,ℓ}` already used by the β* estimator; dose ranks `(1,2,3,4)`; response ranks = ascending midranks, ties = arithmetic mean of occupied ranks; statistic = Pearson correlation between dose ranks and response midranks; locked predicate `ρ_s ≥ 0.8` `[BAR-Entry 11]`; zero response-rank variance → `ρ_s` undefined → failure of the ρ predicate (not INSTRUMENT_FAILURE); non-finite/structurally invalid → apparatus-validity rules (§5.6); FP tolerance minimal/explicit/tested, must not change the 0.8 bar.
+- **PRIMARY** re-designated to **`complete_verdict_false_kill_rate` = `P(any seed: β*_s < 0.2 OR ρ_s undefined OR ρ_s < 0.8)`** (complete frozen-v2.2 any-seed scoring-verdict false-kill rate). `diagnostic_beta_only_any_seed_false_kill_rate` (= `b139749` `false_kill_rate_per_seed`) and `diagnostic_five_seed_mean_false_kill_rate` (= `b139749` `false_kill_rate`) retained as diagnostics (do not gate). Null-control false-pass = `null_control_false_pass_rate` = fraction where every seed satisfies both predicates. Distinct schema fields (§7.1).
+- **§5.5:** added 7 required deterministic tests (perfect monotonicity; adjacent-inversion/threshold; tied responses; constant responses; decreasing responses; non-finite inputs; 5-seed complete-verdict aggregation).
+- **§5.6:** added apparatus-validity rules for non-finite/structurally invalid inputs (no automatic INSTRUMENT_FAILURE; apparatus-fault vs no-fault disposition; no-relabeling).
+- The ρ calculation is a direct, deterministic, non-resampling statistic — NOT a quorum/fallback/bootstrap/Wilson procedure; the v2.4 §8.1 pooled-bootstrap predicate `[BAR-Entry 11.3]` is NOT part of this primary (frozen-v2.2 bars only).
+
+### Item 3 — geometry authority + acceptance/boundary rules
+
+- **§0:** added Rebecca Item 1 ρ authorization ruling + the prospective DRAFT PI geometry-list adoption (`handoffs/DRAFT_PI_L8_GEOMETRY_TABLE_FREEZE_FOR_REBECCA_SIGNATURE.md` — DRAFT, Rebecca signature gate).
+- **§3:** prospectively adopted only the 20-geometry list + ordering from `4463cbc` §8.2 (not previously PI-approved/frozen); acceptance applies to exact `(W, N_w)`; equal-`Q` geometries deterministically ordered (larger `N_w`, then smaller `W`), never merged/pooled.
+- **§5.4:** added boundary-escalation rule — STOP if no geometry passes OR first passing geometry on a tested boundary; "tested boundary" defined exactly as `W` ∈ {50, 400} or `N_w` ∈ {4, 64} (any edge of the `W×N_w` grid).
+- **§1.3/§9:** confirmed v2.4 prohibited machinery (Wilson, pooled-bootstrap, etc.) remains prohibited; the per-seed ρ is an authorized direct calculation, not prohibited machinery.
+
+### Preserved (unchanged)
+
+Locked bars (β* ≥ 0.2, ρ ≥ 0.8, ≥3 doses, 5 seeds) `[BAR-Entry 11]`; verbatim L8 + §5 P1–P6 quotes (E2); 19.2M two-arm / ~90.5 min/1.5–2 h timing (E3); no prohibited machinery beyond the authorized ρ calculation (E5); end-to-end executability re-verified — the complete predicate is now computable via the direct per-seed ρ (E6). No merge to main. TASK BUILDER remains held until fresh-context CRITIC clearance AND Rebecca's geometry-list signature.
+
 ## Remediation (CRITIC BLOCK → ARCHITECT, 2026-08-20)
 
 Fresh-context CRITIC BLOCK (`critic/l8-g2g4-minimal-fullscreen` @ `02a7443`) returned to ARCHITECT only. PRIMARY designation (E1) preserved — CRITIC-verified textually grounded (v2.2 line 44). Fixes applied:
