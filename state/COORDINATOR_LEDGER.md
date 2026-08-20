@@ -6,20 +6,59 @@
 
 ---
 
-## Current state — updated 2026-08-19 15:28 EDT (§8 code fully CRITIC-cleared; ready for Rebecca's local run)
+## Routing manual (applicable logic — how to deduce the next action from the ball-state)
 
-**Ball:** REBECCA — the §8 power analysis code (including the full misspec stress-test extension) is fully CRITIC-cleared (`ad3a405` on `critic/l8-stress-test-extension-rereview`). Code at `cbe4dfb` on `taskbuilder/l8-power-analysis` (1435 lines). Rebecca runs locally:
-```
-git fetch origin && git checkout taskbuilder/l8-power-analysis
-python diagnostics/l8_power_analysis.py --full
-```
-Use `--stress-test-sims 2000` for the reduced stress-test (~8h total instead of ~17h). Output: `diagnostics/l8_power_analysis_results.json` (relative path, ~200 KB). Produces the reference sensitivity map + misspecification stability report feeding Rebecca's G2–G5 gate rulings.
+A fresh coordinator reading "ball with ROLE on TASK" should be able to deduce, from this manual, what to do next and where to find the role's deliverable — without replaying conversation history.
 
-**Still pending Rebecca's decisions:**
-1. **NF-IMPL-2 (false-kill aggregation):** which is the G3-escalation input — 5-seed mean (lower) or per-seed any-seed (higher, matches scoring bar)? Decide when you see both numbers in the output.
-2. **NF-EXT-1 (trivial, optional):** a bare invocation (no `--full`) triggers the full stress-test. You use `--full`, so this doesn't affect you. Could be gated optionally if desired.
+### Branch naming conventions (where each role commits)
+- ARCHITECT → `architect/`-prefixed branches (e.g., `architect/l8-instantiation-v2`)
+- CRITIC → `critic/`-prefixed branches (e.g., `critic/l8-spec-v2.2-fresh-rereview`)
+- TASK BUILDER → `taskbuilder/`-prefixed branches (e.g., `taskbuilder/l8-power-analysis`)
+- RECORDER → `recorder/`-prefixed branches
+- INTEGRATOR → `integrator/`-prefixed branches
+- COORDINATOR → `coordinator/`-prefixed branches
 
-**After the local run:** Rebecca's G2–G5 gate rulings on the (C_min, η) operating point + the [PROPOSED] values → pre-registration freeze → §12 step 4 (L7/L10 delta review) → M4 harness build (L8 homeostat, three-control panel, real estimator) → compatibility check (sim's synthetic profiles through the harness's real estimator, diagnostic-only, O-15) → scoring authorization (gated on the five downstream M4 gates).
+To find a role's latest work: `gh api repos/darkside73826779-ship-it/moving-origin-research/branches --jq '.[].name' | grep <role-prefix>`
+
+### Deliverable location patterns (where each role's product lives)
+- Code (TASK BUILDER): `diagnostics/` for analysis scripts, `src/` for harness/experiment code
+- Specs (ARCHITECT): `specs/` for M4-spec-family documents, `reviews/l8_crossfamily_review/` for the L8 instantiation spec and its chain documents
+- Reviews (CRITIC): `reviews/` (e.g., `reviews/critic_l8_*.md`)
+- Provenance entries (RECORDER): appended to `docs/rulings/provenance_log.md`
+- State (INTEGRATOR): `state/STATE.md` and `GOVERNANCE_SOURCE_MAP.md`
+- Handoffs: `handoffs/` (role return handoffs) or attached by Rebecca
+
+### When Rebecca reports a role is complete (the trigger)
+When Rebecca says a role is complete (or any phrasing suggesting it — "architect finished," "critic clear," "task builder complete"), the coordinator:
+1. Checks for the role's branch: `gh api repos/darkside73826779-ship-it/moving-origin-research/branches --jq '.[].name' | grep <role-prefix>`
+2. Reads the role's return handoff (either committed to `handoffs/` on the branch, or attached by Rebecca as a .md file)
+3. Routes per the routing protocol below
+4. Does NOT poll the role session — Rebecca is the courier; she reports completion
+
+### Routing protocol (what to do with each deliverable type)
+- **Spec deliverable** (ARCHITECT produces a spec revision): → CRITIC for fresh-context delta re-clear with law-diff table → on CLEAR, to Rebecca for ruling/sign-off
+- **Code deliverable** (TASK BUILDER produces implementation): → CRITIC for implementation review (code-vs-spec fidelity, candidate-blindness) → on CLEAR, to Rebecca for the run decision / gate ruling
+- **Review deliverable** (CRITIC returns CLEAR): → coordinator pushes+merges the ledger (coordinator's own authority) → routes the next handoff per the plan
+- **Review deliverable** (CRITIC returns BLOCK): → returns to the originating role for remediation; the ledger stays local until the next CLEAR
+- **Provenance/state housekeeping** (RECORDER/INTEGRATOR): → merge to main under Rebecca's authorization (the coordinator does not merge these — only the ledger)
+
+### What to do when state is ambiguous
+If the ledger, STATE.md, or a return handoff doesn't tell you what to do next: STOP and ask Rebecca. Do not start digging through GitHub main, replaying conversation history, or launching subagents to explore — that is what burned the fresh coordinator's credits. The ledger + STATE.md + the return handoff should be sufficient; if they're not, the right move is to ask Rebecca for a routing instruction, not to reconstruct the state independently.
+
+---
+## Current state — updated 2026-08-19 21:48 EDT (calibration parallelism spec CRITIC-cleared; awaiting Rebecca's approval)
+
+**Ball:** REBECCA — the L8 calibration parallelism spec v1 (`90d8835` on `architect/l8-calibration-parallelism-spec`) is CRITIC-cleared (`a087654` on `critic/l8-calibration-parallelism-spec-review`). 10/10 design decisions resolved; constraints preserved. Awaits Rebecca's approval.
+
+**After approval:** TASK BUILDER (local frontier GPT) implements the approved spec → CRITIC implementation review (the finished code, second pass) → Rebecca authorizes → rerun locally at full parallelism (`python diagnostics/l8_power_analysis.py --full --workers N`) → complete artifact → G2–G5 gate rulings (with advisor consultation).
+
+**Background context:** the §8 multiprocessing (BF-MP-1) is functional (remediated at `7e296ec`); the calibration parallelism is a further optimization to remove the serial calibration bottleneck (15 independent sigma-dose calibrations run one-at-a-time before each 240-combo parallel batch). The TASK BUILDER correctly routed a spec request rather than implementing unauthorized design decisions — the specify-vs-produce boundary working correctly.
+
+**Still pending (from the sim results, for the G2–G5 rulings):**
+1. The calibration problem: 5-seed-mean false-kill 6.22% (lenient) vs per-seed any-seed 76.23% (harsh, matches scoring bar). Advisor consultation needed.
+2. The stress-test instability: selected operating point (0.5, 0.2) did not generalize to misspecified profiles. Advisor consultation needed.
+3. NF-IMPL-2: which false-kill aggregation is the G3 input.
+4. The proposed per-seed diagnostic data + INSTRUMENT_FAILURE fault-tolerance ruling (draft prepared, not yet ruled).
 
 **Immediate next:** Coordinator routes the §8 artifacts handoff to the TASK BUILDER (item 5: candidate-blind power analysis + sensitivity map per XF-9). This is the first real compute — synthetic simulations (10,000 per parameter combination per the XF-9 protocol), candidate-blind, feeding Rebecca's G2–G5 gate rulings on the [PROPOSED] values. The TASK BUILDER runs a 100-sim validation batch first to measure per-simulation cost before the full run; if genuinely compute-heavy, escalate to Rebecca's local system (sandbox has 2 vCPUs, 7.8 GB RAM, no GPU — but the workload is synthetic scalar computations, likely CPU-sufficient).
 
@@ -48,6 +87,11 @@ This hybrid (build sim on spec-text estimator, then verify against the harness's
 
 ## Handoff history (compact — current state overwrites prior; full history in provenance log + git log)
 
+- 2026-08-19 21:48 — calibration parallelism spec CRITIC-cleared (a087654); awaiting Rebecca's approval. 10/10 design decisions resolved.
+- 2026-08-19 21:42 — ARCHITECT calibration parallelism spec v1 (90d8835)
+- 2026-08-19 21:05 — TASK BUILDER (local frontier GPT) found serial calibration bottleneck; routed spec request (10 design decisions) — specify-vs-produce boundary held correctly
+- 2026-08-19 21:00 — §8 multiprocessing CRITIC BLOCK (BF-MP-1: worker results discarded, reference not parallelized, vacuous reproducibility check)
+- 2026-08-19 20:35 — §8 sim completed (selected (0.5, 0.2); 5-seed-mean FK 6.22%, any-seed FK 76.23%; stress-test unstable; write-order defect in artifact)
 - 2026-08-19 15:28 — §8 stress-test extension CRITIC-cleared (ad3a405); §8 code fully cleared; ball to Rebecca for local run
 - 2026-08-19 15:20 — TASK BUILDER stress-test extension (full 2D sensitivity map + selection on misspecified profiles, NF-IMPL-4 scope extension)
 - 2026-08-19 13:16 — §8 code CRITIC-cleared (remediation re-review, 0da3953); ball to Rebecca for local run. NF-IMPL-2 (false-kill aggregation ruling) + NF-IMPL-4 (partial stress-test) flagged to Rebecca.
