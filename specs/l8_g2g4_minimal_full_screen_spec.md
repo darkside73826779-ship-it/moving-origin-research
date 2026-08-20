@@ -124,7 +124,7 @@ The frozen L8 v2.2 spec states the locked standardized-slope bar runs **per seed
 > "The locked bars run on D: Spearman ρ(dose, D) ≥ 0.8 `[BAR-Entry 11]` and standardized slope ≥ 0.2 `[BAR-Entry 11]`, per seed."
 > — `reviews/l8_crossfamily_review/06_l8_instantiation_spec.md` (c7d7bed), line 44.
 
-A candidate run fails the scoring verdict if **any seed** fails **either** predicate (ρ < 0.8 **or** β*_s < 0.2). The false-kill rate corresponding to that verdict is therefore the **any-seed** rate. Of the two rates computable by the direct `b139749` calculation, the any-seed rate is the one that aligns with the per-seed scoring verdict. Designation:
+A candidate run fails the scoring verdict if **any seed** fails **either** predicate (ρ < 0.8 **or** β*_s < 0.2). Among the two β*-predicate direct rates available from `b139749`, the rate with the seed aggregation matching the per-seed scoring verdict is the any-seed rate. Designation:
 
 - **PRIMARY = `false_kill_rate_per_seed`** (per-seed / any-seed; matches the "per seed" locked bar). `[PROPOSED — primary metric, flagged to Rebecca in b139749 (NF-IMPL-2)]`
 - **DIAGNOSTIC = `false_kill_rate`** (5-seed mean).
@@ -225,7 +225,7 @@ Path: `diagnostics/l8_g2g4_minimal_full_screen.json` `[PROPOSED]`. Exact schema,
     "diagnostic_metric": "false_kill_rate",
     "minimum_geometry_satisfying_target": <{geometry_index,W,N_w,Q_per_dose} | null>,
     "rule": "first geometry in §3 Q-ordering whose max_primary_false_kill <= 0.10; null if none (STOP)",
-    "scoring_verdict_alignment_note": "per-seed locked bar (v2.2 line 44); see §5.2-§5.3"
+    "scoring_verdict_alignment_note": "primary is the β*-predicate direct any-seed rate; seed aggregation follows v2.2 line 44; lower bound on complete-verdict false-kill rate; see §5.2-§5.3"
   }
 }
 ```
