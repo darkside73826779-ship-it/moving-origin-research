@@ -102,6 +102,7 @@ This hybrid (build sim on spec-text estimator, then verify against the harness's
 
 ## Handoff history (compact — current state overwrites prior; full history in provenance log + git log)
 
+- 2026-08-20 00:26 — RECORDER+INTEGRATOR backlog catchup MERGED (PR #88, eead511): provenance Entries 82-88 + STATE.md reconciliation. Provenance log now through Entry 88; STATE.md current to v2.4 approval.
 - 2026-08-20 00:11 — Rebecca APPROVED the v2.4 diagnostic method + AUTHORIZED 2,000-rep screening; routing to TASK BUILDER (taskbuilder/l8-g2g4-diagnostic-remediation)
 - 2026-08-20 00:10 — L8 spec v2.4 (4463cbc) CRITIC-cleared; all 7 §8.9 subsections deterministic; bootstrap > 0 doesn't replace 0.2 bar; INSTRUMENT FAILURE apparatus-only; awaiting Rebecca's approval + 2,000-rep screening authorization
 - 2026-08-20 00:06 — TASK BUILDER stopped on v2.3 (diagnostic contract under-specified); ARCHITECT resolved with v2.4 (4463cbc) + CRITIC handoff; v2.3 TASK BUILDER handoff marked superseded
