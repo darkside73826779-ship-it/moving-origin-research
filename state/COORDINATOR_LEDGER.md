@@ -46,11 +46,15 @@ When Rebecca says a role is complete (or any phrasing suggesting it — "archite
 If the ledger, STATE.md, or a return handoff doesn't tell you what to do next: STOP and ask Rebecca. Do not start digging through GitHub main, replaying conversation history, or launching subagents to explore — that is what burned the fresh coordinator's credits. The ledger + STATE.md + the return handoff should be sufficient; if they're not, the right move is to ask Rebecca for a routing instruction, not to reconstruct the state independently.
 
 ---
-## Current state — updated 2026-08-20 01:12 EDT (v2.6 APPROVED — A1/A2 + parallel benchmark authorized; routing to TASK BUILDER)
+## Current state — updated 2026-08-20 01:38 EDT (REBECCA RULING: 1,000-rep parallel feasibility diagnostic; overrules the ARCHITECT/TASK BUILDER back-and-forth; routing ARCHITECT → CRITIC → TASK BUILDER)
 
-**Ball:** TASK BUILDER (local frontier GPT) — implementing the CRITIC-cleared, Rebecca-approved L8 spec v2.6 as A1 → A2 → benchmark/rehearsal evidence on `taskbuilder/l8-g2g4-diagnostic-remediation` (from `e2bd824`). Imports `l8_power_analysis.py` from `b139749`; `6d455bb` read-only. Produces A1 (code/tests/fixtures, no config/evidence) → A2 (frozen resolved_config.json, impl_sha=A1) → B (feasibility_benchmark.json + diagnostic_rehearsal.json, impl_sha=A1, config_source_sha=A2). NOT screening evidence, NOT the screen, NOT 10,000-rep.
+**Ball:** ARCHITECT — Rebecca issued REBECCA_L8_1000_REP_FEASIBILITY_AUTHORIZATION (main `d6bc5c9` + attribution fix `d08cb7e`; `docs/rulings/REBECCA_L8_1000_REP_FEASIBILITY_AUTHORIZATION.md`). This overrules the ARCHITECT/TASK BUILDER back-and-forth and the v2.6 60-rep benchmark (6 cases × 10 reps + deterministic extrapolation formulas). Rebecca authorized a **1,000-repetition parallel feasibility diagnostic** — run the test, use simple math to estimate the full-screen workload. Parallel processing (v2.6 scoring-parity multiprocessing contract: Pool, spawn, chunksize=1, worker_count=min(32,cpu)).
 
-**After TASK BUILDER:** fresh-context CRITIC impl + benchmark review (A1/A2/B stage-isolated? tests + benchmark genuinely pass? evidence free of screening artifacts?) → Rebecca's workload ruling: full 9.6M-rep screen / amended-reduced / stop.
+**Two execution details NOT yet specified (the ARCHITECT must close deterministically):** (1) allocation of the 1,000 repetitions across the approved sentinel cells and geometries; (2) whether each repetition uses the full 5,000-valid-bootstrap verdict or an explicitly reduced benchmark bootstrap budget.
+
+**Routing:** COORDINATOR → ARCHITECT (two-item deterministic amendment) → **Rebecca rules on the design herself** (any deviation = it doesn't happen). Only candidate-blind, synthetic, O-15 feasibility computation after the two details are frozen. No 9.6M screen, no screening evidence, no G2–G4 freeze, no scoring, no protected seeds, no 10,000-rep, no sensitivity/misspecification reruns. O-14 absolute; no relabeling. Rebecca sole authority for later workload/gate decisions.
+
+**Note:** the prior A1/A2 + 6-case benchmark handoff (60-rep) is SUPERSEDED by this ruling — the 1,000-rep diagnostic replaces it.
 
 **The v2.4 design (what Rebecca approves):** §8.9 deterministic contract — complete trend-verdict algorithms (Spearman ρ, OLS β, bootstrap T = mean_s(β*_s) with stratum-level resampling, lower bound > 0 conjunction, per-seed 0.2 bar preserved); all-cell battery sweep (20 geometries × 240 cells, worst-cell Wilson acceptance conjunction < 0.10, preferred < 0.05); config/serialization/seed manifests (canonical JSON + SHA-256, candidate-blind synthetic seeds); atomic publication; fault injection + exit contracts (20–23/1/70) + synthetic-only crash recovery; apparatus fixtures + 12-case rehearsal; exact TASK BUILDER routing (import b139749, 6d455bb read-only).
 
@@ -102,7 +106,8 @@ This hybrid (build sim on spec-text estimator, then verify against the harness's
 
 ## Handoff history (compact — current state overwrites prior; full history in provenance log + git log)
 
-- 2026-08-20 01:12 — Rebecca APPROVED v2.6 (A1/A2 + parallel benchmark); routing to TASK BUILDER (taskbuilder/l8-g2g4-diagnostic-remediation, from e2bd824)
+- 2026-08-20 01:38 — REBECCA RULING (REBECCA_L8_1000_REP_FEASIBILITY_AUTHORIZATION, main d6bc5c9+d08cb7e): 1,000-rep parallel feasibility diagnostic replaces the v2.6 60-rep benchmark; ARCHITECT must close 2 execution details (1,000-rep allocation + bootstrap budget) → CRITIC → TASK BUILDER
+- 2026-08-20 01:12 — Rebecca APPROVED v2.6 (A1/A2 + parallel benchmark); routing to TASK BUILDER (taskbuilder/l8-g2g4-diagnostic-remediation, from e2bd824) [NOTE: superseded by the 1,000-rep ruling]
 - 2026-08-20 01:10 — v2.6 CRITIC CLEAR in-repo (88e238b on critic/l8-g2g4-v2.6-review); INIT fix confirmed working (CRITIC committed v2.5.1 + v2.6 reviews in-repo); ready for Rebecca's v2.6 approval (A1/A2 + parallel benchmark)
 - 2026-08-20 01:05 — L8 spec v2.6 landed (e2bd824, §8.11): A1/A2/B commit lifecycle (no self-referential SHA) + parallel-only benchmark + parallel repeatability (no serial). CRITIC reviewing v2.6.
 - 2026-08-20 00:48 — v2.5.1 CRITIC CLEAR in-repo (1338d28 on critic/l8-g2g4-v2.5.1-rereview); INIT fix worked (CRITIC committed+pushed); v2.5/v2.5.1 design ready for Rebecca's feasibility-gate decision (Commit A + benchmark first)
