@@ -1,9 +1,25 @@
 # L8 Instantiation Specification — Changelog
 
 **Spec:** `reviews/l8_crossfamily_review/06_l8_instantiation_spec.md`
-**Date:** 2026-08-19 · **Author:** ARCHITECT
-**Branch:** `architect/l8-g2g4-remediation` (v2.3); `architect/l8-instantiation-v2.2-fresh` (v2.2); v2.1/v2 on `architect/l8-instantiation-v2`
+**Date:** 2026-08-20 · **Author:** ARCHITECT
+**Branch:** `architect/l8-g2g4-remediation` (v2.4/v2.3); `architect/l8-instantiation-v2.2-fresh` (v2.2); v2.1/v2 on `architect/l8-instantiation-v2`
 **Regime:** B (post-Entry 81; constitution v1 + Amendments 1–2; §5 binding) (P4)
+
+---
+
+## v2.4 — Deterministic implementation amendment after TASK BUILDER STOP (2026-08-20)
+
+**Base:** `2819bf7731b86ef730a867671217aa9d1dba2de7` (v2.3). **Gate served:** deterministic diagnostic contract before implementation or compute.
+
+- Defined exact midrank Spearman, positive-direction, pooled-bootstrap statistic, stratified resampling, percentile interval, quantile convention, RNG derivation, invalid-replicate handling, denominator, and overlapping predicate-rate accounting. `[PROPOSED]`
+- Required all 20 battery geometries across all 240 nuisance/operating cells; acceptance is the conjunction of cell-level Wilson upper bounds, not a mean or pooled rate. `[PROPOSED]`
+- Defined Wilson constants/formula, geometry-aware calibration/seeds, finalists, and the authorization boundary between 2,000-repetition screening and 10,000-repetition confirmation. `[PROPOSED]`
+- Defined resolved-config and seed-manifest schemas, canonical JSON, SHA-256 digests, estimator identity, output paths/schemas, completeness predicates, and atomic publication/recovery. `[PROPOSED]`
+- Defined internal production-path fault hooks, exception/exit contracts, O-14-safe synthetic recovery, independent fixed fixtures, serial/parallel comparison, and rehearsal-report schema. `[PROPOSED]`
+- Fixed repository routing: TASK BUILDER destination branch from the approved v2.4 result, executable baseline `b1397498ca369067e956479e6c2bd6b0793c3e89`, historical result `6d455bb878f4b52a5b5564afac38d6fb3a20d4b3` read-only. `[PROPOSED]`
+- Sequencing corrected to ARCHITECT → fresh-context CRITIC → Rebecca approval → TASK BUILDER diagnostic implementation/screening → fresh-context CRITIC → Rebecca.
+
+No implementation, test, fixture, simulation, diagnostic artifact, scoring action, seed exposure, G2–G4 decision, or merge occurred. All locked L8 bars remain unchanged. `[BAR-Entry 11]` `[BAR-Entry 11.3]`
 
 ---
 

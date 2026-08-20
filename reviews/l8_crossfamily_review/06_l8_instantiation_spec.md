@@ -1,9 +1,9 @@
-# L8 INSTANTIATION SPECIFICATION v2.3 — Selective-Risk Homeostat (G2–G4 Remediation)
+# L8 INSTANTIATION SPECIFICATION v2.4 — Selective-Risk Homeostat (Deterministic Diagnostic Contract)
 
 **Component:** M4 / L8 (Stakes coupling) + L14 couplings
 **Author:** ARCHITECT (implementing Rebecca's advisor-session proposal per Entry 81 + Sol cross-family review XF-4–XF-9 resolution conditions)
-**Status:** DRAFT v2.3 — remediation design only; pending TASK BUILDER diagnostic implementation → fresh-context CRITIC → Rebecca; G2–G4 not frozen and scoring implementation not released
-**Date:** 2026-08-19 · **Regime:** B (post-Entry 81; constitution v1 + Amendments 1–2; §5 binding) (P4)
+**Status:** DRAFT v2.4 — deterministic remediation amendment; pending fresh-context CRITIC → Rebecca approval → TASK BUILDER diagnostic implementation; G2–G4 not frozen and scoring implementation not released
+**Date:** 2026-08-20 · **Regime:** B (post-Entry 81; constitution v1 + Amendments 1–2; §5 binding) (P4)
 **Sources:** Entry 81 (narrowed claim) `[Entry 81]`; Sol cross-family review (XF-4–XF-9, XF-10–XF-11) `[Sol-XF-n]`; advisor proposal v2; CRITIC re-review CF1–CF3; `[LAW-L8]` constitution line 26; `[LAW-L14]` line 40; `[BAR-Entry 11]` M0 sheet; Ruling 3 + Ruling 9 (Entry 76) `[Entry 76]`
 **Standing constraints inherited:** O-14, O-15, §5 P1–P6, L19 pre-registration, Ruling 9 candidate-blindness. Nothing in this spec authorizes scoring, protected-seed exposure, the 10,000-simulation stress rerun, G2–G4 freeze, final L8 scoring implementation, or merger.
 
@@ -334,6 +334,82 @@ The rehearsal report SHALL list injected fault, expected assertion, observed exi
 
 Publish code, simulation-seed derivation, frozen manifests, sweep table, uncertainty intervals, test results, and rehearsal report as committed diagnostic artifacts before any G2–G4 request. `[LAW-L19]` Do not run the prior full 10,000-simulation sensitivity/misspecification stress analysis until aggregation and battery size are frozen. No artifact from this cycle is scoring evidence. `[O-15]`
 
+### 8.9 Deterministic implementation contract (v2.4 STOP closure)
+
+This subsection resolves the TASK BUILDER STOP recorded against v2.3. Where §8.1–§8.8 is less specific, §8.9 controls. Every new value or mechanism below is `[PROPOSED]` and cannot gate scoring unless Rebecca approves it.
+
+#### 8.9.1 Complete trend-verdict algorithms
+
+For each seed, compute the four dose means `D_{s,ℓ}` in IEEE-754 binary64. Spearman `ρ_s` is the Pearson correlation of midranks: dose ranks are `(1,2,3,4)` and tied `D` values receive the arithmetic mean of their occupied one-based ranks. Sorting is ascending and stable; exact binary64 equality defines a tie. Compute covariance and variance with divisor four; the common divisor cancels in the correlation. If either rank vector has zero variance, `ρ_s` is undefined and the seed fails the Spearman predicate. `[PROPOSED — algorithm]`
+
+“Positive dose-response direction” means the unstandardized OLS slope `β_s > 0` for every seed. `[PROPOSED — direction predicate]` This is reported independently even though `β*_s ≥ 0.2` normally implies it. No strict adjacent-increase predicate is added.
+
+The pooled bootstrap statistic is `T = mean_s(β*_s)` across the five seeds. `[PROPOSED — bootstrap estimand]` Each bootstrap replicate independently resamples, with replacement, the `N_w` window deviations **within every `(seed,dose)` stratum**, preserving five seeds, four doses, and `N_w` observations per stratum. Recompute `D`, `σ_pool`, `β`, `β*`, then `T`. Do not resample seeds or pool windows across doses. `[PROPOSED — resampling rule]`
+
+Use 5,000 valid bootstrap replicates, a two-sided 95% percentile interval, and endpoints at probabilities 0.025 and 0.975 using NumPy-style linear quantile interpolation `h=(n−1)q`, between `floor(h)` and `ceil(h)`. `[PROPOSED]` The bootstrap predicate passes only when the lower endpoint is strictly greater than zero. `[PROPOSED]` It does not require the lower endpoint to exceed 0.2; the locked 0.2 bar is applied per seed. `[BAR-Entry 11]`
+
+Bootstrap RNG identity is derived as specified in §8.9.3 with namespace `bootstrap`, including the complete simulation identity and repetition index. If a bootstrap draw produces any undefined `β*`, discard that draw and deterministically continue through at most 5,500 attempted draws to obtain 5,000 valid draws. `[PROPOSED]` Failure to obtain 5,000 valid draws is an ordinary bootstrap-predicate failure, not INSTRUMENT FAILURE.
+
+A simulated repetition enters the denominator whenever all independent apparatus checks pass. Undefined `ρ`, undefined `β*`, or an invalid/insufficient bootstrap sample counts as a false kill and remains in that denominator. Apparatus-invalid repetitions are excluded, counted, and reported separately; if any apparatus-invalid repetition occurs for a combination, that combination is `apparatus-invalid` and cannot qualify a geometry. `[PROPOSED]`
+
+Predicate-specific false-kill rates are **overlapping marginal rates**: for each predicate, count every repetition in which it fails, irrespective of other failures, divided by the same valid-repetition denominator. Also report a bit-mask frequency table over all predicate-failure combinations; do not assign an exclusive “cause.” `[PROPOSED]`
+
+#### 8.9.2 Sweep operating points, aggregation, calibration, and finalists
+
+The screening sweep evaluates all 20 geometries from §8.2 at all 240 pre-registered cells: 15 `(α,v)` nuisance combinations times 16 `(C_min,η)` operating points. `[PROPOSED]` No old reference or selected operating point substitutes for this grid. This preserves G4 deferral.
+
+For each geometry and each of its 240 cells, compute a separate complete-verdict false-kill estimate and Wilson interval. A geometry-level primary value is the **maximum cell-level Wilson upper endpoint**; geometry acceptance is the conjunction that all 240 upper endpoints are below 0.10. `[PROPOSED]` Preferred status is the conjunction that all 240 upper endpoints are below 0.05. `[PROPOSED]` Do not pool repetitions or average rates across cells for acceptance. Report arithmetic means and quantiles across cells as diagnostics only.
+
+Use Wilson score intervals with `z = 1.959963984540054`, `n` equal to apparatus-valid repetitions, and the standard closed form `center=(p+z²/(2n))/(1+z²/n)`, `half=z/(1+z²/n)·sqrt(p(1−p)/n+z²/(4n²))`. `[PROPOSED]` Zero failures use the same formula without a special case. If `n=0`, the cell is apparatus-invalid. Intervals are cell-level; no interval is computed from averaged or pooled cell counts.
+
+Re-run synthetic-reference `σ_dose` calibration independently for every `(W,N_w,α,v)` tuple. `[PROPOSED]` Calibration uses the existing fixed reference operating point `(C_min,η)=(0.7,0.1)` only to determine dose strength; that point is not used to judge battery acceptance. Calibration RNG identities include geometry. Cached calibration is permitted only when the full tuple and calibration-manifest digest match exactly.
+
+After 2,000-repetition screening, finalist geometries are precisely the geometries satisfying the <0.10 conjunction. `[PROPOSED]` Restrict finalists to the smallest total queries per dose `Q`; if multiple remain, retain all tied geometries for 10,000-repetition confirmation. Preferred status does not remove an otherwise acceptable geometry unless tied at the same minimum `Q`, in which case retain preferred geometries only. If no geometry qualifies, there is no finalist and the process STOPS.
+
+This implementation cycle, once Rebecca approves diagnostic compute, runs all 20 screening geometries. `[PROPOSED]` It does not run 10,000-repetition finalist confirmation. That confirmation requires the screening artifact, fresh-context CRITIC verification, and separate Rebecca authorization. It is distinct from—and does not authorize—the deferred full sensitivity/misspecification stress rerun.
+
+#### 8.9.3 Configuration, serialization, identity, and seed manifests
+
+The resolved configuration file is `diagnostics/l8_g2g4/resolved_config.json`. `[PROPOSED]` It is a JSON object with exactly these required top-level fields: `schema_version`, `artifact_date`, `regime`, `design_sha`, `implementation_sha`, `mode`, `aggregation`, `spearman`, `bootstrap`, `battery_geometries`, `dose_levels`, `n_seeds`, `nuisance_grid`, `operating_grid`, `calibration`, `screening_repetitions`, `wilson`, `instrument_checks`, `estimator_version`, and `seed_derivation`. Unknown fields fail schema validation. `[PROPOSED]`
+
+Nested schemas are exact: `aggregation={primary,diagnostic,predicate_rates}`; `spearman={algorithm,tie_rule,undefined_rule,threshold}`; `bootstrap={statistic,resampling_strata,valid_replicates,max_attempts,confidence_level,interval_method,quantile_method,pass_rule}`; each `battery_geometries` entry is `{W,N_w}`; `nuisance_grid={alphas,v_mults}`; `operating_grid={c_mins,etas}`; `calibration={per_geometry,reference_c_min,reference_eta,cache_key_fields}`; `wilson={z,accept_upper_lt,preferred_upper_lt}`; `instrument_checks` is the ordered array of the six identifiers `{oracle_checksum,estimator_fixtures,rng_reproducibility,config_digest,artifact_integrity,dose_calibration}`; and `seed_derivation={hash,encoding,namespace_separator,integer_rule,identity_fields}`. `[PROPOSED]` Each object permits exactly the listed keys; scalar values must equal §8.9, and arrays preserve the stated order.
+
+Set `schema_version="l8-g2g4-config-v1"`, `mode="diagnostic-screening"`, and `estimator_version="xf5-beta-star-v2.4"`. `[PROPOSED]` `design_sha` is the exact approved ARCHITECT commit; `implementation_sha` is the tested TASK BUILDER commit. Every numeric array is ordered exactly as written in §8.2 and §8.4.
+
+Canonical JSON is UTF-8, Unicode NFC, sorted object keys, no insignificant whitespace, separators `(',',':')`, JSON booleans/null, finite numbers only, and one trailing LF. `[PROPOSED]` Digests use SHA-256 over these canonical bytes and lowercase hexadecimal. `[PROPOSED]` The configuration digest is stored in `diagnostics/l8_g2g4/resolved_config.sha256` as `<64-lowercase-hex><two spaces>resolved_config.json<LF>`. `[PROPOSED]`
+
+Seed identity is `SHA256(UTF8-NFC(namespace + "\n" + canonical_json(identity_object)))`. `[PROPOSED]` The identity object contains `config_digest`, `W`, `N_w`, `alpha`, `v_mult`, `c_min`, `eta`, `repetition_index`, `seed_index`, and, when applicable, `bootstrap_attempt_index`. The executable RNG integer is the unsigned big-endian value of the first eight digest bytes modulo `2^63−1`. `[PROPOSED]`
+
+Publish `diagnostics/l8_g2g4/seed_manifest.json` with `schema_version`, `derivation`, `config_digest`, and ordered `entries`; each entry contains the identity fields, full lowercase `seed_digest`, and derived integer labeled `synthetic_diagnostic_seed`. `[PROPOSED]` These are candidate-blind synthetic simulation seeds, not protected scoring seeds. No scoring-seed manifest or courier material is read or written.
+
+#### 8.9.4 Output schemas and atomic publication
+
+The screening artifact is `diagnostics/l8_g2g4/battery_sweep.json`; its checksum sidecar is `battery_sweep.sha256`. `[PROPOSED]` Required top-level fields are `schema_version`, `artifact_date`, `regime`, `design_sha`, `implementation_sha`, `config_digest`, `estimator_version`, `status`, `geometries`, `finalists`, `instrument_failure_count`, and `prohibitions`. `[PROPOSED]` `schema_version="l8-g2g4-sweep-v1"`. Each geometry contains exactly `W`, `N_w`, `queries_per_dose`, `queries_per_five_seed_run`, `screening_repetitions`, `status`, `max_wilson_upper`, `all_cells_below_0_10`, `all_cells_below_0_05`, `diagnostics`, and `cells`; `diagnostics={mean_primary_rate,median_primary_rate,p95_primary_rate,mean_mean_beta_diagnostic}`; and `cells` has exactly 240 ordered entries. Each cell contains exactly `W`, `N_w`, `alpha`, `v_mult`, `c_min`, `eta`, `attempted_repetitions`, `valid_repetitions`, `false_kill_count`, `primary_false_kill_rate`, `wilson_lower`, `wilson_upper`, `mean_beta_false_kill_rate`, `predicate_false_kill_rates`, `failure_mask_counts`, and `apparatus_invalid_count`. `[PROPOSED]` `predicate_false_kill_rates` has exactly `{spearman,beta_star,direction,bootstrap}`; `failure_mask_counts` maps four-bit strings in `0000..1111` to nonnegative counts, with bit order `(spearman,beta_star,direction,bootstrap)`.
+
+Required completeness predicates are: exact schema; exact config digest; 20 unique geometries; 240 unique ordered cells per complete geometry; 2,000 attempted repetitions per cell; denominator plus apparatus-invalid count equals attempts; finite bounded rates/intervals; Wilson recomputation match within `1e-15`; geometry summaries recompute exactly from cells; finalists recompute exactly from the rule; no unknown fields. `[PROPOSED]`
+
+Publish atomically in the destination directory: write canonical bytes to `<filename>.tmp`, flush, call `fsync`, validate by re-reading, then replace the destination with a same-filesystem atomic rename. `[PROPOSED]` Never delete or truncate an existing complete destination before validation. On Windows use replace-existing atomic rename semantics; on POSIX use `os.replace`. A failed publication preserves the prior complete artifact, retains the invalid temp file by renaming it `<filename>.failed.<UTC-basic-timestamp>.<sha256-prefix>`, and exits per §8.9.5. `[PROPOSED]` The sidecar is produced only after the JSON replacement succeeds, using the same atomic protocol. A sidecar mismatch makes the artifact incomplete; it does not destroy the last known-good pair.
+
+#### 8.9.5 Production-path faults, exceptions, exits, and recovery
+
+Production code SHALL expose one internal dependency object `DiagnosticFaultHooks`, defaulting to no faults; tests inject hook implementations directly. `[PROPOSED]` No public CLI fault flags or environment-variable backdoors are permitted. Hooks exist only at named production boundaries: `after_calibration`, `before_artifact_section`, `after_temp_write`, `before_parallel_collect`, and `before_atomic_replace`. Test-only hook implementations live under `tests/` and are unreachable from the production CLI.
+
+Exception/exit contracts are: `DiagnosticSchemaError` exit 20; `DiagnosticChecksumError` exit 21; `DiagnosticConfigMismatchError` exit 22; `DiagnosticNondeterminismError` exit 23; existing `CalibrationWorkerError` or `CalibrationIdentityError` exit 1; unexpected exceptions exit 70. `[PROPOSED]` Every failure writes one structured diagnostic to stderr, publishes no new success artifact or success attestation, and leaves the prior complete artifact untouched.
+
+Crash recovery applies only to candidate-blind synthetic diagnostic invocations and is not a rerun of candidate/scoring evidence. `[PROPOSED]` O-14 remains absolute for scoring runs. A fresh diagnostic invocation validates the frozen manifest, ignores all `.tmp` and `.failed.*` files as inputs, preserves them for audit, and recomputes from repetition zero; no partial simulation state or counts are resumed. `[PROPOSED]` Existing complete artifacts may be replaced only after a new complete artifact validates under the identical approved config digest; replacement is recorded in the rehearsal report. No partial file is silently deleted or overwritten.
+
+#### 8.9.6 Independent apparatus fixtures and rehearsal report
+
+Independent checks use fixed synthetic fixtures committed under `tests/fixtures/l8_g2g4/`. `[PROPOSED]` `known_answers_v1.json` contains exactly 32 objects ordered by integer `i=0..31`: `{"item_id":"fixture-II","oracle_input":{"truth_bit":i mod 2},"expected_label":i mod 2}`, where `II` is zero-padded to two digits. `[PROPOSED]` The oracle production path consumes `oracle_input` and must return `expected_label`. The check canonicalizes the ordered projected list `[{"item_id":"fixture-II","label":i mod 2}, ...]` with the §8.9.3 rules; its expected SHA-256 is `a38ba6a7b6236be756a318cfbab5e97b3c616882d65f8b6bce6452be7d62a141`. `[PROPOSED]` The estimator fixtures are the §2 positive and zero-slope fixtures, evaluated under the already specified tolerances. Dose validation uses the synthetic reference mirror and requires the existing monotonicity/potency conditions before candidate/control observations. `[PROPOSED]`
+
+Configuration mismatch tests mutate, one at a time, `aggregation`, `W`, `N_w`, dose levels, seed derivation, and estimator version after digest creation; each must raise `DiagnosticConfigMismatchError` before calibration or simulation. `[PROPOSED]` Artifact completeness uses every predicate in §8.9.4. Serial/parallel comparison canonicalizes complete small-fixture result objects after removing exactly the top-level `elapsed_seconds` field; byte equality, config digest equality, ordered seed-manifest equality, and checksum equality are required. `[PROPOSED]`
+
+The rehearsal artifact is `diagnostics/l8_g2g4/diagnostic_rehearsal.json` with sidecar `diagnostic_rehearsal.sha256`. `[PROPOSED]` Required fields are `schema_version`, `artifact_date`, `regime`, `design_sha`, `implementation_sha`, `config_digest`, `fixture_digests`, `overall_status`, and ordered `cases`. Each case contains exactly `case_id`, `injected_boundary`, `expected_exception`, `expected_exit_code`, `observed_exception`, `observed_exit_code`, `assertions`, `prior_artifact_digest`, `result_artifact_digest`, `preserved_files`, and `status`. `[PROPOSED]` Each `assertions` entry is exactly `{assertion_id,expected,observed,status}`; `preserved_files` is an ordered array of relative repository paths; digests are lowercase SHA-256 hex or JSON null when no artifact exists. Required `case_id` values are ordered as `incomplete_output`, `malformed_json`, `truncated_temp`, `serial_parallel`, `aggregation_mismatch`, `W_mismatch`, `N_w_mismatch`, `dose_grid_mismatch`, `seed_manifest_mismatch`, `estimator_version_mismatch`, `calibration_worker_crash`, and `calibration_identity_crash`. `[PROPOSED]` `overall_status="PASS"` only when every required case passes every assertion; otherwise it is `FAIL`. Publication follows §8.9.4.
+
+#### 8.9.7 Repository routing
+
+TASK BUILDER creates `taskbuilder/l8-g2g4-diagnostic-remediation` from the approved ARCHITECT v2.4 result SHA. `[PROPOSED — branch routing]` It imports `diagnostics/l8_power_analysis.py` from `b1397498ca369067e956479e6c2bd6b0793c3e89` as the executable implementation baseline; `6d455bb878f4b52a5b5564afac38d6fb3a20d4b3` is read-only historical result context and is not copied forward as a new result. `[PROPOSED]` If either source path/blob differs from the reviewed SHA, STOP. The TASK BUILDER changes only diagnostic code, tests/fixtures, and `diagnostics/l8_g2g4/` artifacts authorized here; it does not modify the ARCHITECT specification.
+
 ---
 
 ## §9 Multiplicity and shared machinery (NF2)
@@ -363,7 +439,7 @@ L8 and L10 share components (mirror, abstention) and run **separate batteries** 
 | # | Item | Decision |
 |---|---|---|
 | G1 | Interpretive: "regulation" = loop-closure reading; narrowed claim adopted | RESOLVED — Entry 81 `[Entry 81]` |
-| G2 | Regulation-error definition plus exact all-seeds verdict aggregation | OPEN — v2.3 §8.1 must be implemented diagnostically, CRITIC-reviewed, and ruled by Rebecca `[PROPOSED]` |
+| G2 | Regulation-error definition plus exact all-seeds verdict aggregation | OPEN — v2.4 §8 must be CRITIC-reviewed, Rebecca-approved, implemented diagnostically, re-reviewed, and ruled by Rebecca `[PROPOSED]` |
 | G3 | Minimum battery geometry under the primary complete-verdict false-kill criterion | OPEN — candidate-blind sweep §8.2; <0.10 required, <0.05 preferred `[PROPOSED]` |
 | G4 | C_min and η (+ bounds), selected only after aggregation and battery freeze | DEFERRED — no recomputation or selection in this cycle `[PROPOSED]` |
 | G5 | CF1 riders: memory-arm mechanism prediction + pre-committed boundary-condition classification (§6.4) + three-control panel (§6.2, §6.3) | Ratify verbatim `[Entry 81]` |
@@ -372,15 +448,16 @@ L8 and L10 share components (mirror, abstention) and run **separate batteries** 
 
 ## §12 Sequencing (binding order)
 
-1. ARCHITECT v2.3 remediation design and changelog committed; no computation.
-2. TASK BUILDER implements only the all-seeds estimand, battery sweep, failure-injection tests, and diagnostic rehearsal in §8.1–§8.2 and §8.6–§8.7. It does not implement final L8 scoring or run the deferred map.
-3. Fresh-context CRITIC reviews the v2.3 design, implementation delta, sweep artifact, and rehearsal evidence, beginning with §5 P1–P6 compliance.
-4. Return the revised design, power analysis/sweep, and CRITIC ruling to Rebecca. Only Rebecca may freeze aggregation or battery size or decide G2/G3.
-5. After Rebecca freezes aggregation and battery geometry, TASK BUILDER recomputes the sensitivity and misspecification maps under §8.3–§8.5; fresh-context CRITIC reviews; Rebecca alone decides G4.
-6. §4 L7/L10 reconciliation check documented; any delta triggers a review cycle.
-7. Pre-registration freeze (L19): all `[PROPOSED]` values resolved, appendix committed, hash-attested.
-8. Final L8 scoring implementation release requires a separate Rebecca authorization. Protected seeds remain unexposed.
-9. Scoring remains gated behind the five standing M4 gates (L3, FWFP, CRITIC, tolerance-calibration, courier). Nothing herein authorizes scoring.
+1. ARCHITECT v2.4 deterministic remediation amendment and changelog committed; no computation.
+2. Fresh-context CRITIC reviews v2.4, beginning with §5 P1–P6 compliance and determinism of §8.9.
+3. Rebecca decides whether to approve the proposed diagnostic method and authorize TASK BUILDER diagnostic implementation/2,000-repetition screening. No approval is inferred.
+4. If authorized, TASK BUILDER implements only the all-seeds estimand, battery sweep, failure-injection tests, and diagnostic rehearsal in §8. It does not implement final L8 scoring, run 10,000-repetition confirmation, or run the deferred map.
+5. Fresh-context CRITIC reviews the implementation delta, 2,000-repetition screening artifact, and rehearsal evidence. Return the revised design, screening analysis, and CRITIC ruling to Rebecca. Only Rebecca may freeze aggregation or battery size or decide G2/G3.
+6. After Rebecca freezes aggregation and battery geometry, TASK BUILDER recomputes the sensitivity and misspecification maps under §8.3–§8.5; fresh-context CRITIC reviews; Rebecca alone decides G4.
+7. §4 L7/L10 reconciliation check documented; any delta triggers a review cycle.
+8. Pre-registration freeze (L19): all `[PROPOSED]` values resolved, appendix committed, hash-attested.
+9. Final L8 scoring implementation release requires a separate Rebecca authorization. Protected seeds remain unexposed.
+10. Scoring remains gated behind the five standing M4 gates (L3, FWFP, CRITIC, tolerance-calibration, courier). Nothing herein authorizes scoring.
 
 ---
 

@@ -1,5 +1,7 @@
 # ARCHITECT → TASK BUILDER Handoff — L8 G2–G4 Remediation Diagnostics
 
+> **SUPERSEDED / DO NOT IMPLEMENT:** TASK BUILDER's deterministic STOP against v2.3 is valid. This handoff is suspended by specification v2.4. Route v2.4 to fresh-context CRITIC, then Rebecca; TASK BUILDER proceeds only if Rebecca approves the proposed diagnostic method and compute scope. The destination branch and implementation-source rules are now in v2.4 §8.9.7.
+
 **Date:** 2026-08-19 · **Regime:** B (post-Entry 81; constitution v2 §5 binding)
 
 **Gate served:** Remediation design before any G2–G4 decision
