@@ -4,7 +4,7 @@
 
 **Regime:** B (post-Entry 81; constitution v2 §5 binding)
 
-**Authority:** Rebecca
+**Authority:** Rebecca R. McClintic
 
 **Serves:** L8 G2–G4 diagnostic feasibility gate
 
@@ -12,15 +12,15 @@
 
 ## Authorization recorded
 
-Rebecca authorized replacing the presently specified 60-repetition feasibility workload (six cases × 10 repetitions) with a **1,000-repetition feasibility diagnostic**. The diagnostic is intended to measure parallel service time and support straightforward extrapolation to the proposed full-screen workload. `[PROPOSED — diagnostic workload; Rebecca-authorized for feasibility measurement]`
+Rebecca R. McClintic authorized replacing the presently specified 60-repetition feasibility workload (six cases × 10 repetitions) with a **1,000-repetition feasibility diagnostic**. The diagnostic is intended to measure parallel service time and support straightforward extrapolation to the proposed full-screen workload. `[PROPOSED — diagnostic workload; Rebecca-authorized for feasibility measurement]`
 
-Rebecca also directed that diagnostic computation use parallel processing rather than repeating a full serial run. The implementation must retain the v2.6 scoring-parity multiprocessing contract unless a subsequent approved amendment changes it: `multiprocessing.Pool`, spawn start method, chunksize one, and worker count `min(32, logical CPU count)`. `[PROPOSED — diagnostic scheduling; Rebecca-authorized]`
+Rebecca R. McClintic also directed that diagnostic computation use parallel processing rather than repeating a full serial run. The implementation must retain the v2.6 scoring-parity multiprocessing contract unless a subsequent approved amendment changes it: `multiprocessing.Pool`, spawn start method, chunksize one, and worker count `min(32, logical CPU count)`. `[PROPOSED — diagnostic scheduling; Rebecca-authorized]`
 
 The authorizing instruction was:
 
 > “if the idea is to run the test to determine if a certain number of runs is appropriate or not i will judge that by doing the 1000 run test and we can use simple math to estimate the full test”
 
-Rebecca then explicitly stated:
+Rebecca R. McClintic then explicitly stated:
 
 > “im authorizing it please document my authorization push and merge my documented authorization”
 
@@ -45,7 +45,7 @@ This ruling authorizes only candidate-blind, synthetic, O-15-labeled feasibility
 - rerunning failed scoring evidence; or
 - L15/L16/L17 work before M5.
 
-O-14 remains absolute for scoring. Statistical failures must not be relabeled as INSTRUMENT FAILURE. Rebecca remains the sole authority for the later workload and gate decisions.
+O-14 remains absolute for scoring. Statistical failures must not be relabeled as INSTRUMENT FAILURE. Rebecca R. McClintic remains the sole authority for the later workload and gate decisions.
 
 ## Next recipient
 
