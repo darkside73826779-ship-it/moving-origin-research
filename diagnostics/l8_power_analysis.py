@@ -39,6 +39,7 @@ import json
 import math
 import multiprocessing
 import os
+import sys
 import time
 from typing import Dict, List, Tuple
 
@@ -475,6 +476,116 @@ def calibrate_sigma_dose(alpha: float, v_mult: float) -> float:
     return 0.5 * (lo + hi)
 
 
+class CalibrationWorkerError(Exception):
+    def __init__(self, ordinal, alpha, v_mult, exception_type,
+                 exception_message="calibration worker failed"):
+        self.ordinal = int(ordinal)
+        self.alpha = float(alpha)
+        self.v_mult = float(v_mult)
+        self.exception_type = str(exception_type)
+        self.exception_message = "calibration worker failed"
+        super().__init__(ordinal, alpha, v_mult, self.exception_type,
+                         self.exception_message)
+
+
+def _worker_calibration(args):
+    ordinal, alpha, v_mult = args
+    try:
+        sigma_dose = calibrate_sigma_dose(alpha, v_mult)
+    except Exception as original_exception:
+        raise CalibrationWorkerError(
+            ordinal, alpha, v_mult,
+            type(original_exception).__name__,
+            "calibration worker failed",
+        ) from None
+    return {
+        "ordinal": ordinal,
+        "alpha": alpha,
+        "v_mult": v_mult,
+        "sigma_dose": sigma_dose,
+    }
+
+
+class CalibrationIdentityError(Exception):
+    def __init__(self, mismatch_kinds, expected_count, seen_count,
+                 canonical_identities,
+                 message="calibration identity validation failed"):
+        self.mismatch_kinds = list(mismatch_kinds)
+        self.expected_count = int(expected_count)
+        self.seen_count = int(seen_count)
+        self.canonical_identities = [list(x) for x in canonical_identities]
+        self.message = "calibration identity validation failed"
+        super().__init__(self.mismatch_kinds, self.expected_count,
+                         self.seen_count, self.canonical_identities,
+                         self.message)
+
+
+def _emit_calibration_failure(record):
+    sys.stderr.write(json.dumps(record, sort_keys=True) + "\n")
+    sys.stderr.flush()
+
+
+def _validate_calibration_identities(results, canonical_work_items):
+    canonical = {(a, v) for (_, a, v) in canonical_work_items}
+    seen_keys = set()
+    result_count = len(results)
+    duplicate = missing = unexpected = False
+    for r in results:
+        try:
+            key = (r["alpha"], r["v_mult"])
+        except (TypeError, KeyError):
+            unexpected = True
+            continue
+        if key in seen_keys:
+            duplicate = True
+        seen_keys.add(key)
+        if key not in canonical:
+            unexpected = True
+    if seen_keys != canonical:
+        missing = True
+    kinds = [k for k, p in [("duplicate", duplicate),
+                           ("missing", missing),
+                           ("unexpected", unexpected)] if p]
+    if kinds:
+        canonical_identities = [[a, v] for (_, a, v) in canonical_work_items]
+        raise CalibrationIdentityError(
+            kinds, len(canonical), result_count, canonical_identities)
+
+
+def _run_calibration_phase(analysis_label, workers):
+    work_items = [(i, a, v)
+                  for i, (a, v) in enumerate(
+                      (a, v) for a in ALPHAS for v in V_MULTS)]
+    n_workers = min(workers or os.cpu_count() or 1, len(work_items))
+    print(f"    [calibration:{analysis_label}] {len(work_items)} identities "
+          f"on {n_workers} workers...")
+    try:
+        with multiprocessing.Pool(processes=n_workers) as pool:
+            results = pool.map(_worker_calibration, work_items)
+        _validate_calibration_identities(results, work_items)
+    except CalibrationWorkerError as e:
+        _emit_calibration_failure({
+            "phase": "calibration",
+            "analysis_label": analysis_label,
+            "ordinal": e.ordinal, "alpha": e.alpha, "v_mult": e.v_mult,
+            "exception_type": e.exception_type,
+            "exception_message": e.exception_message,
+        })
+        raise SystemExit(1)
+    except CalibrationIdentityError as e:
+        _emit_calibration_failure({
+            "phase": "calibration",
+            "analysis_label": analysis_label,
+            "message": "calibration identity validation failed",
+            "mismatch_kinds": e.mismatch_kinds,
+            "expected_count": e.expected_count,
+            "seen_count": e.seen_count,
+            "canonical_identities": e.canonical_identities,
+        })
+        raise SystemExit(1)
+    return {(r["alpha"], r["v_mult"]): r["sigma_dose"] for r in results}
+
+
 # ---------------------------------------------------------------------------
 # Estimator validation (§2 XF-5 synthetic examples).
 #
@@ -773,11 +884,7 @@ def run_power_analysis(n_sims: int, include_null_control: bool = True,
     """
     t0 = time.time()
     results = []
-    calibrations = {}
-    for alpha in ALPHAS:
-        for v_mult in V_MULTS:
-            # Calibrate σ_dose once per (α, v) pair.  [PROPOSED — apparatus parameter, §8]
-            calibrations[(alpha, v_mult)] = calibrate_sigma_dose(alpha, v_mult)
+    calibrations = _run_calibration_phase("reference", workers)
 
     work_items = []
     null_items = [] if include_null_control else None
@@ -1123,11 +1230,8 @@ def run_power_analysis_misspecified(profile_name, n_sims, include_null_control=T
     n_combos = len(ALPHAS) * len(V_MULTS) * len(C_MINS) * len(ETAS)
     done = 0
 
-    # Pre-calibrate σ_dose for all (α, v) pairs (reuse reference calibration).
-    calibrations = {}
-    for alpha in ALPHAS:
-        for v_mult in V_MULTS:
-            calibrations[(alpha, v_mult)] = calibrate_sigma_dose(alpha, v_mult)
+    # Independently calibrate this misspecified analysis (no cross-profile cache).
+    calibrations = _run_calibration_phase(f"misspec:{profile_name}", workers)
 
     # Build work items with the misspecified profile name.
     work_items = []
