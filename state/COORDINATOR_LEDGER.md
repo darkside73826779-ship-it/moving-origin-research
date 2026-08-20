@@ -46,11 +46,24 @@ When Rebecca says a role is complete (or any phrasing suggesting it — "archite
 If the ledger, STATE.md, or a return handoff doesn't tell you what to do next: STOP and ask Rebecca. Do not start digging through GitHub main, replaying conversation history, or launching subagents to explore — that is what burned the fresh coordinator's credits. The ledger + STATE.md + the return handoff should be sufficient; if they're not, the right move is to ask Rebecca for a routing instruction, not to reconstruct the state independently.
 
 ---
-## Current state — updated 2026-08-19 22:53 EDT (local rerun authorized + running on Rebecca's executor)
+## Current state — updated 2026-08-19 23:31 EDT (L8 power analysis rerun COMPLETE — parallel run reproduces prior numbers; preparing advisor consultation for G2–G5)
 
-**Ball:** LOCAL EXECUTOR (Rebecca's workstation) — the L8 power analysis rerun is authorized and running. Command: `python diagnostics/l8_power_analysis.py --full --workers N [--stress-test-sims 2000]` on `taskbuilder/l8-power-analysis` at `b139749`. Produces `diagnostics/l8_power_analysis_results.json` (~200 KB) — the complete artifact (reference sensitivity map + selection + misspecification stability report, both false-kill aggregations) feeding Rebecca's G2–G5 gate rulings. Rebecca reports completion (coordinator does not poll).
+**Ball:** WORKFLOW COORDINATOR — preparing the advisor consultation package for Rebecca's G2–G5 gate rulings. The rerun is complete: artifact `diagnostics/l8_power_analysis_results.json` (297,936 bytes, SHA-256 `978f21c0...`) committed at `6d455bb` on `taskbuilder/l8-power-analysis`.
 
-**After the rerun:** advisor consultation package for G2–G5 (calibration problem: 5-seed-mean vs per-seed any-seed false-kill; stress-test instability: selected operating point generalization) → G2–G5 rulings → pre-registration freeze → §12 step 4 (L7/L10 delta review) → M4 harness build → compatibility check → scoring authorization (gated on 5 downstream gates).
+**Rerun results (reproduce prior run exactly — parallel implementation didn't change the science):**
+- Selected operating point: (C_min=0.5, η=0.2) — same as prior
+- 5-seed-mean false-kill: 6.22% (below 10% threshold — lenient)
+- Per-seed any-seed false-kill: 76.23% (above 10% — G3 TRIGGERED)
+- False-pass: 2.57%; 0 instrument failures
+- Stress-test: BOTH misspecified profiles UNSTABLE (uniform: (0.6, 0.2); bimodal: (0.5, 0.1) — neither matches reference (0.5, 0.2))
+- Performance: 7.51x speedup (22.63 min parallel vs 170.01 min serial); 16 workers + parent, 100% CPU
+- Write-order: PASS (artifact complete); reproducibility: serial==parallel identical
+
+**Two key findings for advisor consultation (both unchanged from prior run):**
+1. The calibration problem (NF-IMPL-2): 5-seed-mean 6.22% (lenient, below threshold) vs per-seed any-seed 76.23% (harsh, above threshold, matches scoring bar). Which is the G3-escalation input?
+2. The stress-test instability: selected operating point (0.5, 0.2) does not generalize to misspecified profiles. Both uniform and bimodal select different operating points.
+
+**After G2–G5 rulings:** pre-registration freeze → §12 step 4 (L7/L10 delta review) → M4 harness build → compatibility check → scoring authorization (gated on 5 downstream gates).
 
 **Task builder note (2026-08-19):** the local frontier GPT TASK BUILDER stopped three times rather than implement an under-specified spec (serial-calibration spec request; §4.1/§4.2 contradiction; sanitization/termination/identity-validation gaps) — correctly routing each to the ARCHITECT. The ARCHITECT's v1.2 (binding normative code + implementation trace + 14-point test contract) closed every gap. The TASK BUILDER then implemented cleanly (all verification PASS, genuine reproducibility, BF-MP-1 defect fixed). The CRITIC verified claims against the actual diff and results — the false-attestation pattern did not recur.
 
@@ -87,7 +100,8 @@ This hybrid (build sim on spec-text estimator, then verify against the harness's
 
 ## Handoff history (compact — current state overwrites prior; full history in provenance log + git log)
 
-- 2026-08-19 22:53 — local rerun authorized + running on Rebecca's executor (b139749, --full --workers N)
+- 2026-08-19 23:31 — L8 power analysis rerun COMPLETE (6d455bb); reproduces prior numbers; 7.51x speedup; both false-kill aggregations + stress-test instability unchanged; preparing advisor consultation
+- 2026-08-19 22:53 — local rerun authorized + running on Rebecca's executor (b139749, --full --workers 16)
 - 2026-08-19 22:52 — calibration parallelism implementation CRITIC-cleared (b139749); BF-MP-1 defect genuinely fixed; local rerun prompt prepared
 - 2026-08-19 22:46 — TASK BUILDER implemented spec v1.2 (b139749); all verification PASS (genuine reproducibility, 14-point test contract, multicore confirmed)
 - 2026-08-19 22:28 — calibration parallelism spec v1.2 (6979378) CRITIC-cleared; all three failure-path gaps closed; awaiting Rebecca's approval (should be the last amendment)
