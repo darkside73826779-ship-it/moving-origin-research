@@ -46,11 +46,13 @@ When Rebecca says a role is complete (or any phrasing suggesting it — "archite
 If the ledger, STATE.md, or a return handoff doesn't tell you what to do next: STOP and ask Rebecca. Do not start digging through GitHub main, replaying conversation history, or launching subagents to explore — that is what burned the fresh coordinator's credits. The ledger + STATE.md + the return handoff should be sufficient; if they're not, the right move is to ask Rebecca for a routing instruction, not to reconstruct the state independently.
 
 ---
-## Current state — updated 2026-08-20 00:37 EDT (v2.5 CRITIC BLOCK on P6 provenance pointers; ARCHITECT corrected to v2.5.1 at 081df58; ball back to CRITIC for re-review)
+## Current state — updated 2026-08-20 00:48 EDT (v2.5.1 CRITIC CLEAR — in-repo at 1338d28; INIT fix worked; design ready for Rebecca's feasibility-gate decision)
 
-**Ball:** CRITIC (re-reviewing v2.5.1 with the ARCHITECT's handoff). The CRITIC blocked v2.5 on a P6 provenance-citation issue: the spec's Sources line cited wrong constitution line numbers (L8 as line 26, L14 as line 40). The CRITIC verified directly against `docs/ARCHITECTURAL_CONSTITUTION_v2.md` and found L8 is line 28, L14 is line 42. The ARCHITECT corrected the pointers in v2.5.1 (`081df58`): L8→line 28, L14→line 42, verified against the constitution, no verbatim law text changed. Also a non-blocking workload clarification (48B valid bootstrap replicates vs 52.8B max attempted = 9.6M reps × 5,500 max attempts). v2.5 scientific/implementation-contract substance unchanged. The v2.5 CRITIC handoff marked superseded.
+**Ball:** REBECCA — the L8 spec v2.5/v2.5.1 design is CRITIC-cleared in-repo (`reviews/critic_l8_g2g4_v2.5.1_rereview.md` at `1338d28` on `critic/l8-g2g4-v2.5.1-rereview`). The CRITIC INIT fix (PR #92) worked: the CRITIC committed + pushed its review this time (with the scan attestation) instead of returning it as an attachment. The v2.5.1 provenance pointers verified against the constitution (L8=line 28, L14=line 42); v2.5 substance byte-for-byte unchanged; §5 P6 passes.
 
-**MATERIAL (unchanged from v2.5):** the 2,000-rep screening authorization remains WITHDRAWN pending the feasibility gate. Commit A + the feasibility benchmark (no scientific screening) must run first, then Rebecca decides (full screen / amended / stop). The TASK BUILDER remains unauthorized.
+**Rebecca's feasibility-gate decision (the v2.5 §8.10.8 gate):** Commit A + the fixed feasibility benchmark (10 reps × 3 fixed cells × 2 geometries, full 5,000-bootstrap, NO scientific screening) must run first. After the benchmark + CRITIC review, Rebecca separately chooses: (a) authorize the full 9.6M-rep screen; (b) approve an amended/reduced design; or (c) stop. The TASK BUILDER is authorized only after Rebecca approves Commit A + benchmark.
+
+**MATERIAL (unchanged):** the 2,000-rep screening authorization remains WITHDRAWN pending the feasibility benchmark + CRITIC review + separate Rebecca ruling. No screening, no 10,000-rep, no scoring, no seed exposure, no merger. The TASK BUILDER remains unauthorized.
 
 **The v2.4 design (what Rebecca approves):** §8.9 deterministic contract — complete trend-verdict algorithms (Spearman ρ, OLS β, bootstrap T = mean_s(β*_s) with stratum-level resampling, lower bound > 0 conjunction, per-seed 0.2 bar preserved); all-cell battery sweep (20 geometries × 240 cells, worst-cell Wilson acceptance conjunction < 0.10, preferred < 0.05); config/serialization/seed manifests (canonical JSON + SHA-256, candidate-blind synthetic seeds); atomic publication; fault injection + exit contracts (20–23/1/70) + synthetic-only crash recovery; apparatus fixtures + 12-case rehearsal; exact TASK BUILDER routing (import b139749, 6d455bb read-only).
 
@@ -102,6 +104,7 @@ This hybrid (build sim on spec-text estimator, then verify against the harness's
 
 ## Handoff history (compact — current state overwrites prior; full history in provenance log + git log)
 
+- 2026-08-20 00:48 — v2.5.1 CRITIC CLEAR in-repo (1338d28 on critic/l8-g2g4-v2.5.1-rereview); INIT fix worked (CRITIC committed+pushed); v2.5/v2.5.1 design ready for Rebecca's feasibility-gate decision (Commit A + benchmark first)
 - 2026-08-20 00:45 — CRITIC INIT fix MERGED (PR #92, edf7a78): binding commit-and-push obligation added (reviews must be in-repo on a critic/ branch, not attachments). One-time handoff sent to current CRITIC to commit its v2.5.1 review.
 - 2026-08-20 00:37 — v2.5 CRITIC BLOCK (P6 provenance pointers: L8 line 26→28, L14 line 40→42); ARCHITECT corrected to v2.5.1 (081df58); ball back to CRITIC re-review. v2.5 substance unchanged; screening still withdrawn.
 - 2026-08-20 00:29 — L8 spec v2.5 landed (5209f33, §8.10, 2nd STOP closed); 2,000-rep screening authorization WITHDRAWN pending feasibility gate (9.6M cell reps / up to 48B bootstrap replicates); CRITIC reviewing v2.5
