@@ -1,0 +1,30 @@
+L8 multiprocessing reproducibility diagnostic
+Date: 2026-08-19
+Regime: B
+Label: diagnostic-only (O-15), synthetic/candidate-blind, no scoring
+Command: bundled-python -m unittest tests.test_l8_multiprocessing -v
+Configuration: 3 combos, 1 simulation/combo, workers=1 versus workers=2
+Fields: (mean_beta_star, false_kill_rate, false_kill_rate_per_seed,
+         n_valid, n_instrument_failures)
+
+Reference workers=1:
+[(0.26321430937795187, 0.0, 1.0, 1, 0),
+ (0.37037613641572575, 0.0, 1.0, 1, 0),
+ (0.1956607649103118, 1.0, 1.0, 1, 0)]
+Reference workers=2:
+[(0.26321430937795187, 0.0, 1.0, 1, 0),
+ (0.37037613641572575, 0.0, 1.0, 1, 0),
+ (0.1956607649103118, 1.0, 1.0, 1, 0)]
+Reference result: byte-identical field values; PASS.
+
+Misspecified uniform_difficulty workers=1:
+[(1.0499306931312413, 0.0, 0.0, 1, 0),
+ (0.9463458621102969, 0.0, 1.0, 1, 0),
+ (1.3302993443956659, 0.0, 0.0, 1, 0)]
+Misspecified uniform_difficulty workers=2:
+[(1.0499306931312413, 0.0, 0.0, 1, 0),
+ (0.9463458621102969, 0.0, 1.0, 1, 0),
+ (1.3302993443956659, 0.0, 0.0, 1, 0)]
+Misspecified result: byte-identical field values; PASS.
+
+Test result: Ran 2 tests in 89.235s; OK.

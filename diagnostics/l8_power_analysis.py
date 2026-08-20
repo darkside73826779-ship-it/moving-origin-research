@@ -755,7 +755,7 @@ def _worker_null_control(args):
 
 
 def run_power_analysis(n_sims: int, include_null_control: bool = True,
-                       progress_every: int = 20) -> Dict:
+                       progress_every: int = 20, workers=None) -> Dict:
     """Run the §8 power analysis over the full 5×3×4×4 = 240 grid.
 
     For each (α, v) pair: calibrate σ_dose once at the reference operating
@@ -773,100 +773,70 @@ def run_power_analysis(n_sims: int, include_null_control: bool = True,
     """
     t0 = time.time()
     results = []
-    n_combos = len(ALPHAS) * len(V_MULTS) * len(C_MINS) * len(ETAS)
-    done = 0
-
+    calibrations = {}
     for alpha in ALPHAS:
         for v_mult in V_MULTS:
             # Calibrate σ_dose once per (α, v) pair.  [PROPOSED — apparatus parameter, §8]
-            sigma_dose = calibrate_sigma_dose(alpha, v_mult)
+            calibrations[(alpha, v_mult)] = calibrate_sigma_dose(alpha, v_mult)
+
+    work_items = []
+    null_items = [] if include_null_control else None
+    for alpha in ALPHAS:
+        for v_mult in V_MULTS:
+            sigma_dose = calibrations[(alpha, v_mult)]
             for c_min in C_MINS:
                 for eta in ETAS:
                     base_seed = combo_seed(alpha, v_mult, c_min, eta)
-                    # True-effect arm: σ_dose as calibrated.
-                    bs, n_fail, per_seed = simulate_one_simulation(
-                        alpha, v_mult, c_min, eta, sigma_dose,
-                        n_sims=n_sims, base_seed=base_seed)
-                    valid = bs[~np.isnan(bs)]
-                    n_valid = int(valid.size)
-                    # False-kill rate (5-seed mean): fraction of simulations where
-                    # the 5-seed-mean β*_estimated < 0.2 when true β* ≥ 0.3. [Sol-XF-9]
-                    # INSTRUMENT_FAILURE simulations (NaN) are excluded from the
-                    # denominator (the apparatus produced no measurement; they
-                    # are reported separately, not counted as kills).
-                    if n_valid > 0:
-                        false_kill_rate = float(np.mean(valid < BETA_STAR_BAR))
-                    else:
-                        false_kill_rate = float("nan")
-                    # NF-IMPL-2: Per-seed false-kill rate: P(any of 5 β*_s < 0.2).
-                    # Matches the per-seed scoring bar (spec §2: "per seed").
-                    # Flagged to Rebecca for ruling on which is the G3 input.
-                    if n_valid > 0:
-                        valid_ps = per_seed[~np.isnan(bs)]  # rows where run-level is valid
-                        if valid_ps.shape[0] > 0:
-                            any_seed_below = np.any(valid_ps < BETA_STAR_BAR, axis=1)
-                            false_kill_rate_per_seed = float(np.mean(any_seed_below))
-                        else:
-                            false_kill_rate_per_seed = float("nan")
-                    else:
-                        false_kill_rate_per_seed = float("nan")
-                    mean_beta = float(valid.mean()) if n_valid else float("nan")
-                    std_beta = float(valid.std()) if n_valid else float("nan")
-
-                    # Null-control arm (false-pass rate) for the sensitivity map.
+                    work_items.append((alpha, v_mult, c_min, eta, sigma_dose,
+                                       n_sims, base_seed, None))
                     if include_null_control:
-                        bs_null, n_fail_null, _ = simulate_one_simulation(
-                            alpha, v_mult, c_min, eta, sigma_dose=0.0,
-                            n_sims=n_sims, base_seed=base_seed)
-                        valid_null = bs_null[~np.isnan(bs_null)]
-                        if valid_null.size > 0:
-                            false_pass_rate = float(
-                                np.mean(valid_null >= BETA_STAR_BAR))
-                        else:
-                            false_pass_rate = float("nan")
-                        mean_null = float(valid_null.mean()) if valid_null.size else float("nan")
-                    else:
-                        false_pass_rate = float("nan")
-                        mean_null = float("nan")
-                        n_fail_null = 0
+                        null_items.append((alpha, v_mult, c_min, eta, n_sims,
+                                           base_seed, None))
 
-                    region = classify_region(false_kill_rate, false_pass_rate) \
-                        if (not math.isnan(false_kill_rate) and
-                            not math.isnan(false_pass_rate)) else "undefined"
-                    min_dist = min_distance_to_boundaries(false_kill_rate,
-                                                           false_pass_rate) \
-                        if region == "informative" else float("nan")
+    n_workers = workers or os.cpu_count() or 1
+    n_combos = len(work_items)
+    print(f"    [reference] {n_combos} combos on {n_workers} workers...")
+    if n_workers > 1:
+        with multiprocessing.Pool(processes=n_workers) as pool:
+            combo_results = pool.map(_worker_combo, work_items)
+            null_results = (pool.map(_worker_null_control, null_items)
+                            if include_null_control else [{}] * n_combos)
+    else:
+        combo_results = [_worker_combo(item) for item in work_items]
+        null_results = ([_worker_null_control(item) for item in null_items]
+                        if include_null_control else [{}] * n_combos)
 
-                    results.append({
-                        "alpha": alpha,
-                        "v_mult": v_mult,
-                        "v_logit": v_mult * V_REF,
-                        "c_min": c_min,
-                        "eta": eta,
-                        "sigma_dose_calibrated": sigma_dose,
-                        "n_sims": n_sims,
-                        "n_valid": n_valid,
-                        "n_instrument_failures": int(n_fail),
-                        "n_instrument_failures_null": int(n_fail_null),
-                        "mean_beta_star": mean_beta,
-                        "std_beta_star": std_beta,
-                        "false_kill_rate": false_kill_rate,  # P(mean 5-seed β*<0.2) [Sol-XF-9]
-                        "false_kill_rate_per_seed": false_kill_rate_per_seed,  # P(any seed β*<0.2) [NF-IMPL-2, PROPOSED — flagged to Rebecca]
-                        "false_pass_rate": false_pass_rate,   # P(β*≥0.2 | null) [PROPOSED — apparatus parameter, §8.7]
-                        "mean_beta_star_null": mean_null,
-                        "region": region,
-                        "min_distance_to_boundaries": min_dist,
-                        "base_seed": base_seed,
-                    })
-                    done += 1
-                    if done % progress_every == 0:
-                        elapsed = time.time() - t0
-                        rate = done / elapsed if elapsed > 0 else 0.0
-                        eta_s = (n_combos - done) / rate if rate > 0 else float("inf")
-                        print(f"  [progress] {done}/{n_combos} combos "
-                              f"({100*done/n_combos:.1f}%) "
-                              f"elapsed={elapsed:.1f}s rate={rate:.2f}/s "
-                              f"eta={eta_s:.0f}s", flush=True)
+    for combo_result, null_result in zip(combo_results, null_results):
+        false_kill_rate = combo_result["false_kill_rate"]
+        false_pass_rate = (null_result["false_pass_rate"]
+                           if include_null_control else float("nan"))
+        region = classify_region(false_kill_rate, false_pass_rate) \
+            if (not math.isnan(false_kill_rate) and
+                not math.isnan(false_pass_rate)) else "undefined"
+        min_dist = min_distance_to_boundaries(false_kill_rate,
+                                               false_pass_rate) \
+            if region == "informative" else float("nan")
+        results.append({
+            "alpha": combo_result["alpha"],
+            "v_mult": combo_result["v_mult"],
+            "v_logit": combo_result["v_mult"] * V_REF,
+            "c_min": combo_result["c_min"],
+            "eta": combo_result["eta"],
+            "sigma_dose_calibrated": combo_result["sigma_dose"],
+            "n_sims": combo_result["n_sims"],
+            "n_valid": combo_result["n_valid"],
+            "n_instrument_failures": combo_result["n_instrument_failures"],
+            "n_instrument_failures_null": null_result.get("n_instrument_failures_null", 0),
+            "mean_beta_star": combo_result["mean_beta_star"],
+            "std_beta_star": combo_result["std_beta_star"],
+            "false_kill_rate": false_kill_rate,
+            "false_kill_rate_per_seed": combo_result["false_kill_rate_per_seed"],
+            "false_pass_rate": false_pass_rate,
+            "mean_beta_star_null": null_result.get("mean_beta_star_null", float("nan")),
+            "region": region,
+            "min_distance_to_boundaries": min_dist,
+            "base_seed": combo_result["base_seed"],
+        })
 
     elapsed = time.time() - t0
     # Build the sensitivity map (§8.7): aggregate over (α, v) by taking the
@@ -1189,126 +1159,49 @@ def run_power_analysis_misspecified(profile_name, n_sims, include_null_control=T
         combo_results = [_worker_combo(w) for w in work_items]
         null_results = [_worker_null_control(w) for w in null_items] if include_null_control else [{}] * n_combos
 
-    # Build results list
-    for alpha in ALPHAS:
-        for v_mult in V_MULTS:
-            sigma_dose = calibrations[(alpha, v_mult)]
-            v_logit = v_mult * V_REF
-            for c_min in C_MINS:
-                for eta in ETAS:
-                    base_seed = combo_seed(alpha, v_mult, c_min, eta)
-                    # True-effect arm: σ_dose as calibrated (reference calibration).
-                    # Inline the simulation loop using
-                    # simulate_one_seed_misspecified for each seed.
-                    beta_stars = np.full(n_sims, np.nan, dtype=np.float64)
-                    per_seed_betas = np.full((n_sims, N_SEEDS), np.nan, dtype=np.float64)
-                    n_failures = 0
-                    for i in range(n_sims):
-                        d_all = np.zeros((N_SEEDS, L_DOSES, N_W), dtype=np.float64)
-                        for s in range(N_SEEDS):
-                            seed_int = (base_seed + i * N_SEEDS + s) % (2 ** 31)
-                            rng = np.random.default_rng(seed_int)
-                            d_all[s] = simulate_one_seed_misspecified(
-                                rng, alpha, v_logit, sigma_dose, c_min, eta, profile_name)
-                        b, fail = run_level_beta_star(d_all)
-                        if fail:
-                            beta_stars[i] = float("nan")
-                            n_failures += 1
-                        else:
-                            beta_stars[i] = b
-                            for s in range(N_SEEDS):
-                                bs_s, fail_s = beta_star_for_seed(d_all[s])
-                                per_seed_betas[i, s] = bs_s if not fail_s else float("nan")
-                    valid = beta_stars[~np.isnan(beta_stars)]
-                    n_valid = int(valid.size)
-                    # False-kill rate (5-seed mean): P(mean 5-seed β*<0.2).
-                    #  [Sol-XF-9] [PROPOSED -- apparatus parameter, §8 item 9]
-                    if n_valid > 0:
-                        false_kill_rate = float(np.mean(valid < BETA_STAR_BAR))
-                    else:
-                        false_kill_rate = float("nan")
-                    # NF-IMPL-2: Per-seed false-kill rate: P(any of 5 β*_s < 0.2).
-                    if n_valid > 0:
-                        valid_ps = per_seed_betas[~np.isnan(beta_stars)]
-                        if valid_ps.shape[0] > 0:
-                            any_seed_below = np.any(valid_ps < BETA_STAR_BAR, axis=1)
-                            false_kill_rate_per_seed = float(np.mean(any_seed_below))
-                        else:
-                            false_kill_rate_per_seed = float("nan")
-                    else:
-                        false_kill_rate_per_seed = float("nan")
-                    mean_beta = float(valid.mean()) if n_valid else float("nan")
-                    std_beta = float(valid.std()) if n_valid else float("nan")
-
-                    # Null-control arm (false-pass rate): σ_dose=0.0 with the
-                    # same misspecified profile.  [PROPOSED -- apparatus parameter, §8 item 9]
-                    if include_null_control:
-                        beta_stars_null = np.full(n_sims, np.nan, dtype=np.float64)
-                        n_failures_null = 0
-                        for i in range(n_sims):
-                            d_all = np.zeros((N_SEEDS, L_DOSES, N_W), dtype=np.float64)
-                            for s in range(N_SEEDS):
-                                seed_int = (base_seed + i * N_SEEDS + s) % (2 ** 31)
-                                rng = np.random.default_rng(seed_int)
-                                d_all[s] = simulate_one_seed_misspecified(
-                                    rng, alpha, v_logit, sigma_dose=0.0,
-                                    c_min=c_min, eta=eta, profile_name=profile_name)
-                            b, fail = run_level_beta_star(d_all)
-                            if fail:
-                                beta_stars_null[i] = float("nan")
-                                n_failures_null += 1
-                            else:
-                                beta_stars_null[i] = b
-                        valid_null = beta_stars_null[~np.isnan(beta_stars_null)]
-                        if valid_null.size > 0:
-                            false_pass_rate = float(
-                                np.mean(valid_null >= BETA_STAR_BAR))
-                        else:
-                            false_pass_rate = float("nan")
-                        mean_null = float(valid_null.mean()) if valid_null.size else float("nan")
-                    else:
-                        false_pass_rate = float("nan")
-                        mean_null = float("nan")
-                        n_failures_null = 0
-
-                    region = classify_region(false_kill_rate, false_pass_rate) \
-                        if (not math.isnan(false_kill_rate) and
-                            not math.isnan(false_pass_rate)) else "undefined"
-                    min_dist = min_distance_to_boundaries(false_kill_rate,
-                                                           false_pass_rate) \
-                        if region == "informative" else float("nan")
-
-                    results.append({
-                        "alpha": alpha,
-                        "v_mult": v_mult,
-                        "v_logit": v_mult * V_REF,
-                        "c_min": c_min,
-                        "eta": eta,
-                        "profile_name": profile_name,
-                        "sigma_dose_calibrated": sigma_dose,
-                        "n_sims": n_sims,
-                        "n_valid": n_valid,
-                        "n_instrument_failures": int(n_failures),
-                        "n_instrument_failures_null": int(n_failures_null),
-                        "mean_beta_star": mean_beta,
-                        "std_beta_star": std_beta,
-                        "false_kill_rate": false_kill_rate,  # P(mean 5-seed β*<0.2) [Sol-XF-9]
-                        "false_kill_rate_per_seed": false_kill_rate_per_seed,  # P(any seed β*<0.2) [NF-IMPL-2, PROPOSED -- flagged to Rebecca]
-                        "false_pass_rate": false_pass_rate,   # P(β*≥0.2 | null) [PROPOSED -- apparatus parameter, §8.7]
-                        "mean_beta_star_null": mean_null,
-                        "region": region,
-                        "min_distance_to_boundaries": min_dist,
-                        "base_seed": base_seed,
-                    })
-                    done += 1
-                    if done % progress_every == 0:
-                        elapsed = time.time() - t0
-                        rate = done / elapsed if elapsed > 0 else 0.0
-                        eta_s = (n_combos - done) / rate if rate > 0 else float("inf")
-                        print(f"  [progress][{profile_name}] {done}/{n_combos} combos "
-                              f"({100*done/n_combos:.1f}%) "
-                              f"elapsed={elapsed:.1f}s rate={rate:.2f}/s "
-                              f"eta={eta_s:.0f}s", flush=True)
+    # Build results list from the actually-consumed worker output. pool.map is
+    # order-preserving, so each true-effect result stays paired with its null.
+    for done, (combo_result, null_result) in enumerate(
+            zip(combo_results, null_results), start=1):
+        false_kill_rate = combo_result["false_kill_rate"]
+        false_pass_rate = (null_result["false_pass_rate"]
+                           if include_null_control else float("nan"))
+        region = classify_region(false_kill_rate, false_pass_rate) \
+            if (not math.isnan(false_kill_rate) and
+                not math.isnan(false_pass_rate)) else "undefined"
+        min_dist = min_distance_to_boundaries(false_kill_rate,
+                                               false_pass_rate) \
+            if region == "informative" else float("nan")
+        results.append({
+            "alpha": combo_result["alpha"],
+            "v_mult": combo_result["v_mult"],
+            "v_logit": combo_result["v_mult"] * V_REF,
+            "c_min": combo_result["c_min"],
+            "eta": combo_result["eta"],
+            "profile_name": profile_name,
+            "sigma_dose_calibrated": combo_result["sigma_dose"],
+            "n_sims": combo_result["n_sims"],
+            "n_valid": combo_result["n_valid"],
+            "n_instrument_failures": combo_result["n_instrument_failures"],
+            "n_instrument_failures_null": null_result.get("n_instrument_failures_null", 0),
+            "mean_beta_star": combo_result["mean_beta_star"],
+            "std_beta_star": combo_result["std_beta_star"],
+            "false_kill_rate": false_kill_rate,
+            "false_kill_rate_per_seed": combo_result["false_kill_rate_per_seed"],
+            "false_pass_rate": false_pass_rate,
+            "mean_beta_star_null": null_result.get("mean_beta_star_null", float("nan")),
+            "region": region,
+            "min_distance_to_boundaries": min_dist,
+            "base_seed": combo_result["base_seed"],
+        })
+        if done % progress_every == 0:
+            elapsed = time.time() - t0
+            rate = done / elapsed if elapsed > 0 else 0.0
+            eta_s = (n_combos - done) / rate if rate > 0 else float("inf")
+            print(f"  [progress][{profile_name}] {done}/{n_combos} combos "
+                  f"({100*done/n_combos:.1f}%) "
+                  f"elapsed={elapsed:.1f}s rate={rate:.2f}/s "
+                  f"eta={eta_s:.0f}s", flush=True)
 
     elapsed = time.time() - t0
     # Build the sensitivity map (§8.7): aggregate over (α, v) by taking the
@@ -1540,7 +1433,8 @@ def main() -> None:
     if args.full:
         print(f"\n[Step 3] FULL power analysis — {N_SIMS_FULL} sims × 240 combos "
               f"(2 arms)")
-        full = run_power_analysis(n_sims=N_SIMS_FULL, include_null_control=True)
+        full = run_power_analysis(n_sims=N_SIMS_FULL, include_null_control=True,
+                                  workers=args.workers)
         sel = full["selection"]
         if sel["selected"] is not None:
             print(f"  Selected (C_min, η) = "
