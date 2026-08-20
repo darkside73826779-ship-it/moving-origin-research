@@ -43,7 +43,7 @@ A minimal, executable specification for one full screen: 20 battery geometries �
 
 ### 1.3 Relationship to prior rulings and superseded machinery
 
-Rebecca's L8 feasibility ruling (`d08cb7e`) authorized only a 1,000-repetition parallel feasibility diagnostic and explicitly did **not** authorize the 9.6M screening run, a 10,000-repetition confirmation, or any bootstrap. This minimal spec is issued under the later WORKFLOW COORDINATOR handoff (2026-08-20), by which Rebecca established the full-screen run parameters (§2). Where `d08cb7e` required the two execution details (repetition allocation; bootstrap budget), this spec closes them: 2,000 simulations per cell per arm, and **no bootstrap** — the direct false-kill calculation only.
+Rebecca's L8 feasibility ruling (`d08cb7e`) authorized only a 1,000-repetition parallel feasibility diagnostic and explicitly did **not** authorize the 9.6M screening run, a 10,000-repetition confirmation, or any bootstrap. This minimal spec is issued under the later WORKFLOW COORDINATOR handoff (2026-08-20), by which Rebecca established the full-screen run parameters (§2). (Note: `d08cb7e`'s two open execution details concerned the **1,000-repetition feasibility diagnostic** — allocation of 1,000 reps across sentinel cells/geometries, and full-5,000-valid-bootstrap verdict vs. reduced benchmark bootstrap budget — a different workload from this 9.6M screening run. The screening-run parameters here come from the later COORDINATOR handoff, not from closing `d08cb7e`'s feasibility-diagnostic details. `d08cb7e`'s authorization boundary — no 9.6M run, no 10K confirmation, no bootstrap, no scoring — remains correct and verified.) This spec uses 2,000 simulations per cell per arm and **no bootstrap** — the direct false-kill calculation only.
 
 **Prohibited machinery (not recreated, not invoked):** v2.3–v2.7 benchmark/bootstrap machinery; the 1,000-repetition feasibility benchmark; 48-billion-bootstrap workload; A1/A2/B lifecycle; rehearsal fixtures and 12-case fault-injection suite; serial benchmark; Wilson intervals and `predicate_false_kill_rates` / `failure_mask_counts` / finalist 10,000-rep confirmation / `resolved_config.json` manifest machinery from v2.4 §8.9.3–§8.9.4; sensitivity-map / misspecification-stress recomputation and `(C_min, η)` selection; scoring or protected-seed access; seeds 201–203 or 301–303; G2–G4 freeze or ruling by ARCHITECT; merge to main; L15/L16/L17 before M5; reclassification of ordinary statistical failures as INSTRUMENT_FAILURE.
 
@@ -105,13 +105,15 @@ Locked dose requirement preserved: four dose levels `{0, 1, 2, 3}`; the sweep sh
 
 Use the existing direct false-kill calculation implemented at `b139749` (`_worker_combo`, `_worker_null_control`, `run_power_analysis`). Two arms per cell, both at 2,000 simulations:
 
-- **Combo arm:** calibrated `σ_dose` per `(α, v)` pair (calibrated once at the reference operating point `(C_min, η) = (0.7, 0.1)` `[PROPOSED — §8]`, then reused for all 16 operating cells of that pair). Computes the standardized slope `β*` via the identical §2 XF-5 estimator `[Sol-XF-5]` `[BAR-Entry 11]` (5 seeds per simulation `[BAR-Entry 11]`; `β*_s = β_s / σ_pool,s`; zero-variance `σ_pool,s = 0` → `INSTRUMENT_FAILURE` `[Sol-XF-5]`).
+- **Combo arm:** calibrated `σ_dose` per `(α, v)` pair (calibrated once at the reference operating point `(C_min, η) = (0.7, 0.1)` `[PROPOSED — §8]`, then reused for all 16 operating cells of that pair). Computes the standardized slope `β*` via the identical §2 XF-5 estimator `[OP — Sol-XF-5, adopted operationalization]` `[BAR-Entry 11]` (5 seeds per simulation `[BAR-Entry 11]`; `β*_s = β_s / σ_pool,s`; zero-variance `σ_pool,s = 0` → `INSTRUMENT_FAILURE` `[OP — Sol-XF-5, adopted operationalization]`).
 - **Null-control arm:** `σ_dose = 0.0` (no true effect). Computes the false-pass rate.
+
+**P3 tag convention (per CRITIC NB4):** the inherited `[Sol-XF-5]` closure labels (from frozen v2.2 line 81 / the L8 crossfamily SOL review) are not one of the four P3 source classes (`[LAW-Lx]`/`[BAR-Entry n]`/`[OP-Entry n]`/`[PROPOSED]`). They are re-tagged here as `[OP — Sol-XF-5, adopted operationalization]` — i.e., adopted-operationalization (`[OP]`) class, with the crossfamily closure label `Sol-XF-5` retained for traceability. The numeric thresholds that matter (0.2, 0.10, 5 seeds, ρ ≥ 0.8) remain tagged `[BAR-Entry 11]` / `[PROPOSED]`.
 
 ### 5.1 The two direct false-kill rates (as computed at `b139749`)
 
-- `false_kill_rate` = fraction of valid simulations where the **5-seed mean** `β*_run < BETA_STAR_BAR` (0.2) `[BAR-Entry 11]`. Label in the handoff: "five-seed aggregated verdict."
-- `false_kill_rate_per_seed` = fraction of valid simulations where **any seed** `β*_s < BETA_STAR_BAR` (0.2) `[BAR-Entry 11]`. Label in the handoff: "any-seed."
+- `false_kill_rate` = fraction of valid simulations where the **5-seed mean** `β*_run < BETA_STAR_BAR` (0.2) `[BAR-Entry 11]`. Handoff label: "five-seed aggregated verdict." `[PROPOSED — diagnostic; NF-IMPL-2 in b139749]`
+- `false_kill_rate_per_seed` = fraction of valid simulations where **any seed** `β*_s < BETA_STAR_BAR` (0.2) `[BAR-Entry 11]` (`b139749` code line 808: `np.mean(np.any(valid_ps < BETA_STAR_BAR, axis=1))`). Handoff label: "any-seed." This is the **β*-predicate direct false-kill rate** — it captures only the standardized-slope < 0.2 predicate of the per-seed scoring verdict. It does **not** count runs killed by the `ρ < 0.8` predicate, which is also part of the per-seed scoring verdict (v2.2 line 44). It is therefore a **lower bound on the complete scoring-verdict false-kill rate**, not the full rate. The complete verdict also requires (in v2.4 §8.1) direction + pooled-bootstrap interval `[BAR-Entry 11.3]`, which this minimal spec deliberately does not compute (no bootstrap; §1.3). `[PROPOSED — primary metric; NF-IMPL-2 in b139749]`
 
 `BETA_STAR_BAR = 0.2` `[BAR-Entry 11]`. `FALSE_KILL_THRESHOLD = 0.10` `[PROPOSED — apparatus parameter, §8]`.
 
@@ -122,16 +124,20 @@ The frozen L8 v2.2 spec states the locked standardized-slope bar runs **per seed
 > "The locked bars run on D: Spearman ρ(dose, D) ≥ 0.8 `[BAR-Entry 11]` and standardized slope ≥ 0.2 `[BAR-Entry 11]`, per seed."
 > — `reviews/l8_crossfamily_review/06_l8_instantiation_spec.md` (c7d7bed), line 44.
 
-Therefore the direct false-kill rate corresponding to the actual scoring verdict is the **any-seed** rate. Designation:
+A candidate run fails the scoring verdict if **any seed** fails **either** predicate (ρ < 0.8 **or** β*_s < 0.2). The false-kill rate corresponding to that verdict is therefore the **any-seed** rate. Of the two rates computable by the direct `b139749` calculation, the any-seed rate is the one that aligns with the per-seed scoring verdict. Designation:
 
-- **PRIMARY = `false_kill_rate_per_seed`** (per-seed / any-seed; matches the "per seed" locked bar).
+- **PRIMARY = `false_kill_rate_per_seed`** (per-seed / any-seed; matches the "per seed" locked bar). `[PROPOSED — primary metric, flagged to Rebecca in b139749 (NF-IMPL-2)]`
 - **DIAGNOSTIC = `false_kill_rate`** (5-seed mean).
+
+**Scope of the primary metric (per CRITIC B2):** `false_kill_rate_per_seed` is the **β*-predicate direct false-kill rate** only (standardized-slope < 0.2, per seed). It is a **lower bound** on the complete scoring-verdict false-kill rate, which also includes the `ρ ≥ 0.8` per-seed predicate (and, in v2.4 §8.1, direction + pooled-bootstrap). This minimal spec deliberately computes only the β*-predicate direct rate (no bootstrap; §1.3); the complete-verdict rate is out of scope and not computed. Rebecca's §5.3 review is therefore of the β*-predicate direct rate as the primary battery-sizing metric, not of the complete-verdict rate.
+
+**Corroborating source (per CRITIC NB1):** v2.4 §8.1 (`4463cbc`) independently resolves the same direction — primary = complete-verdict any-seed rate; "the former five-seed-mean measure… may not gate battery size or selection." v2.2 line 44 remains the primary frozen authority; v2.4 §8.1 is corroborating only (v2.4 is a remediation draft whose own authority is flagged for Rebecca confirmation, §0). Note v2.4 §8.1's complete verdict includes a pooled-bootstrap predicate `[BAR-Entry 11.3]` that this minimal spec deliberately omits in favor of `b139749`'s β*-only direct calculation.
 
 This changes output priority and the geometry-acceptance metric only; it does not alter either direct formula, the `BETA_STAR_BAR`, or the `FALSE_KILL_THRESHOLD`.
 
 ### 5.3 Mismatch memorialization (flagged for CRITIC / Rebecca)
 
-The verified baseline `b139749` labels `false_kill_rate` (5-seed mean) as the key false-kill output and flags `false_kill_rate_per_seed` as "NF-IMPL-2: PROPOSED — flagged to Rebecca." This minimal spec resolves the label priority by applying the frozen spec's "per seed" locked-bar text, which makes the any-seed rate the scoring-verdict-aligned (primary) estimate. **CRITIC and Rebecca must specifically review this primary/diagnostic mapping before TASK BUILDER implementation.** A reference cell (`α=0.0, v_mult=0.5, C_min=0.5, η=0.01`, `N_w=4`) from `6d455bb` illustrates the materiality: `false_kill_rate = 0.0565` (passes 0.10) vs `false_kill_rate_per_seed = 0.7483` (fails). The primary choice is therefore consequential and is the reason the frozen-bar text, not the implementation's convenience label, controls.
+The verified baseline `b139749` labels `false_kill_rate` (5-seed mean) as the key false-kill output and flags `false_kill_rate_per_seed` as "NF-IMPL-2: PROPOSED — flagged to Rebecca." This minimal spec resolves the label priority by applying the frozen spec's "per seed" locked-bar text, which makes the any-seed **β*-predicate direct** rate the primary battery-sizing metric. **CRITIC and Rebecca must specifically review this primary/diagnostic mapping before TASK BUILDER implementation**, noting that the primary metric is the β*-predicate direct rate — a **lower bound** on the complete scoring-verdict false-kill rate (which also includes the ρ ≥ 0.8 per-seed predicate; see §5.2 scope). A reference cell (`α=0.0, v_mult=0.5, C_min=0.5, η=0.01`, `N_w=4`) from `6d455bb` illustrates the materiality: `false_kill_rate = 0.0565` (passes 0.10) vs `false_kill_rate_per_seed = 0.7483` (fails). The primary choice is consequential and is the reason the frozen-bar text, not the implementation's convenience label, controls.
 
 ### 5.4 False-kill target and geometry acceptance
 
@@ -139,6 +145,8 @@ The applicable false-kill target is `FALSE_KILL_THRESHOLD = 0.10` `[PROPOSED —
 
 - **geometry-level maximum primary false-kill** = `max` over its 240 cells of `false_kill_rate_per_seed`.
 - **meets_target** = `geometry-level maximum primary false-kill ≤ 0.10` (does not exceed the threshold).
+
+**P3 / O-15 gating note (per CRITIC NB2):** the primary metric `false_kill_rate_per_seed` is `[PROPOSED]` (flagged to Rebecca in `b139749`, NF-IMPL-2), and geometry acceptance (`meets_target` / minimum acceptable battery) is a `[PROPOSED]`-gated **diagnostic selection**, not a scoring verdict. Because the run is O-15 diagnostic-only and authorizes no scoring, no `[PROPOSED]` value gates scoring here; however, the minimum-acceptable-battery determination requires **Rebecca sign-off before any binding or downstream use**. The TASK BUILDER shall record the output artifact's own SHA-256 in the run handoff (§7.2) for reproducibility verification.
 
 **Minimum acceptable battery** = the first geometry in the §3 ordering whose `meets_target` is true. **If no tested geometry meets the target, STOP:** return the sweep to ARCHITECT/Rebecca; TASK BUILDER may not extend the grid or invent a battery `[PROPOSED — §8.2]`.
 
@@ -226,7 +234,7 @@ Cell ordering within each geometry is the nested loop order `alpha → v_mult �
 
 ### 7.2 Short human-readable run handoff
 
-Path: `diagnostics/l8_g2g4_minimal_full_screen_HANDOFF.md` `[PROPOSED]`. Contents: regime header; `code_baseline_sha` and `reference_artifact_sha`; 20-row geometry table with `Q`, `max_primary_false_kill`, `meets_target`; the `minimum_geometry_satisfying_target` or explicit STOP; total elapsed seconds; instrument-failure total count; the §5.3 mismatch memorialization verbatim; "Diagnostic-only (O-15). This authorizes NO scoring."
+Path: `diagnostics/l8_g2g4_minimal_full_screen_HANDOFF.md` `[PROPOSED]`. Contents: regime header; `code_baseline_sha` and `reference_artifact_sha`; the **output artifact's own SHA-256** (computed over the canonical JSON written by the atomic write, for reproducibility verification — per CRITIC NB2); 20-row geometry table with `Q`, `max_primary_false_kill`, `meets_target`; the `minimum_geometry_satisfying_target` or explicit STOP; total elapsed seconds; instrument-failure total count; the §5.3 mismatch memorialization verbatim; "Diagnostic-only (O-15). This authorizes NO scoring."
 
 ## 8. Candidate-blind and O-15 labeling
 

@@ -12,15 +12,15 @@ Implement the minimal full screen: 20 battery geometries × 240 cells × 2,000 s
 
 - Verified code: `diagnostics/l8_power_analysis.py` at `b1397498ca369067e956479e6c2bd6b0793c3e89` (reuse `_worker_combo`, `_worker_null_control`, `calibrate_sigma_dose`, `simulate_one_simulation`, `beta_star_for_seed`, `run_level_beta_star`, `combo_seed`, the §2 XF-5 estimator, and the multiprocessing path).
 - Reference artifact: `6d455bb8...` (cross-check schema only; do not reproduce as output).
-- Frozen v2.2 spec: `c7d7bed6...` for the §8.2 geometry list and §8.3 grids.
+- **Provenance (single statement, reconciled with spec §0):** the 20-geometry `W×N_w` list (§8.2) and the `§8.3`/`§8.4` grids are in **v2.4 `4463cbc`** on `architect/l8-g2g4-remediation` (path `reviews/l8_crossfamily_review/06_l8_instantiation_spec.md`). The frozen **v2.2 `c7d7bed`** (same path) is cited **only** for: the §2 XF-5 estimator, the per-seed locked bar (line 44: standardized slope ≥ 0.2, per seed), and the 240-cell nuisance/operating grid (v2.2 §8 items 3–6). v2.2 has **no** §8.2/§8.3 subsections and **no** 20-geometry sweep — do not look for the geometry list there. (v2.4's Wilson/bootstrap §8.9 machinery is prohibited and not invoked.)
 
 ## What to build (minimal)
 
 1. A geometry loop wrapping the existing `b139749` 240-cell `run_power_analysis` over the 20 `(W, N_w)` geometries in §3 order. For each geometry × cell, run 2,000 simulations per arm (combo + null-control), 16 workers, `multiprocessing.Pool`, chunksize 1.
 2. Reuse `b139749`'s `false_kill_rate` (5-seed mean) and `false_kill_rate_per_seed` (any-seed) **unchanged**.
-3. Designate **PRIMARY = `false_kill_rate_per_seed`**, **DIAGNOSTIC = `false_kill_rate`** (per the frozen v2.2 line-44 "per seed" locked bar; see spec §5.2–§5.3).
+3. Designate **PRIMARY = `false_kill_rate_per_seed`**, **DIAGNOSTIC = `false_kill_rate`** (per the frozen v2.2 line-44 "per seed" locked bar; see spec §5.2–§5.3). **Scope:** `false_kill_rate_per_seed` is the **β*-predicate direct** false-kill rate only (standardized-slope < 0.2, any seed); it is a **lower bound** on the complete scoring-verdict false-kill rate, which also requires `ρ ≥ 0.8` per seed (and v2.4 §8.1 direction + pooled-bootstrap, omitted here). The primary metric is `[PROPOSED]` (NF-IMPL-2 in `b139749`); geometry acceptance is a `[PROPOSED]`-gated diagnostic selection requiring Rebecca sign-off before binding/downstream use.
 4. Per geometry compute `max_primary_false_kill = max over 240 cells of false_kill_rate_per_seed` and `meets_target = (max_primary_false_kill ≤ 0.10)`. Minimum acceptable battery = first geometry in §3 order with `meets_target`; `null` (STOP) if none.
-5. Write the single artifact `diagnostics/l8_g2g4_minimal_full_screen.json` with the exact schema in spec §7.1, atomically, after all 20 geometries complete. Write the short handoff `diagnostics/l8_g2g4_minimal_full_screen_HANDOFF.md` (spec §7.2).
+5. Write the single artifact `diagnostics/l8_g2g4_minimal_full_screen.json` with the exact schema in spec §7.1, atomically, after all 20 geometries complete. Write the short handoff `diagnostics/l8_g2g4_minimal_full_screen_HANDOFF.md` (spec §7.2), including the **output artifact's own SHA-256** for reproducibility verification.
 
 ## Seed rule (do not invent; closure in spec §6.1)
 

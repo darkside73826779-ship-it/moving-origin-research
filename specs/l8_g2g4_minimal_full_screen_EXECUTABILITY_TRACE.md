@@ -47,8 +47,8 @@ No implementer invention. The geometry set is pre-registered and copied verbatim
 | false_kill_rate_per_seed (any-seed) | P(any β*_s < 0.2) | ✓ §5.1 (b139749) |
 | BETA_STAR_BAR | 0.2 [BAR-Entry 11] | ✓ |
 | FALSE_KILL_THRESHOLD | 0.10 [PROPOSED — §8] | ✓ |
-| primary metric | false_kill_rate_per_seed | ✓ §5.2 |
-| diagnostic metric | false_kill_rate | ✓ §5.2 |
+| primary metric | false_kill_rate_per_seed (β*-predicate direct rate; lower bound on complete-verdict rate, §5.2 scope) | ✓ §5.2 |
+| diagnostic metric | false_kill_rate (5-seed mean) | ✓ §5.2 |
 | geometry-level primary | max over 240 cells of false_kill_rate_per_seed | ✓ §5.4 |
 | meets_target | max_primary_false_kill ≤ 0.10 | ✓ §5.4 |
 | minimum battery | first §3 geometry with meets_target; null if none | ✓ §5.4 |
@@ -70,16 +70,16 @@ No implementer invention. The geometry set is pre-registered and copied verbatim
 
 | Rule | Closure | Where |
 |---|---|---|
-| Which false-kill rate is primary? | false_kill_rate_per_seed (per-seed locked bar, v2.2 line 44) | §5.2 |
-| What is the false-kill target? | 0.10; acceptance = max cell primary ≤ 0.10 | §5.4 |
+| Which false-kill rate is primary? | false_kill_rate_per_seed (per-seed locked bar, v2.2 line 44); **β*-predicate direct rate only — a lower bound on the complete-verdict rate** (also needs ρ≥0.8/seed; v2.4 §8.1 adds direction+bootstrap, omitted) | §5.2 |
+| What is the false-kill target? | 0.10; acceptance = max cell primary ≤ 0.10 (PROPOSED-gated diagnostic selection; Rebecca sign-off required) | §5.4 |
 | Does the seed include geometry? | No; derivation reused unchanged; geometry by data shape | §6.1 |
 | How many arms? | Two (combo + null-control), both 2,000/cell | §5, §7.1 |
 | What is the minimum battery if none meet target? | null → STOP, return to Rebecca; grid not extendable | §5.4 |
 
 ## 6. No prohibited machinery added
 
-Confirmed absent from the spec: bootstrap; Wilson intervals; `predicate_false_kill_rates`; `failure_mask_counts`; finalist 10,000-rep confirmation; `resolved_config.json` manifest; rehearsal fixtures; fault injection; sensitivity/misspecification recomputation; `(C_min,η)` selection; scoring; protected-seed access; seeds 201–203/301–303; G2–G4 freeze; merge to main; L15/L16/L17; INSTRUMENT_FAILURE reclassification. (Spec §1.3, §9.)
+Confirmed absent from the spec: bootstrap; Wilson intervals; `predicate_false_kill_rates`; `failure_mask_counts`; finalist 10,000-rep confirmation; `resolved_config.json` manifest; rehearsal fixtures; fault injection; sensitivity/misspecification recomputation; `(C_min,η)` selection; scoring; protected-seed access; seeds 201–203/301–303; G2–G4 freeze; merge to main; L15/L16/L17; INSTRUMENT_FAILURE reclassification. (Spec §1.3, §9.) Inherited `[Sol-XF-5]` closure labels re-tagged to P3 `[OP]`-class (NB4); numeric thresholds (0.2, 0.10, 5 seeds, ρ≥0.8) remain `[BAR-Entry 11]`/`[PROPOSED]`.
 
 ## 7. Verdict
 
-Every executable input is explicit. The specification is executable end-to-end with no implementer invention required, with one flagged judgment call (§5.3) routed for CRITIC/Rebecca confirmation: the primary/diagnostic designation resolves the `b139749` "PROPOSED — flagged to Rebecca" label by applying the frozen v2.2 "per seed" locked-bar text, making `false_kill_rate_per_seed` primary.
+Every executable input is explicit. The specification is executable end-to-end with no implementer invention required. Two flagged items routed for CRITIC/Rebecca confirmation: (1) the primary/diagnostic designation resolves the `b139749` "PROPOSED — flagged to Rebecca" label by applying the frozen v2.2 "per seed" locked-bar text, making `false_kill_rate_per_seed` primary (CRITIC-verified E1); (2) per B2, the primary metric is the **β*-predicate direct** rate — a lower bound on the complete scoring-verdict false-kill rate (which also requires ρ≥0.8/seed; v2.4 §8.1 adds direction+bootstrap, omitted) — not the complete-verdict rate. Rebecca's §5.3 review is of the β*-predicate direct rate as the primary battery-sizing metric.

@@ -8,6 +8,19 @@
 
 A minimal executable specification for the L8 G2–G4 full battery-geometry screen: 20 geometries × 240 cells × 2,000 simulations per cell, evaluated with the existing direct false-kill calculation at `b139749`. Candidate-blind, O-15 diagnostic-only. Authorizes NO scoring.
 
+## Remediation (CRITIC BLOCK → ARCHITECT, 2026-08-20)
+
+Fresh-context CRITIC BLOCK (`critic/l8-g2g4-minimal-fullscreen` @ `02a7443`) returned to ARCHITECT only. PRIMARY designation (E1) preserved — CRITIC-verified textually grounded (v2.2 line 44). Fixes applied:
+
+- **B1 (provenance):** corrected `…_TASKBUILDER_HANDOFF.md` "Authoritative inputs" — the §8.2 geometry list and §8.3/§8.4 grids are in **v2.4 `4463cbc`** on `architect/l8-g2g4-remediation`; frozen **v2.2 `c7d7bed`** is cited only for the §2 XF-5 estimator, the per-seed locked bar (line 44), and the 240-cell grid (§8 items 3–6). v2.2 has no §8.2/§8.3 and no 20-geometry sweep. All four files reconciled to a single provenance statement matching spec §0.
+- **B2 (accuracy):** qualified §5.2/§5.3 — `false_kill_rate_per_seed` is the **β*-predicate direct** false-kill rate only (standardized-slope < 0.2, any seed; `b139749` line 808); it is a **lower bound** on the complete scoring-verdict false-kill rate, which also requires `ρ ≥ 0.8` per seed (and v2.4 §8.1 direction + pooled-bootstrap, omitted). Removed the unqualified "corresponds to the actual scoring verdict" / "scoring-verdict-aligned" overstatement.
+- **NB1:** cited v2.4 §8.1 (`4463cbc`) as corroborating context for the any-seed-primary resolution (v2.2 line 44 remains primary frozen authority; v2.4 §8.1 corroborating only; its pooled-bootstrap predicate `[BAR-Entry 11.3]` deliberately omitted).
+- **NB2:** marked primary metric `false_kill_rate_per_seed` `[PROPOSED]` (NF-IMPL-2 in `b139749`); geometry acceptance is a `[PROPOSED]`-gated diagnostic selection requiring Rebecca sign-off before binding/downstream use; TASK BUILDER to record the output artifact's own SHA-256 in the run handoff (§7.2).
+- **NB3:** corrected §1.3 — `d08cb7e`'s two open details were for the 1,000-repetition feasibility diagnostic (different workload); screening-run parameters come from the later COORDINATOR handoff, not from closing `d08cb7e`'s feasibility-diagnostic details. `d08cb7e`'s authorization boundary remains correct.
+- **NB4:** re-tagged inherited `[Sol-XF-5]` closure labels as `[OP — Sol-XF-5, adopted operationalization]` (P3 `[OP]`-class; crossfamily closure label retained for traceability). Numeric thresholds (0.2, 0.10, 5 seeds, ρ≥0.8) remain `[BAR-Entry 11]`/`[PROPOSED]`.
+
+**Unchanged (CRITIC-verified E1–E6):** PRIMARY designation (E1); verbatim L8 + §5 P1–P6 quotes (E2); 19.2M two-arm accounting + ~90.5 min/1.5–2 h timing (E3); §0 geometry-list provenance `4463cbc` (E4); no prohibited machinery (E5); end-to-end executability (E6). No merge to main.
+
 ## Decisions made by ARCHITECT (each tied to source text)
 
 1. **20 geometries** copied verbatim from §8.2 of the L8 crossfamily spec — the Cartesian product `W ∈ {50,100,200,400}` × `N_w ∈ {4,8,16,32,64}`, ordered by `Q = W·N_w` asc, then larger `N_w`, then smaller `W`. Not redesigned. (Source: `06_l8_instantiation_spec.md` at `4463cbc` v2.4 §8.2 lines 276–280 — the only located repo source of the pre-registered 20-geometry list. The v2.4 Wilson/bootstrap §8.9 machinery in the same commit is prohibited and not invoked. Geometry-list authority flagged for CRITIC/Rebecca confirmation.)
