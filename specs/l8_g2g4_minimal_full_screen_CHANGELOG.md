@@ -8,6 +8,17 @@
 
 A minimal executable specification for the L8 G2–G4 full battery-geometry screen: 20 geometries × 240 cells × 2,000 simulations per cell, evaluated with the `b139749` β* direct path plus the Rebecca-authorized direct per-seed Spearman ρ calculation (to compute the complete frozen-v2.2 scoring predicate). Candidate-blind, O-15 diagnostic-only. Authorizes NO scoring.
 
+## Advisor round-2 cleanup (numerical/qualification semantics)
+
+- Corrected ρ deterministic-test expected values (Python-verified): `[1,0,2,3]` → `0.8` (passes at threshold); `[0,0,2,3]` → `sqrt(0.9)≈0.9487`; `[3,2,1,0]` → `-1.0`.
+- Added `RHO_COMPARE_EPS = 1e-12` locked-bar comparison tolerance: ρ predicate passes iff `ρ_s ≥ 0.8` OR `abs(ρ_s − 0.8) ≤ RHO_COMPARE_EPS` (absorbs binary64 roundoff at exact threshold only); no-softening test asserts `0.8 − 2·RHO_COMPARE_EPS` fails. Tie detection = exact finite binary64 equality.
+- §5.1 non-finite bullet reconciled with §5.6 decision tree (disposition = apparatus-invalid exclusion OR undefined-ρ predicate failure).
+- §5.5 test 7 made concrete (aggregation-unit over precomputed per-seed `(β*_s, ρ_s)` tuples: all-pass; fail-β*; fail-undefined-ρ; fail-ρ<0.8).
+- §5.4/schema: apparatus-invalid cell disqualifies a geometry — added `cell_apparatus_invalid`, `has_apparatus_invalid_cell`; `meets_target = (no apparatus-invalid cells) AND max_primary_false_kill ≤ 0.10`.
+- §7.1 schema: separate true-effect / null-control denominator fields (`n_valid_true_effect`, `n_valid_null_control`, `n_apparatus_invalid_true_effect/null_control`).
+- `b139749` not overstated: computes `β*_s` and transiently `D̄` inside `beta_star_for_seed`; does NOT expose per-seed `ρ_s` or durable `D̄` arrays — TASK BUILDER computes `ρ_s` in the same estimator path or extends the per-seed result record.
+- Reconciled companion files (executability trace, TASK BUILDER handoff, changelog) with the round-2 spec changes. Locked bars unchanged.
+
 ## Amendment (Rebecca directive, 2026-08-20) — Item 1 (primary metric) + Item 3 (geometry authority)
 
 Rebecca authorized the direct per-seed Spearman ρ calculation (`docs/rulings/REBECCA_L8_FULLSCREEN_ITEM1_RHO_AUTHORIZATION.md`), resolving the prior ARCHITECT STOP (`handoffs/ARCHITECT_L8_FULLSCREEN_STOP_ITEM1_RHO.md` — `b139749` computes β* but not ρ). Changes applied:
