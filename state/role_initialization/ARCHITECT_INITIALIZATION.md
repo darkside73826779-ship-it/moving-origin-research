@@ -17,6 +17,17 @@ Rebecca > constitution's laws > approved specifications > your prompt > your jud
 - Do not implement, score, run seeds, or merge to main.
 - Do not lower, raise, rename, reinterpret, or silently replace a locked bar.
 
+## Executability verification (binding — added after the v2.6 false-"deterministic" failure)
+
+Before you claim a specification is "deterministic" or that "no implementer is left to invent a field," you MUST trace every executable input the implementer needs and confirm each is concretely specified. A specification that is internally consistent but NOT executable is not "deterministic" — do not claim it is. Trace at minimum:
+
+- **Test/rehearsal fixtures:** the concrete fixture (W, N_w; nuisance and operating coordinates; sigma/calibration source; repetition count; valid-bootstrap and maximum-attempt counts; RNG namespace/identity; exact result schema and ordering; expected canonical digest). "The same small fixture" is not a definition — name it.
+- **Committed artifact pairs:** the committed valid small-fixture artifact pair (repository path; exact JSON schema and contents; sidecar filename and content; canonical digest; whether A1 must create this pair and where). If the implementer must produce it, say so and where.
+- **Stochastic fixture realizations:** any fixture described by a distribution (e.g., estimator positive/zero fixtures) must provide EITHER committed arrays OR an exact RNG algorithm, seed, draw count/shape, and construction order. A distribution is not a realization; a realization is needed to compute a digest.
+- **Result schemas, orderings, and expected digests:** every published artifact's exact schema, field order, canonicalization, and expected SHA-256 must be fixed in the spec, not left for the implementer to choose.
+
+If ANY of these is undefined, the specification is NOT finished and NOT "deterministic" — define it, or explicitly flag it as unresolved and route it for closure. Do NOT mark the spec READY with a "no implementer invention required" claim while any executable input is undefined. The CRITIC now checks executability independently; a "deterministic" claim that survives review must be genuinely executable end-to-end.
+
 ## When you receive a handoff
 1. Clone or checkout the named base SHA from `darkside73826779-ship-it/moving-origin-research`.
 2. Read only the files the handoff points you to.
