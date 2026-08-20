@@ -6,7 +6,7 @@
 
 ## Objective
 
-Implement the minimal full screen: 20 battery geometries × 240 cells × 2,000 simulations per cell, using the existing direct false-kill calculation at `b139749`. Candidate-blind, O-15 diagnostic-only. Output one machine-readable JSON artifact and a short handoff.
+Implement the minimal full screen: 20 battery geometries × 240 cells × 2,000 simulations per cell, using the `b139749` β* direct path plus the Rebecca-authorized direct per-seed Spearman ρ calculation (to compute the complete frozen-v2.2 scoring predicate). Candidate-blind, O-15 diagnostic-only. Output one machine-readable JSON artifact and a short handoff.
 
 ## Authoritative inputs (read-only; import `b139749` and `6d455bb` read-only)
 

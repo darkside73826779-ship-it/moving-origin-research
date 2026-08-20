@@ -6,7 +6,7 @@
 
 ## What this is
 
-A minimal executable specification for the L8 G2–G4 full battery-geometry screen: 20 geometries × 240 cells × 2,000 simulations per cell, evaluated with the existing direct false-kill calculation at `b139749`. Candidate-blind, O-15 diagnostic-only. Authorizes NO scoring.
+A minimal executable specification for the L8 G2–G4 full battery-geometry screen: 20 geometries × 240 cells × 2,000 simulations per cell, evaluated with the `b139749` β* direct path plus the Rebecca-authorized direct per-seed Spearman ρ calculation (to compute the complete frozen-v2.2 scoring predicate). Candidate-blind, O-15 diagnostic-only. Authorizes NO scoring.
 
 ## Amendment (Rebecca directive, 2026-08-20) — Item 1 (primary metric) + Item 3 (geometry authority)
 

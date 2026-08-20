@@ -50,7 +50,7 @@ No implementer invention. The geometry set is pre-registered and copied verbatim
 | primary metric | complete_verdict_false_kill_rate = P(any seed: β*_s<0.2 OR ρ_s undefined OR ρ_s<0.8) | ✓ §5.1/§5.2 |
 | diagnostic metrics | diagnostic_beta_only_any_seed_false_kill_rate (β*-only any-seed); diagnostic_five_seed_mean_false_kill_rate (5-seed mean) | ✓ §5.1 |
 | null-control false-pass | null_control_false_pass_rate = fraction every seed satisfies both predicates | ✓ §5.1 |
-| geometry-level primary | max over 240 cells of false_kill_rate_per_seed | ✓ §5.4 |
+| geometry-level primary | max over 240 cells of complete_verdict_false_kill_rate | ✓ §5.4 |
 | meets_target | max_primary_false_kill ≤ 0.10 | ✓ §5.4 |
 | minimum battery | first §3 geometry with meets_target; null if none | ✓ §5.4 |
 

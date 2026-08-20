@@ -124,7 +124,7 @@ Use the existing direct false-kill calculation implemented at `b139749` (`_worke
 - **Non-finite or structurally invalid inputs:** dispositioned through the apparatus-validity rules in §5.6 (not as a predicate pass/fail and not as `INSTRUMENT_FAILURE` unless an apparatus-validity condition fails). `[PROPOSED — §8, Rebecca directive]`
 - **Floating-point tolerance:** any comparison tolerance (e.g., for rank ties or correlation equality) must be minimal, explicit, and tested, and must **not** change the locked 0.8 bar. `[PROPOSED — §8, Rebecca directive]`
 
-The `b139749` baseline computes per-seed `β*_s` but not `ρ_s`; this spec adds the direct `ρ_s` calculation per Rebecca's authorization (the minimum computation required for the complete frozen-v2.2 predicate; it is a direct, deterministic, non-resampling statistic — not a quorum/fallback/bootstrap/Wilson procedure).
+The `b139749` baseline computes per-seed `β*_s` (and transiently the dose-level summaries `D̄_{s,ℓ}` inside `beta_star_for_seed`) but does **not** expose per-seed `ρ_s` or durable `D̄` arrays. This spec adds the direct per-seed Spearman ρ calculation per Rebecca's authorization: the TASK BUILDER shall compute `ρ_s` in the same estimator path where `D̄` is available (reusing the four dose-level summaries already computed for `β*_s`), or extend the per-seed result record to return `ρ_s`. This is the minimum computation required for the complete frozen-v2.2 predicate; it is a direct, deterministic, non-resampling statistic — not a quorum/fallback/bootstrap/Wilson procedure.
 
 **Rates (per cell):**
 
@@ -167,23 +167,25 @@ The applicable false-kill target is `FALSE_KILL_THRESHOLD = 0.10` `[PROPOSED —
 
 ### 5.5 Deterministic tests (required)
 
-The implementation SHALL include deterministic tests with assertions covering each case below. No test may be a no-op or unconditional pass; each must assert the exact `ρ_s` / `complete_verdict_false_kill_rate` outcome against a pre-computed expected value. `[PROPOSED — Rebecca directive]`
+The implementation SHALL include deterministic tests with assertions covering each case below. No test may be a no-op or unconditional pass; each must assert the exact outcome against a pre-computed expected value. `[PROPOSED — Rebecca directive]` Cases 1–5 are **ρ unit tests** (dose ranks `[1,2,3,4]` fixed; only `D̄` varies); `β*` is not asserted from `D̄` alone (it depends on window-level deviations and `σ_pool`). The locked predicate comparison is exact: `ρ_s >= 0.8` `[BAR-Entry 11]` with **no tolerance that can move the 0.8 bar**; deterministic test value checks may use a fixed numeric tolerance such as `abs(actual − expected) <= 1e-12` `[PROPOSED — §8]`.
 
-1. **Perfect increasing monotonicity:** `D̄ = [0, 1, 2, 3]` (strictly increasing). Expected `ρ_s = 1.0` (passes ρ predicate); `β*_s` passes; complete-verdict single-seed outcome = pass.
-2. **Adjacent-inversion / threshold case:** `D̄ = [1, 0, 2, 3]` (one adjacent inversion). Expected `ρ_s` computed exactly (Pearson correlation of dose ranks vs midranks); assert the value and the predicate outcome (ρ_s < 0.8 → fail).
-3. **Tied responses:** `D̄ = [0, 0, 2, 3]` (ties at dose 0,1). Expected midranks = [1.5, 1.5, 3, 4]; `ρ_s` computed with the tie rule; assert exact value and outcome.
-4. **Constant responses:** `D̄ = [c, c, c, c]` (zero response-rank variance). Expected `ρ_s = undefined` → **failure of the ρ predicate** (not `INSTRUMENT_FAILURE`).
-5. **Decreasing responses:** `D̄ = [3, 2, 1, 0]` (strictly decreasing). Expected `ρ_s = -1.0` → fails the ρ predicate (ρ_s < 0.8).
-6. **Non-finite inputs:** a `D̄` containing `NaN`/`inf` is routed through the §5.6 apparatus-validity rules (not scored as a predicate pass/fail); assert the correct disposition.
-7. **Complete-verdict aggregation across five seeds:** construct a 5-seed `D̄` array where a specific subset of seeds fails β* and/or ρ; assert `complete_verdict_false_kill_rate` = (fail if any seed fails either predicate, else pass) exactly, including the undefined-ρ case.
+1. **Perfect increasing monotonicity:** `D̄ = [0, 1, 2, 3]` → response ranks `[1,2,3,4]` → `ρ_s = 1.0` → **passes** the ρ predicate.
+2. **Adjacent-inversion / threshold case:** `D̄ = [1, 0, 2, 3]` → response ranks `[2,1,3,4]` → `ρ_s = 0.8` → **passes** the ρ predicate (at the locked threshold, `>= 0.8`).
+3. **Tied responses:** `D̄ = [0, 0, 2, 3]` → midranks `[1.5, 1.5, 3, 4]` → `ρ_s = sqrt(0.9) ≈ 0.9486832980505138` → **passes** the ρ predicate.
+4. **Constant responses:** `D̄ = [c, c, c, c]` (zero response-rank variance) → `ρ_s = undefined` → **failure of the ρ predicate** (not `INSTRUMENT_FAILURE`).
+5. **Decreasing responses:** `D̄ = [3, 2, 1, 0]` → response ranks `[4,3,2,1]` → `ρ_s = -1.0` → **fails** the ρ predicate (`< 0.8`).
+6. **Non-finite inputs:** a `D̄` containing `NaN`/`inf` is routed through the §5.6 apparatus-validity decision tree (not scored directly as a predicate pass/fail); assert the correct disposition (apparatus-invalid if an independent apparatus fault; otherwise `ρ_s` undefined → ρ-predicate failure).
+7. **Complete-verdict aggregation across five seeds:** construct explicit per-seed tuples `(β*_s status, ρ_s status)` for the 5 seeds (e.g., seed 0: β* pass, ρ pass; seed 1: β* fail; seed 2: ρ undefined; seed 3: ρ < 0.8; seed 4: both pass) and assert `complete_verdict_false_kill_rate` = fail iff **any** seed fails **either** predicate (`β*_s < 0.2` OR `ρ_s` undefined OR `ρ_s < 0.8`), including the undefined-ρ case. Provide full window-level fixtures where `β*` is exercised.
 
 ### 5.6 Apparatus-validity rules for non-finite or structurally invalid inputs (Rebecca directive)
 
-A per-seed `D̄_{s,ℓ}` input that is non-finite (`NaN`/`inf`) or structurally invalid (e.g., not the expected length/shape) is **not** scored as a predicate pass or fail and is **not** automatically `INSTRUMENT_FAILURE`. It is dispositioned through these explicit apparatus-validity rules: `[PROPOSED — Rebecca directive]`
+Non-finite (`NaN`/`inf`) or structurally invalid (wrong length/shape) per-seed `D̄_{s,ℓ}` inputs are routed through this decision tree (not scored directly as a predicate pass/fail, and not automatically `INSTRUMENT_FAILURE`). `[PROPOSED — Rebecca directive]`
 
-- If the non-finite/invalid input arises from an apparatus fault (e.g., the simulation produced no valid dose-level summary — an independent apparatus-validity failure), the repetition is excluded as apparatus-invalid, counted and reported separately; if any apparatus-invalid repetition occurs for a cell, that cell is `apparatus-invalid` and cannot qualify a geometry.
-- If the non-finite/invalid input arises without an independent apparatus fault, the repetition is retained in the denominator and the seed's `ρ_s` (and, if `β*_s` is also undefined, the `β*` predicate) is treated as a predicate failure for that seed (contributing to the complete-verdict false-kill rate), not as `INSTRUMENT_FAILURE`.
-- Ordinary per-seed statistical failures (β*_s < 0.2, ρ_s < 0.8, ρ_s undefined) are **never** reclassified as `INSTRUMENT_FAILURE` (no-relabeling rule; O-14/D1/D5).
+1. **Apparatus fault:** if the non-finite/invalid input arises from an independent apparatus-validity failure (e.g., the simulation produced no valid dose-level summary), the repetition is **apparatus-invalid**: excluded from the false-kill/false-pass denominators, counted and reported separately; if any apparatus-invalid repetition occurs for a cell, that cell is `apparatus-invalid` and cannot qualify a geometry.
+2. **No apparatus fault, non-finite/invalid input:** if the non-finite/invalid input arises **without** an independent apparatus fault, the repetition is **retained in the denominator** and the seed's `ρ_s` is **undefined** (a Pearson correlation cannot be computed) → **failure of the ρ predicate** for that seed (and, if `β*_s` is also undefined, failure of the β* predicate); this contributes to `complete_verdict_false_kill_rate` — **not** `INSTRUMENT_FAILURE`.
+3. **Finite, shape-valid, zero response-rank variance:** if all `D̄_{s,ℓ}` are finite and shape-valid but equal (the response-rank vector has zero variance), `ρ_s` is **undefined** → **failure of the ρ predicate** — **not** `INSTRUMENT_FAILURE`.
+
+Ordinary per-seed statistical failures (`β*_s < 0.2`, `ρ_s < 0.8`, `ρ_s` undefined) are **never** reclassified as `INSTRUMENT_FAILURE` (no-relabeling rule; O-14/D1/D5). `complete_verdict_false_kill_rate` uses the valid true-effect denominator (apparatus-invalid repetitions excluded); `null_control_false_pass_rate` uses the valid null-control denominator.
 
 ## 6. Preserved verified behavior (do not modify)
 
@@ -244,12 +246,14 @@ Path: `diagnostics/l8_g2g4_minimal_full_screen.json` `[PROPOSED]`. Exact schema,
         { "geometry_index": <int>, "W": <int>, "N_w": <int>,
           "alpha": <float>, "v_mult": <float>, "c_min": <float>, "eta": <float>,
           "base_seed": <int>,
-          "n_sims_attempted": 2000, "n_valid": <int>, "n_instrument_failures": <int>,
-          "complete_verdict_false_kill_rate": <float PRIMARY: P(any seed β*_s<0.2 OR ρ_s undefined OR ρ_s<0.8)>,
-          "diagnostic_beta_only_any_seed_false_kill_rate": <float P(any seed β*_s<0.2)>,
-          "diagnostic_five_seed_mean_false_kill_rate": <float P(5-seed mean β*<0.2)>,
-          "null_control_false_pass_rate": <float P(every seed β*_s>=0.2 AND ρ_s>=0.8)>,
-          "n_apparatus_invalid": <int>,
+          "n_sims_attempted_true_effect": 2000, "n_valid_true_effect": <int>,
+          "n_apparatus_invalid_true_effect": <int>, "n_instrument_failures_true_effect": <int>,
+          "n_sims_attempted_null_control": 2000, "n_valid_null_control": <int>,
+          "n_apparatus_invalid_null_control": <int>, "n_instrument_failures_null_control": <int>,
+          "complete_verdict_false_kill_rate": <float PRIMARY: valid-true-effect denominator, P(any seed β*_s<0.2 OR ρ_s undefined OR ρ_s<0.8)>,
+          "diagnostic_beta_only_any_seed_false_kill_rate": <float valid-true-effect denominator, P(any seed β*_s<0.2)>,
+          "diagnostic_five_seed_mean_false_kill_rate": <float valid-true-effect denominator, P(5-seed mean β*<0.2)>,
+          "null_control_false_pass_rate": <float valid-null-control denominator, P(every seed β*_s>=0.2 AND ρ_s>=0.8)>,
           "mean_beta_star": <float>, "mean_beta_star_null": <float> }
         // ...exactly 240 ordered cells: for alpha in alphas: for v_mult in v_mults: for c_min in c_mins: for eta in etas
       ]
