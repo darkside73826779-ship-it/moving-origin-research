@@ -1,5 +1,7 @@
 # ARCHITECT → Fresh-Context CRITIC Handoff — L8 G2–G4 v2.5
 
+> **SUPERSEDED:** CRITIC returned BLOCK on the law-line pointers. Use the v2.5.1 re-review handoff. This handoff authorizes nothing.
+
 **Date:** 2026-08-20 · **Regime:** B (constitution v2 §5 binding)
 
 **Gate served:** Deterministic diagnostic implementation and workload-feasibility design before compute

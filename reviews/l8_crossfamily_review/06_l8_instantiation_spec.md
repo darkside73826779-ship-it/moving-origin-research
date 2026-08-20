@@ -1,10 +1,10 @@
-# L8 INSTANTIATION SPECIFICATION v2.5 — Selective-Risk Homeostat (Determinism and Feasibility Amendment)
+# L8 INSTANTIATION SPECIFICATION v2.5.1 — Selective-Risk Homeostat (CRITIC Provenance Remediation)
 
 **Component:** M4 / L8 (Stakes coupling) + L14 couplings
 **Author:** ARCHITECT (implementing Rebecca's advisor-session proposal per Entry 81 + Sol cross-family review XF-4–XF-9 resolution conditions)
-**Status:** DRAFT v2.5 — second deterministic remediation amendment; pending fresh-context CRITIC → Rebecca approval → TASK BUILDER implementation/feasibility rehearsal; G2–G4 not frozen and screening not released
+**Status:** DRAFT v2.5.1 — v2.5 substance unchanged; law-line provenance corrected; pending fresh-context CRITIC re-review → Rebecca approval → TASK BUILDER implementation/feasibility rehearsal; G2–G4 not frozen and screening not released
 **Date:** 2026-08-20 · **Regime:** B (post-Entry 81; constitution v1 + Amendments 1–2; §5 binding) (P4)
-**Sources:** Entry 81 (narrowed claim) `[Entry 81]`; Sol cross-family review (XF-4–XF-9, XF-10–XF-11) `[Sol-XF-n]`; advisor proposal v2; CRITIC re-review CF1–CF3; `[LAW-L8]` constitution line 26; `[LAW-L14]` line 40; `[BAR-Entry 11]` M0 sheet; Ruling 3 + Ruling 9 (Entry 76) `[Entry 76]`
+**Sources:** Entry 81 (narrowed claim) `[Entry 81]`; Sol cross-family review (XF-4–XF-9, XF-10–XF-11) `[Sol-XF-n]`; advisor proposal v2; CRITIC re-review CF1–CF3; `[LAW-L8]` `docs/ARCHITECTURAL_CONSTITUTION_v2.md` line 28; `[LAW-L14]` line 42; `[BAR-Entry 11]` M0 sheet; Ruling 3 + Ruling 9 (Entry 76) `[Entry 76]`
 **Standing constraints inherited:** O-14, O-15, §5 P1–P6, L19 pre-registration, Ruling 9 candidate-blindness. Nothing in this spec authorizes scoring, protected-seed exposure, the 10,000-simulation stress rerun, G2–G4 freeze, final L8 scoring implementation, or merger.
 
 ---
@@ -506,7 +506,7 @@ TASK BUILDER uses two commits. Commit A contains code, tests, fixtures, and froz
 
 #### 8.10.8 Feasibility gate — screening authorization withdrawn pending benchmark
 
-The full design entails 20 geometries × 240 cells × 2,000 repetitions = 9.6 million cell repetitions and, absent short-circuiting, up to 48 billion bootstrap replicates. `[PROPOSED — workload accounting]` This is materially larger than the reviewed baseline and is not authorized merely because “2,000-repetition screening” was previously stated.
+The full design entails 20 geometries × 240 cells × 2,000 repetitions = 9.6 million cell repetitions and, absent short-circuiting, 48 billion **valid** bootstrap replicates or up to 52.8 billion bootstrap **attempts** at the 5,500-attempt ceiling. `[PROPOSED — workload accounting]` This is materially larger than the reviewed baseline and is not authorized merely because “2,000-repetition screening” was previously stated.
 
 Commit A must include a deterministic feasibility benchmark mode that runs **no scientific screening**: 10 repetitions at the three fixed cells `(alpha,v_mult,C_min,eta)={(0.0,0.5,0.5,0.01),(0.05,1.0,0.7,0.1),(0.2,2.0,0.8,0.2)}` for geometries `(W,N_w)=(50,4)` and `(400,64)`, with the full 5,000-valid-bootstrap verdict. `[PROPOSED]` Report wall time, CPU time, peak memory, bootstrap attempts, and deterministic extrapolations for the 9.6-million-repetition screen. This benchmark is O-15 synthetic diagnostic rehearsal, not battery evidence.
 

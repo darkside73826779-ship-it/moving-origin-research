@@ -2,8 +2,20 @@
 
 **Spec:** `reviews/l8_crossfamily_review/06_l8_instantiation_spec.md`
 **Date:** 2026-08-20 · **Author:** ARCHITECT
-**Branch:** `architect/l8-g2g4-remediation` (v2.5/v2.4/v2.3); `architect/l8-instantiation-v2.2-fresh` (v2.2); v2.1/v2 on `architect/l8-instantiation-v2`
+**Branch:** `architect/l8-g2g4-remediation` (v2.5.1/v2.5/v2.4/v2.3); `architect/l8-instantiation-v2.2-fresh` (v2.2); v2.1/v2 on `architect/l8-instantiation-v2`
 **Regime:** B (post-Entry 81; constitution v1 + Amendments 1–2; §5 binding) (P4)
+
+---
+
+## v2.5.1 — CRITIC provenance-pointer remediation (2026-08-20)
+
+**Base:** `5209f3317232679a3c676af7944a4cc5dcdeed00`. **Review verdict:** BLOCK on one provenance-citation defect.
+
+- Corrected the Sources pointer for `[LAW-L8]` from constitution line 26 to `docs/ARCHITECTURAL_CONSTITUTION_v2.md` line 28.
+- Corrected the Sources pointer for `[LAW-L14]` from line 40 to line 42.
+- Reconciled the non-blocking feasibility count to 48 billion valid bootstrap replicates and up to 52.8 billion attempted replicates at the 5,500-attempt ceiling. `[PROPOSED]`
+
+No law text, locked bar, estimator, predicate, schema, seed rule, apparatus rule, workload gate, or sequencing rule changed. No implementation, benchmark, screening, scoring, protected-seed exposure, G2–G4 ruling, or merge occurred.
 
 ---
 
