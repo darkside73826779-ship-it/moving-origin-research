@@ -46,13 +46,13 @@ When Rebecca says a role is complete (or any phrasing suggesting it — "archite
 If the ledger, STATE.md, or a return handoff doesn't tell you what to do next: STOP and ask Rebecca. Do not start digging through GitHub main, replaying conversation history, or launching subagents to explore — that is what burned the fresh coordinator's credits. The ledger + STATE.md + the return handoff should be sufficient; if they're not, the right move is to ask Rebecca for a routing instruction, not to reconstruct the state independently.
 
 ---
-## Current state — updated 2026-08-19 21:48 EDT (calibration parallelism spec CRITIC-cleared; awaiting Rebecca's approval)
+## Current state — updated 2026-08-19 22:05 EDT (calibration parallelism spec v1.1 CRITIC-cleared + Rebecca-approved; routing to TASK BUILDER)
 
-**Ball:** REBECCA — the L8 calibration parallelism spec v1 (`90d8835` on `architect/l8-calibration-parallelism-spec`) is CRITIC-cleared (`a087654` on `critic/l8-calibration-parallelism-spec-review`). 10/10 design decisions resolved; constraints preserved. Awaits Rebecca's approval.
+**Ball:** TASK BUILDER (local frontier GPT) — implementing the approved calibration parallelism spec v1.1 (`b4419f9` on `architect/l8-calibration-parallelism-spec`; CRITIC-cleared; Rebecca-approved). Option 1: identity-carrying picklable `CalibrationWorkerError` (worker wraps and re-raises; parent reads identity from the exception, no re-execution).
 
-**After approval:** TASK BUILDER (local frontier GPT) implements the approved spec → CRITIC implementation review (the finished code, second pass) → Rebecca authorizes → rerun locally at full parallelism (`python diagnostics/l8_power_analysis.py --full --workers N`) → complete artifact → G2–G5 gate rulings (with advisor consultation).
+**After implementation:** CRITIC implementation review (code matches spec? genuine reproducibility?) → Rebecca authorizes → rerun locally at full parallelism (`python diagnostics/l8_power_analysis.py --full --workers N`) → complete artifact → G2–G5 gate rulings (with advisor consultation).
 
-**Background context:** the §8 multiprocessing (BF-MP-1) is functional (remediated at `7e296ec`); the calibration parallelism is a further optimization to remove the serial calibration bottleneck (15 independent sigma-dose calibrations run one-at-a-time before each 240-combo parallel batch). The TASK BUILDER correctly routed a spec request rather than implementing unauthorized design decisions — the specify-vs-produce boundary working correctly.
+**Task builder note (2026-08-19):** the local frontier GPT TASK BUILDER has twice stopped rather than implement an ambiguous/contradictory spec (the serial-calibration spec request; the §4.1/§4.2 contradiction) — correctly routing design decisions to the ARCHITECT instead of inferring. This is the specify-vs-produce boundary working, and it's the opposite of the false-attestation pattern. The implementation handoff carries emphatic verification obligations (verify each edit, inspect git diff, changelog tied to the diff, genuine reproducibility on the consumed parallel output).
 
 **Still pending (from the sim results, for the G2–G5 rulings):**
 1. The calibration problem: 5-seed-mean false-kill 6.22% (lenient) vs per-seed any-seed 76.23% (harsh, matches scoring bar). Advisor consultation needed.
@@ -87,6 +87,9 @@ This hybrid (build sim on spec-text estimator, then verify against the harness's
 
 ## Handoff history (compact — current state overwrites prior; full history in provenance log + git log)
 
+- 2026-08-19 22:05 — calibration parallelism spec v1.1 (b4419f9) CRITIC-cleared + Rebecca-approved; routing to TASK BUILDER for implementation. Option 1 (CalibrationWorkerError) chosen.
+- 2026-08-19 22:01 — ARCHITECT resolved §4.1/§4.2 contradiction (spec v1.1, b4419f9); CRITIC re-review CLEAR
+- 2026-08-19 21:55 — TASK BUILDER stopped on contradiction (§4.1 no-catch vs §4.2 failure-record identity); routed to ARCHITECT
 - 2026-08-19 21:48 — calibration parallelism spec CRITIC-cleared (a087654); awaiting Rebecca's approval. 10/10 design decisions resolved.
 - 2026-08-19 21:42 — ARCHITECT calibration parallelism spec v1 (90d8835)
 - 2026-08-19 21:05 — TASK BUILDER (local frontier GPT) found serial calibration bottleneck; routed spec request (10 design decisions) — specify-vs-produce boundary held correctly
