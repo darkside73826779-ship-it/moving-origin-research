@@ -1,5 +1,7 @@
 # ARCHITECT → Fresh-Context CRITIC Handoff — L8 G2–G4 v2.6
 
+> **SUPERSEDED:** Rebecca authorized the 1,000-repetition feasibility workload at `d08cb7e`; use the v2.7 closure handoff. This handoff authorizes nothing.
+
 **Date:** 2026-08-20 · **Regime:** B (constitution v2 §5 binding)
 
 **Gate served:** Staged Commit A implementation and parallel feasibility-benchmark design

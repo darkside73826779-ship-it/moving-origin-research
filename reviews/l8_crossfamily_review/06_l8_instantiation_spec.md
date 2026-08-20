@@ -1,8 +1,8 @@
-# L8 INSTANTIATION SPECIFICATION v2.6 — Selective-Risk Homeostat (Commit Identity and Benchmark Contract)
+# L8 INSTANTIATION SPECIFICATION v2.7 — Selective-Risk Homeostat (Authorized 1,000-Rep Feasibility Closure)
 
 **Component:** M4 / L8 (Stakes coupling) + L14 couplings
 **Author:** ARCHITECT (implementing Rebecca's advisor-session proposal per Entry 81 + Sol cross-family review XF-4–XF-9 resolution conditions)
-**Status:** DRAFT v2.6 — Commit A identity and feasibility benchmark contract completed; pending fresh-context CRITIC → Rebecca approval → TASK BUILDER staged implementation/benchmark; G2–G4 not frozen and screening not released
+**Status:** DRAFT v2.7 — final deterministic closure for Rebecca-authorized 1,000-repetition parallel feasibility diagnostic; pending one fresh-context CRITIC review → Rebecca clearance → TASK BUILDER staged implementation/execution; G2–G4 not frozen and screening not released
 **Date:** 2026-08-20 · **Regime:** B (post-Entry 81; constitution v1 + Amendments 1–2; §5 binding) (P4)
 **Sources:** Entry 81 (narrowed claim) `[Entry 81]`; Sol cross-family review (XF-4–XF-9, XF-10–XF-11) `[Sol-XF-n]`; advisor proposal v2; CRITIC re-review CF1–CF3; `[LAW-L8]` `docs/ARCHITECTURAL_CONSTITUTION_v2.md` line 28; `[LAW-L14]` line 42; `[BAR-Entry 11]` M0 sheet; Ruling 3 + Ruling 9 (Entry 76) `[Entry 76]`
 **Standing constraints inherited:** O-14, O-15, §5 P1–P6, L19 pre-registration, Ruling 9 candidate-blindness. Nothing in this spec authorizes scoring, protected-seed exposure, the 10,000-simulation stress rerun, G2–G4 freeze, final L8 scoring implementation, or merger.
@@ -508,7 +508,7 @@ The implementation/evidence lifecycle is defined exclusively by §8.11.1 (A1 imp
 
 The full design entails 20 geometries × 240 cells × 2,000 repetitions = 9.6 million cell repetitions and, absent short-circuiting, 48 billion **valid** bootstrap replicates or up to 52.8 billion bootstrap **attempts** at the 5,500-attempt ceiling. `[PROPOSED — workload accounting]` This is materially larger than the reviewed baseline and is not authorized merely because “2,000-repetition screening” was previously stated.
 
-Commit A must include a deterministic feasibility benchmark mode that runs **no scientific screening**: 10 repetitions at the three fixed cells `(alpha,v_mult,C_min,eta)={(0.0,0.5,0.5,0.01),(0.05,1.0,0.7,0.1),(0.2,2.0,0.8,0.2)}` for geometries `(W,N_w)=(50,4)` and `(400,64)`, with the full 5,000-valid-bootstrap verdict. `[PROPOSED]` Report wall time, CPU time, peak memory, bootstrap attempts, and deterministic extrapolations for the 9.6-million-repetition screen. This benchmark is O-15 synthetic diagnostic rehearsal, not battery evidence.
+Commit A1 must include a deterministic feasibility benchmark mode that runs **no scientific screening**: the 1,000 repetitions allocated in §8.12.1 across the three fixed cells `(alpha,v_mult,C_min,eta)={(0.0,0.5,0.5,0.01),(0.05,1.0,0.7,0.1),(0.2,2.0,0.8,0.2)}` and geometries `(W,N_w)=(50,4)` and `(400,64)`, with the full 5,000-valid-bootstrap verdict. `[PROPOSED — Rebecca-authorized diagnostic workload]` Report wall time, CPU time, peak memory, bootstrap attempts, and deterministic extrapolations for the 9.6-million-repetition screen. This benchmark is O-15 synthetic diagnostic rehearsal, not battery evidence.
 
 Route the benchmark and implementation review to fresh-context CRITIC and Rebecca. Rebecca must then separately choose one of: authorize the full screen; approve an amended sequential/reduced design; or stop. `[PROPOSED — feasibility gate]` Until that ruling, TASK BUILDER may implement and test Commit A only; it may not execute the 2,000-repetition screen, create Commit B screening evidence, or describe screening as authorized.
 
@@ -534,7 +534,7 @@ No serial feasibility benchmark is run. The former cross-mode reproducibility ch
 
 #### 8.11.3 Benchmark inputs, RNG, and calibration timing
 
-The benchmark contains the six fixed cases formed by geometries `(50,4)` and `(400,64)` crossed with the three sentinel cells already specified in §8.10.8. Each case runs 10 complete five-seed repetitions, including up to 5,500 bootstrap attempts, through the frozen multiprocessing path. `[PROPOSED]`
+The benchmark contains the six fixed cases formed by geometries `(50,4)` and `(400,64)` crossed with the three sentinel cells already specified in §8.10.8. Case repetition counts are exactly the §8.12.1 allocation and sum to 1,000; every repetition includes up to 5,500 bootstrap attempts through the frozen multiprocessing path. `[PROPOSED — Rebecca-authorized diagnostic workload]`
 
 Benchmark simulation RNG namespace is `feasibility-benchmark`; identity is `{config_digest,W,N_w,alpha,v_mult,c_min,eta,repetition_index,seed_index}`. Bootstrap streams retain namespace `bootstrap` but add `run_mode:"feasibility-benchmark"` to their identity. Calibration RNG namespace is `feasibility-calibration`; identity is `{config_digest,W,N_w,alpha,v_mult,pilot_repetition_index,seed_index}`. `[PROPOSED]`
 
@@ -548,7 +548,7 @@ Peak memory is sampled aggregate resident-set size (RSS), not Python allocation 
 
 #### 8.11.5 Deterministic extrapolation
 
-Each worker reports `case_service_wall_ns` around its ten repetitions. For case `i`, `service_seconds_per_repetition_i = case_service_wall_ns/(10×10^9)`. `[PROPOSED]` Let `s_max=max_i(service_seconds_per_repetition_i)`, `s_mean=mean_i(...)`, `B=parent_batch_wall_seconds`, `S=sum_i(case_service_wall_seconds)`, and `P=resolved worker_count`. Define observed parallel efficiency `E=min(1,S/(P×B))`; if `E≤0`, the benchmark fails schema validation.
+Each worker reports `case_service_wall_ns` around its assigned case repetitions. For case `i` with fixed count `n_i` from §8.12.1, `service_seconds_per_repetition_i = case_service_wall_ns/(n_i×10^9)`. `[PROPOSED]` Let `s_max=max_i(service_seconds_per_repetition_i)`, `s_mean=mean_i(...)`, `B=parent_batch_wall_seconds`, `S=sum_i(case_service_wall_seconds)`, and `P=resolved worker_count`. Define observed parallel efficiency `E=min(1,S/(P×B))`; if `E≤0`, the benchmark fails schema validation.
 
 Primary conservative screening projection is `projected_screen_wall_seconds = (9,600,000×s_max)/(P×E)`. `[PROPOSED]` Diagnostic central projection replaces `s_max` with `s_mean`. Calibration projection uses the six measured full-calibration service times: `projected_calibration_wall_seconds=(300×max_calibration_service_seconds)/(P×E)`. Total conservative projection is the sum of screening and calibration projections. No geometry weighting, six-case raw mean, or alternative extrapolation may be substituted.
 
@@ -571,6 +571,74 @@ All six calibration cases and six benchmark cases must be `PASS`; parallel repea
 #### 8.11.7 Authorization boundary
 
 Rebecca's approval of v2.6 authorizes A1/A2 implementation, tests, failure rehearsal, two parallel-repeatability fixture executions, six uncached calibrations, and the six-case parallel feasibility benchmark only. `[PROPOSED]` It does not authorize the 2,000-repetition screen, Commit B screening evidence, 10,000 confirmation, sensitivity/misspecification work, scoring, or protected seeds. Benchmark results return through fresh-context CRITIC to Rebecca for the separate workload ruling.
+
+### 8.12 v2.7 final closure for the authorized 1,000-repetition parallel feasibility diagnostic
+
+**Authorization source:** `docs/rulings/REBECCA_L8_1000_REP_FEASIBILITY_AUTHORIZATION.md` at merged main SHA `d08cb7eefec67609a3ea3cee0eb20da22f78c40a`. Rebecca authorized the candidate-blind, synthetic, O-15 1,000-repetition parallel feasibility workload and retained the v2.6 multiprocessing path. This subsection supplies only the three execution closures required by that ruling. `[PROPOSED — Rebecca-authorized diagnostic workload]`
+
+#### 8.12.1 Exact repetition allocation and case ordering
+
+Case order is geometry-major, then sentinel-cell order exactly as listed in v2.6: low, central, high. Allocation is fixed as follows and totals exactly 1,000. `[PROPOSED — Rebecca-authorized diagnostic workload]`
+
+| ordinal | case_id | W | N_w | alpha | v_mult | C_min | eta | repetitions |
+|---:|---|---:|---:|---:|---:|---:|---:|---:|
+| 0 | `g0_low` | 50 | 4 | 0.0 | 0.5 | 0.5 | 0.01 | 167 |
+| 1 | `g0_central` | 50 | 4 | 0.05 | 1.0 | 0.7 | 0.1 | 167 |
+| 2 | `g0_high` | 50 | 4 | 0.2 | 2.0 | 0.8 | 0.2 | 167 |
+| 3 | `g1_low` | 400 | 64 | 0.0 | 0.5 | 0.5 | 0.01 | 167 |
+| 4 | `g1_central` | 400 | 64 | 0.05 | 1.0 | 0.7 | 0.1 | 166 |
+| 5 | `g1_high` | 400 | 64 | 0.2 | 2.0 | 0.8 | 0.2 | 166 |
+
+The ordered `benchmark_cases` array uses ordinals 0–5 above. Each case's `repetition_index` is zero-based and local to that case. Parallel scheduling may complete out of order; collection and canonical publication are sorted by `(ordinal,repetition_index)` before statistics or hashing. No dynamic reallocation, early stopping, replacement, or work stealing may alter counts. `[PROPOSED]`
+
+#### 8.12.2 Feasibility bootstrap depth
+
+Every feasibility repetition requires exactly 5,000 valid bootstrap replicates and permits at most 5,500 attempted replicates. `[PROPOSED]` This **retains and makes binding for the authorized 1,000-repetition feasibility workload** the v2.6 values; it does not reduce them. The stratified bootstrap algorithm, 20-stream `(seed,dose)` RNG construction, invalid-draw handling, percentile interval, quantile convention, lower-bound pass rule, and complete statistical verdict are unchanged.
+
+For feasibility bootstrap identities, `run_mode="feasibility-benchmark"`, `case_ordinal`, and case-local `repetition_index` are included in addition to the v2.5 bootstrap fields. `case_ordinal` is 0–5; this prevents two cases sharing coordinates in a future amendment from sharing streams. The published benchmark case records must state `valid_bootstrap_replicates=5000` and `max_bootstrap_attempts=5500`; any repetition that cannot obtain 5,000 valid draws in 5,500 attempts is an ordinary statistical false kill, not INSTRUMENT FAILURE. `[PROPOSED]`
+
+#### 8.12.3 Fully frozen parallel-repeatability fixture
+
+The repeatability fixture is:
+
+- `case_id="parallel_repeatability_v1"`;
+- geometry `(W,N_w)=(50,4)`;
+- cell `(alpha,v_mult,C_min,eta)=(0.05,1.0,0.7,0.1)`;
+- 32 complete five-seed repetitions, local indices `0..31` `[PROPOSED]`;
+- 5,000 valid bootstrap replicates and at most 5,500 attempts per repetition `[PROPOSED]`;
+- `sigma_dose` loaded from the freshly computed, uncached `g0_central` feasibility calibration from the same invocation and verified against its calibration record digest; no cache or hard-coded sigma is permitted;
+- simulation RNG namespace `parallel-repeatability`, identity `{config_digest,case_id,W,N_w,alpha,v_mult,c_min,eta,repetition_index,seed_index}`; and
+- bootstrap namespace `bootstrap`, with the v2.5 per-`(seed,dose)` identity plus `run_mode="parallel-repeatability"` and `case_id`.
+
+Both executions use the frozen scoring-parity pool (`spawn`, chunksize one, maximum-capacity frozen worker count) and the same identities. Each produces exactly:
+
+`{schema_version,config_digest,implementation_sha,config_source_sha,case,parallelism,results,elapsed_seconds}` with `schema_version="l8-parallel-repeatability-v1"`; `case={case_id,W,N_w,alpha,v_mult,c_min,eta,repetitions,valid_bootstrap_replicates,max_bootstrap_attempts,sigma_source_case_id,sigma_record_digest}`; `parallelism` is the exact frozen object; and `results` is an array ordered by `repetition_index`. `[PROPOSED]`
+
+Each result is exactly `{repetition_index,seeds,bootstrap,complete_verdict}`. `seeds` is ordered by `seed_index` and each item is exactly `{seed_index,rho,beta,beta_star,direction_pass,spearman_pass,beta_star_pass}`. `bootstrap={valid_replicates,attempts,lower,upper,pass}`. `complete_verdict` is boolean. Finite floats use the canonical JSON rules; no unknown fields are permitted.
+
+Comparison removes exactly the top-level `elapsed_seconds` field from each object, canonicalizes both objects, and requires byte identity and SHA-256 identity. Also compare ordered RNG-root digests and the calibration-record digest separately. Any mismatch raises `DiagnosticNondeterminismError` exit 23. Neither execution is serial. `[PROPOSED]`
+
+#### 8.12.4 Committed known-good rehearsal pair
+
+The 12-case failure rehearsal uses this committed pair only:
+
+- `tests/fixtures/l8_g2g4/known_good_pair_v1.json`
+- `tests/fixtures/l8_g2g4/known_good_pair_v1.sha256`
+
+The JSON canonical bytes are exactly `{"artifact_kind":"l8-g2g4-rehearsal-prior","payload":{"generation":1,"status":"COMPLETE"},"schema_version":"l8-g2g4-known-good-pair-v1"}` followed by LF. Its SHA-256 is `36d07e6b515031d38c7f8e88a94e8c0128bf7256e9c4ba0c327cb44213e885e6`. The sidecar bytes are exactly `36d07e6b515031d38c7f8e88a94e8c0128bf7256e9c4ba0c327cb44213e885e6  known_good_pair_v1.json` followed by LF. `[PROPOSED]` Tests copy both files byte-for-byte into the isolated prior-pair location; no test generates or modifies the source fixture.
+
+#### 8.12.5 Frozen estimator-fixture descriptor digests
+
+The fixture generator is the reviewed `validate_estimator` procedure in `diagnostics/l8_power_analysis.py` at `b1397498ca369067e956479e6c2bd6b0793c3e89`: `np.random.default_rng(12345)`, 200,000 trials, positive then zero-slope `(4,4)` draws within every trial, binary64, variance 0.01. `[PROPOSED]` ARCHITECT does not execute the trials; the frozen digests identify the exact generator descriptors that TASK BUILDER executes after approval.
+
+- Positive descriptor canonical bytes: `{"draw_order":"positive-then-zero","dtype":"float64","generator":"np.random.default_rng","n_trials":200000,"noise_variance":0.01,"seed":12345,"shape":[4,4],"slope":0.02,"stream_position":"first-draw-each-trial"}` plus LF. SHA-256: `e9ac5654d788367f7c98cc861ec99e39c587be20ac1fe1135863e106a5be3b30`.
+- Zero-slope descriptor canonical bytes: `{"draw_order":"positive-then-zero","dtype":"float64","generator":"np.random.default_rng","n_trials":200000,"noise_variance":0.01,"seed":12345,"shape":[4,4],"slope":0.0,"stream_position":"second-draw-each-trial"}` plus LF. SHA-256: `db57e8d3d0111162ebe193d9f66cbb0c96dd73900450810436cad270daf71b5b`.
+
+`fixture_digests.estimator_positive_v1` and `fixture_digests.estimator_zero_v1` equal those values. TASK BUILDER verifies descriptor bytes before running the single shared RNG loop; it then applies the existing mean/tolerance assertions from the baseline. A descriptor mismatch is `DiagnosticChecksumError` exit 21. `[PROPOSED]`
+
+#### 8.12.6 Authorization boundary
+
+After fresh-context CRITIC review and Rebecca clearance of this closure, TASK BUILDER may implement and execute only the staged A1/A2 path, fixed apparatus/failure rehearsal, two parallel-repeatability executions, six uncached calibrations, and the exactly 1,000-repetition parallel feasibility diagnostic above. No screening, scoring, protected seeds, G2–G4 freeze, 10,000 confirmation, sensitivity/misspecification stress rerun, or merge authority is granted. `[PROPOSED — authorization boundary]`
 
 ---
 
@@ -610,10 +678,10 @@ L8 and L10 share components (mirror, abstention) and run **separate batteries** 
 
 ## §12 Sequencing (binding order)
 
-1. ARCHITECT v2.5 determinism/feasibility amendment and changelog committed; no computation.
-2. Fresh-context CRITIC reviews v2.5, beginning with §5 P1–P6 compliance, §8.10 determinism, and workload feasibility.
-3. Rebecca decides whether to approve Commit A1 implementation, Commit A2 frozen configuration, and the fixed parallel feasibility benchmark. The 2,000-repetition screen is not authorized at this step.
-4. If authorized, TASK BUILDER produces A1/A2, tests them, and runs only the fixed parallel benchmark/rehearsal evidence commit; no screening evidence.
+1. ARCHITECT v2.7 final three-item closure and changelog committed; no computation.
+2. One fresh-context CRITIC reviews v2.7, beginning with §5 P1–P6 compliance and exact closure of allocation, bootstrap depth, and fixtures.
+3. Rebecca clears the executable closure under the authorization recorded at `d08cb7eefec67609a3ea3cee0eb20da22f78c40a`. The screening run remains unauthorized.
+4. If cleared, TASK BUILDER produces A1/A2, tests them, and runs only the fixed rehearsal/repeatability and 1,000-repetition parallel feasibility evidence commit; no screening evidence.
 5. Fresh-context CRITIC reviews A1/A2, tests, failure rehearsal, parallel repeatability, and benchmark. Rebecca then decides whether to authorize the full screen, amend/reduce it, or stop.
 6. Only if separately authorized, TASK BUILDER runs screening and produces a separate screening-evidence commit; fresh-context CRITIC reviews it. Return design, screening analysis, and CRITIC ruling to Rebecca. Only Rebecca may freeze aggregation or battery size or decide G2/G3.
 7. After Rebecca freezes aggregation and battery geometry, TASK BUILDER recomputes the sensitivity and misspecification maps under §8.3–§8.5; fresh-context CRITIC reviews; Rebecca alone decides G4.

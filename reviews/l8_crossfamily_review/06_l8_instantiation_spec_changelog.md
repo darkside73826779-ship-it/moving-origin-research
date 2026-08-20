@@ -2,8 +2,22 @@
 
 **Spec:** `reviews/l8_crossfamily_review/06_l8_instantiation_spec.md`
 **Date:** 2026-08-20 · **Author:** ARCHITECT
-**Branch:** `architect/l8-g2g4-remediation` (v2.6/v2.5.1/v2.5/v2.4/v2.3); `architect/l8-instantiation-v2.2-fresh` (v2.2); v2.1/v2 on `architect/l8-instantiation-v2`
+**Branch:** `architect/l8-g2g4-remediation` (v2.7/v2.6/v2.5.1/v2.5/v2.4/v2.3); `architect/l8-instantiation-v2.2-fresh` (v2.2); v2.1/v2 on `architect/l8-instantiation-v2`
 **Regime:** B (post-Entry 81; constitution v1 + Amendments 1–2; §5 binding) (P4)
+
+---
+
+## v2.7 — Authorized 1,000-repetition parallel feasibility closure (2026-08-20)
+
+**Base:** `e2bd8242315cb3fee88fb2f8b98bdc77ccacf515`. **Authorization:** merged ruling at `d08cb7eefec67609a3ea3cee0eb20da22f78c40a`.
+
+Exactly three implementation closures were added:
+
+1. Allocated the authorized 1,000 repetitions across the six ordered cases as `[167,167,167,167,166,166]`, geometry-major then low/central/high sentinel order. `[PROPOSED — Rebecca-authorized diagnostic workload]`
+2. Fixed feasibility bootstrap depth at 5,000 valid replicates and 5,500 maximum attempts per repetition, retaining the existing bootstrap RNG/statistical algorithms. `[PROPOSED]`
+3. Fully froze the parallel-repeatability fixture, committed known-good rehearsal pair, and estimator generator-descriptor digests. `[PROPOSED]`
+
+No other design scope changed. Maximum-capacity parallel execution remains mandatory; no serial benchmark was introduced. No implementation, fixture creation, calibration, diagnostic execution, screening, scoring, protected-seed exposure, G2–G4 freeze, confirmation, sensitivity/stress rerun, or merge occurred.
 
 ---
 
