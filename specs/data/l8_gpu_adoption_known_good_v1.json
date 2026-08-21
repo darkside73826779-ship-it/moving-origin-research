@@ -5,6 +5,7 @@
   "fixture_id": "l8-gpu-adoption-sentinel-v1",
   "geometry": {"W": 100, "N_w": 16, "Q_per_dose": 1600},
   "repetitions_per_cell_per_arm": 256,
+  "rho_value_compare_epsilon": 1e-12,
   "arms": ["combo", "null_control"],
   "cells": [
     {"ordinal": 0, "alpha": 0.0, "v_mult": 0.5, "c_min": 0.5, "eta": 0.01},

@@ -4,6 +4,21 @@
 
 **Regime:** B
 
+## v1.3 — CRITIC B10–B12 and NB-A–NB-F remediation
+
+- Replaces the four-file in-tree CPU specification package with the byte-exact authoritative package at `2082680`.
+- Adds `RHO_TEST_VALUE_EPS = 1e-12` for deterministic numeric assertions while retaining exact predicate parity and the distinct locked-bar comparison tolerance.
+- Restores the baseline seed-key's exact six-decimal digest-input formatting.
+- Renames backend-parity roles honestly and removes the incorrect implication that they satisfy L18 controls.
+- Corrects deterministic-category counting: six rho categories plus no-softening, with complete-verdict aggregation separate.
+- Fixes arm-scoped primitive-tape semantics and pre-registers the exact sentinel derived-seed collision count of `3840`.
+- Enumerates exact result-cell coordinate keys and order.
+- Removes `[PROPOSED]` from operative-ruling citations and observed negative values.
+- Carries the authoritative full-screen schema and output-path constraints forward explicitly.
+- Updates the known-good fixture and sidecar for the test-value comparison tolerance.
+
+No locked bar, law quotation, calibration value, geometry, control, negative name, or authorization boundary changed.
+
 ## v1.2 — CRITIC B1–B8 remediation
 
 - Rebases the adoption work onto main `b6d4556` and brings the committed Item-1 rho authorization, controlling full-screen CPU specification, and signed geometry-table ruling into the branch.

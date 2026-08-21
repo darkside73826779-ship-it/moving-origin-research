@@ -6,7 +6,18 @@
 
 ## What this is
 
-A minimal executable specification for the L8 G2–G4 full battery-geometry screen: 20 geometries × 240 cells × 2,000 simulations per cell, evaluated with the existing direct false-kill calculation at `b139749`. Candidate-blind, O-15 diagnostic-only. Authorizes NO scoring.
+A minimal executable specification for the L8 G2–G4 full battery-geometry screen: 20 geometries × 240 cells × 2,000 simulations per cell, evaluated with the `b139749` β* direct path plus the Rebecca-authorized direct per-seed Spearman ρ calculation (to compute the complete frozen-v2.2 scoring predicate). Candidate-blind, O-15 diagnostic-only. Authorizes NO scoring.
+
+## Advisor round-2 cleanup (numerical/qualification semantics)
+
+- Corrected ρ deterministic-test expected values (Python-verified): `[1,0,2,3]` → `0.8` (passes at threshold); `[0,0,2,3]` → `sqrt(0.9)≈0.9487`; `[3,2,1,0]` → `-1.0`.
+- Added `RHO_COMPARE_EPS = 1e-12` locked-bar comparison tolerance: ρ predicate passes iff `ρ_s ≥ 0.8` OR `abs(ρ_s − 0.8) ≤ RHO_COMPARE_EPS` (absorbs binary64 roundoff at exact threshold only); no-softening test asserts `0.8 − 2·RHO_COMPARE_EPS` fails. Tie detection = exact finite binary64 equality.
+- §5.1 non-finite bullet reconciled with §5.6 decision tree (disposition = apparatus-invalid exclusion OR undefined-ρ predicate failure).
+- §5.5 test 7 made concrete (aggregation-unit over precomputed per-seed `(β*_s, ρ_s)` tuples: all-pass; fail-β*; fail-undefined-ρ; fail-ρ<0.8).
+- §5.4/schema: apparatus-invalid cell disqualifies a geometry — added `cell_apparatus_invalid`, `has_apparatus_invalid_cell`; `meets_target = (no apparatus-invalid cells) AND max_primary_false_kill ≤ 0.10`.
+- §7.1 schema: separate true-effect / null-control denominator fields (`n_valid_true_effect`, `n_valid_null_control`, `n_apparatus_invalid_true_effect/null_control`).
+- `b139749` not overstated: computes `β*_s` and transiently `D̄` inside `beta_star_for_seed`; does NOT expose per-seed `ρ_s` or durable `D̄` arrays — TASK BUILDER computes `ρ_s` in the same estimator path or extends the per-seed result record.
+- Reconciled companion files (executability trace, TASK BUILDER handoff, changelog) with the round-2 spec changes. Locked bars unchanged.
 
 ## Amendment (Rebecca directive, 2026-08-20) — Item 1 (primary metric) + Item 3 (geometry authority)
 
@@ -31,6 +42,8 @@ Rebecca authorized the direct per-seed Spearman ρ calculation (`docs/rulings/RE
 
 Locked bars (β* ≥ 0.2, ρ ≥ 0.8, ≥3 doses, 5 seeds) `[BAR-Entry 11]`; verbatim L8 + §5 P1–P6 quotes (E2); 19.2M two-arm / ~90.5 min/1.5–2 h timing (E3); no prohibited machinery beyond the authorized ρ calculation (E5); end-to-end executability re-verified — the complete predicate is now computable via the direct per-seed ρ (E6). No merge to main. TASK BUILDER remains held until fresh-context CRITIC clearance AND Rebecca's geometry-list signature.
 
+> **Historical note:** the sections below ("Remediation" and "Decisions made by ARCHITECT") record the **original pre-amendment** spec state. Where any statement below names `false_kill_rate_per_seed` as PRIMARY or uses "any-seed rate primary" / "scoring-verdict-aligned" wording, it is **superseded** by the "Amendment (Rebecca directive, Item 1)" section above: the current PRIMARY is `complete_verdict_false_kill_rate = P(any seed: β*_s<0.2 OR ρ_s undefined OR ρ_s<0.8)`; `false_kill_rate_per_seed` (β*-only any-seed) and `false_kill_rate` (5-seed mean) are diagnostics. They are retained here as a historical record only.
+
 ## Remediation (CRITIC BLOCK → ARCHITECT, 2026-08-20)
 
 Fresh-context CRITIC BLOCK (`critic/l8-g2g4-minimal-fullscreen` @ `02a7443`) returned to ARCHITECT only. PRIMARY designation (E1) preserved — CRITIC-verified textually grounded (v2.2 line 44). Fixes applied:
@@ -49,8 +62,8 @@ Fresh-context CRITIC BLOCK (`critic/l8-g2g4-minimal-fullscreen` @ `02a7443`) ret
 1. **20 geometries** copied verbatim from §8.2 of the L8 crossfamily spec — the Cartesian product `W ∈ {50,100,200,400}` × `N_w ∈ {4,8,16,32,64}`, ordered by `Q = W·N_w` asc, then larger `N_w`, then smaller `W`. Not redesigned. (Source: `06_l8_instantiation_spec.md` at `4463cbc` v2.4 §8.2 lines 276–280 — the only located repo source of the pre-registered 20-geometry list. The v2.4 Wilson/bootstrap §8.9 machinery in the same commit is prohibited and not invoked. Geometry-list authority flagged for CRITIC/Rebecca confirmation.)
 2. **240 cells = 15 nuisance × 16 operating** copied exactly from `b139749` / v2.2 §8.3: `α ∈ {0.0,0.02,0.05,0.1,0.2}` × `v_mult ∈ {0.5,1.0,2.0}` × `C_min ∈ {0.5,0.6,0.7,0.8}` × `η ∈ {0.01,0.05,0.1,0.2}`.
 3. **2,000 simulations per cell per arm**; **16 workers**; **~1.5–2 h** — Rebecca-established per the WORKFLOW COORDINATOR handoff.
-4. **Direct false-kill calculation only; no bootstrap.** Uses `false_kill_rate` (5-seed mean) and `false_kill_rate_per_seed` (any-seed) as computed at `b139749`.
-5. **PRIMARY = `false_kill_rate_per_seed`; DIAGNOSTIC = `false_kill_rate`.** Justification: the frozen v2.2 spec (c7d7bed, line 44) states the locked standardized-slope ≥ 0.2 bar runs "per seed," so the scoring-verdict-aligned direct false-kill estimate is the any-seed rate. This relabels output priority only; neither direct formula is altered.
+4. **Direct false-kill calculation only; no bootstrap.** Uses the `b139749` β* direct path plus the Rebecca-authorized direct per-seed Spearman ρ calculation. `[SUPERSEDED by the Amendment (Item 1) — the β*-only `false_kill_rate`/`false_kill_rate_per_seed` are now diagnostics; PRIMARY is `complete_verdict_false_kill_rate`.]`
+5. **PRIMARY = `false_kill_rate_per_seed`; DIAGNOSTIC = `false_kill_rate`.** `[SUPERSEDED by the Amendment (Item 1) — see §"Amendment" above: PRIMARY is now `complete_verdict_false_kill_rate = P(any seed: β*_s<0.2 OR ρ_s undefined OR ρ_s<0.8)`; `diagnostic_beta_only_any_seed_false_kill_rate` and `diagnostic_five_seed_mean_false_kill_rate` are diagnostics.]`
 6. **False-kill target = 0.10** (`FALSE_KILL_THRESHOLD`, v2.2 §8: false-kill exceeding 0.10 escalates to G3). Geometry acceptance: `max` over 240 cells of primary false-kill ≤ 0.10. Minimum acceptable battery = first geometry in §3 order meeting the target; STOP if none.
 7. **Seed derivation preserved unchanged across geometries** — the frozen v2.2 spec defines no geometry seed dimension (only superseded v2.4 §8.9.3 machinery does). `combo_seed(α,v,C_min,η)` and the per-simulation derivation are reused as-is; geometry is distinguished by the `(W, N_w)` data shape. Known shared-seed property memorialized in §6.1.
 8. **Two arms per cell preserved** (combo + null-control) per `b139749`'s verified `run_power_analysis`, to supply the false-pass rate.

@@ -1,4 +1,4 @@
-# L8 GPU Diagnostic-Backend Adoption Specification v1.2
+# L8 GPU Diagnostic-Backend Adoption Specification v1.3
 
 **Date:** 2026-08-20
 
@@ -31,8 +31,8 @@ This contract concerns backend equivalence only. It makes no L8 scientific claim
 The following committed artifacts control, in descending order after the constitution:
 
 1. `docs/rulings/REBECCA_L8_FULLSCREEN_GPU_REBUILD_APPROVAL.md` at base `b6d4556` `[PROPOSED]`.
-2. `docs/rulings/REBECCA_L8_FULLSCREEN_ITEM1_RHO_AUTHORIZATION.md`, copied into this branch from committed source `69feed8d353662c60fe9025b0f3c91dc80b9d1e3` `[PROPOSED]`.
-3. `docs/rulings/REBECCA_L8_GEOMETRY_TABLE_FREEZE.md`, copied into this branch from committed source `5306c3025a6018a4947c97b8f498f811ef7580ba` `[PROPOSED]`.
+2. `docs/rulings/REBECCA_L8_FULLSCREEN_ITEM1_RHO_AUTHORIZATION.md`, copied into this branch from committed source `69feed8d353662c60fe9025b0f3c91dc80b9d1e3`.
+3. `docs/rulings/REBECCA_L8_GEOMETRY_TABLE_FREEZE.md`, copied into this branch from committed source `5306c3025a6018a4947c97b8f498f811ef7580ba`.
 4. Controlling CPU specification `specs/l8_g2g4_minimal_full_screen_spec.md`, source SHA `2082680a7caba85c46e637b3b38d679fa7f80599` `[PROPOSED]`.
 5. CPU implementation baseline `b1397498ca369067e956479e6c2bd6b0793c3e89` plus only the direct per-seed rho extension required by Items 1–4 `[PROPOSED]`.
 6. Frozen calibration `specs/data/l8_cpu_frozen_calibration_v1.json`, committed-LF SHA-256 `f012849c57f7aadac3af69a345572674a6fdcc3de5eaf9eb642973b7d3cdfb5e` `[PROPOSED]`. `.gitattributes` fixes this file to LF on checkout `[PROPOSED]`.
@@ -47,6 +47,7 @@ For each seed, use the four dose-level regulation-error summaries already used b
 - Response ranks are ascending one-based midranks; exact finite binary64 ties receive the arithmetic mean of occupied ranks `[PROPOSED]`.
 - Rho is the binary64 Pearson correlation between dose ranks and response ranks `[PROPOSED]`.
 - `RHO_COMPARE_EPS = 1e-12` `[PROPOSED]`.
+- `RHO_TEST_VALUE_EPS = 1e-12` controls deterministic-test value comparison only `[PROPOSED]`.
 - The rho predicate passes iff `rho >= 0.8 OR abs(rho - 0.8) <= RHO_COMPARE_EPS` `[BAR-Entry 11]`.
 - `rho = 0.8 - 2*RHO_COMPARE_EPS` must fail `[PROPOSED]`.
 - Finite, shape-valid constant responses produce undefined rho and a rho-predicate failure, not `INSTRUMENT_FAILURE` `[PROPOSED]`.
@@ -54,6 +55,8 @@ For each seed, use the four dose-level regulation-error summaries already used b
 The complete true-effect verdict is false-kill iff any of five seeds has `beta_star < 0.2`, undefined rho, or a failing rho predicate `[BAR-Entry 11]`. Null false-pass occurs iff every one of five seeds satisfies both predicates `[BAR-Entry 11]`. The beta-only any-seed and five-seed-mean rates remain diagnostics `[PROPOSED]`.
 
 Nonfinite or structurally invalid inputs are `INSTRUMENT_FAILURE` only when an independent apparatus check proves an apparatus fault. Without such proof, the repetition remains in the denominator and the affected statistical predicate fails `[PROPOSED]`.
+
+Deterministic finite-rho value checks pass iff `abs(observed_rho - expected_rho) <= RHO_TEST_VALUE_EPS` `[PROPOSED]`. This comparison is distinct from `RHO_COMPARE_EPS`: it accommodates valid binary64 evaluation-order differences such as `0.7999999999999998`, `0.7999999999999999`, and `0.8`, while predicate outcomes must still be exactly identical `[PROPOSED]`. Undefined expected rho passes the value check only when observed rho is also undefined `[PROPOSED]`.
 
 Inherited bars are unchanged: beta-star at least `0.2`, rho at least `0.8`, at least three doses, exactly five seeds, and the specificity control `[BAR-Entry 11]`. This gate uses four doses `[BAR-Entry 11]`.
 
@@ -81,14 +84,14 @@ A numeric value within tolerance but producing a different predicate boolean is 
 
 CPU seed derivation is preserved exactly `[PROPOSED]`:
 
-`base_seed = int.from_bytes(sha256("alpha=<a>|vmult=<v>|cmin=<c>|eta=<e>").digest()[:8], "little") mod 2^31` `[PROPOSED]`.
+`key = f"alpha={alpha:.6f}|vmult={v_mult:.6f}|cmin={c_min:.6f}|eta={eta:.6f}"` encoded as UTF-8, then `base_seed = int.from_bytes(sha256(key).digest()[:8], "little") mod 2^31` `[PROPOSED]`. The six-decimal formatting, field names, separators, field order, and lowercase spellings are digest input and may not vary `[PROPOSED]`.
 
 For zero-based repetition `i` and seed index `s` in `0..4`, `seed_int = (base_seed + i*5 + s) mod 2^31` `[PROPOSED]`. Uniqueness is asserted over the identity tuple `(cell_ordinal, arm_ordinal, repetition_index, seed_index)`, not over the reduced integer value `[PROPOSED]`. A repeated identity tuple is `INSTRUMENT_FAILURE`; equal derived integers from distinct tuples are reported as `derived_seed_collision_count` and are not relabeled as identity duplication `[PROPOSED]`.
 
 To preserve NumPy RNG semantics while saturating the GPU, the implementation uses this fixed primitive-draw-tape pipeline `[PROPOSED]`:
 
 1. CPU producer processes use `numpy.random.default_rng(seed_int)` with the pinned NumPy version and execute the baseline sampling calls in their original order `[PROPOSED]`.
-2. Each producer emits one immutable primitive tape per seed: clipped `p_true` binary64 tensor `(4,N_w,W)`; realized `correct` boolean tensor `(4,N_w,W)`; mirror-normal `xi` binary64 tensor `(4,N_w,W)`; and dose-normal `xi_l` binary64 tensor `(4,N_w,W)`, with exact positive zero at dose zero `[PROPOSED]`. Tensor axes are dose, window, query `[PROPOSED]`.
+2. Each producer emits one arm-scoped immutable primitive tape per seed: clipped `p_true` binary64 tensor `(4,N_w,W)`; realized `correct` boolean tensor `(4,N_w,W)`; mirror-normal `xi` binary64 tensor `(4,N_w,W)`; and dose-normal `xi_l` binary64 tensor `(4,N_w,W)`, with exact positive zero at dose zero `[PROPOSED]`. Tensor axes are dose, window, query `[PROPOSED]`. Combo and null tapes are not shared: the null arm follows the baseline by consuming no `xi_l` draws and storing positive-zero `xi_l` values, while the combo arm consumes positive-dose `xi_l` draws in baseline order `[PROPOSED]`.
 3. The tape records values after NumPy's beta/normal/random transforms but before mirror confidence, dose degradation, thresholding, coverage-floor selection, regulation-error calculation, controller update, beta-star, rho, predicates, or aggregation `[PROPOSED]`.
 4. A factored CPU evaluator and the GPU evaluator consume the identical tape and perform all downstream scientific operations in the baseline order `[PROPOSED]`.
 5. On the complete sentinel, the factored CPU evaluator must reproduce the unmodified `b139749` simulation path bit-for-bit for every `d_seed`, beta-star value, and diagnostic verdict before CPU↔GPU comparison is allowed `[PROPOSED]`.
@@ -99,7 +102,7 @@ Work items are fixed blocks of thirty-two consecutive repetitions for one `(cell
 
 ## 6. Frozen sentinel workload
 
-The known-good contract is `specs/data/l8_gpu_adoption_known_good_v1.json`, SHA-256 `d1ee4f56dfafcbb1c18e84c36e2110e9038ceaa1f9f4699753140578e4f19a2a` `[PROPOSED]`, with sidecar `specs/data/l8_gpu_adoption_known_good_v1.json.sha256` `[PROPOSED]`.
+The known-good contract is `specs/data/l8_gpu_adoption_known_good_v1.json`, SHA-256 `65256ff48fb48399536c3e499242400267aa044459d247a9ecc51eb77e6cd7f7` `[PROPOSED]`, with sidecar `specs/data/l8_gpu_adoption_known_good_v1.json.sha256` `[PROPOSED]`.
 
 The stochastic sentinel uses exact geometry `(W=100, N_w=16)` and `Q=1600` queries per dose `[PROPOSED]`. It runs exactly 256 repetitions per cell per arm `[PROPOSED]`, five seeds per repetition `[BAR-Entry 11]`, combo then null-control arms `[PROPOSED]`, and these cells in order `[PROPOSED]`:
 
@@ -109,13 +112,13 @@ The stochastic sentinel uses exact geometry `(W=100, N_w=16)` and `Q=1600` queri
 
 The combo arm loads sigma from the frozen CPU calibration artifact; the null arm uses `sigma_dose=0.0` `[PROPOSED]`. No calibration executes `[PROPOSED]`. Total sentinel repetitions are `3*2*256 = 1,536` and total logical seeds are `7,680` `[PROPOSED]`.
 
-The seven rho categories, the no-softening subtest, and four complete-verdict cases are exactly those in the known-good contract `[PROPOSED]`. Nonfinite JSON fixture input uses `null` solely as the serialized representation of undefined/nonfinite test input; the in-memory test injects binary64 NaN `[PROPOSED]`.
+The known-good contract contains six rho categories plus the no-softening subtest, and four complete-verdict cases; together these cover the controlling CPU specification's seven deterministic categories plus case 2a `[PROPOSED]`. Nonfinite JSON fixture input uses `null` solely as the serialized representation of undefined/nonfinite test input; the in-memory test injects binary64 NaN `[PROPOSED]`.
 
 The entire GPU sentinel is executed twice from a fresh process with identical configuration `[PROPOSED]`. After removal of runtime metadata, the second canonical scientific payload must be byte-identical to the first `[PROPOSED]`. Failure produces `INSTRUMENT_FAILURE`; no third execution is permitted `[OP-Entry 22]`.
 
 ## 7. L18 scope
 
-This backend gate makes no positive L8 scientific claim. Its frozen baseline is the CPU comparator, its naive baseline is the unextended beta-only `b139749` output retained as diagnostics, its oracle is the deterministic rho/aggregation contract, and its contamination controls are the combo and null-control arms required by the operative GPU ruling `[LAW-L18]`. Empty/permuted/shuffled scientific arms are not present in the controlling L8 comparator and are not invented here `[LAW-L19]`.
+This backend gate makes no positive L8 scientific claim. For backend parity only, the CPU comparator is the reference, the unextended beta-only `b139749` output is a diagnostic comparator, the deterministic rho/aggregation contract supplies expected values, and combo/null are the paired simulation arms `[PROPOSED]`. These are backend-parity roles, not renamed L18 controls. Empty/permuted/shuffled scientific arms are not present in the controlling L8 comparator and are not invented here `[LAW-L19]`.
 
 This narrow backend-equivalence battery does not waive L18 for a later L8 positive claim. Any scoring or scientific claim must run the full controlling L18 battery under a separately approved specification `[LAW-L18]`.
 
@@ -140,7 +143,7 @@ Required keys, in source order and with no additions `[PROPOSED]`:
 11. `repetitions_per_cell_per_arm` integer;
 12. `arms` array exactly `['combo','null_control']`;
 13. `cells` array exactly matching the known-good contract;
-14. `rng` object with `family='numpy-default_rng'`, `seed_formula`, `identity_fields=['cell_ordinal','arm_ordinal','repetition_index','seed_index']`;
+14. `rng` object with `family='numpy-default_rng'`, `seed_formula='alpha={alpha:.6f}|vmult={v_mult:.6f}|cmin={c_min:.6f}|eta={eta:.6f}'`, `identity_fields=['cell_ordinal','arm_ordinal','repetition_index','seed_index']`, `expected_derived_seed_collision_count=3840`;
 15. `parallel` object with `producer_workers='os.cpu_count()'`, `pool='multiprocessing.Pool'`, `chunksize=1`, `block_repetitions=32`, `queue_depth_formula='4*os.cpu_count()'`.
 
 Literal strings and numeric values above are `[PROPOSED]`.
@@ -152,7 +155,7 @@ Required top-level keys in source order `[PROPOSED]`: `header`, `deterministic_t
 - `header`: exact configuration object plus `numpy_version`, `torch_version`, `cuda_runtime_version`, `gpu_model`, `producer_worker_count`, and `derived_seed_collision_count` `[PROPOSED]`.
 - `deterministic_tests`: ordered rows matching known-good `rho_cases` then `complete_verdict_cases`; each row has `id`, `cpu_observed`, `gpu_observed`, `cpu_predicate`, `gpu_predicate`, `pass` `[PROPOSED]`.
 - `runs`: exactly two rows, `run_ordinal` zero then one; each has `scientific_payload_sha256`, `elapsed_seconds`, and ordered `cells` `[PROPOSED]`.
-- each cell has `cell_ordinal`, coordinates, `base_seed`, then `arms` in combo/null order `[PROPOSED]`.
+- each cell has, in order, `cell_ordinal`, `alpha`, `v_mult`, `c_min`, `eta`, `base_seed`, then `arms` in combo/null order `[PROPOSED]`.
 - each arm has `arm`, `n_attempted`, `n_valid`, `n_apparatus_invalid`, `mean_beta_star_cpu`, `mean_beta_star_gpu`, `mean_rho_cpu`, `mean_rho_gpu`, `complete_verdict_count_cpu`, `complete_verdict_count_gpu`, `diagnostic_beta_only_count_cpu`, `diagnostic_beta_only_count_gpu`, `diagnostic_five_seed_mean_count_cpu`, `diagnostic_five_seed_mean_count_gpu`, `max_abs_beta_delta`, `max_abs_rho_delta`, `undefined_rho_masks_equal`, `predicate_vectors_equal` `[PROPOSED]`.
 - `equivalence`: `all_deterministic_tests_pass`, `all_numeric_tolerances_pass`, `all_predicates_equal`, `all_counts_equal`, `repeat_payloads_equal` `[PROPOSED]`.
 - `failure_rehearsal`: twelve ordered rows defined in Section 9 `[PROPOSED]`.
@@ -191,7 +194,11 @@ No failure case is retried. The prior pair comprises the committed `specs/data/l
 
 An independently valid apparatus with any parity failure yields `NOT_EQUIVALENT` `[PROPOSED]`. A failure of an independent apparatus check yields `INSTRUMENT_FAILURE` `[PROPOSED]`. Ordinary statistical failures never become apparatus failure `[PROPOSED]`.
 
-Native torch RNG calibration divergence remains a named negative: four of fifteen pairs differ; the exact maximum absolute difference is `0.7499937499999998`, the other nonzero magnitude is `0.18749843749999995`, and mean absolute difference is `0.1624986458333333` `[PROPOSED]`. The two misspecification-profile coordinate disagreements remain named negative findings `[LAW-L19]`. Native GPU calibration and torch-native RNG are not adopted `[PROPOSED]`.
+Native torch RNG calibration divergence remains an observed named negative: four of fifteen pairs differ; the exact maximum absolute difference is `0.7499937499999998`, the other nonzero magnitude is `0.18749843749999995`, and mean absolute difference is `0.1624986458333333`. The two misspecification-profile coordinate disagreements remain named negative findings `[LAW-L19]`. Native GPU calibration and torch-native RNG are not adopted `[PROPOSED]`.
+
+For this exact sentinel, `derived_seed_collision_count` must equal `3840` `[PROPOSED]`: each of the `3*256*5 = 3840` cell/repetition/seed values appears once in each arm, with no additional collision among the three cell ranges `[PROPOSED]`. Any other count is `INSTRUMENT_FAILURE` `[PROPOSED]`.
+
+Any later full-screen GPU run remains bound to the controlling §7.1 schema, field order, types, NaN-to-null handling, atomic write, and output paths `diagnostics/l8_g2g4_minimal_full_screen.json` and `diagnostics/l8_g2g4_minimal_full_screen_HANDOFF.md` `[PROPOSED]`. This equivalence-packet schema does not replace or amend that full-screen contract `[PROPOSED]`.
 
 One fresh-context CRITIC performs law fidelity first and substantive falsification second. Overall clearance requires `LAW_FIDELITY: PASS` and `SUBSTANTIVE: CLEAR` `[PROPOSED]`. The packet then returns to Rebecca. TASK BUILDER is not released by this specification alone `[PROPOSED]`.
 
