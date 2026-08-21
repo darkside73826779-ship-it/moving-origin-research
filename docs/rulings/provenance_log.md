@@ -2696,3 +2696,23 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Next authorized role:** Rebecca (authorize housekeeping merge of RECORDER provenance + INTEGRATOR STATE.md), then INTEGRATOR (STATE.md reconciliation).
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). M4 GATE SIGNED (implementation authorized, scoring gated). Provenance backlog caught up through Entry 111. STATE.md reconciliation pending INTEGRATOR. §5 custody line: constitution SHA-256 unchanged. Seeds 201–203 and 301–303 retained, never rerun.**
+
+
+---
+
+## Entry 112 — Provenance backlog STATE.md reconciliation custody attestation
+
+**Date:** 2026-08-21 (date-stamped at creation per §5-P4, Regime B) · **Actor:** INTEGRATOR (sole STATE.md writer); RECORDER (custody and hash attestation)
+
+- **Gate served:** STATE.md reconciliation custody attestation following PR #110 (provenance backlog catch-up, Entries 90–111).
+- **Named base:** `b078d4f0c936bd6b0def4e394ac55524720d97fc` (GitHub main, post-PR #110; independently verified).
+- **INTEGRATOR source:** `d0e23821a1a0d617bb58c6502fec6e941634ee64` on `integrator/provenance-backlog-state-reconciliation`; direct parent is the named base, one commit ahead. Changes: `state/STATE.md` only (29 insertions, 9 deletions).
+- **STATE.md committed Git blob:** `9875fd02c993d1ed21d0c48ee4a07ded7845f66a`.
+- **STATE.md canonical Git-blob/LF SHA-256:** `d00d4e5fd3ad31fdc29e0289526089a58449183cbf1ed9da7f47f7fd8f538074` — VERIFIED. Independently computed by RECORDER; matches INTEGRATOR-reported hash. 0 CRLF lines (pure LF).
+- **Reconciliation verification:** STATE.md updated to reflect PR #110 (Entries 90–111, L8/GPU chain). Repo hashes updated to `b078d4f`. Role statuses updated (RECORDER, INTEGRATOR, ARCHITECT, TASK_BUILDER). Next action updated (ARCHITECT v1.2 awaiting CRITIC review; B9 pending Rebecca). Changelog entry appended summarizing all 22 entries.
+- **§5 custody line:** Constitution v1 SHA-256 `509f11c316e6ed3abbdca2df4973484dd676eecc87b727f312ee8658bef93b19` — unchanged. Constitution v2 SHA-256 `8e029645f9e0f2b7914c9e74a6b76b8fd18b7a5c2d7a48a664f771906b045aaf` — unchanged.
+- **Preserved evidence and protections:** M3 INSTRUMENT FAILURE retained (seeds 201–203 and 301–303, never rerun). Native GPU calibration divergence (`0.74999375`) + misspecification disagreements remain explicit findings — not renamed, not retrospective-toleranced. All prior provenance entries (1–111) remain unchanged. O-14, O-15, D1–D5, L9, L18, L15, §5 (P1–P6), and all standing protections intact.
+- **Scope attestation:** INTEGRATOR result changes only `state/STATE.md`; no scientific standard, verdict, specification, constitution, implementation, scoring artifact, review, or provenance content altered. RECORDER appended this provenance entry only and did not alter STATE.md.
+- **Next authorized role:** **Rebecca**, to decide whether to incorporate this custody-only branch.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). M4 GATE SIGNED (implementation authorized, scoring gated). Provenance backlog caught up through Entry 111. STATE.md reconciled and canonically attested (Entry 112). §5 custody line: constitution SHA-256 unchanged. Seeds 201–203 and 301–303 retained, never rerun.**
