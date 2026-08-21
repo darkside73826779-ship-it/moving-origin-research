@@ -2729,3 +2729,15 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Scope boundary preserved:** Item A is a synthetic scaffold implementation closure only. It does not authorize model or tokenizer acquisition, local-artifact publication, serving, qualification, diagnostics, scoring, protected-seed access, training, adapter work, native-CUDA L8 activity, scientific threshold or gate changes, STATE.md mutation, rerun, or any further merge.
 - **Custody chain:** TASK BUILDER implementation/IF1 remediation → CRITIC CLEAR → WORKFLOW COORDINATOR ledger record → Rebecca merge approval → RECORDER provenance custody. No state, specification, implementation, review, model, seed, scoring, or gate action taken by RECORDER.
 - **§5 custody line:** Constitution v2 SHA-256 `c96dc32f00cafeec4a6073c9f2bb8276f05ea764f34d266abae98ed84a750b4a` — unchanged at the named main merge.
+
+---
+
+## Entry 115 — M4 Item A STATE.md Git-blob hash attestation
+
+**Date:** 2026-08-21 · **Regime:** B [§5-P4] · **Actor:** INTEGRATOR (sole STATE.md writer); RECORDER (custody and hash attestation)
+
+- **Gate served:** Item A post-merge STATE.md custody attestation.
+- **INTEGRATOR source:** `integrator/m4-item-a-merge-reconciliation` @ `16548edb106ad30728ef167780306bcfe9b32bc6`, parent `a0f0095e92c617a60fdfcfc3fb54f1826da9e2f7`.
+- **STATE.md canonical Git-blob SHA-256:** `6bd3a15929032bbdb7e332cd7739b31641c05e5967037230f72445aadbd42ac6` — independently verified by RECORDER. This is the authoritative committed Git-blob domain; no STATE.md edit or correction commit is required.
+- **Scope and holds:** RECORDER did not edit STATE.md. Item A remains a synthetic scaffold closure; all model, qualification, scoring, protected-seed, scientific, and merge holds remain unchanged.
+- **§5 custody line:** Constitution v2 SHA-256 `c96dc32f00cafeec4a6073c9f2bb8276f05ea764f34d266abae98ed84a750b4a` — unchanged.
