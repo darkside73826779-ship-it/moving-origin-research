@@ -9,6 +9,14 @@ from src import m4_model_scaffold as m4
 
 
 class M4CallableFixtureTests(unittest.TestCase):
+    def _ready_adapter(self):
+        adapter = m4.SyntheticCallableAdapter()
+        manifest, _ = adapter.describe()
+        dependency = base64.b64decode(m4.CALLABLE["dependency_manifest"]["canonical_utf8_base64"])
+        adapter.initialize(manifest, dependency)
+        adapter.reset_episode(base64.b64decode(m4.CALLABLE["reset_fixture"]["canonical_utf8_base64"]))
+        return adapter
+
     def test_all_released_wrappers_and_schemas_reconstruct(self):
         results = m4.verify_released_fixtures()
         self.assertEqual(results["varying_response"], "190b49b15d5dd0b5adb693056b5781a0ac8b0cd227dd2d445bac2dd02f2f3e33")
@@ -123,6 +131,40 @@ class M4CallableFixtureTests(unittest.TestCase):
         with self.assertRaises(m4.ContractError) as caught:
             m4.verify_wrapper(wrapper)
         self.assertEqual(caught.exception.code, "DIGEST_MISMATCH")
+
+    def test_malformed_success_result_cannot_return_or_commit_state(self):
+        adapter = self._ready_adapter()
+        before = copy.deepcopy(adapter.state)
+        wrapper = m4.AMENDMENT["step_operation_result"]
+        original = wrapper["artifact"]["status"]
+        try:
+            wrapper["artifact"]["status"] = "INVALID"
+            request = base64.b64decode(m4.CALLABLE["varying_candidate"]["canonical_request_utf8_base64"])
+            response, result_bytes = adapter.step(request, b"")
+        finally:
+            wrapper["artifact"]["status"] = original
+        result = json.loads(result_bytes)
+        self.assertEqual(response, b"")
+        self.assertEqual(result["status"], "FAIL")
+        self.assertEqual(result["failure_code"], "DIGEST_MISMATCH")
+        self.assertEqual(adapter.state, before)
+
+    def test_malformed_next_state_cannot_commit(self):
+        adapter = self._ready_adapter()
+        before = copy.deepcopy(adapter.state)
+        wrapper = m4.AMENDMENT["stepped_state"]
+        original = wrapper["artifact"]["lifecycle_state"]
+        try:
+            wrapper["artifact"]["lifecycle_state"] = "INVALID"
+            request = base64.b64decode(m4.CALLABLE["varying_candidate"]["canonical_request_utf8_base64"])
+            response, result_bytes = adapter.step(request, b"")
+        finally:
+            wrapper["artifact"]["lifecycle_state"] = original
+        result = json.loads(result_bytes)
+        self.assertEqual(response, b"")
+        self.assertEqual(result["status"], "FAIL")
+        self.assertEqual(result["failure_code"], "DIGEST_MISMATCH")
+        self.assertEqual(adapter.state, before)
 
 
 if __name__ == "__main__":

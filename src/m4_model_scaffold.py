@@ -260,11 +260,49 @@ class SyntheticCallableAdapter:
         validate_schema(artifact, "m4_model_adapter_operation_result_schema_v1.json")
         return canonical_json(artifact)
 
+    def _commit_success(
+        self,
+        operation: str,
+        next_state_wrapper: Mapping[str, Any],
+        operation_wrapper: Mapping[str, Any],
+    ) -> bytes:
+        """Validate a complete success transition before committing its state."""
+        prior_state = self.state
+        next_state = next_state_wrapper["artifact"]
+        result = operation_wrapper["artifact"]
+
+        verify_wrapper(next_state_wrapper)
+        validate_schema(next_state, "m4_model_adapter_state_schema_v1.json")
+        verify_wrapper(operation_wrapper)
+        validate_schema(result, "m4_model_adapter_operation_result_schema_v1.json")
+
+        if (
+            result["operation"] != operation
+            or result["status"] != "PASS"
+            or result["failure_code"] is not None
+            or result["prior_state"] != prior_state["lifecycle_state"]
+            or result["result_state"] != next_state["lifecycle_state"]
+            or result["prior_state_sha256"] != digest(prior_state)
+            or result["post_state_sha256"] != digest(next_state)
+        ):
+            raise ContractError("DIGEST_MISMATCH", "success transition binding mismatch")
+
+        result_bytes = canonical_json(result)
+        self.state = copy.deepcopy(next_state)
+        return result_bytes
+
     def describe(self) -> tuple[bytes, bytes]:
         if self.state["lifecycle_state"] != "CREATED":
             return self.manifest_bytes, self._failure("describe", "ADAPTER_LIFECYCLE_VIOLATION")
-        self.state = copy.deepcopy(CALLABLE["lifecycle_state_contract"]["states"]["described"]["artifact"])
-        return self.manifest_bytes, base64.b64decode(CALLABLE["lifecycle_state_contract"]["operation_results"]["describe"]["canonical_utf8_base64"])
+        try:
+            result = self._commit_success(
+                "describe",
+                CALLABLE["lifecycle_state_contract"]["states"]["described"],
+                CALLABLE["lifecycle_state_contract"]["operation_results"]["describe"],
+            )
+        except ContractError as exc:
+            result = self._failure("describe", exc.code)
+        return self.manifest_bytes, result
 
     def initialize(self, manifest_bytes: bytes, dependency_manifest_bytes: bytes) -> bytes:
         if self.state["lifecycle_state"] != "DESCRIBED":
@@ -278,8 +316,14 @@ class SyntheticCallableAdapter:
             return self._failure("initialize", exc.code)
         if digest(manifest) != self.manifest_sha256 or digest(dependency) != CALLABLE["dependency_manifest"]["expected_sha256"]:
             return self._failure("initialize", "CONFIGURATION_MISMATCH")
-        self.state = copy.deepcopy(CALLABLE["lifecycle_state_contract"]["states"]["initialized"]["artifact"])
-        return base64.b64decode(CALLABLE["lifecycle_state_contract"]["operation_results"]["initialize"]["canonical_utf8_base64"])
+        try:
+            return self._commit_success(
+                "initialize",
+                CALLABLE["lifecycle_state_contract"]["states"]["initialized"],
+                CALLABLE["lifecycle_state_contract"]["operation_results"]["initialize"],
+            )
+        except ContractError as exc:
+            return self._failure("initialize", exc.code)
 
     def reset_episode(self, reset_request_bytes: bytes) -> bytes:
         if self.state["lifecycle_state"] != "INITIALIZED":
@@ -292,8 +336,14 @@ class SyntheticCallableAdapter:
         if request != CALLABLE["reset_fixture"]["request"]:
             code = "DIGEST_MISMATCH" if request.get("prior_state_sha256") != digest(self.state) else "CONFIGURATION_MISMATCH"
             return self._failure("reset_episode", code)
-        self.state = copy.deepcopy(CALLABLE["lifecycle_state_contract"]["states"]["ready"]["artifact"])
-        return base64.b64decode(CALLABLE["lifecycle_state_contract"]["operation_results"]["reset_episode"]["canonical_utf8_base64"])
+        try:
+            return self._commit_success(
+                "reset_episode",
+                CALLABLE["lifecycle_state_contract"]["states"]["ready"],
+                CALLABLE["lifecycle_state_contract"]["operation_results"]["reset_episode"],
+            )
+        except ContractError as exc:
+            return self._failure("reset_episode", exc.code)
 
     def step(self, request_bytes: bytes, perturbation_payload_bytes_or_empty: bytes) -> tuple[bytes, bytes]:
         if self.state["lifecycle_state"] != "EPISODE_READY":
@@ -318,11 +368,20 @@ class SyntheticCallableAdapter:
         if response["state_before_sha256"] != digest(self.state) or response["state_after_sha256"] != digest(projection):
             return b"", self._failure("step", "DIGEST_MISMATCH")
         response_bytes = canonical_json(response)
+        try:
+            verify_wrapper(AMENDMENT["varying_response"])
+            validate_schema(response, "m4_model_adapter_response_schema_v1.json")
+        except ContractError as exc:
+            return b"", self._failure("step", exc.code)
         post = copy.deepcopy(AMENDMENT["stepped_state"]["artifact"])
         if post["last_response_sha256"] != digest_bytes(response_bytes):
             return b"", self._failure("step", "DIGEST_MISMATCH")
-        self.state = post
-        operation_bytes = canonical_json(AMENDMENT["step_operation_result"]["artifact"])
+        try:
+            operation_bytes = self._commit_success(
+                "step", AMENDMENT["stepped_state"], AMENDMENT["step_operation_result"]
+            )
+        except ContractError as exc:
+            return b"", self._failure("step", exc.code)
         return response_bytes, operation_bytes
 
     def snapshot(self, request_bytes: bytes) -> tuple[bytes, bytes]:
@@ -337,14 +396,23 @@ class SyntheticCallableAdapter:
             return b"", self._failure("snapshot", "DIGEST_MISMATCH")
         checkpoint = copy.deepcopy(BASE["checkpoint"]["artifact"])
         validate_schema(checkpoint, "m4_model_checkpoint_metadata_schema_v1.json")
-        self.state = copy.deepcopy(AMENDMENT["snapshotted_state"]["artifact"])
-        return canonical_json(checkpoint), canonical_json(AMENDMENT["snapshot_operation_result"]["artifact"])
+        try:
+            result = self._commit_success(
+                "snapshot", AMENDMENT["snapshotted_state"], AMENDMENT["snapshot_operation_result"]
+            )
+        except ContractError as exc:
+            return b"", self._failure("snapshot", exc.code)
+        return canonical_json(checkpoint), result
 
     def close(self) -> bytes:
         if self.state != AMENDMENT["snapshotted_state"]["artifact"]:
             return self._failure("close", "ADAPTER_LIFECYCLE_VIOLATION")
-        self.state = copy.deepcopy(AMENDMENT["closed_state"]["artifact"])
-        return canonical_json(AMENDMENT["close_operation_result"]["artifact"])
+        try:
+            return self._commit_success(
+                "close", AMENDMENT["closed_state"], AMENDMENT["close_operation_result"]
+            )
+        except ContractError as exc:
+            return self._failure("close", exc.code)
 
 
 __all__ = [
