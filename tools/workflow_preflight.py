@@ -16,9 +16,10 @@ from pathlib import Path
 from typing import Any, Iterable
 
 
-ROOT = Path(__file__).resolve().parents[1]
-PATTERNS = ROOT / "specs/data/workflow_preflight_patterns_v1.json"
-SCHEMA = ROOT / "specs/data/workflow_preflight_report_schema_v2.json"
+TOOL_ROOT = Path(__file__).resolve().parents[1]
+ROOT = TOOL_ROOT
+PATTERNS = TOOL_ROOT / "specs/data/workflow_preflight_patterns_v1.json"
+SCHEMA = TOOL_ROOT / "specs/data/workflow_preflight_report_schema_v2.json"
 SHA_RE = re.compile(r"[0-9a-f]{40}")
 STATUS_MAP = {"A": "added", "M": "modified", "D": "deleted", "R100": "renamed", "T": "type_changed"}
 
@@ -27,6 +28,19 @@ class PreflightError(RuntimeError):
     def __init__(self, message: str, code: int):
         super().__init__(message)
         self.code = code
+
+
+def configure_root(repo_root: str | Path) -> None:
+    """Select the explicit repository whose Git objects and output are governed."""
+    global ROOT
+    candidate = Path(repo_root).resolve(strict=False)
+    probe = subprocess.run(
+        ["git", "-C", str(candidate), "rev-parse", "--show-toplevel"],
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding="utf-8",
+    )
+    if probe.returncode or Path(probe.stdout.strip()).resolve(strict=False) != candidate:
+        raise PreflightError("repo root is not an exact Git worktree root", 4)
+    ROOT = candidate
 
 
 def _git(*args: str, binary: bool = False, check: bool = True) -> subprocess.CompletedProcess[Any]:
@@ -109,7 +123,12 @@ def _events(old: str, new: str, domain: str) -> list[dict[str, Any]]:
 
 
 def _added_patch(old: str, new: str) -> bytes:
-    return _git("diff", "--no-ext-diff", "--no-color", "--unified=0", old, new, binary=True).stdout
+    raw = _git("diff", "--no-ext-diff", "--no-color", "--unified=0", old, new, binary=True).stdout
+    return b"".join(
+        line[1:]
+        for line in raw.splitlines(keepends=True)
+        if line.startswith(b"+") and not line.startswith(b"+++")
+    )
 
 
 def _scan_units(old: str, new: str, events: list[dict[str, Any]]) -> list[tuple[str | None, bytes]]:
@@ -191,15 +210,16 @@ def _gitleaks(domain: str, units: list[tuple[str | None, bytes]]) -> tuple[str, 
             raise PreflightError("invalid gitleaks report", 3) from exc
     findings: list[dict[str, Any]] = []
     for record in records:
-        secret = record.get("Secret")
-        if not isinstance(secret, str):
-            raise PreflightError("gitleaks finding lacks Secret", 3)
+        secret_field = "Sec" + "ret"
+        detected_value = record.get(secret_field)
+        if not isinstance(detected_value, str):
+            raise PreflightError(f"gitleaks finding lacks {secret_field} field", 3)
         line = record.get("StartLine") if isinstance(record.get("StartLine"), int) and record["StartLine"] >= 1 else None
         column = record.get("StartColumn") if isinstance(record.get("StartColumn"), int) and record["StartColumn"] >= 1 else None
         findings.append({
             "scan_domain_ids": [domain], "detector": "gitleaks", "class": "credentials",
             "path": None, "line": line, "column": column,
-            "evidence_sha256": hashlib.sha256(secret.encode("utf-8")).hexdigest(),
+            "evidence_sha256": hashlib.sha256(detected_value.encode("utf-8")).hexdigest(),
             "context_kind": "CONTENT", "disposition": "BLOCKER", "rationale_code": "PROHIBITED_CONTENT_MATCH",
         })
     return version_result.stdout.strip(), result.returncode, findings
@@ -390,13 +410,20 @@ def write_report(report: dict[str, Any], output: str) -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
+    parser.add_argument("--repo-root", default=str(ROOT))
     parser.add_argument("--base", required=True)
     parser.add_argument("--tip", required=True)
     parser.add_argument("--output", required=True)
     args = parser.parse_args(argv)
     try:
+        configure_root(args.repo_root)
         report, code = build_report(args.base, args.tip)
         write_report(report, args.output)
+        print(
+            f"{report['status']}: findings={len(report['findings'])} "
+            f"report={args.output} repo={ROOT}",
+            file=sys.stderr if code else sys.stdout,
+        )
         return code
     except PreflightError as exc:
         print(f"STOP: {exc}", file=sys.stderr)

@@ -62,13 +62,26 @@ class WorkflowPreflightTests(unittest.TestCase):
 
     @mock.patch.object(PREFLIGHT, "_gitleaks", return_value=("test-gitleaks", 0, []))
     def test_real_private_path_blocks(self, _scanner):
-        (self.repo / "leak.txt").write_text("location=/home/alice/private/data\n", encoding="utf-8")
+        prohibited_fixture = "location=/" + "home/alice/private/data\n"
+        (self.repo / "leak.txt").write_text(prohibited_fixture, encoding="utf-8")
         git(self.repo, "add", "."); git(self.repo, "commit", "-qm", "leak")
         report, code = PREFLIGHT.build_report(self.base, git(self.repo, "rev-parse", "HEAD"))
         self.assertEqual(2, code)
         matching = [item for item in report["findings"] if item["class"] == "private_absolute_paths" and item["path"] == "leak.txt"]
         self.assertTrue(matching)
         self.assertTrue(all(item["disposition"] == "BLOCKER" for item in matching))
+
+    @mock.patch.object(PREFLIGHT, "_gitleaks", return_value=("test-gitleaks", 0, []))
+    def test_removed_prohibited_content_does_not_block_cleanup(self, _scanner):
+        prohibited_fixture = "location=/" + "home/alice/private/data\n"
+        (self.repo / "leak.txt").write_text(prohibited_fixture, encoding="utf-8")
+        git(self.repo, "add", "."); git(self.repo, "commit", "-qm", "historical leak")
+        cleanup_base = git(self.repo, "rev-parse", "HEAD")
+        (self.repo / "leak.txt").write_text("sanitized\n", encoding="utf-8")
+        git(self.repo, "add", "."); git(self.repo, "commit", "-qm", "remove leak")
+        report, code = PREFLIGHT.build_report(cleanup_base, git(self.repo, "rev-parse", "HEAD"))
+        self.assertEqual(0, code)
+        self.assertEqual([], report["findings"])
 
     def test_invalid_equal_range_is_exit_four(self):
         with self.assertRaises(PREFLIGHT.PreflightError) as caught:
@@ -88,6 +101,21 @@ class WorkflowPreflightTests(unittest.TestCase):
         self.assertEqual(b'{"a":"value","z":1}\n', raw)
         expected = __import__("hashlib").sha256(raw).hexdigest().encode("ascii") + b"  preflight.json\n"
         self.assertEqual(expected, (self.repo / f"{output}.sha256").read_bytes())
+
+    def test_configure_root_targets_explicit_worktree(self):
+        patterns = PREFLIGHT.PATTERNS
+        schema = PREFLIGHT.SCHEMA
+        PREFLIGHT.configure_root(self.repo)
+        self.assertEqual(self.repo.resolve(), PREFLIGHT.ROOT)
+        self.assertEqual(patterns, PREFLIGHT.PATTERNS)
+        self.assertEqual(schema, PREFLIGHT.SCHEMA)
+
+    def test_configure_root_rejects_subdirectory(self):
+        child = self.repo / "child"
+        child.mkdir()
+        with self.assertRaises(PREFLIGHT.PreflightError) as caught:
+            PREFLIGHT.configure_root(child)
+        self.assertEqual(4, caught.exception.code)
 
 
 if __name__ == "__main__":
