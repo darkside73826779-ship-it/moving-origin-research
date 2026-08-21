@@ -6,7 +6,7 @@ Authority class: Principal repository-custody directive
 
 ## Decision
 
-Every downloaded or locally produced model artifact remains on Rebecca's local system and must never be pushed to GitHub or added to any Git branch. This rule applies regardless of whether a branch is intended to be temporary, private, draft, or unmerged.
+Every downloaded or locally produced model artifact remains on Rebecca's local system and must never be pushed to GitHub or added to any Git branch. The primary reason is repository size: the model checkpoints are several gigabytes and are not practical GitHub content. This rule applies regardless of whether a branch is intended to be temporary, private, draft, or unmerged.
 
 ## Prohibited Git content
 
