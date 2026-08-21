@@ -66,6 +66,21 @@ def test_rehearsal_status_enum():
                for row in contract["rows"])
 
 
+def test_rehearsal_child_canonical_key_order():
+    semantic = {
+        "case_id": "cuda_unavailable",
+        "injected_boundary": "before_cuda_probe",
+        "expected_status": "INSTRUMENT_FAILURE",
+        "observed_status": "INSTRUMENT_FAILURE",
+        "preserved_paths": [],
+        "assertion_pass": True,
+    }
+    decoded = subject.strict_json_bytes(subject.canonical_bytes(semantic))
+    expected = sorted(semantic)
+    assert list(decoded) == expected
+    subject.exact_keys(decoded, expected)
+
+
 def test_rehearsal_filesystem(tmp_path):
     contract = load("specs/data/l8_gpu_adoption_rehearsal_contract_v1.json")
     assert contract["preserved_paths"] == [

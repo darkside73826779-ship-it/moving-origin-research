@@ -742,8 +742,12 @@ def failure_rehearsal() -> list[dict[str, Any]]:
             if child.exitcode != 0:
                 raise ContractFailure("failure_rehearsal", "CHILD_PROTOCOL_FAILURE", case["case_id"])
             row = strict_json_bytes(raw)
-            exact_keys(row, ["case_id", "injected_boundary", "expected_status", "observed_status",
-                             "preserved_paths", "assertion_pass"])
+            # Child rows cross the process boundary as RFC 8785 canonical JSON.
+            # RFC 8785 sorts object keys lexicographically, so validation after
+            # decoding must require that canonical order rather than the row's
+            # pre-serialization semantic construction order.
+            exact_keys(row, sorted(["case_id", "injected_boundary", "expected_status", "observed_status",
+                                    "preserved_paths", "assertion_pass"]))
             if row["observed_status"] != row["expected_status"] or not row["assertion_pass"]:
                 raise ContractFailure("failure_rehearsal", "CHILD_PROTOCOL_FAILURE", case["case_id"])
             rows.append(row)
