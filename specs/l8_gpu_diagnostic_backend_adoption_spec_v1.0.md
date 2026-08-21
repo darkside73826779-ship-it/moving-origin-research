@@ -1,13 +1,20 @@
 # L8 GPU Diagnostic-Backend Adoption Specification v1.0
 
-**Date:** 2026-08-20  
-**Regime:** B  
-**Status:** ARCHITECT proposal; every criterion tagged `[PROPOSED]` is inoperative until Rebecca signs it  
-**Gate served:** L8 GPU diagnostic-backend statistical-equivalence pre-registration  
-**Base:** `60c42025d50b3637b2a5aa19bb0ed1f83948c921`  
-**Controlling CPU implementation:** `b1397498ca369067e956479e6c2bd6b0793c3e89`  
-**Prior CPU evidence:** `6d455bb878f4b52a5b5564afac38d6fb3a20d4b3`  
-**Prior GPU evidence:** `1bf7654533483cb704a7b8e0898dbbf5439b1552`  
+**Date:** 2026-08-20
+
+**Regime:** B
+
+**Status:** ARCHITECT proposal; every criterion tagged `[PROPOSED]` is inoperative until Rebecca signs it
+
+**Gate served:** L8 GPU diagnostic-backend statistical-equivalence pre-registration
+
+**Base:** `60c42025d50b3637b2a5aa19bb0ed1f83948c921`
+
+**Controlling CPU implementation:** `b1397498ca369067e956479e6c2bd6b0793c3e89`
+
+**Prior CPU evidence:** `6d455bb878f4b52a5b5564afac38d6fb3a20d4b3`
+
+**Prior GPU evidence:** `1bf7654533483cb704a7b8e0898dbbf5439b1552`
 
 ## 1. Constitutional basis
 

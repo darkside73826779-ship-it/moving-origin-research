@@ -1,6 +1,7 @@
 # L8 GPU Diagnostic-Backend Adoption Specification — Changelog
 
-**Date:** 2026-08-20  
+**Date:** 2026-08-20
+
 **Regime:** B
 
 ## v1.0 — initial pre-registration
@@ -18,4 +19,3 @@
 - Added the mandatory fresh-context law-fidelity → CRITIC → Rebecca → TASK BUILDER route.
 
 All new criteria are `[PROPOSED]`. No locked bar was changed.
-
