@@ -136,6 +136,27 @@ For all valid varying inputs, arithmetic follows `arithmetic_contract`: binary64
 
 The two positive hook payloads validate under `m4_model_perturbation_payload_schema_v1.json`. `SELF_MODEL_REPRESENTATION` adds its four binary64 values elementwise to the normalized candidate private representation before all candidate heads. `NON_SELF_PROXIMAL_COMPONENT` adds its four values to the normalized public component used by the behavioral head only and cannot alter the private representation or self-state/confidence heads. Receipt raw digests hash the concatenation of the four little-endian IEEE-754 binary64 encodings in stored order. The complete requests, payloads, receipts, outputs, and hashes in the callable fixture are normative `[PROPOSED]`.
 
+### 8.2 Callable step non-cyclic digest amendment
+
+`specs/data/m4_callable_step_digest_amendment_v1.json` is the sole controlling overlay for the first callable step and its direct snapshot/close dependents `[PROPOSED]`. It is bound to the exact raw SHA-256 of `m4_model_callable_fixture_v1.json` at `ade99fc13dc750b789d254316b9a7dc5de2eae8b`; a base mismatch is `CONFIGURATION_MISMATCH`. Its `precedence` member names the only superseded base pointers. The verified `describe`, `initialize`, and `reset_episode` artifacts and every unlisted fixture remain byte-for-byte operative.
+
+The response/state construction order is mandatory `[PROPOSED]`:
+
+1. validate that request episode and ordinal equal the complete pre-state;
+2. hash the complete pre-state under RFC-8785 without LF;
+3. construct the complete post-state with `last_response_sha256=null`;
+4. deep-copy that object, delete exactly `/last_response_sha256`, and hash this post-state projection;
+5. construct the complete response with the request episode/ordinal, complete pre-state digest in `state_before_sha256`, and post-state-projection digest in `state_after_sha256`;
+6. hash the complete response;
+7. insert that response digest into the complete post-state's `/last_response_sha256` and hash the complete post-state;
+8. construct the operation result using the complete pre-state and complete post-state digests, then hash it.
+
+Thus response `state_after_sha256` deliberately identifies the post-state projection that excludes only the response-backlink field; operation-result `post_state_sha256` identifies the complete post-state containing the actual complete response digest. No placeholder, fixed-point search, legacy `7777…`/`8888…` digest, base-fixture episode, or base response digest is permitted `[PROPOSED]`.
+
+The overlay commits complete canonical wrappers and exact digests for the correlated varying response, post-state projection, stepped state, step result, snapshot request/state/result, and close state/result. The response uses `callable-episode-0`, the callable ready-state digest, the callable dependency-manifest digest, and its own actual complete-response digest in the post-state. TASK BUILDER copies these bytes; it does not recompute an alternative digest domain `[PROPOSED]`.
+
+This changes an operative callable contract after the prior implementation release. Even after persistent-CRITIC CLEAR, scaffold implementation remains held until Rebecca explicitly re-releases this exact amendment `[PROPOSED]`.
+
 ## 9. CUDA, host custody, and resource reporting
 
 CUDA is permitted only for model/harness computation. Every device output is synchronized, copied into a new host allocation, normalized to declared little-endian C-contiguous dtype/shape, checked finite/range-valid, hashed, frozen, and then handed to the harness `[PROPOSED]`. Device pointers, DLPack capsules, unified memory, live pinned views, and in-flight buffers cannot cross the custody boundary `[PROPOSED]`.
