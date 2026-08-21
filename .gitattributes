@@ -19,3 +19,7 @@ specs/data/m4_tokenizer_runtime_unavailable_interpreter_expected_v1.json text eo
 specs/data/m4_tokenizer_runtime_unavailable_interpreter_expected_v1.json.sha256 text eol=lf
 specs/data/m4_tokenizer_runtime_unavailable_interpreter_fixture_v1.json text eol=lf
 specs/data/m4_tokenizer_runtime_unavailable_interpreter_fixture_v1.json.sha256 text eol=lf
+specs/data/m4_tokenizer_runtime_validation_negative_cases_v1.json text eol=lf
+specs/data/m4_tokenizer_runtime_validation_negative_cases_v1.json.sha256 text eol=lf
+specs/data/m4_tokenizer_runtime_validation_negative_expected_v1.json text eol=lf
+specs/data/m4_tokenizer_runtime_validation_negative_expected_v1.json.sha256 text eol=lf

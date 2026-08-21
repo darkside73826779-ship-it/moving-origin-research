@@ -71,3 +71,9 @@
 - Enumerated the exact ordered nine-JSON contract set and all nine adjacent sidecars consumed by the mandatory isolated test/materializer path `[PROPOSED]`.
 - Added individual `text eol=lf` attributes for all 18 paths and required raw mounted-worktree binary/sidecar verification in fixed order before import or custody lookup, with fail-closed CR/BOM/LF/link/attribute/grammar/basename/digest negatives `[PROPOSED]`.
 - Forbade runtime normalization, copying, generation, rewrite, Git-object substitution, wildcards, and inferred path additions while preserving scientific/tokenizer construction and all banked evidence.
+
+## v1.4.7 — NF1/NF2 executable pre-import validation
+
+- Replaced direct discovery with an exact isolated wrapper command that validates the bound 9+9 mounted byte set before test-module import, then invokes the preserved standard-library discovery inputs only on PASS `[PROPOSED]`.
+- Bound the wrapper callable, snapshot fields, seven-step short-circuit order, canonical stderr failure, exit mapping, and no-import/no-custody/no-output boundary `[PROPOSED]`.
+- Added ten ordered, single-mutation negative realizations and canonical expected rows covering missing/extra path, attributes, links, CR, BOM, terminal LF, sidecar grammar/basename, and digest failure without modifying mounted files or consuming the materialization operation `[PROPOSED]`.
