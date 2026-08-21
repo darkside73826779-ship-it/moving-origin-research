@@ -1,0 +1,20 @@
+{
+  "schema_version": "m4-l8-compatibility-expected-responses-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "rows": [
+    {"row_ordinal": 0, "case_kind": "rho", "case_id": "perfect_increasing", "expected": {"rho": 1.0, "rho_defined": true, "rho_predicate": true}, "expected_response_sha256": "e85035403b69e5db49aa9bc42c94c600f9f4469514c41059e5d5b07c8a54ea97"},
+    {"row_ordinal": 1, "case_kind": "rho", "case_id": "adjacent_inversion_threshold", "expected": {"rho": 0.7999999999999999, "rho_defined": true, "rho_predicate": true}, "expected_response_sha256": "12e7225e010df8b3ea367cc6f190de53643c325a1c4ea762b1bdc2d9e14ba651"},
+    {"row_ordinal": 2, "case_kind": "rho", "case_id": "no_softening", "expected": {"rho": 0.799999999998, "rho_defined": true, "rho_predicate": false}, "expected_response_sha256": "48423fc754ecbf26648014447fb4e712d689e63bae2b005b5b0e08b54cc0be42"},
+    {"row_ordinal": 3, "case_kind": "rho", "case_id": "tied_responses", "expected": {"rho": 0.9486832980505138, "rho_defined": true, "rho_predicate": true}, "expected_response_sha256": "ceeb1588d3dad739f4ec41e820cbce8ada8ea587f0f491b1d697067328a4bb2e"},
+    {"row_ordinal": 4, "case_kind": "rho", "case_id": "constant_responses", "expected": {"rho": null, "rho_defined": false, "rho_predicate": false}, "expected_response_sha256": "3988a4044fdf2dde18efd58fbb84b941027140441fc477ec59facaf445144fc8"},
+    {"row_ordinal": 5, "case_kind": "rho", "case_id": "decreasing_responses", "expected": {"rho": -1.0, "rho_defined": true, "rho_predicate": false}, "expected_response_sha256": "b614dc97338e20bfd2b2adbc4f3165c6c4ce8d3d06e58d884eaa841c3ae738f5"},
+    {"row_ordinal": 6, "case_kind": "rho", "case_id": "nonfinite_without_apparatus_fault", "expected": {"rho": null, "rho_defined": false, "rho_predicate": false}, "expected_response_sha256": "3988a4044fdf2dde18efd58fbb84b941027140441fc477ec59facaf445144fc8"},
+    {"row_ordinal": 7, "case_kind": "complete_verdict", "case_id": "all_pass", "expected": {"false_kill": false}, "expected_response_sha256": "5115f983f57de755256f7bafd9d6723bfd928c5cf5104f45bdf77ec938ec7f9e"},
+    {"row_ordinal": 8, "case_kind": "complete_verdict", "case_id": "beta_failure", "expected": {"false_kill": true}, "expected_response_sha256": "515466a6635bcfe111952587645bbabeddf9dae3f3b07f04dff69a2d7d1c7849"},
+    {"row_ordinal": 9, "case_kind": "complete_verdict", "case_id": "undefined_rho", "expected": {"false_kill": true}, "expected_response_sha256": "515466a6635bcfe111952587645bbabeddf9dae3f3b07f04dff69a2d7d1c7849"},
+    {"row_ordinal": 10, "case_kind": "complete_verdict", "case_id": "rho_failure", "expected": {"false_kill": true}, "expected_response_sha256": "515466a6635bcfe111952587645bbabeddf9dae3f3b07f04dff69a2d7d1c7849"},
+    {"row_ordinal": 11, "case_kind": "tie", "case_id": "lower_clip_cutoff", "expected": {"coverage_indices": [0, 1, 2], "answered_correctness": [true, true, false], "risk": 0.3333333333333333, "deviation": 0.2333333333333333, "dose_summaries": [0.13333333333333333, 0.2, 0.30000000000000004, 0.4], "beta_star": 1.0205040771249136, "rho": 1.0, "beta_predicate": true, "rho_predicate": true, "complete_predicate": true}, "expected_response_sha256": "8750acaa3f795d36c759d6ff542896a72bd4d602cfc9aad0fa0980eb8c356982"},
+    {"row_ordinal": 12, "case_kind": "tie", "case_id": "upper_clip_cutoff", "expected": {"coverage_indices": [0], "answered_correctness": [false], "risk": 1.0, "deviation": 0.9, "dose_summaries": [0.3, 0.2, 0.30000000000000004, 0.4], "beta_star": 0.18516401995451037, "rho": 0.8, "beta_predicate": false, "rho_predicate": true, "complete_predicate": false}, "expected_response_sha256": "ff552edc5d1cb5b82f4849083683424013558a69d33c6a7b37832d54415e5248"}
+  ]
+}

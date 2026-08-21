@@ -31,7 +31,7 @@ Relevant laws, quoted verbatim from `docs/ARCHITECTURAL_CONSTITUTION_v2.md:28,54
 
 > **L19 — Pre-registration.** Bars and kill conditions written before runs; a Critic role empowered to falsify; a Judge role forbidden to lower bars; negatives retained as findings.
 
-This contract changes no locked bar, predicate, negative label, seed rule, or scientific arm. L8 uses beta-star `>=0.2`, rho `>=0.8`, at least three doses, five scoring seeds, and the specificity leg `[BAR-Entry 11]`. M4 continues to use exactly the scientific arms `candidate, empty, permuted, shuffled, oracle, naive, frozen, specificity` in that order `[LAW-L18] [LAW-L8]`; the approved backend's `combo` and `null_control` names remain backend-parity identities and are never substituted for or published as M4 negative labels `[PROPOSED]`.
+This contract changes no locked bar, predicate, negative label, seed rule, or scientific arm. L8 uses beta-star `>=0.2`, rho `>=0.8`, and at least three doses `[BAR-Entry 11]`; five scoring seeds and the all-seeds-direction rule are `[BAR-Entry 11.3]`; the standardized proximal-component specificity design is `[OP-Entry 76 Ruling 3]`. M4 continues to use exactly the scientific arms `candidate, empty, permuted, shuffled, oracle, naive, frozen, specificity` in that order `[LAW-L18] [LAW-L8]`; the approved backend's `combo` and `null_control` names remain backend-parity identities and are never substituted for or published as M4 negative labels `[PROPOSED]`.
 
 ## 2. Authority and immutable identities
 
@@ -75,9 +75,9 @@ The response validates against `m4_l8_adapter_response_schema_v1.json`. It conta
 
 ### 4.2 Real estimator semantics
 
-For each seed, `d_seed` has shape `(4,N_w)` `[PROPOSED]`. Dose summary is the binary64 arithmetic mean over windows. Beta-star is the population-covariance slope of dose summaries on dose indices divided by pooled within-dose sample standard deviation with `4*(N_w-1)` degrees of freedom, using the controlling CPU operation order `[PROPOSED]`. Zero pooled variance is an apparatus fault only when an independent apparatus check proves it; otherwise the statistical predicate fails and the seed remains included `[PROPOSED]`.
+For each seed, `d_seed` has shape `(4,N_w)` `[PROPOSED]`. Dose summary is the binary64 arithmetic mean over windows. Beta-star is the population-covariance slope of dose summaries on dose indices divided by pooled within-dose sample standard deviation with `4*(N_w-1)` degrees of freedom, using the controlling CPU operation order `[PROPOSED]`. Zero pooled variance is an apparatus fault only when an independent apparatus check proves it; otherwise the response records `beta_star=null`, `beta_defined=false`, `statistical_failure_code=ZERO_POOLED_VARIANCE`, `beta_predicate=false`, `complete_predicate=false`, `apparatus_status=VALID`, and `failure_code=null`; the seed remains included and its M4 per-law status is `KILL` `[PROPOSED]`. The published L8 seed record uses the identical nullable beta, defined flag, statistical failure code, false predicates, and non-apparatus representation. No validator may convert this case to `INSTRUMENT_FAILURE`.
 
-Rho uses ascending one-based midranks and binary64 Pearson correlation against dose ranks `(1,2,3,4)` `[PROPOSED]`. Exact finite ties receive the mean occupied rank. Undefined rho fails its predicate without becoming apparatus failure absent independent proof. Rho passes iff `rho>=0.8 OR abs(rho-0.8)<=1e-12` `[BAR-Entry 11] [PROPOSED]`; beta passes iff `beta_star>=0.2` `[BAR-Entry 11]`. The five-seed complete L8 verdict fails when any seed fails beta, has undefined rho, or fails rho `[BAR-Entry 11]`.
+Rho uses ascending one-based midranks and binary64 Pearson correlation against dose ranks `(1,2,3,4)` `[PROPOSED]`. Exact finite ties receive the mean occupied rank. Undefined rho fails its predicate without becoming apparatus failure absent independent proof. Rho passes iff `rho>=0.8 OR abs(rho-0.8)<=1e-12` `[BAR-Entry 11] [PROPOSED]`; beta passes iff `beta_star>=0.2` `[BAR-Entry 11]`. The five-seed complete L8 verdict fails when any seed fails beta, has undefined rho, or fails rho `[BAR-Entry 11.3]`.
 
 Coverage ordering is `(descending c_prime, ascending zero-based query_index)` with exact binary64 ties; the first `max(1,ceil(c_min*W))` indices form the floor and later indices enter only when `c_prime>tau` `[PROPOSED]`. This is the Rebecca-approved v1.5 B11 rule. The adapter may not call NumPy default quicksort or CUDA `topk` where tie order can differ `[PROPOSED]`.
 
@@ -99,7 +99,7 @@ CUDA unavailability, allocation failure, dependency mismatch, unsupported operat
 
 Before any M4 implementation release, TASK BUILDER must execute exactly one candidate-blind compatibility suite in `O-15-diagnostic-only` mode after Phase B authorization `[PROPOSED]`. This is not scoring and consumes no protected/courier seed.
 
-The suite uses `specs/data/m4_l8_compatibility_fixture_v1.json` and performs, in fixed order `[PROPOSED]`:
+The suite uses `specs/data/m4_l8_compatibility_fixture_v1.json`, `specs/data/m4_harness_executable_fixtures_v1.json`, and `specs/data/m4_l8_compatibility_expected_responses_v1.json` and performs, in fixed order `[PROPOSED]`:
 
 1. seven rho cases and four complete-verdict cases copied from approved known-good fixture raw digest `65256ff48fb48399536c3e499242400267aa044459d247a9ecc51eb77e6cd7f7`;
 2. the two B11 cutoff-straddling fixtures copied from approved tie fixture at design result `a25398e599622c09d130b597b7bc83ce62a966d5`;
@@ -107,11 +107,11 @@ The suite uses `specs/data/m4_l8_compatibility_fixture_v1.json` and performs, in
 
 Every positive row must match all literal expected fields; beta/rho absolute difference may be at most `1e-12` while predicate, undefined-mask, coverage order, and canonical response bytes must be exact `[PROPOSED]`. Run zero and a fresh-process run one must yield byte-identical canonical response arrays; no third run is permitted `[PROPOSED]`. Any failure yields `INSTRUMENT_FAILURE`, preserves the diagnostic, and blocks M4 release without retry or replacement `[PROPOSED]`.
 
-The report validates against `m4_l8_compatibility_report_schema_v1.json`, publishes at `diagnostics/m4_l8_compatibility_report.json` plus sidecar, and contains no candidate observations or protected seed identity `[PROPOSED]`.
+The report validates against `m4_l8_compatibility_report_schema_v1.json`, has exactly the thirteen ordered rows and six ordered failure injections committed in `m4_l8_compatibility_expected_report_v1.json`, publishes at `diagnostics/m4_l8_compatibility_report.json` plus sidecar, and contains no candidate observations or protected seed identity `[PROPOSED]`. Each row's observed object is RFC-8785 canonicalized and its raw SHA-256 must equal the row's committed expected-response digest. The complete report must equal the committed expected report after replacing only the four schema-marked identity/digest placeholders during Phase B; all other bytes are fixed.
 
 ## 7. Harness configuration, result, custody, and failure
 
-Runtime configuration validates against `m4_harness_config_schema_v1.json`. It is materialized from a committed template by replacing only implementation/result identity placeholders, then RFC-8785 canonicalized; `config_sha256` hashes those canonical bytes `[PROPOSED]`. Unknown/duplicate keys, NaN/Infinity, unapproved identity, absent sidecar, or schema drift fails before RNG construction `[PROPOSED]`.
+Runtime configuration validates against `m4_harness_config_schema_v1.json`. Its sole source is `specs/data/m4_harness_config_template_v1.json`; its raw template digest is fixed by the adjacent sidecar `[PROPOSED]`. Materialization replaces each exact placeholder token once: `IMPLEMENTATION_COMMIT_PLACEHOLDER`, `RESULT_DIGEST_PLACEHOLDER`, and `DEPENDENCY_DIGEST_PLACEHOLDER`. No other byte/value/order changes. The resulting object is RFC-8785 canonicalized; `config_sha256` hashes those canonical bytes `[PROPOSED]`. A missing, duplicate, malformed, or extra placeholder; unknown/duplicate key; NaN/Infinity; unapproved identity; absent sidecar; or schema drift fails before RNG construction `[PROPOSED]`.
 
 In that schema, `m4_spec_sha` and `m4_task_spec_sha` are full Git commit identities, not blob hashes; Phase A requires both to equal `7d6e499cb8a0cf9859cc05b37ec4e97767c4839e`, and any later controlling-spec amendment requires a fresh ARCHITECT/CRITIC/Rebecca reconciliation `[PROPOSED]`. Raw file digests are recorded in the handoff artifact inventory rather than substituted for these commit fields.
 
@@ -140,7 +140,7 @@ Implementation is forbidden until Phase B is complete. After release, order is `
 9. fresh-context CRITIC implementation review;
 10. Rebecca implementation release.
 
-`specs/data/m4_harness_executability_matrix_v1.json` fixes every required test ID, fixture, assertion, and failure. Every row must collect exactly once and pass. Semantic validators must also reject cross-field inconsistencies that JSON Schema cannot express `[PROPOSED]`.
+`specs/data/m4_harness_executability_matrix_v1.json` fixes every required test ID, committed fixture path/case ID, literal mutation, expected enum/object/digest, and failure. `specs/data/m4_harness_executable_fixtures_v1.json` includes the complete primitive-tape request plus literal base64 buffer bytes and raw digests; no constructor input is external. Every row must collect exactly once and pass. Semantic validators must also reject cross-field inconsistencies that JSON Schema cannot express `[PROPOSED]`.
 
 ## 9. Phase B reconciliation
 

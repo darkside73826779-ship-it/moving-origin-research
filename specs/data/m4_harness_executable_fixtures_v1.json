@@ -1,0 +1,55 @@
+{
+  "schema_version": "m4-harness-executable-fixtures-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "primitive_tape": {
+    "case_id": "primitive_tape_complete",
+    "request": {
+      "schema_version": "m4-l8-adapter-request-v1",
+      "mode": "O-15-diagnostic-only",
+      "operation": "PRIMITIVE_TAPE",
+      "adapter_version": "m4-l8-adapter-v1",
+      "binding_manifest_sha256": "1bfea36d6438cde7d0fd3f2f6f30f8f2b260bc12045560b372609ec4ea514c87",
+      "implementation_sha": "1111111111111111111111111111111111111111",
+      "identity": {"case_id": "primitive_tape_complete", "arm": "candidate", "repetition_index": 0, "seed_index": 0},
+      "backend_arm": "combo",
+      "geometry": {"dose_count": 4, "windows_per_dose": 2, "queries_per_window": 2, "axis_order": ["dose", "window", "query"]},
+      "parameters": {"alpha": 0.0, "v_mult": 0.5, "c_min": 0.5, "eta": 0.2, "sigma_dose": 0.1, "r_star": 0.1, "tau_init": 0.5, "tau_min": 0.000001, "tau_max": 0.999999, "dose_indices": [0, 1, 2, 3]},
+      "buffers": {
+        "p_true": {"dtype": "float64", "endianness": "little", "contiguous": "C", "shape": [4, 2, 2], "byte_length": 128, "sha256": "4daebe685ab53b9f449e9aaf1b86b842c66868cfedd92e0023a7292092b045c4"},
+        "correct": {"dtype": "bool8", "encoding": "zero_or_one_byte", "contiguous": "C", "shape": [4, 2, 2], "byte_length": 16, "sha256": "14ee48d6dcf5d32ff229c5ba6cf99f4b7906af6bd35eb7e02b7ff19f08e0ac3e"},
+        "xi": {"dtype": "float64", "endianness": "little", "contiguous": "C", "shape": [4, 2, 2], "byte_length": 128, "sha256": "7cdce6f0a0a6063e1dc05fbda207656ecc0b4b52de8d08357287c3a60dcb41ea"},
+        "xi_l": {"dtype": "float64", "endianness": "little", "contiguous": "C", "shape": [4, 2, 2], "byte_length": 128, "sha256": "a5bc8a4840f1dec0048e0d39782e56b14c182716b2bf29dacbf23cb1b0c37a1d"}
+      }
+    },
+    "buffer_bytes_base64": {
+      "p_true": "mpmZmZmZ6T9mZmZmZmbmPzMzMzMzM+M/AAAAAAAA4D+amZmZmZnpP2ZmZmZmZuY/MzMzMzMz4z8AAAAAAADgP5qZmZmZmek/ZmZmZmZm5j8zMzMzMzPjPwAAAAAAAOA/mpmZmZmZ6T9mZmZmZmbmPzMzMzMzM+M/AAAAAAAA4D8=",
+      "correct": "AQEAAQEAAQEAAQEBAQEBAA==",
+      "xi": "AAAAAAAAAACamZmZmZm5P5qZmZmZmbm/mpmZmZmZyT8AAAAAAAAAAJqZmZmZmbk/mpmZmZmZub+amZmZmZnJPwAAAAAAAAAAmpmZmZmZuT+amZmZmZm5v5qZmZmZmck/AAAAAAAAAACamZmZmZm5P5qZmZmZmbm/mpmZmZmZyT8=",
+      "xi_l": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB7FK5H4XqEP3sUrkfheoQ/exSuR+F6hD97FK5H4XqEP3sUrkfhepQ/exSuR+F6lD97FK5H4XqUP3sUrkfhepQ/uB6F61G4nj+4HoXrUbieP7gehetRuJ4/uB6F61G4nj8="
+    }
+  },
+  "cases": [
+    {"case_id": "unapproved_identity", "base": "primitive_tape_complete.request", "mutation": {"operation": "replace", "json_pointer": "/implementation_sha", "value": "2222222222222222222222222222222222222222"}, "expected": "UNAPPROVED_IMPLEMENTATION_IDENTITY"},
+    {"case_id": "request_schema_accept", "base": "primitive_tape_complete", "mutation": null, "expected": "STRICT_ACCEPT"},
+    {"case_id": "all_arms", "base": null, "mutation": null, "input": ["candidate", "empty", "permuted", "shuffled", "oracle", "naive", "frozen", "specificity"], "expected": ["candidate", "empty", "permuted", "shuffled", "oracle", "naive", "frozen", "specificity"]},
+    {"case_id": "cuda_unavailable", "base": "primitive_tape_complete", "mutation": {"operation": "inject", "boundary": "before_cuda_launch", "fault": "cuda_is_available_false"}, "expected": "CUDA_UNAVAILABLE"},
+    {"case_id": "gpu_calibration_call", "base": "primitive_tape_complete.request", "mutation": {"operation": "replace", "json_pointer": "/operation", "value": "CALIBRATE_SIGMA"}, "expected": "UNSUPPORTED_OPERATION"},
+    {"case_id": "zero_pooled_variance", "input": {"d_seed": [[0.1, 0.1], [0.1, 0.1], [0.1, 0.1], [0.1, 0.1]]}, "expected_adapter": {"beta_star": null, "beta_defined": false, "statistical_failure_code": "ZERO_POOLED_VARIANCE", "beta_predicate": false, "complete_predicate": false, "apparatus_status": "VALID", "failure_code": null}, "expected_law": {"status": "KILL", "beta_star": null, "beta_defined": false, "statistical_failure_code": "ZERO_POOLED_VARIANCE", "beta_predicate": false, "complete_predicate": false}},
+    {"case_id": "atomic_second_replace", "base": {"prior_pair": "valid", "result_temp": "valid", "sidecar_temp": "valid"}, "mutation": {"operation": "inject", "boundary": "after_result_replace_before_sidecar_replace", "fault": "publisher_interrupt"}, "expected": {"code": "PUBLICATION_INTERRUPTED", "prior_pair_restored": true, "incomplete_retained": true}},
+    {"case_id": "gate_matrix", "constructor": {"algorithm": "for mask 0 through 31 inclusive, emit booleans in schema gate order with bit i=(mask >> i)&1", "gate_order": ["l3_fresh_seed_resolution", "fwfp_closure", "implementation_review", "rebecca_tolerance_calibration_signoff", "rebecca_courier_scoring_authorization"]}, "expected": "ACCEPT_ONLY_MASK_31"},
+    {"case_id": "invalid_cross_fields", "mutations": [
+      {"id": "beta_null_but_defined", "base": "zero_pooled_variance.expected_adapter", "operation": "replace", "json_pointer": "/beta_defined", "value": true, "expected": "SCHEMA_DRIFT"},
+      {"id": "apparatus_invalid_without_code", "base": "zero_pooled_variance.expected_adapter", "operation": "replace", "json_pointer": "/apparatus_status", "value": "INVALID", "expected": "SCHEMA_DRIFT"},
+      {"id": "state_statistical_failure_as_apparatus", "base": "zero_pooled_variance.expected_adapter", "operation": "replace", "json_pointer": "/failure_code", "value": "NONFINITE_APPARATUS", "expected": "SCHEMA_DRIFT"}
+    ]}
+  ],
+  "failure_injections": [
+    {"case_id": "schema_rejection", "base": "primitive_tape_complete.request", "mutation": {"operation": "add", "json_pointer": "/unknown", "value": 1}, "expected_code": "SCHEMA_DRIFT"},
+    {"case_id": "digest_mismatch", "base": "primitive_tape_complete.request", "mutation": {"operation": "replace", "json_pointer": "/buffers/p_true/sha256", "value": "0000000000000000000000000000000000000000000000000000000000000000"}, "expected_code": "DIGEST_MISMATCH"},
+    {"case_id": "dependency_mismatch", "base": "m4_harness_config_template_v1", "mutation": {"operation": "replace", "json_pointer": "/dependency_manifest_sha256", "value": "0000000000000000000000000000000000000000000000000000000000000000"}, "expected_code": "DEPENDENCY_MISMATCH"},
+    {"case_id": "cuda_unavailable", "base": "primitive_tape_complete", "mutation": {"operation": "inject", "boundary": "before_cuda_launch", "fault": "cuda_is_available_false"}, "expected_code": "CUDA_UNAVAILABLE"},
+    {"case_id": "nondeterministic_repeat", "base": "compatibility_response_array_run_1", "mutation": {"operation": "flip", "json_pointer": "/0/observed/rho_predicate", "from": true, "to": false}, "expected_code": "NONDETERMINISTIC_RESPONSE"},
+    {"case_id": "unsupported_arm", "base": "primitive_tape_complete.request", "mutation": {"operation": "replace", "json_pointer": "/backend_arm", "value": "unsupported"}, "expected_code": "UNSUPPORTED_OPERATION"}
+  ]
+}

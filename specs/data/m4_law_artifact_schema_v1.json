@@ -1,1 +1,547 @@
-{"$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://moving-origin-research.invalid/schemas/m4-law-artifact-v1","title":"M4 Law Artifact v1","x-artifact-date":"2026-08-21","x-artifact-regime":"B","x-source-class":"PROPOSED","type":"object","additionalProperties":false,"required":["schema_version","date","regime","law","status","seed_count","payload"],"properties":{"schema_version":{"const":"m4-law-artifact-v1"},"date":{"type":"string","format":"date"},"regime":{"const":"B"},"law":{"enum":["L7","L8","L10","L14","L18"]},"status":{"enum":["PASS","KILL","INSTRUMENT_FAILURE","NOT_RUN"]},"seed_count":{"type":"integer","minimum":0,"maximum":5},"payload":{"type":"object"}},"allOf":[{"if":{"properties":{"law":{"const":"L7"}}},"then":{"properties":{"payload":{"$ref":"#/$defs/l7"}}}},{"if":{"properties":{"law":{"const":"L8"}}},"then":{"properties":{"payload":{"$ref":"#/$defs/l8"}}}},{"if":{"properties":{"law":{"const":"L10"}}},"then":{"properties":{"payload":{"$ref":"#/$defs/l10"}}}},{"if":{"properties":{"law":{"const":"L14"}}},"then":{"properties":{"payload":{"$ref":"#/$defs/l14"}}}},{"if":{"properties":{"law":{"const":"L18"}}},"then":{"properties":{"payload":{"$ref":"#/$defs/l18"}}}}],"$defs":{"num5":{"type":"array","minItems":5,"maxItems":5,"items":{"type":"number"}},"bool5":{"type":"array","minItems":5,"maxItems":5,"items":{"type":"boolean"}},"sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},"l7":{"type":"object","additionalProperties":false,"required":["candidate_auroc","peer_auroc","candidate_ece","margin","margin_all_positive","pooled_margin_ci95","auroc_predicates","ece_predicates","margin_predicate"],"properties":{"candidate_auroc":{"$ref":"#/$defs/num5"},"peer_auroc":{"$ref":"#/$defs/num5"},"candidate_ece":{"$ref":"#/$defs/num5"},"margin":{"$ref":"#/$defs/num5"},"margin_all_positive":{"type":"boolean"},"pooled_margin_ci95":{"type":"array","minItems":2,"maxItems":2,"items":{"type":"number"}},"auroc_predicates":{"$ref":"#/$defs/bool5"},"ece_predicates":{"$ref":"#/$defs/bool5"},"margin_predicate":{"type":"boolean"}}},"l8seed":{"type":"object","additionalProperties":false,"required":["seed_ordinal","d_seed_sha256","beta_star","rho","rho_defined","beta_predicate","rho_predicate","complete_predicate"],"properties":{"seed_ordinal":{"type":"integer","minimum":0,"maximum":4},"d_seed_sha256":{"$ref":"#/$defs/sha256"},"beta_star":{"type":"number"},"rho":{"anyOf":[{"type":"number"},{"type":"null"}]},"rho_defined":{"type":"boolean"},"beta_predicate":{"type":"boolean"},"rho_predicate":{"type":"boolean"},"complete_predicate":{"type":"boolean"}}},"l8arm":{"type":"object","additionalProperties":false,"required":["arm","seeds","arm_status"],"properties":{"arm":{"enum":["candidate","empty","permuted","shuffled","oracle","naive","frozen","specificity"]},"seeds":{"type":"array","minItems":5,"maxItems":5,"items":{"$ref":"#/$defs/l8seed"}},"arm_status":{"enum":["PASS","KILL","INSTRUMENT_FAILURE"]}}},"l8":{"type":"object","additionalProperties":false,"required":["dose_indices","arms","specificity_severity_manifest_sha256","all_candidate_seeds_pass","specificity_pass"],"properties":{"dose_indices":{"const":[0,1,2,3]},"arms":{"type":"array","minItems":8,"maxItems":8,"items":{"$ref":"#/$defs/l8arm"}},"specificity_severity_manifest_sha256":{"$ref":"#/$defs/sha256"},"all_candidate_seeds_pass":{"type":"boolean"},"specificity_pass":{"type":"boolean"}}},"l10":{"type":"object","additionalProperties":false,"required":["tau_manifest_sha256","clean_abstention","drift_abstention","drift_primary_auroc","answered_case_auroc","clean_predicates","drift_predicates","auroc_predicates"],"properties":{"tau_manifest_sha256":{"$ref":"#/$defs/sha256"},"clean_abstention":{"$ref":"#/$defs/num5"},"drift_abstention":{"$ref":"#/$defs/num5"},"drift_primary_auroc":{"$ref":"#/$defs/num5"},"answered_case_auroc":{"type":"array","minItems":5,"maxItems":5,"items":{"anyOf":[{"type":"number"},{"type":"null"}]}},"clean_predicates":{"$ref":"#/$defs/bool5"},"drift_predicates":{"$ref":"#/$defs/bool5"},"auroc_predicates":{"$ref":"#/$defs/bool5"}}},"coupling":{"type":"object","additionalProperties":false,"required":["coupling_id","d","corr","d_predicates","corr_predicates"],"properties":{"coupling_id":{"enum":["self_model_readable","memory_quality","thick_present_target"]},"d":{"$ref":"#/$defs/num5"},"corr":{"$ref":"#/$defs/num5"},"d_predicates":{"$ref":"#/$defs/bool5"},"corr_predicates":{"$ref":"#/$defs/bool5"}}},"l14":{"type":"object","additionalProperties":false,"required":["couplings"],"properties":{"couplings":{"type":"array","minItems":3,"maxItems":3,"items":{"$ref":"#/$defs/coupling"}}}},"l18row":{"type":"object","additionalProperties":false,"required":["law","arm","artifact_sha256","status","corrected_alpha","p_value","borderline"],"properties":{"law":{"enum":["L7","L8","L10","L14"]},"arm":{"enum":["empty","permuted","shuffled","oracle","naive","frozen"]},"artifact_sha256":{"$ref":"#/$defs/sha256"},"status":{"enum":["PASS","KILL","INSTRUMENT_FAILURE"]},"corrected_alpha":{"type":"number"},"p_value":{"anyOf":[{"type":"number"},{"type":"null"}]},"borderline":{"type":"boolean"}}},"l18":{"type":"object","additionalProperties":false,"required":["fwfp_audit_sha256","per_arm_fwfp_pass","milestone_wide_fwfp_pass","controls"],"properties":{"fwfp_audit_sha256":{"$ref":"#/$defs/sha256"},"per_arm_fwfp_pass":{"type":"boolean"},"milestone_wide_fwfp_pass":{"type":"boolean"},"controls":{"type":"array","minItems":24,"maxItems":24,"items":{"$ref":"#/$defs/l18row"}}}}}}
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://moving-origin-research.invalid/schemas/m4-law-artifact-v1",
+  "title": "M4 Law Artifact v1",
+  "x-artifact-date": "2026-08-21",
+  "x-artifact-regime": "B",
+  "x-source-class": "PROPOSED",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "date",
+    "regime",
+    "law",
+    "status",
+    "seed_count",
+    "payload"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "m4-law-artifact-v1"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "regime": {
+      "const": "B"
+    },
+    "law": {
+      "enum": [
+        "L7",
+        "L8",
+        "L10",
+        "L14",
+        "L18"
+      ]
+    },
+    "status": {
+      "enum": [
+        "PASS",
+        "KILL",
+        "INSTRUMENT_FAILURE",
+        "NOT_RUN"
+      ]
+    },
+    "seed_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5
+    },
+    "payload": {
+      "type": "object"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "law": {
+            "const": "L7"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/l7"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "law": {
+            "const": "L8"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/l8"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "law": {
+            "const": "L10"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/l10"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "law": {
+            "const": "L14"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/l14"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "law": {
+            "const": "L18"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/l18"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "num5": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "type": "number"
+      }
+    },
+    "bool5": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "type": "boolean"
+      }
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "l7": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_auroc",
+        "peer_auroc",
+        "candidate_ece",
+        "margin",
+        "margin_all_positive",
+        "pooled_margin_ci95",
+        "auroc_predicates",
+        "ece_predicates",
+        "margin_predicate"
+      ],
+      "properties": {
+        "candidate_auroc": {
+          "$ref": "#/$defs/num5"
+        },
+        "peer_auroc": {
+          "$ref": "#/$defs/num5"
+        },
+        "candidate_ece": {
+          "$ref": "#/$defs/num5"
+        },
+        "margin": {
+          "$ref": "#/$defs/num5"
+        },
+        "margin_all_positive": {
+          "type": "boolean"
+        },
+        "pooled_margin_ci95": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "number"
+          }
+        },
+        "auroc_predicates": {
+          "$ref": "#/$defs/bool5"
+        },
+        "ece_predicates": {
+          "$ref": "#/$defs/bool5"
+        },
+        "margin_predicate": {
+          "type": "boolean"
+        }
+      }
+    },
+    "l8seed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "seed_ordinal",
+        "d_seed_sha256",
+        "beta_star",
+        "beta_defined",
+        "rho",
+        "rho_defined",
+        "statistical_failure_code",
+        "beta_predicate",
+        "rho_predicate",
+        "complete_predicate"
+      ],
+      "properties": {
+        "seed_ordinal": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4
+        },
+        "d_seed_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "beta_star": {
+          "anyOf": [
+            {"type": "number"},
+            {"type": "null"}
+          ]
+        },
+        "beta_defined": {
+          "type": "boolean"
+        },
+        "rho": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rho_defined": {
+          "type": "boolean"
+        },
+        "statistical_failure_code": {
+          "anyOf": [
+            {"type": "null"},
+            {"enum": ["ZERO_POOLED_VARIANCE", "UNDEFINED_RHO"]}
+          ]
+        },
+        "beta_predicate": {
+          "type": "boolean"
+        },
+        "rho_predicate": {
+          "type": "boolean"
+        },
+        "complete_predicate": {
+          "type": "boolean"
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"statistical_failure_code": {"const": "ZERO_POOLED_VARIANCE"}}, "required": ["statistical_failure_code"]},
+          "then": {"properties": {"beta_star": {"type": "null"}, "beta_defined": {"const": false}, "beta_predicate": {"const": false}, "complete_predicate": {"const": false}}}
+        },
+        {
+          "if": {"properties": {"beta_defined": {"const": true}}, "required": ["beta_defined"]},
+          "then": {"properties": {"beta_star": {"type": "number"}}}
+        }
+      ]
+    },
+    "l8arm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "arm",
+        "seeds",
+        "arm_status"
+      ],
+      "properties": {
+        "arm": {
+          "enum": [
+            "candidate",
+            "empty",
+            "permuted",
+            "shuffled",
+            "oracle",
+            "naive",
+            "frozen",
+            "specificity"
+          ]
+        },
+        "seeds": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": {
+            "$ref": "#/$defs/l8seed"
+          }
+        },
+        "arm_status": {
+          "enum": [
+            "PASS",
+            "KILL",
+            "INSTRUMENT_FAILURE"
+          ]
+        }
+      }
+    },
+    "l8": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dose_indices",
+        "arms",
+        "specificity_severity_manifest_sha256",
+        "all_candidate_seeds_pass",
+        "specificity_pass"
+      ],
+      "properties": {
+        "dose_indices": {
+          "const": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        "arms": {
+          "type": "array",
+          "minItems": 8,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/l8arm"
+          }
+        },
+        "specificity_severity_manifest_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "all_candidate_seeds_pass": {
+          "type": "boolean"
+        },
+        "specificity_pass": {
+          "type": "boolean"
+        }
+      }
+    },
+    "l10": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tau_manifest_sha256",
+        "clean_abstention",
+        "drift_abstention",
+        "drift_primary_auroc",
+        "answered_case_auroc",
+        "clean_predicates",
+        "drift_predicates",
+        "auroc_predicates"
+      ],
+      "properties": {
+        "tau_manifest_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "clean_abstention": {
+          "$ref": "#/$defs/num5"
+        },
+        "drift_abstention": {
+          "$ref": "#/$defs/num5"
+        },
+        "drift_primary_auroc": {
+          "$ref": "#/$defs/num5"
+        },
+        "answered_case_auroc": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "clean_predicates": {
+          "$ref": "#/$defs/bool5"
+        },
+        "drift_predicates": {
+          "$ref": "#/$defs/bool5"
+        },
+        "auroc_predicates": {
+          "$ref": "#/$defs/bool5"
+        }
+      }
+    },
+    "coupling": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "coupling_id",
+        "d",
+        "corr",
+        "d_predicates",
+        "corr_predicates"
+      ],
+      "properties": {
+        "coupling_id": {
+          "enum": [
+            "self_model_readable",
+            "memory_quality",
+            "thick_present_target"
+          ]
+        },
+        "d": {
+          "$ref": "#/$defs/num5"
+        },
+        "corr": {
+          "$ref": "#/$defs/num5"
+        },
+        "d_predicates": {
+          "$ref": "#/$defs/bool5"
+        },
+        "corr_predicates": {
+          "$ref": "#/$defs/bool5"
+        }
+      }
+    },
+    "l14": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "couplings"
+      ],
+      "properties": {
+        "couplings": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "$ref": "#/$defs/coupling"
+          }
+        }
+      }
+    },
+    "l18row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "law",
+        "arm",
+        "artifact_sha256",
+        "status",
+        "corrected_alpha",
+        "p_value",
+        "borderline"
+      ],
+      "properties": {
+        "law": {
+          "enum": [
+            "L7",
+            "L8",
+            "L10",
+            "L14"
+          ]
+        },
+        "arm": {
+          "enum": [
+            "empty",
+            "permuted",
+            "shuffled",
+            "oracle",
+            "naive",
+            "frozen"
+          ]
+        },
+        "artifact_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "status": {
+          "enum": [
+            "PASS",
+            "KILL",
+            "INSTRUMENT_FAILURE"
+          ]
+        },
+        "corrected_alpha": {
+          "type": "number"
+        },
+        "p_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "borderline": {
+          "type": "boolean"
+        }
+      }
+    },
+    "l18": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fwfp_audit_sha256",
+        "per_arm_fwfp_pass",
+        "milestone_wide_fwfp_pass",
+        "controls"
+      ],
+      "properties": {
+        "fwfp_audit_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "per_arm_fwfp_pass": {
+          "type": "boolean"
+        },
+        "milestone_wide_fwfp_pass": {
+          "type": "boolean"
+        },
+        "controls": {
+          "type": "array",
+          "minItems": 24,
+          "maxItems": 24,
+          "items": {
+            "$ref": "#/$defs/l18row"
+          }
+        }
+      }
+    }
+  }
+}
