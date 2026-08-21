@@ -1,0 +1,26 @@
+{
+  "schema": "l8_cpu_frozen_calibration/v1",
+  "date": "2026-08-20",
+  "regime": "B",
+  "source_commit": "6d455bb878f4b52a5b5564afac38d6fb3a20d4b3",
+  "source_path": "diagnostics/l8_power_analysis_results.json",
+  "source_git_blob": "ac691f74d283e545948422870753036dc94b905e",
+  "extraction": "For each (alpha,v_mult) pair in ascending numeric order, require all 16 source rows to contain one bit-identical binary64 sigma_dose_calibrated value; emit that value once.",
+  "entries": [
+    {"alpha": 0.0, "v_mult": 0.5, "sigma_dose": 1.3125890624999998},
+    {"alpha": 0.0, "v_mult": 1.0, "sigma_dose": 2.25008125},
+    {"alpha": 0.0, "v_mult": 2.0, "sigma_dose": 12.0},
+    {"alpha": 0.02, "v_mult": 0.5, "sigma_dose": 1.3125890624999998},
+    {"alpha": 0.02, "v_mult": 1.0, "sigma_dose": 3.000075},
+    {"alpha": 0.02, "v_mult": 2.0, "sigma_dose": 12.0},
+    {"alpha": 0.05, "v_mult": 0.5, "sigma_dose": 1.3125890624999998},
+    {"alpha": 0.05, "v_mult": 1.0, "sigma_dose": 3.000075},
+    {"alpha": 0.05, "v_mult": 2.0, "sigma_dose": 12.0},
+    {"alpha": 0.1, "v_mult": 0.5, "sigma_dose": 1.3125890624999998},
+    {"alpha": 0.1, "v_mult": 1.0, "sigma_dose": 3.000075},
+    {"alpha": 0.1, "v_mult": 2.0, "sigma_dose": 12.0},
+    {"alpha": 0.2, "v_mult": 0.5, "sigma_dose": 1.3125890624999998},
+    {"alpha": 0.2, "v_mult": 1.0, "sigma_dose": 3.000075},
+    {"alpha": 0.2, "v_mult": 2.0, "sigma_dose": 12.0}
+  ]
+}
