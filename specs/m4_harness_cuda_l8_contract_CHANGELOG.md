@@ -24,3 +24,5 @@
 - Separated CUDA AI-model execution and synchronized host export from the parallel-CPU L8 evaluator; added a fail-closed boundary-record schema.
 - Replaced the former native-CUDA Phase B dependency with mandatory final parallel-CPU implementation exact-SHA reconciliation.
 - Recorded Rebecca's codenames only as adjacent human-facing aliases; canonical backend identifiers and machine enums remain unchanged.
+- Replaced valid-looking compatibility identities with explicit one-use reconciliation placeholders and fixed parsed-value materialization plus final report-digest construction.
+- Added a mandatory exact-order law-identity validator contract with twelve committed duplication, omission, and reordering fixtures covering L8 arms/seeds, L14 couplings, and all 24 L18 law/arm positions.

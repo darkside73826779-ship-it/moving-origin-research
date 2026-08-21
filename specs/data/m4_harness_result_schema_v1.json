@@ -203,6 +203,7 @@
                                 "DIGEST_MISMATCH",
                                 "DEPENDENCY_MISMATCH",
                                 "CONFIGURATION_MISMATCH",
+                                "LAW_IDENTITY_ORDER_MISMATCH",
                             "AI_CUDA_UNAVAILABLE",
                             "AI_GPU_ALLOCATION_FAILED",
                             "DEVICE_TRANSFER_FAILED",

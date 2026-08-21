@@ -2,6 +2,7 @@
   "schema_version": "m4-harness-executable-fixtures-v1",
   "date": "2026-08-21",
   "regime": "B",
+  "reconciliation_fields": [{"placeholder_id":"implementation_commit","json_pointer":"/primitive_tape/request/implementation_sha","token_is_entire_value_at_pointer":true,"replacement_schema":"^[0-9a-f]{40}$"}],
   "primitive_tape": {
     "case_id": "primitive_tape_complete",
     "request": {
@@ -12,7 +13,7 @@
       "l8_backend": "PARALLEL_CPU_L8_EXACT_SHA",
       "buffer_location": "HOST",
       "binding_manifest_sha256": "80f9193ef5dcb21c556e4ebe134e739b2c1f5e2f87c0815b6c3467702eda19af",
-      "implementation_sha": "1111111111111111111111111111111111111111",
+      "implementation_sha": "IMPLEMENTATION_COMMIT_PLACEHOLDER",
       "identity": {"case_id": "primitive_tape_complete", "arm": "candidate", "repetition_index": 0, "seed_index": 0},
       "backend_arm": "combo",
       "geometry": {"dose_count": 4, "windows_per_dose": 2, "queries_per_window": 2, "axis_order": ["dose", "window", "query"]},
@@ -32,7 +33,7 @@
     }
   },
   "cases": [
-    {"case_id": "unapproved_identity", "base": "primitive_tape_complete.request", "mutation": {"operation": "replace", "json_pointer": "/implementation_sha", "value": "2222222222222222222222222222222222222222"}, "expected": "UNAPPROVED_IMPLEMENTATION_IDENTITY"},
+    {"case_id": "unapproved_identity", "base": "primitive_tape_complete.request after required placeholder materialization", "mutation": {"operation": "replace", "json_pointer": "/implementation_sha", "value": "ffffffffffffffffffffffffffffffffffffffff"}, "expected": "UNAPPROVED_IMPLEMENTATION_IDENTITY"},
     {"case_id": "request_schema_accept", "base": "primitive_tape_complete", "mutation": null, "expected": "STRICT_ACCEPT"},
     {"case_id": "all_arms", "base": null, "mutation": null, "input": ["candidate", "empty", "permuted", "shuffled", "oracle", "naive", "frozen", "specificity"], "expected": ["candidate", "empty", "permuted", "shuffled", "oracle", "naive", "frozen", "specificity"]},
     {"case_id": "cuda_ai_model_unavailable", "base": "primitive_tape_complete", "mutation": {"operation": "inject", "boundary": "before_cuda_model_initialization", "fault": "cuda_ai_model_is_available_false"}, "expected": "AI_CUDA_UNAVAILABLE"},
