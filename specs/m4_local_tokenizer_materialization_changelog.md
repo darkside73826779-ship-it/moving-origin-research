@@ -77,3 +77,9 @@
 - Replaced direct discovery with an exact isolated wrapper command that validates the bound 9+9 mounted byte set before test-module import, then invokes the preserved standard-library discovery inputs only on PASS `[PROPOSED]`.
 - Bound the wrapper callable, snapshot fields, seven-step short-circuit order, canonical stderr failure, exit mapping, and no-import/no-custody/no-output boundary `[PROPOSED]`.
 - Added ten ordered, single-mutation negative realizations and canonical expected rows covering missing/extra path, attributes, links, CR, BOM, terminal LF, sidecar grammar/basename, and digest failure without modifying mounted files or consuming the materialization operation `[PROPOSED]`.
+
+## v1.4.8 — BF1 `.gitattributes` LF self-binding
+
+- Added exact repository-committed self-rule `.gitattributes text eol=lf`, making the mounted raw `.gitattributes` identity deterministic even when ambient `core.autocrlf=true` `[PROPOSED]`.
+- Rebound the file to `1817` LF bytes and SHA-256 `7811d61d53e74c99543e9d796bd8857076b022c666338ce2954ef236156a4179`, and reconciled the test contract and its sidecar `[PROPOSED]`.
+- Preserved NF2 closure, the exact 9+9 set, wrapper/discovery/materializer commands, pinned runtime, custody/scientific contracts, and every execution hold.
