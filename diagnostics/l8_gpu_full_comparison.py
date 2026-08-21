@@ -67,7 +67,9 @@ def run_grid(repetitions: int, calibration: dict, profile: str | None) -> dict:
                     effect = _cell(effect_cell, repetitions, seed, profile)
                     null = _cell(null_cell, repetitions, seed, profile)
                     fk, fp = effect["false_kill_rate"], null["false_pass_rate"]
-                    region = cpu.classify_region(fk, fp)
+                    region = (cpu.classify_region(fk, fp)
+                              if math.isfinite(fk) and math.isfinite(fp)
+                              else "undefined")
                     distance = cpu.min_distance_to_boundaries(fk, fp) if region == "informative" else float("nan")
                     results.append({
                         "alpha": alpha, "v_mult": v_mult, "v_logit": v_mult * cpu.V_REF,
@@ -91,7 +93,12 @@ def run_grid(repetitions: int, calibration: dict, profile: str | None) -> dict:
     cells = []
     for c_min in cpu.C_MINS:
         for eta in cpu.ETAS:
-            rows = [r for r in results if r["c_min"] == c_min and r["eta"] == eta]
+            rows = [r for r in results
+                    if r["c_min"] == c_min and r["eta"] == eta
+                    and math.isfinite(r["false_kill_rate"])
+                    and math.isfinite(r["false_pass_rate"])]
+            if not rows:
+                continue
             fk = float(np.mean([r["false_kill_rate"] for r in rows]))
             fp = float(np.mean([r["false_pass_rate"] for r in rows]))
             region = cpu.classify_region(fk, fp)
