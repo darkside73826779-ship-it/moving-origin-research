@@ -41,3 +41,9 @@
 - Replaced the non-executable unavailable-interpreter test shorthand with an exact pure launcher-disposition callable, singleton input fixture, expected sanitized harness artifact, positional input mapping, validation order, deterministic output mapping, and fixed unit-test operation `[PROPOSED]`.
 - Made `PROCESS_NOT_STARTED`, no custody lookup, and no project result artifact explicit; the negative neither launches OCI nor claims a failed OCI pre-process returned materialization output.
 - Preserved both positive `python3 -I` commands and every previously banked identity, construction, schema, custody, and hold.
+
+## v1.4.2 — LF1/P4 metadata closure
+
+- Added exact `date="2026-08-21"` and `regime="B"` fields to both normative unavailable-interpreter JSON artifacts and required their literal validation/return without adding callable inputs `[PROPOSED]`.
+- Recomputed both LF Git-blob sidecars and bound their exact replacement SHA-256 values in the test contract and documentation `[PROPOSED]`.
+- Preserved banked RF1 substantive closure and both positive `python3 -I` commands unchanged.
