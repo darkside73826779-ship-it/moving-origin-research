@@ -1,0 +1,17 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"l8-native-cuda-result-schema-v1",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["schema_version","date","regime","status","identity","runs","comparison","verdict","failures"],
+  "properties":{
+    "schema_version":{"const":"l8-native-cuda-result-v1"},"date":{"const":"2026-08-21"},"regime":{"const":"B"},
+    "status":{"enum":["complete","failed"]},
+    "identity":{"type":"object","additionalProperties":false,"required":["implementation_sha","config_sha256","cpu_oracle_sha256","dependency_sha256","device_sha256"],"properties":{"implementation_sha":{"type":"string","pattern":"^[0-9a-f]{40}$"},"config_sha256":{"$ref":"#/$defs/digest"},"cpu_oracle_sha256":{"$ref":"#/$defs/digest"},"dependency_sha256":{"$ref":"#/$defs/digest"},"device_sha256":{"$ref":"#/$defs/digest"}}},
+    "runs":{"type":"array","minItems":2,"maxItems":2,"items":{"type":"object","additionalProperties":false,"required":["run_index","elapsed_seconds","scientific_payload_sha256","rows","selected","aggregate_regions","boundary_cells"],"properties":{"run_index":{"enum":[1,2]},"elapsed_seconds":{"type":"number","exclusiveMinimum":0},"scientific_payload_sha256":{"$ref":"#/$defs/digest"},"rows":{"type":"array","minItems":240,"maxItems":240,"items":{"$ref":"#/$defs/row"}},"selected":{"$ref":"#/$defs/point"},"aggregate_regions":{"type":"array","minItems":16,"maxItems":16,"items":{"type":"string"}},"boundary_cells":{"type":"array","maxItems":1,"items":{"type":"integer","minimum":0,"maximum":239}}}}},
+    "comparison":{"type":"object","additionalProperties":false,"required":["repeat_payloads_identical","selected_exact","aggregate_regions_exact","per_metric","boundary_cell_count"],"properties":{"repeat_payloads_identical":{"const":true},"selected_exact":{"type":"boolean"},"aggregate_regions_exact":{"type":"boolean"},"per_metric":{"type":"object"},"boundary_cell_count":{"type":"integer","minimum":0}}},
+    "verdict":{"enum":["CPU_CONSISTENT_OR_BETTER_FOR_O15_NATIVE_DIAGNOSTICS","SCIENTIFIC_REGRESSION_CELL_REGION","SCIENTIFIC_REGRESSION_DISTRIBUTION","INSTRUMENT_FAILURE"]},
+    "failures":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["stage","code","detail"],"properties":{"stage":{"enum":["preflight","rng","evaluator","collector","comparison","repeat_custody","publisher"]},"code":{"enum":["DEPENDENCY_OR_DEVICE_MISMATCH","CUDA_UNAVAILABLE","IDENTITY_COLLISION","SEED_COLLISION","NONFINITE_APPARATUS","SCHEMA_INVALID","REPEAT_MISMATCH","PUBLICATION_FAILURE","UNAPPROVED_IDENTITY"]},"detail":{"type":"string"}}}}
+  },
+  "$defs":{"digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"point":{"type":"object","additionalProperties":false,"required":["c_min","eta"],"properties":{"c_min":{"type":"number"},"eta":{"type":"number"}}},"row":{"type":"object","additionalProperties":false,"required":["ordinal","alpha","v_mult","c_min","eta","false_kill","any_seed_false_kill","false_pass","mean_beta_star","mean_null_beta_star","region"],"properties":{"ordinal":{"type":"integer","minimum":0,"maximum":239},"alpha":{"type":"number"},"v_mult":{"type":"number"},"c_min":{"type":"number"},"eta":{"type":"number"},"false_kill":{"type":"number","minimum":0,"maximum":1},"any_seed_false_kill":{"type":"number","minimum":0,"maximum":1},"false_pass":{"type":"number","minimum":0,"maximum":1},"mean_beta_star":{"type":"number"},"mean_null_beta_star":{"type":"number"},"region":{"type":"string"}}}}
+}

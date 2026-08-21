@@ -1,0 +1,25 @@
+{
+  "schema_version":"l8-native-cuda-executability-matrix-v1","date":"2026-08-21","regime":"B",
+  "tests":[
+    {"id":"NC-001","fixture":"rng_fixture","mutation":"none","expected":"all identities and seeds exact"},
+    {"id":"NC-002","fixture":"rng_fixture","mutation":"namespace byte","expected":"preflight rejection"},
+    {"id":"NC-003","fixture":"draw_schedule","mutation":"swap gamma calls","expected":"fixture mismatch"},
+    {"id":"NC-004","fixture":"scheduler","mutation":"concurrent cell kernels","expected":"preflight rejection"},
+    {"id":"NC-005","fixture":"manifest","mutation":"dependency or device byte","expected":"DEPENDENCY_OR_DEVICE_MISMATCH"},
+    {"id":"NC-006","fixture":"cuda","mutation":"unavailable","expected":"CUDA_UNAVAILABLE and no fallback"},
+    {"id":"NC-007","fixture":"apparatus","mutation":"NaN","expected":"NONFINITE_APPARATUS"},
+    {"id":"NC-008","fixture":"region_mismatch_fixture","mutation":"none","expected":"historic finding preserved and nonqualifying"},
+    {"id":"NC-009","fixture":"boundary","mutation":"one cell at every inclusive limit","expected":"BOUNDARY_CONSISTENT"},
+    {"id":"NC-010","fixture":"boundary","mutation":"each limit plus one binary64 ulp","expected":"SCIENTIFIC_REGRESSION_CELL_REGION"},
+    {"id":"NC-011","fixture":"boundary","mutation":"two qualifying cells","expected":"SCIENTIFIC_REGRESSION_CELL_REGION"},
+    {"id":"NC-012","fixture":"regression","mutation":"each per-cell limit plus one binary64 ulp","expected":"SCIENTIFIC_REGRESSION_DISTRIBUTION"},
+    {"id":"NC-013","fixture":"regression","mutation":"large improvement","expected":"no symmetric-distance failure"},
+    {"id":"NC-014","fixture":"repeat","mutation":"one payload byte","expected":"REPEAT_MISMATCH"},
+    {"id":"NC-015","fixture":"backend","mutation":"CPU fallback attempt","expected":"failed closed"},
+    {"id":"NC-016","fixture":"runtime","mutation":"CuPy or NVRTC import","expected":"preflight rejection"},
+    {"id":"NC-017","fixture":"schema","mutation":"unknown field","expected":"SCHEMA_INVALID"},
+    {"id":"NC-018","fixture":"publisher","mutation":"interrupt at each atomic boundary","expected":"prior pair restored and incomplete retained"},
+    {"id":"NC-019","fixture":"m4_request","mutation":"native before adoption","expected":"BACKEND_NOT_ADOPTED"},
+    {"id":"NC-020","fixture":"performance","mutation":"elapsed above 135.7682971715927","expected":"acceptance failure"}
+  ]
+}

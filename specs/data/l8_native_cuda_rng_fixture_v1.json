@@ -1,0 +1,33 @@
+{
+  "schema_version": "l8-native-cuda-rng-fixture-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "encoding": "ASCII",
+  "derivation": "sha256-first-eight-bytes-unsigned-little-endian-and-0x7fffffffffffffff",
+  "cases": [
+    {
+      "id": "RNG-001",
+      "identity": "l8-native-cuda-v1|alpha=0.000000|vmult=0.500000|cmin=0.500000|eta=0.010000|arm=combo",
+      "sha256": "76652188f622c0b43ad6b65ebea4e53da67b1b8d0973c02474ac4163f1805f8a",
+      "seed": 3801076527741887862
+    },
+    {
+      "id": "RNG-002",
+      "identity": "l8-native-cuda-v1|alpha=0.000000|vmult=0.500000|cmin=0.500000|eta=0.010000|arm=null_control",
+      "sha256": "62f66938f94d8675765cbdd2b8476f5b2ef14f97c92e79cac9cc0905adcaa937",
+      "seed": 8468541882105460322
+    },
+    {
+      "id": "RNG-003",
+      "identity": "l8-native-cuda-v1|alpha=0.000000|vmult=2.000000|cmin=0.800000|eta=0.200000|arm=combo",
+      "sha256": "de9ccd85612faf4590150eef59ac4b76716f7457f004c5384db0a9550ea7d0f2",
+      "seed": 5021284205444570334
+    },
+    {
+      "id": "RNG-004",
+      "identity": "l8-native-cuda-v1|alpha=0.200000|vmult=2.000000|cmin=0.800000|eta=0.200000|arm=combo",
+      "sha256": "f46b9d65323cc6fa834c6e6e3a23561ae6e4d88a66e8475c2793b63fa686a354",
+      "seed": 8846824705166765044
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "l8-native-cuda-region-mismatch-fixture-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "source_result_sha": "9678713ef13af1d8746f9ecd9a04457a6461c270",
+  "cell_ordinal": 47,
+  "cell": {"alpha": 0.0, "v_mult": 2.0, "c_min": 0.8, "eta": 0.2},
+  "region_boundary": 0.5,
+  "cpu": {"false_kill_rate": 0.4787, "false_pass_rate": 0.034, "region": "informative"},
+  "cuda_native": {"false_kill_rate": 0.5009, "false_pass_rate": 0.0358, "region": "abstention-escape"},
+  "historic_disposition": "UNRESOLVED_BOUNDARY_CELL",
+  "prospective_rule_classification_if_observed_in_a_new_authorized_run": "BOUNDARY_CONSISTENT",
+  "qualifies_historic_evidence": false,
+  "forbidden_dispositions": ["INSTRUMENT_FAILURE", "erased", "retroactively_qualifying"]
+}

@@ -1,0 +1,5 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema","$id":"l8-native-cuda-backend-response-schema-v1","type":"object","additionalProperties":false,
+  "required":["schema_version","date","regime","backend","status","artifact","failure"],
+  "properties":{"schema_version":{"const":"l8-backend-response-v1"},"date":{"const":"2026-08-21"},"regime":{"const":"B"},"backend":{"enum":["CPU_ORACLE","CUDA_TAPE_APPROVED_V1_5","CUDA_NATIVE_PROPOSED_V1"]},"status":{"enum":["COMPLETE","BACKEND_NOT_ADOPTED","FAILED_CLOSED"]},"artifact":{"oneOf":[{"type":"null"},{"type":"object","additionalProperties":false,"required":["path","sha256"],"properties":{"path":{"type":"string"},"sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"}}}]},"failure":{"oneOf":[{"type":"null"},{"type":"object","additionalProperties":false,"required":["code","detail"],"properties":{"code":{"enum":["BACKEND_NOT_ADOPTED","UNAPPROVED_IDENTITY","BACKEND_FAILURE"]},"detail":{"type":"string"}}}]}}
+}

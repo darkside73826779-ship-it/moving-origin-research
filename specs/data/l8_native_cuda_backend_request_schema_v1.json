@@ -1,0 +1,6 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema","$id":"l8-native-cuda-backend-request-schema-v1","type":"object","additionalProperties":false,
+  "required":["schema_version","date","regime","mode","backend","implementation_sha","config_sha256","dependency_sha256","device_sha256","cpu_oracle_sha256","workload","output"],
+  "properties":{"schema_version":{"const":"l8-backend-request-v1"},"date":{"const":"2026-08-21"},"regime":{"const":"B"},"mode":{"const":"O15_DIAGNOSTIC_ONLY"},"backend":{"enum":["CPU_ORACLE","CUDA_TAPE_APPROVED_V1_5","CUDA_NATIVE_PROPOSED_V1"]},"implementation_sha":{"type":"string","pattern":"^[0-9a-f]{40}$"},"config_sha256":{"$ref":"#/$defs/d"},"dependency_sha256":{"$ref":"#/$defs/d"},"device_sha256":{"$ref":"#/$defs/d"},"cpu_oracle_sha256":{"const":"978f21c061dbee40fe3dd6d80f8b4c5abec3e13ea9babf4c361b6ba34b5e4b21"},"workload":{"const":{"repetitions":10000,"cell_count":240,"arms":["combo","null_control"],"cell_order":"cpu-oracle-result-order"}},"output":{"const":{"json":"diagnostics/l8_native_cuda_adoption.json","sidecar":"diagnostics/l8_native_cuda_adoption.json.sha256"}}},
+  "$defs":{"d":{"type":"string","pattern":"^[0-9a-f]{64}$"}}
+}

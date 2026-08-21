@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "l8-native-cuda-config-schema-v1",
+  "title": "L8 native CUDA prospective adoption configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "date", "regime", "mode", "backend", "implementation_sha", "cpu_oracle", "workload", "rng", "runtime", "device", "equivalence", "performance", "outputs"],
+  "properties": {
+    "schema_version": {"const": "l8-native-cuda-config-v1"},
+    "date": {"const": "2026-08-21"},
+    "regime": {"const": "B"},
+    "mode": {"const": "O15_DIAGNOSTIC_ONLY"},
+    "backend": {"const": "CUDA_NATIVE_PROPOSED_V1"},
+    "implementation_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "cpu_oracle": {
+      "type": "object", "additionalProperties": false,
+      "required": ["commit", "path", "raw_sha256", "repetitions", "cell_count"],
+      "properties": {
+        "commit": {"const": "6d455bb"},
+        "path": {"type": "string", "pattern": "^diagnostics/[^/]+\\.json$"},
+        "raw_sha256": {"const": "978f21c061dbee40fe3dd6d80f8b4c5abec3e13ea9babf4c361b6ba34b5e4b21"},
+        "repetitions": {"const": 10000},
+        "cell_count": {"const": 240}
+      }
+    },
+    "workload": {
+      "type": "object", "additionalProperties": false,
+      "required": ["repetitions", "native_run_count", "arms", "cell_order", "device_ordinal", "process_count", "stream"],
+      "properties": {
+        "repetitions": {"const": 10000}, "native_run_count": {"const": 2},
+        "arms": {"const": ["combo", "null_control"]}, "cell_order": {"const": "cpu-oracle-result-order"},
+        "device_ordinal": {"const": 0}, "process_count": {"const": 1}, "stream": {"const": "default"}
+      }
+    },
+    "rng": {
+      "type": "object", "additionalProperties": false,
+      "required": ["namespace", "algorithm", "identity_format", "seed_derivation", "draw_schedule"],
+      "properties": {
+        "namespace": {"const": "l8-native-cuda-v1"}, "algorithm": {"const": "pytorch-cuda-philox"},
+        "identity_format": {"const": "l8-native-cuda-v1|alpha={alpha:.6f}|vmult={v_mult:.6f}|cmin={c_min:.6f}|eta={eta:.6f}|arm={arm}"},
+        "seed_derivation": {"const": "sha256-first-eight-bytes-unsigned-little-endian-and-0x7fffffffffffffff"},
+        "draw_schedule": {"const": "dose-ascending/window-ascending/gammaA/gammaB/rand-correct/randn-xi/conditional-combo-positive-dose-randn-dose"}
+      }
+    },
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["python", "numpy", "scipy", "torch", "cuda_runtime", "rfc8785", "deterministic_algorithms", "float_dtype", "tf32"],
+      "properties": {
+        "python": {"const": "3.11.9"}, "numpy": {"const": "1.26.4"}, "scipy": {"const": "1.13.1"},
+        "torch": {"const": "2.13.0+cu130"}, "cuda_runtime": {"const": "13.0"}, "rfc8785": {"const": "0.1.4"},
+        "deterministic_algorithms": {"const": true}, "float_dtype": {"const": "float64"}, "tf32": {"const": false}
+      }
+    },
+    "device": {
+      "type": "object", "additionalProperties": false,
+      "required": ["pci_bus_id", "ordinal", "name", "compute_capability", "total_memory_bytes", "driver_version"],
+      "properties": {
+        "pci_bus_id": {"type": "string", "minLength": 1}, "ordinal": {"const": 0}, "name": {"type": "string", "minLength": 1},
+        "compute_capability": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+$"}, "total_memory_bytes": {"type": "integer", "minimum": 1},
+        "driver_version": {"type": "string", "minLength": 1}
+      }
+    },
+    "equivalence": {"$ref": "#/$defs/equivalence"},
+    "performance": {"const": {"reference_seconds": 1357.6829717159271, "minimum_speedup": 10.0, "maximum_native_seconds": 135.7682971715927}},
+    "outputs": {"const": {"json": "diagnostics/l8_native_cuda_adoption.json", "sidecar": "diagnostics/l8_native_cuda_adoption.json.sha256"}}
+  },
+  "$defs": {
+    "equivalence": {
+      "const": {
+        "exact_selected_operating_point": true, "exact_aggregate_region_labels": 16,
+        "maximum_boundary_consistent_cells": 1,
+        "boundary_rule": {"false_kill_boundary": 0.5, "closed_half_width": 0.025, "maximum_false_kill_difference": 0.025, "maximum_false_pass_difference": 0.005, "require_other_predicates_exact": true},
+        "per_cell_max_regression": {"false_kill": 0.025, "any_seed_false_kill": 0.02, "false_pass": 0.0075, "mean_beta_star_decrease": 0.0075, "mean_null_beta_star_increase": 0.0075},
+        "mean_regression": {"false_kill": 0.005, "any_seed_false_kill": 0.005, "false_pass": 0.0025, "mean_beta_star_decrease": 0.0025, "mean_null_beta_star_increase": 0.0025}
+      }
+    }
+  }
+}
