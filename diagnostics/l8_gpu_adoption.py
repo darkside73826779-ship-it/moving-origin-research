@@ -366,7 +366,8 @@ def evaluate_tape_gpu(tape: dict[str, Any], device: str = "cuda") -> dict[str, A
     eps = pa.EPS_C
     logit_floor = math.log(eps) - math.log1p(-eps)
     logit_ceiling = math.log1p(-eps) - math.log(eps)
-    c_logit = (p_logit + xi).clamp(logit_floor, logit_ceiling)
+    alpha_bias = float(tape.get("alpha_bias", 0.0))
+    c_logit = (p_logit + alpha_bias + xi).clamp(logit_floor, logit_ceiling)
     c_prime_logit = (c_logit + xi_l).clamp(logit_floor, logit_ceiling)
     for dose in range(L):
         tau = torch.full((B, S), pa.TAU_INIT, dtype=torch.float64, device=device)
