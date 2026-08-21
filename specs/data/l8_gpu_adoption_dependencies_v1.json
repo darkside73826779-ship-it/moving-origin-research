@@ -1,0 +1,15 @@
+{
+  "schema_version": "l8-gpu-adoption-dependencies-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "python": {"implementation": "CPython", "version": "3.11.9"},
+  "packages": [
+    {"name":"numpy","version":"1.26.4","wheel_filename":"numpy-1.26.4-cp311-cp311-win_amd64.whl","url":"https://files.pythonhosted.org/packages/3f/6b/5610004206cf7f8e7ad91c5a85a8c71b2f2f8051a0c0c4d5916b76d6cbb2/numpy-1.26.4-cp311-cp311-win_amd64.whl#sha256=cd25bcecc4974d09257ffcd1f098ee778f7834c3ad767fe5db785be9a4aa9cb2","sha256":"cd25bcecc4974d09257ffcd1f098ee778f7834c3ad767fe5db785be9a4aa9cb2"},
+    {"name":"scipy","version":"1.13.1","wheel_filename":"scipy-1.13.1-cp311-cp311-win_amd64.whl","url":"https://files.pythonhosted.org/packages/4a/48/4513a1a5623a23e95f94abd675ed91cfb19989c58e9f6f7d03990f6caf3d/scipy-1.13.1-cp311-cp311-win_amd64.whl#sha256=5713f62f781eebd8d597eb3f88b8bf9274e79eeabf63afb4a737abc6c84ad37b","sha256":"5713f62f781eebd8d597eb3f88b8bf9274e79eeabf63afb4a737abc6c84ad37b"},
+    {"name":"torch","version":"2.13.0+cu130","wheel_filename":"torch-2.13.0+cu130-cp311-cp311-win_amd64.whl","url":"https://download-r2.pytorch.org/whl/cu130/torch-2.13.0%2Bcu130-cp311-cp311-win_amd64.whl#sha256=45e97bd9bc0416f4f4190b5098c55119a389fa5a7c8bbf2639f08f1d04e0a0dc","sha256":"45e97bd9bc0416f4f4190b5098c55119a389fa5a7c8bbf2639f08f1d04e0a0dc"},
+    {"name":"rfc8785","version":"0.1.4","wheel_filename":"rfc8785-0.1.4-py3-none-any.whl","url":"https://files.pythonhosted.org/packages/4d/78/119878110660b2ad709888c8a1614fce7e2fab39080ab960656dc8605bf6/rfc8785-0.1.4-py3-none-any.whl#sha256=520d690b448ecf0703691c76e1a34a24ddcd4fc5bc41d589cb7c58ec651bcd48","sha256":"520d690b448ecf0703691c76e1a34a24ddcd4fc5bc41d589cb7c58ec651bcd48"}
+  ],
+  "cuda_runtime_version": "13.0",
+  "unknown_fields": "reject",
+  "version_match": "exact"
+}

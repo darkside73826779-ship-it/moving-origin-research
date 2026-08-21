@@ -1,0 +1,24 @@
+{
+  "schema_version": "l8-gpu-adoption-executability-matrix-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "controls": [
+    {"control_id":"COUNT_EVENT_POLARITY","spec_section":"v1.5 §2","fixture_or_manifest":"known-good + sentinel rows","failure_status":"INSTRUMENT_FAILURE"},
+    {"control_id":"HEADER_TOPOLOGY","spec_section":"v1.5 §3.2","fixture_or_manifest":"config template","failure_status":"INSTRUMENT_FAILURE"},
+    {"control_id":"CONFIG_SELF_IDENTITY","spec_section":"v1.5 §3.1","fixture_or_manifest":"config template","failure_status":"INSTRUMENT_FAILURE"},
+    {"control_id":"DETERMINISTIC_ROW_TYPES","spec_section":"v1.5 §4","fixture_or_manifest":"known-good + literal rows","failure_status":"INSTRUMENT_FAILURE"},
+    {"control_id":"REHEARSAL_STATUS_ENUM","spec_section":"v1.5 §5","fixture_or_manifest":"rehearsal contract","failure_status":"INSTRUMENT_FAILURE"},
+    {"control_id":"REHEARSAL_FILESYSTEM","spec_section":"v1.5 §5","fixture_or_manifest":"rehearsal prior pair","failure_status":"INSTRUMENT_FAILURE"},
+    {"control_id":"REPEAT_CUSTODY","spec_section":"v1.5 §6","fixture_or_manifest":"repeat protocol","failure_status":"INSTRUMENT_FAILURE"},
+    {"control_id":"FULLSCREEN_PIPELINE","spec_section":"v1.5 §7","fixture_or_manifest":"controlling §7.1 schema","failure_status":"INSTRUMENT_FAILURE"},
+    {"control_id":"COUNTER_INVARIANTS","spec_section":"v1.5 §8","fixture_or_manifest":"sentinel rows","failure_status":"INSTRUMENT_FAILURE"},
+    {"control_id":"DEPENDENCY_FREEZE","spec_section":"v1.5 §9","fixture_or_manifest":"dependency manifest","failure_status":"INSTRUMENT_FAILURE"},
+    {"control_id":"RNG_IDENTITY","spec_section":"v1.4 §5; v1.5 §7","fixture_or_manifest":"config template","failure_status":"INSTRUMENT_FAILURE"},
+    {"control_id":"COVERAGE_TIE_RULE","spec_section":"v1.5 §10.1","fixture_or_manifest":"lower/upper clipping tie fixtures","failure_status":"NOT_EQUIVALENT"},
+    {"control_id":"QUEUE_RESIDENCY_BOUND","spec_section":"v1.5 §7","fixture_or_manifest":"full-screen queue contract","failure_status":"INSTRUMENT_FAILURE"},
+    {"control_id":"LOCKED_BAR_LITERAL","spec_section":"v1.4 §3; v1.5 §1","fixture_or_manifest":"known-good","failure_status":"INSTRUMENT_FAILURE"},
+    {"control_id":"UNKNOWN_FIELD_REJECTION","spec_section":"v1.4 §8; v1.5 §§3–5","fixture_or_manifest":"all schemas","failure_status":"INSTRUMENT_FAILURE"},
+    {"control_id":"ATOMIC_PAIR_RECOVERY","spec_section":"v1.5 §5","fixture_or_manifest":"rehearsal prior pair","failure_status":"INSTRUMENT_FAILURE"},
+    {"control_id":"AUTHORIZATION_BOUNDARY","spec_section":"v1.5 §11","fixture_or_manifest":"Rebecca re-release","failure_status":"INSTRUMENT_FAILURE"}
+  ]
+}

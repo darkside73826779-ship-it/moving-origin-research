@@ -2395,15 +2395,17 @@ def main():
     output_dir = args.output_dir
     os.makedirs(output_dir, exist_ok=True)
 
-    # R3: hold-out seed guard. Seeds 45 and 46 are HOLD-OUT -- NEVER used in
-    # development. If they appear in a development (non-scoring) run, warn.
+    # R3/R8: hold-out seed guard. Seeds 45 and 46 are HOLD-OUT -- NEVER used in
+    # development. Fail-closed: raises instead of warning (auditor item R8).
     # The scoring run (5 seeds) is the ONLY run that may include 45/46.
     holdout_in_run = [s for s in seeds if s in HOLDOUT_SEEDS]
     is_scoring_run = set(seeds) == set(SCORING_SEEDS)
     if holdout_in_run and not is_scoring_run:
-        _tee(f"[R3 WARNING] hold-out seeds {holdout_in_run} present in a non-scoring run. "
-             f"R3: seeds 45,46 are FORBIDDEN in development (only the 5-seed scoring "
-             f"run may include them). Proceeding, but this should be a scoring run.")
+        raise ValueError(
+            f"[R3/R8 FAIL-CLOSED] Hold-out seeds {holdout_in_run} present in a "
+            f"non-scoring run. Seeds 45,46 are FORBIDDEN in development "
+            f"(only the 5-seed scoring run may include them). "
+            f"Guard is fail-closed per auditor item R8.")
 
     log_path = os.path.join(output_dir, "e1_run.log")
     _LOG_FH = open(log_path, "w", encoding="utf-8")

@@ -1,0 +1,45 @@
+L8 calibration parallelism verification
+Date: 2026-08-19
+Regime: B
+Label: O-15 diagnostic-only; synthetic/candidate-blind; no scoring
+
+Calibration workers: serial=1, parallel=15
+Calibration identities: 15
+
+Serial and parallel sigma-dose tables (identical):
+(0.0, 0.5)=1.3125890624999998
+(0.0, 1.0)=2.25008125
+(0.0, 2.0)=12.0
+(0.02, 0.5)=1.3125890624999998
+(0.02, 1.0)=3.000075
+(0.02, 2.0)=12.0
+(0.05, 0.5)=1.3125890624999998
+(0.05, 1.0)=3.000075
+(0.05, 2.0)=12.0
+(0.1, 0.5)=1.3125890624999998
+(0.1, 1.0)=3.000075
+(0.1, 2.0)=12.0
+(0.2, 0.5)=1.3125890624999998
+(0.2, 1.0)=3.000075
+(0.2, 2.0)=12.0
+
+calibration_value_equality: True
+artifact_byte_identity_excluding_elapsed_seconds: True
+downstream_scientific_equality: True
+
+Verifier correction retained:
+The first verifier attempt compared raw Python structures and returned False
+because NaN != NaN, while the approved sanitized artifact-byte comparison was
+already True. The verifier was corrected to compare _sanitize_nan-normalized
+downstream structures exactly (no tolerance); the corrected run passed.
+
+Multicore observation during parallel calibration:
+Python processes: 16 (one parent plus 15 calibration workers)
+Sampled processor load: 62 percent
+Classification: [PROPOSED — diagnostic implementation check], not a performance bar
+
+Unit/regression tests:
+Ran 10 tests in 89.995 seconds
+Result: OK
+
+No scoring, hold-out exposure, or rerun of scoring seeds occurred.

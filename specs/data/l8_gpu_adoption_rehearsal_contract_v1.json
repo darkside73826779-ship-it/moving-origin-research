@@ -1,0 +1,20 @@
+{
+  "schema_version": "l8-gpu-adoption-rehearsal-contract-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "rows": [
+    {"case_id":"cuda_unavailable","injected_boundary":"preflight.cuda_available","expected_status":"INSTRUMENT_FAILURE","case_assertion":"cuda_preflight_rejects_before_rng"},
+    {"case_id":"allocation_failure","injected_boundary":"gpu.first_batch_allocation","expected_status":"INSTRUMENT_FAILURE","case_assertion":"allocation_failure_aborts_without_retry"},
+    {"case_id":"invalid_profile","injected_boundary":"config.arms[0]","expected_status":"SCHEMA_REJECTED","case_assertion":"unknown_arm_rejected_before_rng"},
+    {"case_id":"invalid_repetitions","injected_boundary":"config.repetitions_per_cell_per_arm","expected_status":"SCHEMA_REJECTED","case_assertion":"zero_repetitions_rejected_before_rng"},
+    {"case_id":"nonfinite_estimator","injected_boundary":"evaluator.post_estimator_finite_check","expected_status":"INSTRUMENT_FAILURE","case_assertion":"independent_fault_marker_required"},
+    {"case_id":"missing_calibration","injected_boundary":"preflight.calibration_open","expected_status":"INSTRUMENT_FAILURE","case_assertion":"missing_calibration_rejected_before_rng"},
+    {"case_id":"calibration_digest_mismatch","injected_boundary":"preflight.calibration_digest","expected_status":"INSTRUMENT_FAILURE","case_assertion":"digest_mismatch_rejected_before_rng"},
+    {"case_id":"duplicate_identity_tuple","injected_boundary":"collector.identity_index_insert","expected_status":"INSTRUMENT_FAILURE","case_assertion":"duplicate_full_identity_rejected"},
+    {"case_id":"completion_order_shuffle","injected_boundary":"collector.completed_block_delivery","expected_status":"PAYLOAD_IDENTICAL","case_assertion":"reversed_delivery_canonical_payload_identical"},
+    {"case_id":"interrupted_publication","injected_boundary":"publisher.after_json_temp_fsync","expected_status":"INTERRUPTED_RECOVERED","case_assertion":"prior_pair_preserved_json_incomplete_only"},
+    {"case_id":"configuration_mismatch","injected_boundary":"preflight.known_good_fixture_digest","expected_status":"INSTRUMENT_FAILURE","case_assertion":"one_hex_digest_change_rejected_before_rng"},
+    {"case_id":"ordinary_predicate_failure","injected_boundary":"deterministic.rho_failure","expected_status":"STATISTICAL_FAILURE","case_assertion":"rho_failure_valid_not_instrument_failure"}
+  ],
+  "preserved_paths": ["specs/data/l8_gpu_adoption_known_good_v1.json","specs/data/l8_gpu_adoption_known_good_v1.json.sha256","specs/data/l8_gpu_adoption_rehearsal_prior_v1.json","specs/data/l8_gpu_adoption_rehearsal_prior_v1.json.sha256"]
+}
