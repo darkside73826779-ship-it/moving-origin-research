@@ -65,3 +65,9 @@
 - Fixed the runtime marker identity domain to the raw mounted worktree bytes and added committed `.gitattributes` rule `tests/__init__.py text eol=lf` with P4 metadata `[PROPOSED]`.
 - Required a fresh clean exact-SHA checkout, exact Git-attribute verification, binary 69-byte/SHA-256 verification of the same read-only mounted checkout, and fail-closed rejection of normalization, copying, generation, override, mutation, or Git-object substitution `[PROPOSED]`.
 - Preserved banked IF1, both commands, pinned runtime, custody/schema/fixture identities, and the unconsumed operation.
+
+## v1.4.6 — Normative JSON LF byte-domain closure
+
+- Enumerated the exact ordered nine-JSON contract set and all nine adjacent sidecars consumed by the mandatory isolated test/materializer path `[PROPOSED]`.
+- Added individual `text eol=lf` attributes for all 18 paths and required raw mounted-worktree binary/sidecar verification in fixed order before import or custody lookup, with fail-closed CR/BOM/LF/link/attribute/grammar/basename/digest negatives `[PROPOSED]`.
+- Forbade runtime normalization, copying, generation, rewrite, Git-object substitution, wildcards, and inferred path additions while preserving scientific/tokenizer construction and all banked evidence.
