@@ -1,1 +1,369 @@
-{"schema_version":"m4-law-identity-validation-fixtures-v1","date":"2026-08-21","regime":"B","validator":{"module_path":"src/m4_harness/law_identity_validator.py","symbol":"validate_m4_law_identities_v1","invocation":"python -m src.m4_harness.law_identity_validator --schema specs/data/m4_law_artifact_schema_v1.json --fixtures specs/data/m4_law_identity_validation_fixtures_v1.json","input":"one already-schema-valid m4-law-artifact-v1 JSON object","success":{"valid":true,"failure_code":null,"json_pointer":null,"expected":null,"observed":null},"failure":{"valid":false,"failure_code":"LAW_IDENTITY_ORDER_MISMATCH","json_pointer":"first mismatching identity field in RFC6901 notation","expected":"required identity at that pointer or END_OF_ARRAY","observed":"actual identity at that pointer or END_OF_ARRAY"}},"required_orders":{"l8_arms":["candidate","empty","permuted","shuffled","oracle","naive","frozen","specificity"],"l8_seed_ordinals":[0,1,2,3,4],"l14_couplings":["self_model_readable","memory_quality","thick_present_target"],"l18_controls":[{"law":"L7","arm":"empty"},{"law":"L7","arm":"permuted"},{"law":"L7","arm":"shuffled"},{"law":"L7","arm":"oracle"},{"law":"L7","arm":"naive"},{"law":"L7","arm":"frozen"},{"law":"L8","arm":"empty"},{"law":"L8","arm":"permuted"},{"law":"L8","arm":"shuffled"},{"law":"L8","arm":"oracle"},{"law":"L8","arm":"naive"},{"law":"L8","arm":"frozen"},{"law":"L10","arm":"empty"},{"law":"L10","arm":"permuted"},{"law":"L10","arm":"shuffled"},{"law":"L10","arm":"oracle"},{"law":"L10","arm":"naive"},{"law":"L10","arm":"frozen"},{"law":"L14","arm":"empty"},{"law":"L14","arm":"permuted"},{"law":"L14","arm":"shuffled"},{"law":"L14","arm":"oracle"},{"law":"L14","arm":"naive"},{"law":"L14","arm":"frozen"}]},"algorithm":["First validate the input against m4_law_artifact_schema_v1.json; schema failure returns SCHEMA_DRIFT and this identity validator does not run.","Select the required order by law. L8: compare payload.arms arm values to l8_arms, then for each arm compare payload.arms/{arm_ordinal}/seeds seed_ordinal values to l8_seed_ordinals. L14: compare payload.couplings coupling_id values to l14_couplings. L18: compare each payload.controls object projected to the ordered pair (law,arm) to l18_controls.","Compare array length first. A missing entry is observed END_OF_ARRAY at the first missing ordinal; an extra entry is expected END_OF_ARRAY at the first extra ordinal.","Then compare left-to-right and stop at the first mismatch. Return the exact failure object above. No sorting, set conversion, deduplication, normalization, or alias substitution is permitted."],"negative_fixtures":[{"case_id":"l8_arm_duplicate","target":"/payload/arms","mutation":{"operation":"replace_identity","ordinal":1,"field":"arm","value":"candidate"},"expected_pointer":"/payload/arms/1/arm","expected":"empty","observed":"candidate"},{"case_id":"l8_arm_omission","target":"/payload/arms","mutation":{"operation":"remove","ordinal":7},"expected_pointer":"/payload/arms/7/arm","expected":"specificity","observed":"END_OF_ARRAY"},{"case_id":"l8_arm_reorder","target":"/payload/arms","mutation":{"operation":"swap","ordinals":[1,2]},"expected_pointer":"/payload/arms/1/arm","expected":"empty","observed":"permuted"},{"case_id":"l8_seed_duplicate","target":"/payload/arms/0/seeds","mutation":{"operation":"replace_identity","ordinal":1,"field":"seed_ordinal","value":0},"expected_pointer":"/payload/arms/0/seeds/1/seed_ordinal","expected":1,"observed":0},{"case_id":"l8_seed_omission","target":"/payload/arms/0/seeds","mutation":{"operation":"remove","ordinal":4},"expected_pointer":"/payload/arms/0/seeds/4/seed_ordinal","expected":4,"observed":"END_OF_ARRAY"},{"case_id":"l8_seed_reorder","target":"/payload/arms/0/seeds","mutation":{"operation":"swap","ordinals":[1,2]},"expected_pointer":"/payload/arms/0/seeds/1/seed_ordinal","expected":1,"observed":2},{"case_id":"l14_coupling_duplicate","target":"/payload/couplings","mutation":{"operation":"replace_identity","ordinal":1,"field":"coupling_id","value":"self_model_readable"},"expected_pointer":"/payload/couplings/1/coupling_id","expected":"memory_quality","observed":"self_model_readable"},{"case_id":"l14_coupling_omission","target":"/payload/couplings","mutation":{"operation":"remove","ordinal":2},"expected_pointer":"/payload/couplings/2/coupling_id","expected":"thick_present_target","observed":"END_OF_ARRAY"},{"case_id":"l14_coupling_reorder","target":"/payload/couplings","mutation":{"operation":"swap","ordinals":[0,1]},"expected_pointer":"/payload/couplings/0/coupling_id","expected":"self_model_readable","observed":"memory_quality"},{"case_id":"l18_control_duplicate","target":"/payload/controls","mutation":{"operation":"replace_identity","ordinal":1,"fields":{"law":"L7","arm":"empty"}},"expected_pointer":"/payload/controls/1","expected":{"law":"L7","arm":"permuted"},"observed":{"law":"L7","arm":"empty"}},{"case_id":"l18_control_omission","target":"/payload/controls","mutation":{"operation":"remove","ordinal":23},"expected_pointer":"/payload/controls/23","expected":{"law":"L14","arm":"frozen"},"observed":"END_OF_ARRAY"},{"case_id":"l18_control_reorder","target":"/payload/controls","mutation":{"operation":"swap","ordinals":[0,1]},"expected_pointer":"/payload/controls/0","expected":{"law":"L7","arm":"empty"},"observed":{"law":"L7","arm":"permuted"}}],"expected_suite":{"positive_orders":"VALID","negative_case_count":12,"negative_cases_in_stored_order_all":"LAW_IDENTITY_ORDER_MISMATCH","stop_at_first_mismatch":true}}
+{
+    "schema_version": "m4-law-identity-validation-fixtures-v1",
+    "date": "2026-08-21",
+    "regime": "B",
+    "validator": {
+        "module_path": "src/m4_harness/law_identity_validator.py",
+        "symbol": "validate_m4_law_identities_v1",
+        "invocation": "python -m src.m4_harness.law_identity_validator --schema specs/data/m4_law_artifact_schema_v1.json --fixtures specs/data/m4_law_identity_validation_fixtures_v1.json",
+        "input": "a deep copy of one complete base selected by base_pointer from specs/data/m4_law_identity_mutation_bases_v1.json, after applying exactly the fixture mutation",
+        "success": {
+            "valid": true,
+            "failure_code": null,
+            "json_pointer": null,
+            "expected": null,
+            "observed": null
+        },
+        "failure": {
+            "stage": "IDENTITY",
+            "valid": false,
+            "failure_code": "LAW_IDENTITY_ORDER_MISMATCH",
+            "json_pointer": "first mismatching identity field in RFC6901 notation",
+            "expected": "required identity at that pointer or END_OF_ARRAY",
+            "observed": "actual identity at that pointer or END_OF_ARRAY"
+        }
+    },
+    "mutation_base_artifact": {
+        "path": "specs/data/m4_law_identity_mutation_bases_v1.json",
+        "sha256_sidecar": "specs/data/m4_law_identity_mutation_bases_v1.json.sha256",
+        "base_pointers": {
+            "L8": "/bases/l8",
+            "L14": "/bases/l14",
+            "L18": "/bases/l18"
+        }
+    },
+    "required_orders": {
+        "l8_arms": [
+            "candidate",
+            "empty",
+            "permuted",
+            "shuffled",
+            "oracle",
+            "naive",
+            "frozen",
+            "specificity"
+        ],
+        "l8_seed_ordinals": [
+            0,
+            1,
+            2,
+            3,
+            4
+        ],
+        "l14_couplings": [
+            "self_model_readable",
+            "memory_quality",
+            "thick_present_target"
+        ],
+        "l18_controls": [
+            {
+                "law": "L7",
+                "arm": "empty"
+            },
+            {
+                "law": "L7",
+                "arm": "permuted"
+            },
+            {
+                "law": "L7",
+                "arm": "shuffled"
+            },
+            {
+                "law": "L7",
+                "arm": "oracle"
+            },
+            {
+                "law": "L7",
+                "arm": "naive"
+            },
+            {
+                "law": "L7",
+                "arm": "frozen"
+            },
+            {
+                "law": "L8",
+                "arm": "empty"
+            },
+            {
+                "law": "L8",
+                "arm": "permuted"
+            },
+            {
+                "law": "L8",
+                "arm": "shuffled"
+            },
+            {
+                "law": "L8",
+                "arm": "oracle"
+            },
+            {
+                "law": "L8",
+                "arm": "naive"
+            },
+            {
+                "law": "L8",
+                "arm": "frozen"
+            },
+            {
+                "law": "L10",
+                "arm": "empty"
+            },
+            {
+                "law": "L10",
+                "arm": "permuted"
+            },
+            {
+                "law": "L10",
+                "arm": "shuffled"
+            },
+            {
+                "law": "L10",
+                "arm": "oracle"
+            },
+            {
+                "law": "L10",
+                "arm": "naive"
+            },
+            {
+                "law": "L10",
+                "arm": "frozen"
+            },
+            {
+                "law": "L14",
+                "arm": "empty"
+            },
+            {
+                "law": "L14",
+                "arm": "permuted"
+            },
+            {
+                "law": "L14",
+                "arm": "shuffled"
+            },
+            {
+                "law": "L14",
+                "arm": "oracle"
+            },
+            {
+                "law": "L14",
+                "arm": "naive"
+            },
+            {
+                "law": "L14",
+                "arm": "frozen"
+            }
+        ]
+    },
+    "algorithm": [
+        "Load the complete base at base_pointer, deep-copy it, and apply exactly the stored mutation without normalizing any other value. Validate the mutated object against m4_law_artifact_schema_v1.json first.",
+        "If schema validation fails, the identity validator does not run. For the four stored removal cases the sole expected error is the target array minItems failure; return stage=SCHEMA, valid=false, failure_code=SCHEMA_DRIFT, json_pointer equal to target, expected=minItems:N, observed=length:N-1 exactly as committed in that fixture.",
+        "If schema validation succeeds, run the identity comparison. Return stage=IDENTITY, valid=false, failure_code=LAW_IDENTITY_ORDER_MISMATCH and the fixture's exact first-mismatch pointer/expected/observed values. Duplication and swapping preserve schema validity and must reach this stage.",
+        "Select the required order by law. L8: compare payload.arms arm values to l8_arms, then for each arm compare payload.arms/{arm_ordinal}/seeds seed_ordinal values to l8_seed_ordinals. L14: compare payload.couplings coupling_id values to l14_couplings. L18: compare each payload.controls object projected to the ordered pair (law,arm) to l18_controls.",
+        "Compare array length first. A missing entry is observed END_OF_ARRAY at the first missing ordinal; an extra entry is expected END_OF_ARRAY at the first extra ordinal.",
+        "Then compare left-to-right and stop at the first mismatch. Return the exact failure object above. No sorting, set conversion, deduplication, normalization, or alias substitution is permitted."
+    ],
+    "expected_outcome_default": {
+        "applies_when_schema_valid": true,
+        "stage": "IDENTITY",
+        "valid": false,
+        "failure_code": "LAW_IDENTITY_ORDER_MISMATCH",
+        "pointer_expected_observed_source": "the individual fixture"
+    },
+    "negative_fixtures": [
+        {
+            "case_id": "l8_arm_duplicate",
+            "base_pointer": "/bases/l8",
+            "target": "/payload/arms",
+            "mutation": {
+                "operation": "replace_identity",
+                "ordinal": 1,
+                "field": "arm",
+                "value": "candidate"
+            },
+            "expected_pointer": "/payload/arms/1/arm",
+            "expected": "empty",
+            "observed": "candidate"
+        },
+        {
+            "case_id": "l8_arm_omission",
+            "base_pointer": "/bases/l8",
+            "target": "/payload/arms",
+            "mutation": {
+                "operation": "remove",
+                "ordinal": 7
+            },
+            "expected_stage": "SCHEMA",
+            "expected_code": "SCHEMA_DRIFT",
+            "expected_pointer": "/payload/arms",
+            "expected": "minItems:8",
+            "observed": "length:7"
+        },
+        {
+            "case_id": "l8_arm_reorder",
+            "base_pointer": "/bases/l8",
+            "target": "/payload/arms",
+            "mutation": {
+                "operation": "swap",
+                "ordinals": [
+                    1,
+                    2
+                ]
+            },
+            "expected_pointer": "/payload/arms/1/arm",
+            "expected": "empty",
+            "observed": "permuted"
+        },
+        {
+            "case_id": "l8_seed_duplicate",
+            "base_pointer": "/bases/l8",
+            "target": "/payload/arms/0/seeds",
+            "mutation": {
+                "operation": "replace_identity",
+                "ordinal": 1,
+                "field": "seed_ordinal",
+                "value": 0
+            },
+            "expected_pointer": "/payload/arms/0/seeds/1/seed_ordinal",
+            "expected": 1,
+            "observed": 0
+        },
+        {
+            "case_id": "l8_seed_omission",
+            "base_pointer": "/bases/l8",
+            "target": "/payload/arms/0/seeds",
+            "mutation": {
+                "operation": "remove",
+                "ordinal": 4
+            },
+            "expected_stage": "SCHEMA",
+            "expected_code": "SCHEMA_DRIFT",
+            "expected_pointer": "/payload/arms/0/seeds",
+            "expected": "minItems:5",
+            "observed": "length:4"
+        },
+        {
+            "case_id": "l8_seed_reorder",
+            "base_pointer": "/bases/l8",
+            "target": "/payload/arms/0/seeds",
+            "mutation": {
+                "operation": "swap",
+                "ordinals": [
+                    1,
+                    2
+                ]
+            },
+            "expected_pointer": "/payload/arms/0/seeds/1/seed_ordinal",
+            "expected": 1,
+            "observed": 2
+        },
+        {
+            "case_id": "l14_coupling_duplicate",
+            "base_pointer": "/bases/l14",
+            "target": "/payload/couplings",
+            "mutation": {
+                "operation": "replace_identity",
+                "ordinal": 1,
+                "field": "coupling_id",
+                "value": "self_model_readable"
+            },
+            "expected_pointer": "/payload/couplings/1/coupling_id",
+            "expected": "memory_quality",
+            "observed": "self_model_readable"
+        },
+        {
+            "case_id": "l14_coupling_omission",
+            "base_pointer": "/bases/l14",
+            "target": "/payload/couplings",
+            "mutation": {
+                "operation": "remove",
+                "ordinal": 2
+            },
+            "expected_stage": "SCHEMA",
+            "expected_code": "SCHEMA_DRIFT",
+            "expected_pointer": "/payload/couplings",
+            "expected": "minItems:3",
+            "observed": "length:2"
+        },
+        {
+            "case_id": "l14_coupling_reorder",
+            "base_pointer": "/bases/l14",
+            "target": "/payload/couplings",
+            "mutation": {
+                "operation": "swap",
+                "ordinals": [
+                    0,
+                    1
+                ]
+            },
+            "expected_pointer": "/payload/couplings/0/coupling_id",
+            "expected": "self_model_readable",
+            "observed": "memory_quality"
+        },
+        {
+            "case_id": "l18_control_duplicate",
+            "base_pointer": "/bases/l18",
+            "target": "/payload/controls",
+            "mutation": {
+                "operation": "replace_identity",
+                "ordinal": 1,
+                "fields": {
+                    "law": "L7",
+                    "arm": "empty"
+                }
+            },
+            "expected_pointer": "/payload/controls/1",
+            "expected": {
+                "law": "L7",
+                "arm": "permuted"
+            },
+            "observed": {
+                "law": "L7",
+                "arm": "empty"
+            }
+        },
+        {
+            "case_id": "l18_control_omission",
+            "base_pointer": "/bases/l18",
+            "target": "/payload/controls",
+            "mutation": {
+                "operation": "remove",
+                "ordinal": 23
+            },
+            "expected_stage": "SCHEMA",
+            "expected_code": "SCHEMA_DRIFT",
+            "expected_pointer": "/payload/controls",
+            "expected": "minItems:24",
+            "observed": "length:23"
+        },
+        {
+            "case_id": "l18_control_reorder",
+            "base_pointer": "/bases/l18",
+            "target": "/payload/controls",
+            "mutation": {
+                "operation": "swap",
+                "ordinals": [
+                    0,
+                    1
+                ]
+            },
+            "expected_pointer": "/payload/controls/0",
+            "expected": {
+                "law": "L7",
+                "arm": "empty"
+            },
+            "observed": {
+                "law": "L7",
+                "arm": "permuted"
+            }
+        }
+    ],
+    "expected_suite": {
+        "positive_orders": "VALID",
+        "negative_case_count": 12,
+        "identity_failure_cases_in_stored_order": ["l8_arm_duplicate","l8_arm_reorder","l8_seed_duplicate","l8_seed_reorder","l14_coupling_duplicate","l14_coupling_reorder","l18_control_duplicate","l18_control_reorder"],
+        "identity_failure_code": "LAW_IDENTITY_ORDER_MISMATCH",
+        "schema_failure_cases_in_stored_order": ["l8_arm_omission","l8_seed_omission","l14_coupling_omission","l18_control_omission"],
+        "schema_failure_code": "SCHEMA_DRIFT",
+        "stop_at_first_mismatch": true
+    }
+}

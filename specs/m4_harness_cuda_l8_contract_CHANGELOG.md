@@ -26,3 +26,4 @@
 - Recorded Rebecca's codenames only as adjacent human-facing aliases; canonical backend identifiers and machine enums remain unchanged.
 - Replaced valid-looking compatibility identities with explicit one-use reconciliation placeholders and fixed parsed-value materialization plus final report-digest construction.
 - Added a mandatory exact-order law-identity validator contract with twelve committed duplication, omission, and reordering fixtures covering L8 arms/seeds, L14 couplings, and all 24 L18 law/arm positions.
+- Added complete schema-valid L8/L14/L18 mutation bases and corrected schema-first control flow: four removals yield `SCHEMA_DRIFT`; eight schema-valid duplicate/reorder cases reach `LAW_IDENTITY_ORDER_MISMATCH`.
