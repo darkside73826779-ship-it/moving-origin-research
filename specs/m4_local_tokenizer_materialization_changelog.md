@@ -53,3 +53,9 @@
 - Replaced only the failing dotted-module unittest invocation with exact isolated-mode discovery: `python3 -I -m unittest discover -s tests -t . -p test_m4_tokenizer_materialization.py` `[PROPOSED]`.
 - Bound the repository-root working directory, exact start/top-level/pattern inputs, standard-library discovery import mechanism, singleton selected test path, exit behavior, and no-custody/no-output expectations without `PYTHONPATH`, installation, image mutation, fallback, or application-written path mutation `[PROPOSED]`.
 - Preserved the pinned image/interpreter, unchanged materializer command, fixtures, schemas, custody, banked evidence, and unconsumed operation.
+
+## v1.4.4 — IF1 test package marker
+
+- Added exact `tests/__init__.py` package-marker bytes with date and Regime B metadata so the preserved isolated discovery start directory is importable `[PROPOSED]`.
+- Bound its regular non-link path, UTF-8/LF form, byte count, SHA-256, and pre-discovery failure behavior in the specification and test contract `[PROPOSED]`.
+- Preserved the exact discovery command, image, interpreter, materializer, custody/schema/fixture contracts, and banked evidence unchanged.
