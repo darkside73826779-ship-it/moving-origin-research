@@ -575,3 +575,9 @@ No L15, L16, or L17 work authorized before M5. This spec does not propose integr
 - Implementing L15/L16/L17 or any M5 component.
 - Modifying STATE.md or provenance_log.md.
 - Renaming, reinterpreting, or silently replacing any negative result or INSTRUMENT FAILURE label.
+
+---
+
+## 14. Model-selection qualification ladder amendment
+
+The prospective model-selection, exact-matched-peer, checkpoint-custody, serving-preflight, and Q1–Q3 qualification contract is `specs/m4_model_selection_qualification_ladder_spec_v1.md`. That companion is normative only after persistent-CRITIC CLEAR and Rebecca's approval of its exact result. Its Q2 informative-band numbers remain `[PROPOSED]` and cannot gate or be executed before Rebecca signs them. The companion supersedes this specification's training-based peer language only to the extent expressly authorized by `handoffs/REBECCA_M4_EXACT_MATCHED_PEER_AMENDMENT_2026-08-21.md`; all L7 numeric bars and observable-only peer-channel requirements remain unchanged.

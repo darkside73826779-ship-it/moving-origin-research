@@ -6,6 +6,16 @@
 **Branch:** `architect/m4-spec-v1.6`
 **Regime:** B (post-Entry 27; constitution v1 + Amendment 1; §5 binding) (P4)
 
+## v1.7 — Exact-matched-peer model-selection qualification ladder (2026-08-21)
+
+- Incorporated Rebecca's Qwen3-4B FP8 primary and Qwen3-8B FP8 fallback qualification ladder.
+- Replaced the superseded cross-family peer proposal with a separate byte-identical instance of the selected Qwen checkpoint, differing only by its observable-only channel.
+- Added immutable model/revision/weight identities, local-only custody, exact serving-stack identity, deterministic session verification, FP8 verification, context, co-residency, and phased-swap contracts.
+- Added fixed Q1–Q3 sequencing, non-adaptive escalation, Phase A transcript logging, qualification-report schemas, and closed-by-default QLoRA handling.
+- Proposed a numeric Q2 informative band as `[PROPOSED]`; it remains inoperative pending Rebecca's explicit signature.
+- Preserved every locked L7/L8/L10/L14/L18 bar, O-14/O-15, negative labels, scoring-seed fences, and Rebecca-only gate/merge authority.
+
+
 ---
 
 ## v1.6.2 — CRITIC residual BLOCK remediation: line 8 provenance + §12 L8 entry (2026-08-18)
