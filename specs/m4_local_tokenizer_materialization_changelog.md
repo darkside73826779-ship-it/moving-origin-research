@@ -17,3 +17,9 @@
 - Fixed the private custody-record filename, schema, canonical bytes, resolver, uniqueness, and failure mapping `[PROPOSED]`.
 - Bound PASS to the literal canonical `[151645]` stop-array digest `[PROPOSED]`.
 - Sealed Python/Transformers behavior to the approved immutable vLLM OCI image digests and exact `AutoTokenizer.from_pretrained` API arguments `[PROPOSED]`.
+
+## v1.2 — RF2/RF3 partial remediation
+
+- Added `type: string` to the private-custody `tokenizer_config.sha256` constraint and prescribed the exact numeric `7` negative mutation fixture `[PROPOSED]`.
+- Added `type: string` to every published result-array `sha256` constraint and prescribed the exact numeric `7` negative mutation fixture `[PROPOSED]`.
+- Preserved RF1 as an explicit fail-closed hold: no authoritative `tokenizer_config.json` digest or bounded derivation authority is present, so this delta does not claim complete remediation or readiness for materialization.
