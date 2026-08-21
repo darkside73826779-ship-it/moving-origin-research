@@ -4,6 +4,16 @@
 
 **Regime:** B
 
+## v1.1 — combined fresh-context CRITIC route
+
+- Replaced the unavailable standalone law-fidelity-reviewer role with one fresh-context CRITIC review containing two ordered and separately reported parts.
+- Part A performs the complete §5 law-fidelity check and must pass before substantive clearance is possible.
+- Part B performs substantive falsification only after Part A passes.
+- The combined ruling clears only when `LAW_FIDELITY: PASS` and `SUBSTANTIVE: CLEAR` are both present.
+- Defined the context supplied to the fresh-context CRITIC and excluded ARCHITECT drafting deliberation.
+
+No scientific criterion, equivalence tolerance, workload, bar, control, negative name, or authorization boundary changed.
+
 ## v1.0 — initial pre-registration
 
 - Limited adoption to candidate-blind O-15 diagnostics; CPU remains the reference and scoring is excluded.

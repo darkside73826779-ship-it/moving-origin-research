@@ -1,4 +1,4 @@
-# L8 GPU Diagnostic-Backend Adoption Specification v1.0
+# L8 GPU Diagnostic-Backend Adoption Specification v1.1
 
 **Date:** 2026-08-20
 
@@ -235,10 +235,15 @@ Any later reproducibility regression, apparatus failure, dependency incompatibil
 
 ## 15. Required review sequence
 
-1. Fresh-context law-fidelity reviewer verifies every quotation, source tag, and provenance citation `[PROPOSED]`.
-2. Fresh-context CRITIC attempts to falsify the RNG mapping, statistical power, multiplicity correction, tolerances, L18 routing, and failure semantics `[LAW-L19]`.
-3. Rebecca alone decides whether to sign the `[PROPOSED]` criteria and release TASK BUILDER `[LAW-L19]`.
-4. TASK BUILDER may implement and execute only after that clearance `[PROPOSED]`.
+One fresh-context CRITIC performs a single review with two mandatory, ordered parts `[PROPOSED]`:
+
+1. **Part A — law fidelity.** Before substantive review, CRITIC must: diff every quoted law against `docs/ARCHITECTURAL_CONSTITUTION_v2.md`; verify every threshold's source-class tag; verify every provenance citation against the cited entry; and report a separate `LAW_FIDELITY: PASS|BLOCK` result `[PROPOSED]`. A Part A block stops the review and returns the artifact to ARCHITECT; CRITIC may list substantive observations but may not clear the specification `[PROPOSED]`.
+2. **Part B — substantive falsification.** Only after `LAW_FIDELITY: PASS`, the same CRITIC attempts to falsify the RNG mapping, statistical power, multiplicity correction, tolerances, L18 routing, failure semantics, feasibility, and absence of TASK BUILDER discretion `[LAW-L19]`. CRITIC reports a separate `SUBSTANTIVE: CLEAR|BLOCK` result `[PROPOSED]`.
+3. The combined CRITIC ruling is `CLEAR` only when Part A is `PASS` and Part B is `CLEAR` `[PROPOSED]`.
+4. Rebecca alone decides whether to sign the `[PROPOSED]` criteria and release TASK BUILDER `[LAW-L19]`.
+5. TASK BUILDER may implement and execute only after that clearance `[PROPOSED]`.
+
+“Fresh-context” means the CRITIC receives the committed specification, changelog, frozen-calibration artifact, handoff, and named repository sources, but no ARCHITECT drafting analysis or private deliberation `[PROPOSED]`.
 
 ## 16. Explicit prohibitions
 
