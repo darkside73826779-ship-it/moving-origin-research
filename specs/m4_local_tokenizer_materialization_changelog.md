@@ -59,3 +59,9 @@
 - Added exact `tests/__init__.py` package-marker bytes with date and Regime B metadata so the preserved isolated discovery start directory is importable `[PROPOSED]`.
 - Bound its regular non-link path, UTF-8/LF form, byte count, SHA-256, and pre-discovery failure behavior in the specification and test contract `[PROPOSED]`.
 - Preserved the exact discovery command, image, interpreter, materializer, custody/schema/fixture contracts, and banked evidence unchanged.
+
+## v1.4.5 — IF2 runtime byte domain and checkout construction
+
+- Fixed the runtime marker identity domain to the raw mounted worktree bytes and added committed `.gitattributes` rule `tests/__init__.py text eol=lf` with P4 metadata `[PROPOSED]`.
+- Required a fresh clean exact-SHA checkout, exact Git-attribute verification, binary 69-byte/SHA-256 verification of the same read-only mounted checkout, and fail-closed rejection of normalization, copying, generation, override, mutation, or Git-object substitution `[PROPOSED]`.
+- Preserved banked IF1, both commands, pinned runtime, custody/schema/fixture identities, and the unconsumed operation.
