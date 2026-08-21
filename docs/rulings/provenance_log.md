@@ -2409,3 +2409,27 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Authorization boundary:** this entry memorializes the L8 spec v2.4 + CRITIC clearance + Rebecca's approval of the diagnostic method + 2,000-rep screening authorization. Diagnostic-only (O-15); no scoring, no seed exposure, no merger, no G2–G4 freeze/release, no 10,000-rep confirmation authorized by this entry. All new mechanics are `[PROPOSED]` (cannot gate scoring unless Rebecca approves).
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). M4 GATE SIGNED — IMPLEMENTATION AUTHORIZED (scoring gated). Step 8 in progress: L8 spec v2.4 CRITIC-cleared + Rebecca-approved; TASK BUILDER implementing §8.9 + 2,000-rep screening.**
+
+
+---
+
+## Entry 89 — E3 pre-proposal filed (PARKED / IDEA-STAGE / POST-M5)
+
+**Date:** 2026-08-20 (date-stamped at creation per §5-P4, Regime B) · **Actor:** Rebecca Mcclintic (Principal, originator and directive); Advisor session (drafting); RECORDER (filing, P6 verification, STATE.md edit under Principal instruction, and provenance attestation)
+
+- **Gate served:** E3 pre-proposal filing — PARKED / IDEA-STAGE / POST-M5. Enters no gate, consumes no budget, touches no scoring scope.
+- **Named base:** `b6d4556021ad38199d3bfa90fdb3ef9a99988790` (GitHub main, independently verified).
+- **RECORDER publication branch:** `recorder/e3-preproposal-parked`, branched from current main `b6d4556`.
+- **Artifact filed:**
+  - `docs/preproposals/e3_experience_strip.md` — SHA-256 `a9129e4d9a949538ce4d547ba22c60b08ac2a7a01a9b49696095eab7f0292316` — filed verbatim from Principal's attachment. No content edits. Drafting attribution (advisor session, from the Principal's concept) is part of the record.
+- **Pre-proposal summary:** Sequential Fast-Weight Experience Strip ("the tape") — dual-write memory architecture (log + plastic weight strip over frozen backbone). Revival of glial-substrate weight-memory concept under its extracted findings. Novel instrument: tape–log divergence metric. Inherits mandatory controls: C-MC (mean-centering), C-REM (removability), C-ILL (illusion audit). Three-property test skeleton (bars TBD at spec stage). Constitutional touchpoints: L14, L16-class, L19, Ruling 9 pattern.
+- **P6 citation verification (performed before commit):**
+  - (a) Glial-substrate characterization: MATCHES. Constitution L20 (line 54): "dg_dense was a mean-subtraction in a 4096-dim costume." Provenance Entry 1: "L15 failure (components removable without mutual effect)." Governance paper §4.2: "terminated when its pre-registered kill conditions fired — specifically an integration-law failure in which components proved removable without mutual effect." Pre-proposal's characterization matches all three sources. ✓
+  - (b) Three-property test: MATCHES. Constitution v2 Amendment 1 (Entry 27): correctness, operational distinctness, load-bearing coupling. Pre-proposal §4: correctness, operational distinctness (scaling-separation mirroring E1), load-bearing coupling (dose-dependent degradation with specificity controls). Structure matches; bars appropriately TBD at spec stage. ✓
+- **STATE.md edit (Parked / Post-M5 section):** Added "Parked / Post-M5" section to STATE.md with one entry: E3 — pointer to `docs/preproposals/e3_experience_strip.md` — blockers M4, M5, P1 — status PARKED. This STATE.md edit was performed by RECORDER under Principal instruction in lieu of an INTEGRATOR cycle, ratified at the Principal's merge. This is an exception to the normal INTEGRATOR-sole-writer rule, authorized by the Principal's directive (authority chain: Rebecca > constitution's laws > prompt > agent judgment).
+- **§5 custody line:** Constitution v1 SHA-256 `509f11c316e6ed3abbdca2df4973484dd676eecc87b727f312ee8658bef93b19` — unchanged. Constitution v2 SHA-256 `8e029645f9e0f2b7914c9e74a6b76b8fd18b7a5c2d7a48a664f771906b045aaf` — unchanged.
+- **Preserved evidence and protections:** M3 INSTRUMENT FAILURE retained (seeds 201–203 and 301–303, never rerun). All prior provenance entries (1–88) remain unchanged. O-14, O-15, D1–D5, L9, L18, L15, §5 (P1–P6), and all standing protections intact.
+- **Scope attestation:** RECORDER filed the pre-proposal verbatim, performed P6 verification, edited STATE.md under Principal instruction (Parked / Post-M5 section only), and appended this provenance entry. No merge to main performed or requested. Not to be scoped, specified, or built by any agent until blockers (M4, M5, P1) clear and the Principal invokes it by explicit directive.
+- **Authorization boundary:** This filing parks an idea. It authorizes nothing — no implementation, no specification, no scoring, no fresh-seed exposure, no rerun, no budget consumption. Parked means parked.
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). M4 GATE SIGNED (implementation authorized, scoring gated). E3 pre-proposal filed — PARKED / IDEA-STAGE / POST-M5. Blocked behind M4, M5, P1. Enters no gate, consumes no budget. §5 custody line: constitution SHA-256 unchanged. Seeds 201–203 and 301–303 retained, never rerun.**

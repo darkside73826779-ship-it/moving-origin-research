@@ -255,6 +255,19 @@ non_blocking_findings_of_record:    # CRITIC V4 review Part 3 + reproducibility-
     source: critic_m3_reproducibility_contract_spec_rereview.md
 
 next_action: "Step 8 in progress — M4 gate SIGNED (Entry 78, implementation-only per Ruling 6); task spec extracted (Entry 79, specs/m4_task_spec.md on main via PR #62 at 672e7aa, 495 lines, 16 sections, SHA-256 c7d414e4...). TASK BUILDER starts M4 harness scaffold + non-L8 laws + FWFP closure audit; CRITIC conducts L8 homeostatic-variable prerequisite review; L8 implementation waits for CRITIC prerequisite clearance; then CRITIC implementation review → courier → Rebecca scoring authorization. Scoring remains gated on five downstream gates: L3 fresh-seed resolution, FWFP closure audit, CRITIC implementation review, Rebecca's tolerance-calibration sign-off (Ruling 9), courier-channel authorization. Steps 1–7 of the M4 gate resolution sequence are COMPLETE (gate SIGNED); the advisor correction cycle is COMPLETE; nine gate rulings logged (Entry 76); v1.6.2 CRITIC-CLEARED (fresh-context final re-clear CLEAR at a5c8e39) and MERGED to main via PR #59 at 66acce9 at specs/m4_specification.md. Milestone status: M0 COMPLETE, M1 GREEN, M2 GREEN/SEALED, M3 INSTRUMENT FAILURE (retained), M4 GATE SIGNED — IMPLEMENTATION AUTHORIZED (scoring gated). M4 build proceeds; M4 scoring remains gated on five downstream gates (L3 fresh-seed resolution, FWFP closure audit, CRITIC implementation review, tolerance-calibration sign-off, courier-channel authorization). No scoring, fresh-seed exposure, rerun, or hold-out seed exposure is authorized now; seeds 201-203 and 301-303 remain retained INSTRUMENT FAILURE evidence and are never rerun (O-14)."
+
+## Parked / Post-M5
+
+  - id: E3
+    desc: "Sequential Fast-Weight Experience Strip (the tape) — dual-write memory architecture (log + plastic weight strip). Revival of glial-substrate weight-memory concept under its extracted findings."
+    file: "docs/preproposals/e3_experience_strip.md"
+    originator: "Principal (Rebecca Mcclintic)"
+    drafted_by: "Advisor session"
+    date: "2026-08-19"
+    blockers: [M4, M5, P1]
+    status: PARKED
+    note: "Idea-stage pre-proposal. Enters no gate, consumes no budget, touches no scoring scope. Not to be scoped, specified, or built by any agent until blockers clear and the Principal invokes it by explicit directive. STATE.md edit performed by RECORDER under Principal instruction in lieu of an INTEGRATOR cycle, ratified at the Principal's merge."
+
 ```
 
 ---
