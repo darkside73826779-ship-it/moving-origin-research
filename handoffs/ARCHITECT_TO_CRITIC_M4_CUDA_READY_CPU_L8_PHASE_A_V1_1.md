@@ -1,10 +1,14 @@
 # FORMAL HANDOFF — ARCHITECT → fresh-context CRITIC, through WORKFLOW COORDINATOR
 
-**Date:** 2026-08-21  
-**Regime:** B  
-**Work item:** Revised M4 Phase A — CUDA-ready harness with authoritative parallel-CPU L8  
-**Sender:** ARCHITECT  
-**Receiver:** fresh-context CRITIC  
+**Date:** 2026-08-21
+
+**Regime:** B
+
+**Work item:** Revised M4 Phase A — CUDA-ready harness with authoritative parallel-CPU L8
+
+**Sender:** ARCHITECT
+
+**Receiver:** fresh-context CRITIC
 
 ## Gate served
 
