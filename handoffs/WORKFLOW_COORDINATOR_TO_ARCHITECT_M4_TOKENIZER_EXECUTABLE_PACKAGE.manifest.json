@@ -15,7 +15,7 @@
   ],
   "remote_ref": "refs/heads/coordinator/m4-tokenizer-executable-package-remediation",
   "base_sha": "91a8195c6d4975a57ec29c399646322aeda83f1b",
-  "routing_ref_sha": "31d4da460fd8a41959c198c1b70db0231945dfde",
+  "routing_ref_sha": "47e06c361c361843916668304432f7a748ac514e",
   "review_result_sha": "31d4da460fd8a41959c198c1b70db0231945dfde",
   "work_branch": "architect/m4-tokenizer-executable-package-remediation",
   "artifacts": {
@@ -55,7 +55,7 @@
   ],
   "scan_attestation": {
     "base_sha": "91a8195c6d4975a57ec29c399646322aeda83f1b",
-    "tip_sha": "31d4da460fd8a41959c198c1b70db0231945dfde",
+    "tip_sha": "47e06c361c361843916668304432f7a748ac514e",
     "tool_status": "blocked",
     "manual_review": true,
     "findings": [
