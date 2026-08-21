@@ -64,7 +64,7 @@ Real-model manifest fields remain null and status `UNBOUND_MODEL_SELECTION_REQUI
 Requests validate against `m4_model_adapter_request_schema_v1.json`. The ordered input is public history, then privileged packet, then perturbation declaration `[PROPOSED]`.
 
 - `candidate`: privileged packet is required, `access_granted=true`, and packet role is `MOVING_ORIGIN_STATE`.
-- `peer`: privileged packet values must be absent, `access_granted=false`, and a redaction receipt binds the public request digest. The peer receives candidate behavioral outputs, append-log events, external events, and query history only `[LAW-L7] [BAR-Entry 11]`.
+- `peer`: privileged packet values must be absent, `access_granted=false`, and a redaction receipt binds the public projection of the complete request. The projection copies, in order, `/episode_id`, `/request_ordinal`, `/public_history`, and `/retrieval`; RFC-8785 canonical subtree bytes without LF are SHA-256 hashed and compared with `/privileged_boundary/redaction_receipt_sha256`. The literal projection, complete-request digest, receipt digest, and binding-negative mutation are fixed in `m4_model_scaffold_rf1_rf3_fixture_v1.json` `[LAW-L7] [BAR-Entry 11] [PROPOSED]`.
 - candidate and peer manifests must later have identical architecture fingerprint, parameter count, initialization digest, training-data digest, optimizer schedule digest, and declared dimensions; only privileged access and the resulting independently trained instance may differ `[BAR-Entry 11]`.
 - Entry 76 Ruling 5 additionally requires identical confidence-calibration, evaluation-data, ECE-definition, binning-definition, and paired-training-contract digests. `training_instance_sha256` must differ while every preceding equality field matches `[OP-Entry 76]`.
 - No peer request may carry an internal representation, self-report, confidence payload, homeostatic hidden value, gradients, device pointer, checkpoint tensor, or perturbation realization. The mandatory semantic-probe sentinel is `candidate_confidence_present=false,candidate_confidence=null`; changing either to convey a value is `PRIVILEGED_STATE_LEAK` `[PROPOSED]`.
@@ -106,7 +106,7 @@ The scaffold variable is `stub_reserve`, target `0.5`, domain `[0,1]`, and regul
 
 ## 8. Synthetic adapters
 
-`specs/data/m4_model_scaffold_executable_fixture_v1.json` fixes complete schema-valid candidate/peer manifests and requests, dependency/checkpoint/publication bases, six lifecycle results, nine canonical response constructors and SHA-256 values, and seventeen typed mutations with canonical failure-result SHA-256 values. Its stored adapter order is `[PROPOSED]`:
+`specs/data/m4_model_scaffold_executable_fixture_v1.json` fixes complete schema-valid candidate/peer manifests and requests, dependency/checkpoint/publication bases, six lifecycle results, nine canonical response constructors and SHA-256 values, and seventeen typed mutations with canonical failure-result SHA-256 values. `m4_model_scaffold_rf1_rf3_fixture_v1.json`, bound to the first file's raw digest, adds the redaction-binding mutation, making eighteen stored negative cases total `[PROPOSED]`. The adapter order is `[PROPOSED]`:
 
 1. `candidate`: reads the privileged vector;
 2. `peer`: reads public history only;
@@ -115,7 +115,7 @@ The scaffold variable is `stub_reserve`, target `0.5`, domain `[0,1]`, and regul
 5. `permuted`: applies the committed privileged-index permutation;
 6. `shuffled`: applies the committed public-history permutation;
 7. `naive`: uses the last public observation only;
-8. `frozen`: repeats the first complete response for the episode;
+8. `frozen`: repeats the first complete scientific payload for the episode while rebuilding the request-correlated envelope; `reset_episode` clears that payload cache;
 9. `specificity`: candidate path with perturbation only at `NON_SELF_PROXIMAL_COMPONENT`.
 
 Scientific published labels remain exactly `candidate,empty,permuted,shuffled,oracle,naive,frozen,specificity`; `peer` is the L7 matched comparator and is never renamed into a control arm `[LAW-L7] [LAW-L18] [PROPOSED]`.
@@ -130,9 +130,11 @@ Each response reports device class, compute capability, runtime/dependency-manif
 
 The scaffold must run with `CPU_STUB` and `CUDA_STUB_HOST_ORCHESTRATION`; the latter may allocate only fixture tensors and cannot invoke a real model `[PROPOSED]`. Resource-limit violation is `RESOURCE_ENVELOPE_EXCEEDED`, never automatic model fallback `[PROPOSED]`.
 
+The supplemental executable fixture constructs the CUDA-host dependency manifest, adapter manifest, request, internal response, device-to-host custody record, published positive response, and their fixed digests. Its custody negative changes only `/resource_report/synchronized` from `true` to `false`; no CPU object can serve as that negative's base `[PROPOSED]`.
+
 ## 10. Determinism, checkpoint metadata, and publication
 
-Scaffold adapters are stateless except `frozen`, whose first-response cache is reset only by `reset_episode`. Two fresh-process runs over the fixture sequence must yield byte-identical canonical responses and identical state digests; O-14 prohibits a third run after failure and O-15 keeps both runs diagnostic-only `[PROPOSED]`.
+Scaffold adapters are stateless except `frozen`, whose first scientific-payload cache is reset only by `reset_episode`. The supplemental fixture fixes two requests in episode one, a reset and request in episode two, three complete responses, payload and envelope digests, and two complete fresh-process run manifests. Each run concatenates every constructed artifact's RFC-8785 bytes plus LF in stored order; both artifact-digest arrays and run digests must be identical. The nondeterminism injection changes one valid binary64 confidence bit only in run two. O-14 prohibits a third run after failure and O-15 keeps both runs diagnostic-only `[PROPOSED]`.
 
 Checkpoint metadata schema records adapter manifest digest, implementation SHA, attempt ID, training status, step, data/schedule/initialization digests, candidate/peer parity digest, tensor-index digest, and parent checkpoint digest `[PROPOSED]`. For the scaffold, `training_status=NOT_APPLICABLE_STUB`, step `0`, and tensor index is empty `[PROPOSED]`. Checkpoint files from a future real model are forbidden until the later gate.
 

@@ -21,3 +21,9 @@
 - Separated input-schema, post-schema semantic, pre-serialization internal-output, repeatability, and publication injection boundaries so every expected failure code is reachable.
 - Added all Entry 76 Ruling 5 equality identities and an executable candidate/peer manifest pair with one explicitly different independently trained instance identity.
 - Corrected the unsupported confidence-domain source tag from `[BAR-Entry 11]` to `[PROPOSED]`.
+
+## v1.2 — RF1–RF3 remediation
+
+- Added an exact `CUDA_STUB_HOST_ORCHESTRATION` dependency/manifest/request/response/custody positive and a single-field custody negative.
+- Added two frozen requests in one episode, a reset and second episode, three complete responses, and two byte-identical fresh-process run manifests with fixed digests.
+- Defined the peer-redaction projection, constructor order, complete-request digest, receipt digest, and binding-negative mutation.
