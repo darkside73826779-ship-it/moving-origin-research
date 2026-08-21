@@ -230,14 +230,38 @@ def test_primitive_tape_reproduces_baseline_and_gpu():
     assert comparison["max_rho_delta"] <= 1e-12
 
 
-@pytest.mark.parametrize("alpha,c_min,eta,v_mult", [
-    (0.1, 0.7, 0.1, 1.0),
-    (0.2, 0.8, 0.2, 2.0),
+@pytest.mark.parametrize("alpha,v_mult,c_min,eta,sigma", [
+    (0.1, 1.0, 0.7, 0.1, 3.000075),
+    (0.2, 2.0, 0.8, 0.2, 12.0),
 ])
-def test_nonzero_alpha_cpu_gpu_selection_and_rho(alpha, c_min, eta, v_mult):
+def test_nonzero_alpha_cpu_gpu_selection_and_rho(alpha, v_mult, c_min, eta, sigma):
     if subject.torch is None or not subject.torch.cuda.is_available():
         pytest.skip("required CUDA runtime unavailable")
-    tape = subject.make_tape((0, 0, 0, 8, 10, 4, alpha, c_min, eta, v_mult, 1.0))
+    tape = subject.make_tape((0, 0, 0, 8, 10, 4, alpha, v_mult, c_min, eta, sigma))
+    cpu = subject.evaluate_tape_cpu(tape)
+    gpu = subject.evaluate_tape_gpu(tape)
+    comparison = subject.compare_block(cpu, gpu)
+    assert np.array_equal(cpu["d_seed"], gpu["d_seed"])
+    assert comparison["masks_equal"]
+    assert comparison["rho_masks_equal"]
+    assert comparison["predicates_equal"]
+    assert comparison["max_beta_delta"] <= 1e-12
+    assert comparison["max_rho_delta"] <= 1e-12
+
+
+@pytest.mark.parametrize("cell_ordinal,alpha,v_mult,c_min,eta,sigma", [
+    (0, 0.0, 0.5, 0.5, 0.01, 1.3125890624999998),
+    (1, 0.1, 1.0, 0.7, 0.1, 3.000075),
+    (2, 0.2, 2.0, 0.8, 0.2, 12.0),
+])
+@pytest.mark.parametrize("arm_ordinal", [0, 1])
+def test_full_dimension_paired_block_equivalence(
+        cell_ordinal, alpha, v_mult, c_min, eta, sigma, arm_ordinal):
+    if subject.torch is None or not subject.torch.cuda.is_available():
+        pytest.skip("required CUDA runtime unavailable")
+    arm_sigma = sigma if arm_ordinal == 0 else 0.0
+    tape = subject.make_tape((cell_ordinal, arm_ordinal, 0, 32, 100, 16,
+                              alpha, v_mult, c_min, eta, arm_sigma))
     cpu = subject.evaluate_tape_cpu(tape)
     gpu = subject.evaluate_tape_gpu(tape)
     comparison = subject.compare_block(cpu, gpu)

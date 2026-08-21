@@ -352,18 +352,20 @@ def evaluate_tape_gpu(tape: dict[str, Any], device: str = "cuda") -> dict[str, A
     if torch is None or not torch.cuda.is_available():
         raise ContractFailure("gpu_evaluator", "CUDA_UNAVAILABLE")
     try:
-        p = torch.as_tensor(tape["p_true"], dtype=torch.float64, device=device)
+        # The CPU reference log transform is part of deterministic primitive-tape
+        # construction.  The simulation path after this boundary remains CUDA.
+        p_logit_cpu = pa.logit(tape["p_true"])
+        p_logit = torch.as_tensor(p_logit_cpu, dtype=torch.float64, device=device)
         correct = torch.as_tensor(tape["correct"], dtype=torch.bool, device=device)
         xi = torch.as_tensor(tape["xi"], dtype=torch.float64, device=device)
         xi_l = torch.as_tensor(tape["xi_l"], dtype=torch.float64, device=device)
     except RuntimeError:
         raise ContractFailure("gpu_evaluator", "GPU_ALLOCATION_FAILED") from None
-    B, S, L, Nw, W = p.shape
+    B, S, L, Nw, W = p_logit.shape
     d = torch.empty((B, S, L, Nw), dtype=torch.float64, device=device)
     eps = pa.EPS_C
     logit_floor = math.log(eps) - math.log1p(-eps)
     logit_ceiling = math.log1p(-eps) - math.log(eps)
-    p_logit = torch.log(p) - torch.log1p(-p)
     c_logit = (p_logit + xi).clamp(logit_floor, logit_ceiling)
     c_prime_logit = (c_logit + xi_l).clamp(logit_floor, logit_ceiling)
     for dose in range(L):
@@ -382,12 +384,20 @@ def evaluate_tape_gpu(tape: dict[str, Any], device: str = "cuda") -> dict[str, A
             risk = incorrect.to(torch.float64) / answered.to(torch.float64)
             d[:, :, dose, window] = risk - pa.R_STAR
             tau = (tau + tape["eta"] * (risk - pa.R_STAR)).clamp(pa.TAU_MIN, pa.TAU_MAX)
-    # Fixed-order accumulation prevents a backend-selected parallel reduction
-    # from perturbing exact four-dose ties before rho midranking.
-    means = torch.zeros((B, S, L), dtype=torch.float64, device=device)
-    for window in range(Nw):
-        means = means + d[:, :, :, window]
-    means = means / Nw
+    # NumPy 1.26 pairwise_sum for the controlling N_w=16 uses eight lanes,
+    # followed by its fixed binary combine tree.  Spell that tree explicitly
+    # on CUDA so exact CPU ties remain exact before rho midranking.
+    if Nw == 16:
+        lanes = d[:, :, :, :8] + d[:, :, :, 8:16]
+        means = (((lanes[:, :, :, 0] + lanes[:, :, :, 1]) +
+                  (lanes[:, :, :, 2] + lanes[:, :, :, 3])) +
+                 ((lanes[:, :, :, 4] + lanes[:, :, :, 5]) +
+                  (lanes[:, :, :, 6] + lanes[:, :, :, 7]))) / 16.0
+    else:
+        means = torch.zeros((B, S, L), dtype=torch.float64, device=device)
+        for window in range(Nw):
+            means = means + d[:, :, :, window]
+        means = means / Nw
     x = torch.tensor([0., 1., 2., 3.], dtype=torch.float64, device=device)
     cov = ((means - means.mean(-1, keepdim=True)) * (x - x.mean())).mean(-1)
     beta = cov / float(pa.VAR_X)

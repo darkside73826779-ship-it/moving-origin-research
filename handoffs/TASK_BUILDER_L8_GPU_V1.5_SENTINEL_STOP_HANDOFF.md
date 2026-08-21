@@ -89,6 +89,16 @@ Rebecca rejected the hybrid CPU-reference scientific path as inadequate GPU adop
 
 The same two nonzero-alpha regression cases now pass on the fully GPU-native evaluator with identical CPU/GPU `d_seed`, masks, and predicates. Targeted result: `21 passed in 1.62s`. Full battery: `39 passed in 89.62s`. No sentinel or full-screen execution was performed for this replacement proposal before reporting to Rebecca.
 
+## CUDA equivalence remediation v2
+
+After the first fully GPU-native sentinel returned `NOT_EQUIVALENT`, Rebecca directed continued CUDA-equivalence development using the existing CPU outputs. The corrected boundary is:
+
+- CPU deterministic tape construction additionally derives reference `logit(p)` from the already-generated `p_true`; this is a primitive-tape transformation, not a per-repetition simulator evaluation.
+- CUDA performs confidence perturbation, clamping, threshold transformation/comparison, stable selection, incorrect-answer counting, risk and tau updates, beta, dose means, exact-equality midranks, and rho.
+- For the controlling `N_w=16`, CUDA explicitly reproduces NumPy 1.26.4's eight-lane pairwise-sum tree before division. This preserves CPU-exact dose-mean ties and therefore the rho midranks without a tolerance or predicate change.
+
+Expanded development coverage uses the exact sentinel dimensions (`W=100`, `N_w=16`), all three committed sentinel cells, both arms, and committed calibration values. All six paired blocks have exact CPU/GPU `d_seed`, validity masks, rho masks, and predicates, with beta/rho within existing tolerances. Targeted module: `27 passed in 4.65s`. Full battery: `45 passed in 92.71s`. No governed sentinel or full-screen execution was performed for this remediation before reporting to Rebecca.
+
 ## Public-repository safety attestation
 
 Before Commit A was pushed, gitleaks scanned the complete one-commit delta and found zero leaks. A separate regex/manual scan found no credentials, API keys, tokens, passwords, secrets, personal contact details, machine identifiers, private absolute paths, environment dumps, protected seeds, or other prohibited PII. The role-local Git author address was classified acceptable. `git diff --check` found only three intentional Markdown hard-break spaces in Rebecca's immutable approval artifact; they were preserved. The failure-evidence commit received the same pre-push scan before publication.
