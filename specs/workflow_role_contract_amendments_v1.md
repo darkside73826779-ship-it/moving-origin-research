@@ -14,7 +14,7 @@ Insert before `## Standing constraints`:
 >
 > Formal routing follows `specs/data/workflow_routing_table_v1.json`. A task-specific route overrides a default only through a full-SHA, repository-committed Rebecca-signed ruling and may not remove mandatory independence, custody, or Rebecca gates. Ownership transfers only through a labeled FORMAL HANDOFF. CONSULTATION REQUEST does not transfer ownership.
 >
-> Every formal handoff uses `specs/data/common_handoff_manifest_schema_v1.json`. The receiver independently verifies all fields within its authority; an upstream assertion is not evidence merely because it validates. New public artifacts must not contain application task/thread/session IDs or task URLs.
+> Every formal handoff uses `specs/data/common_handoff_manifest_schema_v1.json`. The receiver independently verifies all fields within its authority; an upstream assertion is not evidence merely because it validates. The sole pre-custody exception is the schema-valid private JUDGE→RECORDER envelope; RECORDER restores durability by committing a receiver-authored custody manifest with the exact ruling. New public artifacts must not contain application task/thread/session IDs or task URLs.
 >
 > Every push is scanned over the complete introduced `base..tip` range plus manual review. No role relies on the former narrow scan exemption. Tool output collects evidence and never replaces judgment.
 >
@@ -50,19 +50,19 @@ Replace the checkpoint paragraph with:
 
 Append to `## Executability verification`:
 
-> Every executable specification must include a trace conforming to `specs/data/executability_trace_schema_v1.json`. ARCHITECT fixes every row and verification ID; `STOP_UNRESOLVED` is the only permitted incomplete status. A trace never replaces the item-by-item post-edit and diff self-inspections already required.
+> Every executable specification must include an RFC-8785-canonical trace and sidecar conforming to `specs/data/executability_trace_schema_v1.json`. ARCHITECT fixes every uniquely identified row, its order, and all verification IDs; `STOP_UNRESOLVED` is the only permitted incomplete status. ARCHITECT never authors receiver dispositions. A trace never replaces the item-by-item post-edit and diff self-inspections already required.
 
 ## `CRITIC_INITIALIZATION.md`
 
 Append to `## Executability review`:
 
-> Independently follow every path and value in the specification's structured trace. Record `VERIFIED` or `BLOCKED` per row without editing the source trace. Schema validity or an upstream `READY` assertion is never sufficient evidence.
+> Independently follow every path and value in the specification's structured trace. Without editing the source trace, author `reviews/executability/<work_item_slug>_critic_disposition.json` and its sidecar under `specs/data/executability_trace_disposition_schema_v1.json`, bound to the raw trace digest, specification commit, source order, per-row RFC-8785 digest, and CRITIC verification IDs. Record `VERIFIED` or `BLOCKED` per row; any blocked/missing/mismatched row makes the overall disposition `BLOCKED`. Schema validity or an upstream `READY` assertion is never sufficient evidence.
 
 ## `TASK_BUILDER_INITIALIZATION.md`
 
 Append to its executability/pre-build section:
 
-> Before implementation, independently validate every structured-trace row and STOP on `STOP_UNRESOLVED`, digest/schema mismatch, missing fixed test ID, or implementer choice. After Rebecca approval, TASK BUILDER may perform exact mechanical role-contract/schema/tool edits, but never STATE.md, provenance, ledger, scientific-specification, scoring, or ruling authorship.
+> Only after Rebecca releases implementation and before editing, independently validate every structured-trace row. Without editing the source trace or CRITIC disposition, author `diagnostics/executability/<work_item_slug>_taskbuilder_disposition.json` and sidecar under `specs/data/executability_trace_disposition_schema_v1.json`, bound to the raw trace digest, specification commit, source order, per-row RFC-8785 digest, and TASK BUILDER verification IDs. STOP on `STOP_UNRESOLVED`, any blocked/missing/reordered row, digest/schema mismatch, missing fixed test ID, or implementer choice. After Rebecca approval, TASK BUILDER may perform exact mechanical role-contract/schema/tool edits, but never STATE.md, provenance, ledger, scientific-specification, scoring, or ruling authorship.
 
 ## `INTEGRATOR_INITIALIZATION.md`
 
@@ -70,7 +70,7 @@ Replace the next-recipient implication after STATE commit with:
 
 > Every committed STATE.md update routes serially to RECORDER for hash attestation before any dependent event. Multiple already-authorized low-risk state events may be one commit only when each event is separately enumerated. INTEGRATOR is not a mandatory post-build hop unless the approved route declares a state event.
 
-Add freshness keys to its STATE handoff requirement: `schema_version`, `as_of_utc`, `authoritative_commit`, `supersedes`, `status`, `document_role`.
+INTEGRATOR alone creates/updates `state/STATE.metadata.json` and sidecar using `workflow_state_metadata_schema_v1.json`; RECORDER attests both STATE and metadata hashes. `source_commit` names the input commit summarized by STATE, never the metadata commit.
 
 ## `RECORDER_INITIALIZATION.md`
 
@@ -78,11 +78,13 @@ Insert under custody rules:
 
 > RECORDER attests every INTEGRATOR STATE update serially. For JUDGE rulings, RECORDER verifies the JUDGE-provided byte hash, scans without editing, commits the exact UTF-8/LF bytes under `docs/rulings/` on a recorder branch, appends custody provenance, and pushes. Byte mismatch, scan block, or publication failure yields `UNPUBLISHED_JUDGE_RULING` and STOP to Rebecca. Publication is custody, not gate approval.
 
+> RECORDER alone creates/updates `docs/rulings/provenance_log.metadata.json` and sidecar. It also attests `state/STATE.metadata.json`; it never edits STATE or Coordinator metadata.
+
 ## `JUDGE_INITIALIZATION.md`
 
 Replace step 5, `Return a ruling`, with:
 
-> 5. Serialize the final ruling as UTF-8/LF bytes, compute lowercase SHA-256, and return both to RECORDER through the authorized custody channel. Do not commit, push, edit after hashing, or merge.
+> 5. Serialize the final ruling as strict UTF-8 without BOM, LF-only, exactly one final LF, and at most 4,194,304 bytes. Build the schema-defined RFC 8785 canonical JUDGE custody envelope using standard padded RFC 4648 base64 without whitespace and return it in one labeled formal handoff through the Coordinator to RECORDER. Do not commit, push, edit after hashing, split the envelope, or merge.
 
 Append to the handoff format:
 
@@ -114,17 +116,19 @@ Replace §3.1's prospective scan-scope exception with:
 
 > Every branch push is scanned across the complete introduced `base..tip` commit range and manually reviewed, regardless of path class or prior review. Unavailable/erroring scanners fail closed. The approved preflight helper may standardize evidence collection but never replaces manual review or independent custody/scoring integrity checks.
 
-## State document templates
+## State metadata and owner-specific edits
 
-The authorized mechanical owners add this exact front-matter block to new ledger/checkpoint/STATE-handoff/custody-package templates:
+Metadata uses only `specs/data/workflow_state_metadata_schema_v1.json`, RFC 8785 canonicalization, and the sidecar rule in the program specification. No YAML/front-matter substitute is permitted.
 
-```yaml
-schema_version: workflow-state-metadata-v1
-as_of_utc: YYYY-MM-DDTHH:MM:SSZ
-authoritative_commit: 40-lowercase-hex
-supersedes: [40-lowercase-hex-or-empty]
-status: current|superseded|historical
-document_role: routing|durable_state|custody_history|checkpoint
-```
+- WORKFLOW COORDINATOR alone creates/updates `state/COORDINATOR_LEDGER.metadata.json`, each new `state/checkpoints/*.md.metadata.json`, and their sidecars.
+- INTEGRATOR alone creates/updates `state/STATE.metadata.json` and sidecar.
+- RECORDER alone creates/updates `docs/rulings/provenance_log.metadata.json` and sidecar and attests STATE metadata.
+- TASK BUILDER may add schema validators/templates but may not populate or edit owner-controlled metadata instances.
 
-No mechanical editor may modify historical content beyond adding approved metadata/status. Companion changelogs must enumerate every changed file and exact inserted/replaced section.
+For `state/COORDINATOR_HANDOFF_CHECKPOINT.md`, WORKFLOW COORDINATOR inserts immediately after the H1 title this exact line and changes no historical body text:
+
+> **Status:** HISTORICAL SNAPSHOT — superseded for routing; retained unchanged as evidence. See adjacent metadata. `[PROPOSED]`
+
+Coordinator creates `state/COORDINATOR_HANDOFF_CHECKPOINT.md.metadata.json` with exact values: `schema_version="workflow-state-metadata-v1"`, `as_of_utc="2026-08-19T14:51:00Z"`, `source_commit="d38f9069d9a4f2a92ffb3a29d6f80ef4e7253da9"`, `document_path="state/COORDINATOR_HANDOFF_CHECKPOINT.md"`, `document_sha256` computed after the approved one-line status insertion, `supersedes_metadata_sha256=[]`, `status="historical"`, `document_role="checkpoint"`, `owner_role="WORKFLOW_COORDINATOR"`. The target hash is implementation-time evidence and is not preclaimed by ARCHITECT `[PROPOSED]`.
+
+No mechanical editor may modify historical content beyond that approved status line. Companion changelogs enumerate every changed file and exact inserted/replaced section.
