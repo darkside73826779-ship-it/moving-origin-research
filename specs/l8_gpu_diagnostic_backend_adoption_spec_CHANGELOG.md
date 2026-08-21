@@ -4,6 +4,17 @@
 
 **Regime:** B
 
+## v1.4 — CRITIC B13 and NB-G–NB-I remediation
+
+- Defines the exact twelve-key canonical scientific payload used by `scientific_payload_sha256`.
+- Enumerates every excluded result/runtime field and forbids dropping or normalizing any included scientific field.
+- Requires equality of both canonical payload bytes and their digest across the two runs and completion-order rehearsal.
+- Clarifies that fixture and calibration digests cover committed UTF-8/LF file bytes, not RFC 8785 reserialization.
+- Removes `[PROPOSED]` from the merged operative GPU-ruling citation.
+- Defines `derived_seed_collision_count` as the count of unordered distinct-identity pairs sharing a derived integer.
+
+No prior blocker closure, locked bar, law quotation, calibration value, fixture expectation, geometry, negative finding, or authorization boundary changed.
+
 ## v1.3 — CRITIC B10–B12 and NB-A–NB-F remediation
 
 - Replaces the four-file in-tree CPU specification package with the byte-exact authoritative package at `2082680`.

@@ -1,4 +1,4 @@
-# L8 GPU Diagnostic-Backend Adoption Specification v1.3
+# L8 GPU Diagnostic-Backend Adoption Specification v1.4
 
 **Date:** 2026-08-20
 
@@ -30,7 +30,7 @@ This contract concerns backend equivalence only. It makes no L8 scientific claim
 
 The following committed artifacts control, in descending order after the constitution:
 
-1. `docs/rulings/REBECCA_L8_FULLSCREEN_GPU_REBUILD_APPROVAL.md` at base `b6d4556` `[PROPOSED]`.
+1. `docs/rulings/REBECCA_L8_FULLSCREEN_GPU_REBUILD_APPROVAL.md` at base `b6d4556`.
 2. `docs/rulings/REBECCA_L8_FULLSCREEN_ITEM1_RHO_AUTHORIZATION.md`, copied into this branch from committed source `69feed8d353662c60fe9025b0f3c91dc80b9d1e3`.
 3. `docs/rulings/REBECCA_L8_GEOMETRY_TABLE_FREEZE.md`, copied into this branch from committed source `5306c3025a6018a4947c97b8f498f811ef7580ba`.
 4. Controlling CPU specification `specs/l8_g2g4_minimal_full_screen_spec.md`, source SHA `2082680a7caba85c46e637b3b38d679fa7f80599` `[PROPOSED]`.
@@ -102,7 +102,7 @@ Work items are fixed blocks of thirty-two consecutive repetitions for one `(cell
 
 ## 6. Frozen sentinel workload
 
-The known-good contract is `specs/data/l8_gpu_adoption_known_good_v1.json`, SHA-256 `65256ff48fb48399536c3e499242400267aa044459d247a9ecc51eb77e6cd7f7` `[PROPOSED]`, with sidecar `specs/data/l8_gpu_adoption_known_good_v1.json.sha256` `[PROPOSED]`.
+The known-good contract is `specs/data/l8_gpu_adoption_known_good_v1.json`, raw committed-LF file SHA-256 `65256ff48fb48399536c3e499242400267aa044459d247a9ecc51eb77e6cd7f7` `[PROPOSED]`, with sidecar `specs/data/l8_gpu_adoption_known_good_v1.json.sha256` `[PROPOSED]`. The fixture and frozen-calibration digests cover their committed UTF-8/LF file bytes, not RFC 8785 reserialization `[PROPOSED]`.
 
 The stochastic sentinel uses exact geometry `(W=100, N_w=16)` and `Q=1600` queries per dose `[PROPOSED]`. It runs exactly 256 repetitions per cell per arm `[PROPOSED]`, five seeds per repetition `[BAR-Entry 11]`, combo then null-control arms `[PROPOSED]`, and these cells in order `[PROPOSED]`:
 
@@ -114,7 +114,7 @@ The combo arm loads sigma from the frozen CPU calibration artifact; the null arm
 
 The known-good contract contains six rho categories plus the no-softening subtest, and four complete-verdict cases; together these cover the controlling CPU specification's seven deterministic categories plus case 2a `[PROPOSED]`. Nonfinite JSON fixture input uses `null` solely as the serialized representation of undefined/nonfinite test input; the in-memory test injects binary64 NaN `[PROPOSED]`.
 
-The entire GPU sentinel is executed twice from a fresh process with identical configuration `[PROPOSED]`. After removal of runtime metadata, the second canonical scientific payload must be byte-identical to the first `[PROPOSED]`. Failure produces `INSTRUMENT_FAILURE`; no third execution is permitted `[OP-Entry 22]`.
+The entire GPU sentinel is executed twice from a fresh process with identical configuration `[PROPOSED]`. Using exactly the §8.4 construction, the second canonical scientific payload must be byte-identical to the first `[PROPOSED]`. Failure produces `INSTRUMENT_FAILURE`; no third execution is permitted `[OP-Entry 22]`.
 
 ## 7. L18 scope
 
@@ -169,6 +169,31 @@ Write and fsync JSON temp, validate, compute digest, write and fsync sidecar tem
 
 Commit A freezes code, schemas, configuration, dependencies, fixtures, and tests. Commit B contains only returned evidence and handoff, and records Commit A as `implementation_sha` `[PROPOSED]`.
 
+### 8.4 Canonical scientific payload and repeat digest
+
+For each run, construct a new object containing exactly these keys in this source order and no others `[PROPOSED]`:
+
+1. `schema_version`, literal `l8-gpu-adoption-scientific-payload-v1`;
+2. `implementation_sha`, copied from the validated configuration;
+3. `config_sha256`, SHA-256 of the RFC 8785 canonical configuration object;
+4. `fixture_sha256`, literal `65256ff48fb48399536c3e499242400267aa044459d247a9ecc51eb77e6cd7f7`;
+5. `frozen_calibration_sha256`, literal `f012849c57f7aadac3af69a345572674a6fdcc3de5eaf9eb642973b7d3cdfb5e`;
+6. `geometry`, copied exactly from configuration;
+7. `repetitions_per_cell_per_arm`, copied exactly from configuration;
+8. `arms`, copied exactly from configuration;
+9. `cells_config`, copied exactly from configuration;
+10. `derived_seed_collision_count`;
+11. `deterministic_tests`, the complete ordered array defined in §8.2;
+12. `cells`, the complete ordered run-specific cell array defined in §8.2, including every arm-level count, mean, maximum delta, undefined-mask equality, and predicate-vector equality field.
+
+All literals and test criteria in this list are `[PROPOSED]`.
+
+Serialize that object with RFC 8785 and compute lowercase SHA-256 over those canonical bytes; this is `scientific_payload_sha256` `[PROPOSED]`. The complete canonical payload bytes must be retained in memory until the containing result validates; they are not published as a separate file `[PROPOSED]`.
+
+The digest domain excludes exactly: top-level `header`; top-level `equivalence`; top-level `failure_rehearsal`; top-level `verdict`; each run's `run_ordinal`, `scientific_payload_sha256`, and `elapsed_seconds`; and all environment/runtime fields `numpy_version`, `torch_version`, `cuda_runtime_version`, `gpu_model`, and `producer_worker_count` `[PROPOSED]`. No field inside `deterministic_tests` or `cells` may be removed, masked, rounded, normalized, or reordered before hashing `[PROPOSED]`.
+
+Run zero and run one pass repeatability iff their canonical payload byte arrays are byte-identical and their `scientific_payload_sha256` strings are identical `[PROPOSED]`. Case 9 applies the same construction after reversed completion delivery `[PROPOSED]`. Any mismatch is `INSTRUMENT_FAILURE`; no third run occurs `[OP-Entry 22]`.
+
 ## 9. Twelve-case failure rehearsal
 
 Each case starts from the committed known-good JSON/sidecar pair, runs in a fresh process, preserves the input pair, and emits one ordered row with `case_id`, `injected_boundary`, `expected_status`, `observed_status`, `preserved_paths`, `assertion_pass` `[PROPOSED]`.
@@ -196,7 +221,7 @@ An independently valid apparatus with any parity failure yields `NOT_EQUIVALENT`
 
 Native torch RNG calibration divergence remains an observed named negative: four of fifteen pairs differ; the exact maximum absolute difference is `0.7499937499999998`, the other nonzero magnitude is `0.18749843749999995`, and mean absolute difference is `0.1624986458333333`. The two misspecification-profile coordinate disagreements remain named negative findings `[LAW-L19]`. Native GPU calibration and torch-native RNG are not adopted `[PROPOSED]`.
 
-For this exact sentinel, `derived_seed_collision_count` must equal `3840` `[PROPOSED]`: each of the `3*256*5 = 3840` cell/repetition/seed values appears once in each arm, with no additional collision among the three cell ranges `[PROPOSED]`. Any other count is `INSTRUMENT_FAILURE` `[PROPOSED]`.
+Define `derived_seed_collision_count = sum_z m_z*(m_z-1)/2`, where `m_z` is the number of distinct full identity tuples whose derived `seed_int` equals integer `z`; equivalently it counts unordered pairs of distinct identity tuples sharing a derived integer `[PROPOSED]`. For this exact sentinel it must equal `3840` `[PROPOSED]`: each of the `3*256*5 = 3840` cell/repetition/seed values appears once in each arm, with no additional collision among the three cell ranges `[PROPOSED]`. Any other count is `INSTRUMENT_FAILURE` `[PROPOSED]`.
 
 Any later full-screen GPU run remains bound to the controlling §7.1 schema, field order, types, NaN-to-null handling, atomic write, and output paths `diagnostics/l8_g2g4_minimal_full_screen.json` and `diagnostics/l8_g2g4_minimal_full_screen_HANDOFF.md` `[PROPOSED]`. This equivalence-packet schema does not replace or amend that full-screen contract `[PROPOSED]`.
 
