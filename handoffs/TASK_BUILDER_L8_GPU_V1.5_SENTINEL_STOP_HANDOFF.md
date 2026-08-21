@@ -53,6 +53,21 @@ No sentinel result JSON or sidecar was published. No full-screen result JSON or 
 
 After receiving the STOP report and repair options on 2026-08-21, Rebecca R. McClintic expressly authorized TASK BUILDER to implement the recommended RFC 8785 canonical-order repair and run the sentinel again. This authorizes one new replacement sentinel execution after the repair passes tests; it is not an automatic retry. The conditional full-screen execution remains permitted only if that replacement sentinel returns `EQUIVALENT_FOR_O15_DIAGNOSTICS`.
 
+## Authorized repair and replacement-sentinel result
+
+- Repair commit: `44046ae40f3e2f381f7c4227b5dd4bf1db874063`.
+- Full post-repair battery: `37 passed in 86.27s`.
+- The one Rebecca-authorized replacement sentinel completed without an apparatus failure.
+- Published result: `diagnostics/l8_gpu_adoption_equivalence.json`.
+- Published raw SHA-256: `1178de6f7ad40d282d2ffb102fb02809ad6b9370d92c5189eee088a66414017b`.
+- Verdict: `NOT_EQUIVALENT`.
+- Both runs were byte-repeatable; all deterministic cases and all twelve failure rehearsals passed.
+- Equivalence failures: counts were not all equal, numeric tolerances did not all pass, and predicates were not all equal.
+- Maximum beta difference was `5.551115123125783e-16`; maximum rho difference was `0.4000000000000001` in nonzero-alpha cells.
+- One reported combo complete-verdict count differed: CPU `122`, GPU `121`.
+
+Because the approved prerequisite verdict was not obtained, the full-screen execution was not launched. This completed negative sentinel result is preserved without renaming. Any rho-path remediation and any further execution require a new reviewed design and explicit Rebecca authorization.
+
 ## Public-repository safety attestation
 
 Before Commit A was pushed, gitleaks scanned the complete one-commit delta and found zero leaks. A separate regex/manual scan found no credentials, API keys, tokens, passwords, secrets, personal contact details, machine identifiers, private absolute paths, environment dumps, protected seeds, or other prohibited PII. The role-local Git author address was classified acceptable. `git diff --check` found only three intentional Markdown hard-break spaces in Rebecca's immutable approval artifact; they were preserved. The failure-evidence commit received the same pre-push scan before publication.
