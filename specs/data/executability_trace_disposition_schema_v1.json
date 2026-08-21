@@ -1,0 +1,22 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://moving-origin-research.invalid/schemas/executability-trace-disposition-v1",
+  "title":"Independent Executability Trace Disposition v1",
+  "x-artifact-date":"2026-08-21",
+  "x-artifact-regime":"B",
+  "x-source-class":"PROPOSED",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["schema_version","date","regime","reviewer_role","source_trace_path","source_trace_sha256","source_specification_sha","rows","overall_disposition"],
+  "properties":{
+    "schema_version":{"const":"executability-trace-disposition-v1"},
+    "date":{"type":"string","format":"date"},
+    "regime":{"const":"B"},
+    "reviewer_role":{"enum":["CRITIC","TASK_BUILDER"]},
+    "source_trace_path":{"type":"string","pattern":"^(?!/)(?![A-Za-z]:)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)(?!.*\\\\)[A-Za-z0-9._/-]+$"},
+    "source_trace_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "source_specification_sha":{"type":"string","pattern":"^[0-9a-f]{40}$"},
+    "rows":{"type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"required":["input_id","source_row_sha256","verification_id","disposition","evidence_paths","finding"],"properties":{"input_id":{"type":"string","pattern":"^[A-Z0-9_]+$"},"source_row_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},"verification_id":{"type":"string","minLength":1},"disposition":{"enum":["VERIFIED","BLOCKED"]},"evidence_paths":{"type":"array","uniqueItems":true,"items":{"type":"string"}},"finding":{"type":["string","null"]}}}},
+    "overall_disposition":{"enum":["VERIFIED","BLOCKED"]}
+  }
+}

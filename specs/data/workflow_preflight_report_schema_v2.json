@@ -1,0 +1,33 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://moving-origin-research.invalid/schemas/workflow-preflight-report-v2",
+  "title":"Workflow Preflight Report v2",
+  "x-artifact-date":"2026-08-21",
+  "x-artifact-regime":"B",
+  "x-source-class":"PROPOSED",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["schema_version","base_sha","tip_sha","base_is_ancestor","merge_policy","introduced_commits","paths","secret_scanner","findings","manual_review_required","status"],
+  "properties":{
+    "schema_version":{"const":"workflow-preflight-report-v2"},
+    "base_sha":{"$ref":"#/$defs/sha"},
+    "tip_sha":{"$ref":"#/$defs/sha"},
+    "base_is_ancestor":{"const":true},
+    "merge_policy":{"const":"scan_each_commit_against_each_parent_and_scan_combined_base_tip"},
+    "introduced_commits":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["sha","parent_shas","is_merge"],"properties":{"sha":{"$ref":"#/$defs/sha"},"parent_shas":{"type":"array","items":{"$ref":"#/$defs/sha"},"uniqueItems":true},"is_merge":{"type":"boolean"}}}},
+    "paths":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["path","change_type","object_type","sha256"],"properties":{"path":{"$ref":"#/$defs/repoPath"},"change_type":{"enum":["added","modified","deleted","renamed","type_changed"]},"object_type":{"enum":["regular","symlink","deleted"]},"sha256":{"anyOf":[{"$ref":"#/$defs/sha256"},{"type":"null"}]}}}},
+    "secret_scanner":{"type":"object","additionalProperties":false,"required":["tool","version","exit_code","finding_count"],"properties":{"tool":{"const":"gitleaks"},"version":{"type":"string","minLength":1},"exit_code":{"type":"integer"},"finding_count":{"type":"integer","minimum":0}}},
+    "findings":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["finding_id","detector","class","path","line","column","commit_sha","evidence_sha256","context_kind","disposition","rationale_code"],"properties":{"finding_id":{"type":"string","pattern":"^F[0-9]{6}$"},"detector":{"enum":["gitleaks","fixed_regex"]},"class":{"enum":["credentials","private_keys","private_absolute_paths","personal_contact","machine_identifiers","environment_dumps","pii","protected_seed_material","task_session_ids"]},"path":{"anyOf":[{"$ref":"#/$defs/repoPath"},{"type":"null"}]},"line":{"type":["integer","null"],"minimum":1},"column":{"type":["integer","null"],"minimum":1},"commit_sha":{"$ref":"#/$defs/sha"},"evidence_sha256":{"$ref":"#/$defs/sha256"},"context_kind":{"enum":["CONTENT","SCANNER_DEFINITION_LITERAL"]},"disposition":{"enum":["BLOCKER","REBECCA_DECISION"]},"rationale_code":{"enum":["PROHIBITED_CONTENT_MATCH","SCANNER_PATTERN_SELF_MATCH"]}}}},
+    "manual_review_required":{"const":true},
+    "status":{"enum":["CLEAN","BLOCKED","ERROR"]}
+  },
+  "allOf":[
+    {"if":{"properties":{"status":{"const":"CLEAN"}}},"then":{"properties":{"findings":{"maxItems":0}}}},
+    {"if":{"properties":{"status":{"const":"BLOCKED"}}},"then":{"properties":{"findings":{"minItems":1}}}}
+  ],
+  "$defs":{
+    "sha":{"type":"string","pattern":"^[0-9a-f]{40}$"},
+    "sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "repoPath":{"type":"string","pattern":"^(?!/)(?![A-Za-z]:)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)(?!.*\\\\)[A-Za-z0-9._/-]+$"}
+  }
+}
