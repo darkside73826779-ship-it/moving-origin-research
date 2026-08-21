@@ -68,6 +68,16 @@ After receiving the STOP report and repair options on 2026-08-21, Rebecca R. McC
 
 Because the approved prerequisite verdict was not obtained, the full-screen execution was not launched. This completed negative sentinel result is preserved without renaming. Any rho-path remediation and any further execution require a new reviewed design and explicit Rebecca authorization.
 
+## Proposed rho-path remediation for review
+
+At Rebecca's direction, TASK BUILDER implemented the narrowest accuracy-preserving remediation without changing the published primitive-tape schema:
+
+- Construct selection-critical `c_prime` from the existing tape using the unchanged NumPy/SciPy CPU reference primitives before transfer to CUDA. This prevents transcendental-library rounding near `c_prime > tau` from changing answered sets.
+- Compute the discontinuous four-dose rho midrank statistic from the returned GPU `d_seed` using the unchanged CPU reference reduction. This prevents CUDA reduction ordering from splitting CPU-exact ties.
+- Retain CUDA batching for stable sorting, selection, incorrect-answer counting, risk updates, beta, and the large tensor workload.
+
+Two new nonzero-alpha regression cases cover the sentinel geometries that previously diverged. They require identical `d_seed`, validity masks, rho masks, and predicates, plus the existing numeric tolerances. Targeted result: `21 passed in 1.58s`. Full battery: `39 passed in 88.26s`. No new sentinel or full-screen execution was performed as part of this proposed remediation.
+
 ## Public-repository safety attestation
 
 Before Commit A was pushed, gitleaks scanned the complete one-commit delta and found zero leaks. A separate regex/manual scan found no credentials, API keys, tokens, passwords, secrets, personal contact details, machine identifiers, private absolute paths, environment dumps, protected seeds, or other prohibited PII. The role-local Git author address was classified acceptable. `git diff --check` found only three intentional Markdown hard-break spaces in Rebecca's immutable approval artifact; they were preserved. The failure-evidence commit received the same pre-push scan before publication.

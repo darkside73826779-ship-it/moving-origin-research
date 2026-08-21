@@ -228,3 +228,22 @@ def test_primitive_tape_reproduces_baseline_and_gpu():
     assert comparison["predicates_equal"]
     assert comparison["max_beta_delta"] <= 1e-12
     assert comparison["max_rho_delta"] <= 1e-12
+
+
+@pytest.mark.parametrize("alpha,c_min,eta,v_mult", [
+    (0.1, 0.7, 0.1, 1.0),
+    (0.2, 0.8, 0.2, 2.0),
+])
+def test_nonzero_alpha_cpu_gpu_selection_and_rho(alpha, c_min, eta, v_mult):
+    if subject.torch is None or not subject.torch.cuda.is_available():
+        pytest.skip("required CUDA runtime unavailable")
+    tape = subject.make_tape((0, 0, 0, 8, 10, 4, alpha, c_min, eta, v_mult, 1.0))
+    cpu = subject.evaluate_tape_cpu(tape)
+    gpu = subject.evaluate_tape_gpu(tape)
+    comparison = subject.compare_block(cpu, gpu)
+    assert np.array_equal(cpu["d_seed"], gpu["d_seed"])
+    assert comparison["masks_equal"]
+    assert comparison["rho_masks_equal"]
+    assert comparison["predicates_equal"]
+    assert comparison["max_beta_delta"] <= 1e-12
+    assert comparison["max_rho_delta"] <= 1e-12

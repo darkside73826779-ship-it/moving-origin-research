@@ -352,23 +352,23 @@ def evaluate_tape_gpu(tape: dict[str, Any], device: str = "cuda") -> dict[str, A
     if torch is None or not torch.cuda.is_available():
         raise ContractFailure("gpu_evaluator", "CUDA_UNAVAILABLE")
     try:
-        p = torch.as_tensor(tape["p_true"], dtype=torch.float64, device=device)
+        # Selection is discontinuous at c_prime == tau.  Construct c_prime with
+        # the unchanged CPU reference primitives so CUDA transcendental-library
+        # rounding cannot turn a sub-ulp confidence difference into a different
+        # answered set, risk count, and downstream rho predicate.
+        eps = pa.EPS_C
+        c_cpu = np.clip(pa.sigmoid(pa.logit(tape["p_true"]) + tape["xi"]), eps, 1-eps)
+        c_prime_cpu = np.clip(pa.sigmoid(pa.logit(c_cpu) + tape["xi_l"]), eps, 1-eps)
+        c_prime = torch.as_tensor(c_prime_cpu, dtype=torch.float64, device=device)
         correct = torch.as_tensor(tape["correct"], dtype=torch.bool, device=device)
-        xi = torch.as_tensor(tape["xi"], dtype=torch.float64, device=device)
-        xi_l = torch.as_tensor(tape["xi_l"], dtype=torch.float64, device=device)
     except RuntimeError:
         raise ContractFailure("gpu_evaluator", "GPU_ALLOCATION_FAILED") from None
-    B, S, L, Nw, W = p.shape
+    B, S, L, Nw, W = c_prime.shape
     d = torch.empty((B, S, L, Nw), dtype=torch.float64, device=device)
-    eps = pa.EPS_C
     for dose in range(L):
         tau = torch.full((B, S), pa.TAU_INIT, dtype=torch.float64, device=device)
         for window in range(Nw):
-            pv = p[:, :, dose, window].clamp(eps, 1-eps)
-            logits = torch.log(pv) - torch.log1p(-pv)
-            c = torch.sigmoid(logits + xi[:, :, dose, window]).clamp(eps, 1-eps)
-            clogit = torch.log(c) - torch.log1p(-c)
-            cp = torch.sigmoid(clogit + xi_l[:, :, dose, window]).clamp(eps, 1-eps)
+            cp = c_prime[:, :, dose, window]
             order = torch.argsort(cp, dim=-1, descending=True, stable=True)
             floor = max(1, math.ceil(tape["c_min"] * W))
             rank = torch.empty_like(order)
@@ -388,28 +388,17 @@ def evaluate_tape_gpu(tape: dict[str, Any], device: str = "cuda") -> dict[str, A
     sigma = torch.sqrt((residual ** 2).sum((-1, -2)) / (L * (Nw - 1)))
     invalid = (sigma == 0) | (~torch.isfinite(d).all((-1, -2)))
     beta_star = beta / sigma
-    order = torch.argsort(means, dim=-1, stable=True)
-    ranks = torch.empty_like(means)
-    # Four values only: exact-equality midranks are explicit and deterministic.
-    for i in range(B):
-        for s in range(S):
-            vals = means[i, s]
-            idx = order[i, s]
-            pos = 0
-            while pos < 4:
-                end = pos + 1
-                while end < 4 and bool(vals[idx[end]] == vals[idx[pos]]):
-                    end += 1
-                ranks[i, s, idx[pos:end]] = ((pos + 1) + end) / 2.0
-                pos = end
-    dose_rank = torch.tensor([1., 2., 3., 4.], dtype=torch.float64, device=device)
-    dx = dose_rank - dose_rank.mean()
-    dy = ranks - ranks.mean(-1, keepdim=True)
-    denom = torch.sqrt((dx ** 2).mean() * (dy ** 2).mean(-1))
-    rho = (dx * dy).mean(-1) / denom
-    rho = torch.where(denom == 0, torch.nan, rho)
-    return {"d_seed": d.cpu().numpy(), "beta": beta_star.cpu().numpy(),
-            "rho": rho.cpu().numpy(), "invalid": invalid.cpu().numpy()}
+    d_cpu = d.cpu().numpy()
+    # Rho is a discontinuous four-item midrank statistic.  Apply the unchanged
+    # CPU reference reduction to the already-identical d_seed values so CUDA
+    # reduction order cannot split an exact tie before ranking.
+    rho_cpu = np.empty((B, S), dtype=np.float64)
+    for repetition in range(B):
+        for seed in range(S):
+            value = rho_from_means(d_cpu[repetition, seed].mean(axis=1))
+            rho_cpu[repetition, seed] = np.nan if value is None else value
+    return {"d_seed": d_cpu, "beta": beta_star.cpu().numpy(),
+            "rho": rho_cpu, "invalid": invalid.cpu().numpy()}
 
 
 def compare_block(cpu: dict[str, Any], gpu: dict[str, Any]) -> dict[str, Any]:
