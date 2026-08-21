@@ -1,5 +1,22 @@
 # L8 GPU Diagnostic-Backend Adoption Specification — Changelog
 
+## v1.5 — 2026-08-21 — executability closure after TASK BUILDER STOP
+
+- Added a normative B1–B11 amendment without changing locked bars, geometry, seed derivation, controls, negative names, or authorization boundaries.
+- Defined arm-specific count polarity, denominator, undefined-rho treatment, and apparatus-invalid exclusion.
+- Fixed literal nested header topology and a deterministic Commit-A template/runtime-SHA/config-digest lifecycle.
+- Typed every deterministic row and supplied literal expected rows for all eleven categories.
+- Added a closed rehearsal status vocabulary, exact twelve-case contract, isolated filesystem layout, and a rehearsal-only known-good publication pair.
+- Defined fresh-process parent/child byte custody and comparison.
+- Bound the full screen to the primitive-tape/GPU evaluator, CPU geometry-aware calibration, sixteen producers, 62×32 + 1×16 blocking, and unchanged controlling output.
+- Added completed-arm counter invariants and exact top-level instrument-failure behavior.
+- Added a committed exact dependency manifest.
+- Added a seventeen-control executability matrix and mandatory implementation trace report to prevent narrative-only schema gaps.
+- Closed B11 with a Rebecca-gated lexicographic coverage-floor tie rule, explicit supersession of the conflicting bit-for-bit tie requirement, and cutoff-straddling lower/upper clipping fixtures with differing correctness labels.
+- Added a hard two-block resident queue bound with blocking backpressure for the largest full-screen geometry.
+- Aligned the dependency contract to the TASK BUILDER-confirmed workstation stack: PyTorch 2.13.0+cu130 and bundled CUDA 13.0.
+- Supersedes only conflicting v1.4 clauses; requires fresh-context CRITIC and Rebecca re-release before TASK BUILDER resumes.
+
 **Date:** 2026-08-20
 
 **Regime:** B

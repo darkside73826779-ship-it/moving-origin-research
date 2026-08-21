@@ -1,0 +1,15 @@
+{
+  "schema_version": "l8-gpu-adoption-dependencies-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "python": {"implementation": "CPython", "version": "3.11.9"},
+  "packages": [
+    {"name": "numpy", "version": "1.26.4", "index": "https://pypi.org/simple"},
+    {"name": "scipy", "version": "1.13.1", "index": "https://pypi.org/simple"},
+    {"name": "torch", "version": "2.13.0+cu130", "index": "https://download.pytorch.org/whl/cu130"},
+    {"name": "rfc8785", "version": "0.1.4", "index": "https://pypi.org/simple"}
+  ],
+  "cuda_runtime_version": "13.0",
+  "unknown_fields": "reject",
+  "version_match": "exact"
+}

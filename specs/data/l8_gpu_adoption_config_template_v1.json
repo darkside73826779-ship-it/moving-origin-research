@@ -1,0 +1,21 @@
+{
+  "schema_version": "l8-gpu-adoption-config-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "implementation_sha": "COMMIT_A_SHA",
+  "mode": "O-15-diagnostic-only",
+  "cpu_baseline_sha": "b1397498ca369067e956479e6c2bd6b0793c3e89",
+  "cpu_spec_sha": "2082680a7caba85c46e637b3b38d679fa7f80599",
+  "frozen_calibration": {"path": "specs/data/l8_cpu_frozen_calibration_v1.json", "sha256": "f012849c57f7aadac3af69a345572674a6fdcc3de5eaf9eb642973b7d3cdfb5e"},
+  "known_good_fixture": {"path": "specs/data/l8_gpu_adoption_known_good_v1.json", "sha256": "65256ff48fb48399536c3e499242400267aa044459d247a9ecc51eb77e6cd7f7", "sidecar_path": "specs/data/l8_gpu_adoption_known_good_v1.json.sha256"},
+  "geometry": {"W": 100, "N_w": 16, "Q_per_dose": 1600},
+  "repetitions_per_cell_per_arm": 256,
+  "arms": ["combo", "null_control"],
+  "cells": [
+    {"ordinal": 0, "alpha": 0.0, "v_mult": 0.5, "c_min": 0.5, "eta": 0.01},
+    {"ordinal": 1, "alpha": 0.1, "v_mult": 1.0, "c_min": 0.7, "eta": 0.1},
+    {"ordinal": 2, "alpha": 0.2, "v_mult": 2.0, "c_min": 0.8, "eta": 0.2}
+  ],
+  "rng": {"family": "numpy-default_rng", "seed_formula": "alpha={alpha:.6f}|vmult={v_mult:.6f}|cmin={c_min:.6f}|eta={eta:.6f}", "identity_fields": ["cell_ordinal", "arm_ordinal", "repetition_index", "seed_index"], "expected_derived_seed_collision_count": 3840},
+  "parallel": {"producer_workers": "os.cpu_count()", "pool": "multiprocessing.Pool", "chunksize": 1, "block_repetitions": 32, "queue_depth_formula": "4*os.cpu_count()"}
+}
