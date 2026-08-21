@@ -18,5 +18,7 @@ specs/data/m4_l8_compatibility_report_schema_v1.json text eol=lf
 specs/data/m4_l8_compatibility_report_schema_v1.json.sha256 text eol=lf
 specs/data/m4_l8_estimator_request_schema_v1.json text eol=lf
 specs/data/m4_l8_estimator_request_schema_v1.json.sha256 text eol=lf
+specs/data/m4_model_*.json text eol=lf
+specs/data/m4_model_*.json.sha256 text eol=lf
 specs/data/m4_law_artifact_schema_v1.json text eol=lf
 specs/data/m4_law_artifact_schema_v1.json.sha256 text eol=lf
