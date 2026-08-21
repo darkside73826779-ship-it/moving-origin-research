@@ -41,3 +41,8 @@
 - Fixed the Stage-1-only INTEGRATOR and RECORDER edit loci while preserving their serial ownership boundary and excluding Stage 3 metadata and Stage 5 JUDGE custody.
 - Added the exact strict case schema, ordered route/parallel/batching fixture corpus, semantic validator algorithm, schema-negative mutation fixtures, canonical output rule, expected command, and Git-blob sidecars.
 - Preserved all scientific, scoring, seed, state/provenance, public-policy, review-independence, staged-release, and Rebecca-only gate/merge safeguards.
+
+## v1.3.1 — SB2 exact-locus correction
+
+- Replaced nonexistent inferred INTEGRATOR/RECORDER anchors with exact unique committed byte-line replacements in `state/role_initialization/INTEGRATOR_INITIALIZATION.md` and `state/role_initialization/RECORDER_INITIALIZATION.md`.
+- Fixed start/end boundaries, exact-match cardinality, adjacent-section exclusions, and Stage 3/5 prohibitions without changing banked SB1 or SB3 artifacts.

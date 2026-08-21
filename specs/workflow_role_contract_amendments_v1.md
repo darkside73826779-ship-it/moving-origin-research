@@ -40,19 +40,32 @@ Replace only the existing `## Subagent economy` section, from that heading up to
 
 The fresh-startup and checkpoint paragraphs are not edited in Stage 1; they belong to held Stage 3.
 
-### `INTEGRATOR_INITIALIZATION.md`
+### `state/role_initialization/INTEGRATOR_INITIALIZATION.md`
 
-Replace only the sentence or paragraph that assigns the next recipient after a committed STATE update with:
+Within the existing `## When you receive a handoff` section, replace the exact committed byte line (excluding its terminating LF):
 
-> Every committed STATE.md update routes serially to RECORDER for hash attestation before any dependent event. Multiple already-authorized low-risk state events may share one commit only when each event and resulting STATE hash is separately enumerated. INTEGRATOR is not a mandatory post-build hop unless the approved route declares a state event.
+> `6. Return a handoff with the STATE.md SHA-256.`
+
+with these exact two LF-separated lines:
+
+> `6. Return a handoff with the STATE.md SHA-256.`
+> `7. Route every committed STATE.md update serially to RECORDER for hash attestation before any dependent event. Multiple already-authorized low-risk state events may share one commit only when each event and resulting STATE hash is separately enumerated. INTEGRATOR is not a mandatory post-build hop unless the approved route declares a state event.`
+
+The replacement begins at the ASCII `6` of the existing line and ends immediately before that line's LF. Exactly one match is required; zero or multiple matches is STOP. Do not alter the adjacent `## Handoff format` section.
 
 Do not add state metadata text; it belongs to held Stage 3.
 
-### `RECORDER_INITIALIZATION.md`
+### `state/role_initialization/RECORDER_INITIALIZATION.md`
 
-Insert as the final paragraph of the existing custody-rules section:
+Within the existing `## Rules` section, replace the exact committed byte line (excluding its terminating LF):
 
-> RECORDER attests every INTEGRATOR STATE update serially before any dependent event. For an approved batch, verify and enumerate every constituent event and the resulting STATE hash separately; missing, dependent, scientific, scoring, or protected-seed events are STOP.
+> `- Attest STATE.md hash after every INTEGRATOR update. If divergence between provenance log and STATE.md is detected, escalate to Rebecca immediately.`
+
+with this exact line:
+
+> `- Attest every INTEGRATOR STATE.md update serially before any dependent event. For an approved batch, verify and enumerate every constituent event and the resulting STATE hash separately; missing, dependent, scientific, scoring, or protected-seed events are STOP. If divergence between provenance log and STATE.md is detected, escalate to Rebecca immediately.`
+
+The replacement begins at the leading hyphen and ends immediately before that line's LF. Exactly one match is required; zero or multiple matches is STOP. Do not create a custody heading or alter any other `## Rules` bullet.
 
 Do not add JUDGE-publication or provenance-metadata text; those belong to held Stages 5 and 3 respectively. No other role-specific replacement below is part of Stage 1.
 
