@@ -18,7 +18,7 @@ Insert before `## Standing constraints`:
 >
 > Every push is scanned over the complete introduced `base..tip` range plus manual review. No role relies on the former narrow scan exemption. Tool output collects evidence and never replaces judgment.
 >
-> Every checkout uses the exact remote ref and full SHA from the handoff in an isolated detached worktree. Failure to prove ref/object/SHA identity, isolate the worktree, or obtain a clean checkout is STOP.
+> Every checkout uses the handoff's distinct exact remote-ref head SHA and review/design-result SHA in an isolated detached worktree. Verify remote-ref equality to the routing head, result ancestry/equality, handoff-only post-result commits, both commit objects, and clean isolation. Never discard or conflate either identity; failure is STOP.
 
 ## `WORKFLOW_COORDINATOR_INITIALIZATION.md`
 
