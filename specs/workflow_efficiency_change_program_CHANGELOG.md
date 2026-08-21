@@ -34,3 +34,10 @@
 - Split routing-ref head from review/design-result identity, fixed their ancestry and post-result handoff-only relationship, and required both to be verified and retained.
 - Added fail-closed transitions from `IMPLEMENTING` and `IMPLEMENTATION_VERIFIED` to `SUSPENDED`, with no direct retry/release path.
 - Added required semantic-validator and negative-fixture coverage for invariants stronger than JSON Schema.
+
+## v1.3 — Stage 1 SB1–SB3 executability remediation
+
+- Fixed the complete Stage-1-only P1/P7 insertion and replacement text, exact section boundaries, and explicit exclusions preventing held Stage 2–5 role edits from entering Stage 1.
+- Fixed the Stage-1-only INTEGRATOR and RECORDER edit loci while preserving their serial ownership boundary and excluding Stage 3 metadata and Stage 5 JUDGE custody.
+- Added the exact strict case schema, ordered route/parallel/batching fixture corpus, semantic validator algorithm, schema-negative mutation fixtures, canonical output rule, expected command, and Git-blob sidecars.
+- Preserved all scientific, scoring, seed, state/provenance, public-policy, review-independence, staged-release, and Rebecca-only gate/merge safeguards.

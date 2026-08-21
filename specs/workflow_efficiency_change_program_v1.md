@@ -67,6 +67,10 @@ Concurrent **preparation** is permitted only when all conditions hold: inputs ar
 
 Batching may combine multiple already-authorized, low-risk state/custody events into one INTEGRATOR commit followed by one RECORDER attestation, but every constituent event and resulting STATE hash remains listed separately `[PROPOSED]`. Batching never combines scientific gates or hides negative events.
 
+### 3.3 Stage 1 executable validation package
+
+Stage 1 is implemented only from the exact edit boundaries in `specs/workflow_role_contract_amendments_v1.md` plus `specs/data/workflow_stage1_validator_contract_v1.json`, `specs/data/workflow_stage1_route_case_schema_v1.json`, and `specs/data/workflow_stage1_routing_fixtures_v1.json` `[PROPOSED]`. The contract fixes parsing, unknown-field rejection, route lookup/override validation, all six P7 predicates, batching eligibility, reason precedence, canonical output, fixture order, and expected SHA-256 values. TASK BUILDER may translate the prescribed algorithm mechanically but may not invent a route, reason, predicate, edit locus, fixture, or expected output. Stages 2–5 files and role text are forbidden Stage 1 outputs.
+
 ## 4. Stage 2 — P2 common handoff manifest and P3 executability trace
 
 ### 4.1 Formal handoff manifest

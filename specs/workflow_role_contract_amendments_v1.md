@@ -6,6 +6,56 @@
 
 **Status:** Exact mechanical edit specification `[PROPOSED]`; do not apply before CRITIC CLEAR and Rebecca approval
 
+## Stage 1 controlling scope — P1/P7 only
+
+For the Stage 1 release, this section is the complete mechanical edit set and supersedes every later-stage instruction below until its stage is separately released. TASK BUILDER changes only the following loci; byte ranges outside the named insertions/replacements are immutable.
+
+### All seven role initialization files
+
+Insert immediately before each file's `## Standing constraints` heading (or append immediately before the final initialization-complete sentence when that heading is absent):
+
+> ## Stage 1 canonical routing and safe preparation
+>
+> Default routes and P1/P7 decisions are validated against `specs/data/workflow_routing_table_v1.json` using the exact contract and fixtures in `specs/data/workflow_stage1_validator_contract_v1.json` and `specs/data/workflow_stage1_routing_fixtures_v1.json`. Exactly one role owns each work item. Ownership transfers only through a labeled FORMAL HANDOFF acknowledged by the recipient; consultation never transfers ownership. A committed Rebecca-signed full-SHA task route may add gates but may not remove mandatory independence, custody, owner-only state/provenance boundaries, or Rebecca's final gate. Missing or conflicting authority is STOP to WORKFLOW COORDINATOR.
+>
+> Concurrent preparation is allowed only for identical immutable inputs, disjoint outputs, no output dependency, no self-review, no scoring or protected seeds, and a declared deterministic serial commit/custody order. Failure of any condition reverts to serial and is STOP. Dependency gates, scoring custody, and INTEGRATOR-to-RECORDER attestation are always serial. Only already-authorized low-risk state/custody events may batch; every event and resulting STATE hash remains separately listed.
+
+No Stage 1 edit mentions or activates common handoff manifests, executability traces, freshness metadata, preflight/checkout helpers, public-policy metadata, session-ID scanning, or JUDGE custody. Those are Stages 2–5 and remain held.
+
+### `WORKFLOW_COORDINATOR_INITIALIZATION.md`
+
+Replace only the existing `## Routing protocol` section, from that heading up to but excluding the next same-level `##` heading, with:
+
+> ## Routing protocol
+>
+> `specs/data/workflow_routing_table_v1.json` is the canonical default table. Defaults are specification `ARCHITECT → FRESH_CONTEXT_CRITIC → REBECCA`, mechanical implementation `TASK_BUILDER → FRESH_CONTEXT_CRITIC → REBECCA`, state event `INTEGRATOR → RECORDER → REBECCA`, and scoring `REBECCA_EXECUTOR → RECORDER_INTAKE → JUDGE → RECORDER_PUBLICATION → REBECCA`. CRITIC BLOCK returns only to the originating role. Task-specific overrides require a repository-committed Rebecca-signed ruling path, full 40-hex SHA, exact ordered route, and scope; they may add but never remove mandatory gates.
+>
+> Exactly one role owns a work item. Concurrent preparation and batching use the Stage 1 universal contract and fail closed through the committed validator fixtures. Every formal pass reports work item/gate, sender, intended receiver, remote ref/full SHA, artifact path, blockers/holds, and next event to WORKFLOW COORDINATOR. Consultation is non-transferring.
+
+Replace only the existing `## Subagent economy` section, from that heading up to but excluding the next same-level `##` heading, with:
+
+> ## Safe preparation and batching
+>
+> Batch only already-authorized low-risk state/custody events. Every INTEGRATOR STATE commit routes serially to RECORDER for hash attestation. Independent preparation may run concurrently only when all six committed P7 predicates pass; ownership remains singular and outputs disjoint. Scientific gates, dependencies, scoring, protected seeds, and review of one's own output are never batched or parallelized.
+
+The fresh-startup and checkpoint paragraphs are not edited in Stage 1; they belong to held Stage 3.
+
+### `INTEGRATOR_INITIALIZATION.md`
+
+Replace only the sentence or paragraph that assigns the next recipient after a committed STATE update with:
+
+> Every committed STATE.md update routes serially to RECORDER for hash attestation before any dependent event. Multiple already-authorized low-risk state events may share one commit only when each event and resulting STATE hash is separately enumerated. INTEGRATOR is not a mandatory post-build hop unless the approved route declares a state event.
+
+Do not add state metadata text; it belongs to held Stage 3.
+
+### `RECORDER_INITIALIZATION.md`
+
+Insert as the final paragraph of the existing custody-rules section:
+
+> RECORDER attests every INTEGRATOR STATE update serially before any dependent event. For an approved batch, verify and enumerate every constituent event and the resulting STATE hash separately; missing, dependent, scientific, scoring, or protected-seed events are STOP.
+
+Do not add JUDGE-publication or provenance-metadata text; those belong to held Stages 5 and 3 respectively. No other role-specific replacement below is part of Stage 1.
+
 ## Universal insertion — all seven role initializations
 
 Insert before `## Standing constraints`:
