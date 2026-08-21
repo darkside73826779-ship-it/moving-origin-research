@@ -130,7 +130,7 @@ Each response reports device class, compute capability, runtime/dependency-manif
 
 The scaffold must run with `CPU_STUB` and `CUDA_STUB_HOST_ORCHESTRATION`; the latter may allocate only fixture tensors and cannot invoke a real model `[PROPOSED]`. Resource-limit violation is `RESOURCE_ENVELOPE_EXCEEDED`, never automatic model fallback `[PROPOSED]`.
 
-The supplemental executable fixture constructs the CUDA-host dependency manifest, adapter manifest, request, internal response, device-to-host custody record, published positive response, and their fixed digests. Its custody negative changes only `/resource_report/synchronized` from `true` to `false`; no CPU object can serve as that negative's base `[PROPOSED]`.
+The supplemental executable fixture constructs the CUDA-host dependency manifest, adapter manifest, request, internal response, device-to-host custody record, published positive response, and their fixed digests. The custody digest domain is exclusively the literal object at `/cuda_host_positive/custody_record/artifact`; its sibling `digest_domain` and `expected_sha256` fields are wrapper metadata and are never members of the hashed artifact. Its custody negative changes only `/resource_report/synchronized` from `true` to `false`; no CPU object can serve as that negative's base `[PROPOSED]`.
 
 ## 10. Determinism, checkpoint metadata, and publication
 

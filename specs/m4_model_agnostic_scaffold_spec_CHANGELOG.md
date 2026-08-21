@@ -27,3 +27,7 @@
 - Added an exact `CUDA_STUB_HOST_ORCHESTRATION` dependency/manifest/request/response/custody positive and a single-field custody negative.
 - Added two frozen requests in one episode, a reset and second episode, three complete responses, and two byte-identical fresh-process run manifests with fixed digests.
 - Defined the peer-redaction projection, constructor order, complete-request digest, receipt digest, and binding-negative mutation.
+
+## v1.3 — RF1A remediation
+
+- Moved the CUDA custody artifact under an explicit wrapper and fixed its digest domain to `/cuda_host_positive/custody_record/artifact`, eliminating the self-referential expected-digest ambiguity.
