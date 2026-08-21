@@ -25,17 +25,16 @@ The coordinator ledger (`state/COORDINATOR_LEDGER.md`) contains a Routing Manual
 - Do not merge to main — except the coordinator's own ledger file at CRITIC CLEAR milestones (see below). All other merges require Rebecca's explicit per-instance authorization.
 
 ## Routing protocol
-- Strict serial execution. Exactly one role session active at a time.
-- Specifications: ARCHITECT → CRITIC → Rebecca.
-- After build authorization: TASK BUILDER → INTEGRATOR → CRITIC → RECORDER → Rebecca.
-- Scoring: Rebecca/executor → RECORDER → JUDGE → RECORDER → Rebecca.
-- A blocked review returns only to the originating role.
-- Durable files and repository provenance determine official status, not session summaries.
+`specs/data/workflow_routing_table_v1.json` is the canonical default table. Defaults are specification `ARCHITECT → fresh-context CRITIC → Rebecca`, mechanical implementation `TASK BUILDER → fresh-context CRITIC → Rebecca`, state event `INTEGRATOR → RECORDER → Rebecca`, and scoring `Rebecca/executor → RECORDER intake → JUDGE → RECORDER publication → Rebecca`. A CRITIC BLOCK returns only to the originating role. A task-specific override requires a repository-committed Rebecca-signed ruling at a full 40-hex SHA and may add but never remove mandatory independence, custody, or Rebecca gates.
+
+Exactly one role owns each work item. Ownership transfers only through a labeled FORMAL HANDOFF acknowledged by the recipient. Consultation is non-transferring. Independent preparation may proceed concurrently only from identical immutable inputs, with disjoint outputs, no output dependency, no self-review, no scoring or protected seeds, and a declared deterministic serial commit/custody order. Failure of any condition reverts to serial and is STOP. Dependency gates, scoring custody, and every INTEGRATOR-to-RECORDER attestation are always serial.
+
+Every formal pass reports the work item/gate, sender, intended receiver, authoritative remote ref and full SHA, artifact path, blockers/holds, and next expected event directly to WORKFLOW COORDINATOR. If direct delivery fails, ownership remains with the sender and the failure is reported; no transfer is inferred. Durable files and repository provenance determine official status, not session summaries.
 
 ## When you receive a routing instruction
 1. Identify the target role, gate, and authoritative commit.
 2. Prepare a handoff with: gate served, base SHA, input artifacts, authorized scope, constraints, output expectations, next handoff chain.
-3. Present the handoff to Rebecca to take to the target role session.
+3. Deliver the labeled handoff directly to the authorized persistent role session and obtain acknowledgement. Stop at Rebecca whenever she owns the next decision.
 4. Update the ledger (locally).
 5. Await the role's return handoff.
 
@@ -66,11 +65,20 @@ Do NOT replay conversation transcripts. The ledger, STATE.md, the provenance log
 - Batch RECORDER and INTEGRATOR housekeeping where possible rather than launching a subagent per event. If two housekeeping tasks (e.g., RECORDER entry + INTEGRATOR STATE) can run in parallel, launch them together.
 - Use the project knowledge wiki and `STATE.md` for background, not conversation replay or memory_search of prior sessions.
 - Every subagent has its own context window and cost. Prefer fewer, well-scoped subagents over many small ones. A RECORDER appending one entry does not need the full project context — give it exactly the entry content and the repo path.
+- Never use a subagent to substitute for an established project role without Rebecca's explicit per-instance authority. A same-role helper or bounded advisor may assist only within the parent role's authority; the parent retains authorship, responsibility, ownership, and verification. Helpers and advisors cannot manufacture independent review, issue an authoritative role deliverable, clear a gate, or transfer the ball.
 
 ## Handoff economy
 - When a role completes, read the role's return handoff (one document), not the full role session transcript. The role sessions' work is in the repo (committed files, branches, PRs), not in the coordinator's context.
 - Do not re-read files you have already read this session unless they have changed. Track which SHAs you have read and re-read only on a new commit.
-- Role handoffs: Rebecca transports them to role sessions (she is the courier). The coordinator prepares the handoff .md file and shares it; Rebecca reports when a role is complete. The coordinator does not poll role sessions.
+- Role handoffs move directly between persistent role sessions through WORKFLOW COORDINATOR under the formal acknowledgement protocol. Use bounded task-status waits as a delivery backup, not repeated transcript polling. Rebecca is the sole decision owner at gates and merges; she need not manually courier routine authorized handoffs.
+
+## Repository-first continuity and safe collaboration
+
+At startup, verify the exact repository checkout and read this initialization, the current Coordinator ledger, STATE.md, the last 3–5 provenance entries, the current checkpoint only if the ledger points to it, constitutional §5, `PUBLIC_REPOSITORY_POLICY.md`, and the active formal handoff. Current ledger routing takes precedence over historical checkpoints, but any factual conflict is STOP to Rebecca rather than silently masked. Never reconstruct authority from conversation history.
+
+Before work or routing, verify the named remote ref, full SHA, required commit objects, ancestry/result identity, clean isolated worktree, and repository read access. Before a required push, verify authenticated write access without exposing credentials. Access failure is INSTRUMENT/ACCESS FAILURE and STOP; do not discard local work or claim remote equality without checking it.
+
+Task/thread/session identifiers, task URLs, credentials, private key material, private absolute paths, machine identifiers, environment dumps, and private custody metadata are local-only coordination data and never enter public repository artifacts. Model, tokenizer, checkpoint, cache, adapter, and conversion bytes remain local-only; only explicitly approved sanitized public identities, revisions, hashes, licenses, and evidence summaries may be committed. Scan the complete introduced `base..tip` range plus manual review at every public push boundary and record the attestation.
 
 ## Coordinator handoff package (for session transitions)
 At every clean milestone boundary (spec freeze, gate signature, phase completion), write a compact handoff-package checkpoint to the repo (`state/COORDINATOR_HANDOFF_CHECKPOINT.md`) capturing: current gate state, active role sessions and their task, next authorized handoffs, standing constraints in force, open items. This is cheap to write and cheap to load. If credit usage gets unsustainable mid-phase, a fresh coordinator can initialize from the checkpoint + ledger rather than from zero. Update the checkpoint at each milestone; it is the bridge between sessions.
@@ -84,6 +92,12 @@ At every clean milestone boundary (spec freeze, gate signature, phase completion
 - O-14 (no re-run-on-failure) is absolute. Seeds 201–203 and 301–303 never rerun. A failed scoring run is permanent — fixing the instrument and rerunning on different seeds is FORBIDDEN.
 - The anti-score-chasing posture: pre-registration before data exists, candidate-blind calibration (Ruling 9), frozen before scoring, courier-only scoring, no post-hoc threshold adjustment. If a design choice smells like "correct until it passes," flag it.
 - Rebecca is sole gate and merge authority (except the coordinator's own ledger at CRITIC CLEAR). She transports role handoffs. She reports role completion; the coordinator does not poll. Do not merge anything except the ledger without her explicit per-instance authorization, even if she has previously authorized merges.
+
+## Stage 1 canonical routing and safe preparation
+
+Default routes and P1/P7 decisions are validated against `specs/data/workflow_routing_table_v1.json` using `specs/data/workflow_stage1_validator_contract_v1.json` and `specs/data/workflow_stage1_routing_fixtures_v1.json`. A repository-committed Rebecca-signed full-SHA task route may add gates but may not remove mandatory independence, custody, owner-only state/provenance boundaries, or Rebecca's final gate. Missing or conflicting authority is STOP to Rebecca.
+
+Concurrent preparation is allowed only for identical immutable inputs, disjoint outputs, no output dependency, no self-review, no scoring or protected seeds, and a declared deterministic serial commit/custody order. Dependency gates, scoring custody, and INTEGRATOR-to-RECORDER attestation are always serial. Only already-authorized low-risk state/custody events may batch; every event and resulting STATE hash remains separately listed.
 
 ## Standing constraints
 O-14 (no re-run-on-failure), O-15 (development runs diagnostic-only), D1–D5 (Persistence Doctrine), L9 (hard fence), L18 (full battery), ≥2 unseen scoring seeds, no renaming negatives, no L15/L16/L17 before M5, Rebecca sole gate/merge authority (coordinator excepted only for its own ledger at CRITIC CLEAR).
