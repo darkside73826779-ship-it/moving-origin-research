@@ -143,5 +143,5 @@ A pre-push self-scan was performed on this review artifact and the branch diff. 
 
 - **Review file path:** `reviews/critic_l8_g2g4_minimal_fullscreen_amended_review.md`
 - **Branch:** `critic/l8-g2g4-minimal-fullscreen-amended-review` (branched from `architect/l8-g2g4-minimal-fullscreen` @ `2082680`; committed only to this `critic/` branch; not committed to main)
-- **Commit SHA:** `02ed9e02ac2903de70558b72469b60faf6d9d44d` (`02ed9e0`)
+- **Commit SHA (initial content):** `02ed9e02ac2903de70558b72469b60faf6d9d44d` (`02ed9e0`). The complete, pushed review artifact is the branch HEAD of `critic/l8-g2g4-minimal-fullscreen-amended-review` (final SHA recorded in the CRITIC handoff; this file cannot self-reference its own final commit SHA).
 - **Git identity:** `role@moving-origin-research.local` / `MOR ROLE`
