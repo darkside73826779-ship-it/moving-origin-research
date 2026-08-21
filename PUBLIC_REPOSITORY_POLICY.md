@@ -1,10 +1,12 @@
 # Public-Repository Operating Policy
 
-**Status:** ARCHITECT draft — requires CRITIC review and Rebecca approval
-**Date:** 2026-08-17 · **Author:** ARCHITECT
+**Status:** Rebecca-approved and binding on all new work; substantive v1.1 requirements unchanged.
+**Publication status:** This metadata does not assert that the repository-public flip occurred; that remains a separate Rebecca decision.
+**Date:** 2026-08-17 · **Metadata corrected:** 2026-08-21
+**Approval provenance:** `docs/rulings/provenance_log.md` Entry 57 — Public-repository operating policy publication + STATE.md custody attestation. `[OP-Entry 57]`
 **Base SHA:** `b61ba07` (GitHub main, includes PR #23 public-funding-readiness)
 **Authority chain:** Rebecca > constitution's laws > approved specifications > this policy > agent judgment
-**Effective:** Upon Rebecca's publication-readiness merge. All rules apply prospectively; historical files, SHAs, rulings, and evidence are preserved unchanged.
+**Effective:** Binding prospectively on all new work. Historical files, SHAs, rulings, and evidence remain unchanged.
 
 ---
 
@@ -43,7 +45,9 @@ No branch, commit, handoff, log, artifact, or tag may contain:
 - Private absolute paths (e.g., `/home/user/workspace/...`, `C:\Users\...`)
 - Environment dumps, shell history, or runtime configuration containing secrets
 - Unreviewed executor logs, session transcripts, or raw model outputs not intended for publication
+- Persistent application task/thread/session identifiers, task URLs, or private local routing-map identifiers in new artifacts. Use role labels, stable work-item slugs, repository refs, and full SHAs instead.
 - Scoring seed identities (seeds 201–203, 301–303, or any future scoring seeds) beyond what is already recorded in the historical provenance
+- Model, tokenizer, checkpoint, cache, adapter, conversion, or other multi-gigabyte local custody bytes. Only explicitly approved sanitized public identities, revisions, hashes, licenses, and evidence summaries may be committed.
 
 **Historical content note:** Existing commits, handoffs, and STATE.md entries may contain absolute paths (`/home/user/workspace/...`) and internal operational language. Per §11 (prospective application), these are preserved unchanged. The pre-publication scan (§12) classifies whether any historical content requires redaction before the repository goes public.
 
@@ -53,12 +57,7 @@ No branch, commit, handoff, log, artifact, or tag may contain:
 
 ### 3.1 When to scan
 
-Every role must run a public-safety scan **before pushing any branch** that contains:
-- New or modified files in `handoffs/`, `state/`, `docs/`, `runs/`, `diagnostics/`, or `verification/`
-- New or modified log files, artifact manifests, or JSON outputs
-- Any file not previously scanned
-
-Scans are not required for pushes that only modify files under `src/` (code) or `specs/` (specifications) that have already been reviewed, unless those files embed paths, credentials, or PII.
+Every role must run a public-safety scan **before every branch push** across the complete introduced `base..tip` commit range, including intermediate commits and their diffs, regardless of path class or prior review. The complete range also receives manual content review. An unavailable or erroring required scanner fails closed. `tools/workflow_preflight.py` may standardize evidence collection but never replaces manual review, independent custody, or scoring-integrity checks.
 
 ### 3.2 Required checks
 
@@ -78,6 +77,7 @@ Scans are not required for pushes that only modify files under `src/` (code) or 
    - Internal operational language not understandable by an outside reader
    - Session references, agent model names, or infrastructure details not relevant to the scientific record
    - Unreviewed executor logs or raw model outputs
+   - Persistent application task/thread/session IDs, task URLs, or private local routing mappings. Historical artifacts are not rewritten without Rebecca's separate authorization.
 
 ### 3.3 Scan evidence
 

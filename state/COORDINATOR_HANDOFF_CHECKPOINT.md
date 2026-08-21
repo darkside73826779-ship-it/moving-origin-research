@@ -1,5 +1,7 @@
 # WORKFLOW COORDINATOR HANDOFF CHECKPOINT — 2026-08-19 10:51 EDT
 
+**Status:** HISTORICAL SNAPSHOT — superseded for routing; retained unchanged as evidence. See adjacent metadata. `[PROPOSED]`
+
 **Purpose:** Bridge this coordinator session to a fresh WORKFLOW COORDINATOR. Load this checkpoint + STATE.md + the provenance log tail to pick up without conversation replay. This is the current state of the M4 gate and the L8 design chain.
 
 **Canonical thread (this session):** https://www.perplexity.ai/computer/tasks/f1087707-11b0-42c1-99a4-4f93d4d01660

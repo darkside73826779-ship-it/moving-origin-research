@@ -46,3 +46,11 @@
 
 - Replaced nonexistent inferred INTEGRATOR/RECORDER anchors with exact unique committed byte-line replacements in `state/role_initialization/INTEGRATOR_INITIALIZATION.md` and `state/role_initialization/RECORDER_INITIALIZATION.md`.
 - Fixed start/end boundaries, exact-match cardinality, adjacent-section exclusions, and Stage 3/5 prohibitions without changing banked SB1 or SB3 artifacts.
+
+## v1.4 — Cumulative P1–P10 mechanical implementation
+
+- Memorialized Rebecca's cumulative P1–P10 implementation authority separately from the earlier Stage-1-only release.
+- Reconciled all seven role initializations with repository-first state precedence, canonical manifests, exact checkout identities, direct Coordinator returns, bounded same-role helpers, role-specific rollback duties, full-range public scanning, and local-only model/custody/session data.
+- Added deterministic routing, manifest/metadata/trace/rollback/JUDGE-envelope validators; immutable-checkout and complete-range preflight tooling; executable fixtures; and focused regression tests.
+- Added owner-scoped ledger/checkpoint metadata, marked the legacy checkpoint historical, enforced LF for workflow contract surfaces, and synchronized public-repository policy.
+- Preserved every scientific, scoring, seed, review-independence, custody, negative-result, and Rebecca-only gate/merge safeguard.

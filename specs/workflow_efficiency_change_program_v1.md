@@ -4,7 +4,7 @@
 
 **Regime:** B
 
-**Status:** ARCHITECT prospective design; inoperative pending fresh-context CRITIC clearance and Rebecca's approval of the exact text
+**Status:** Rebecca-approved cumulative Stages 1–5; mechanical implementation authorized 2026-08-21 under the Coordinator-owned reconciliation ruling
 
 **Gate served:** Rebecca-approved staged specification of proposals P1–P10; governance and role contracts only
 
@@ -12,7 +12,9 @@
 
 **Authority package:** `coordinator/efficiency-change-program-intake@67280dfd3ee6e00459f3f23d4d98dff637eb1760`
 
-Unless another source tag is shown, every threshold, test criterion, precedence choice, route, schema, and STOP rule introduced here is `[PROPOSED]` and remains inoperative until Rebecca approves it.
+**Implementation authority:** `handoffs/REBECCA_WORKFLOW_EFFICIENCY_P1_P10_IMPLEMENTATION_AND_COORDINATOR_ROLE_INIT_AUTHORIZATION_2026-08-21.md` at `8923112fde4ce95a6dad03f6c71f5235eeccc7e5`.
+
+Unless another source tag is shown, `[PROPOSED]` records the design's original source class. Rebecca approved the complete P1–P10 program for mechanical implementation on 2026-08-21; that approval does not convert governance mechanisms into scientific bars or authorize scoring, seed access, or scientific changes.
 
 ## 1. Constitutional compliance
 
@@ -134,7 +136,7 @@ The helper writes a local canonical receipt inside the marked root, not the repo
 
 ### 7.1 Public-policy status
 
-Prospective exact metadata for `PUBLIC_REPOSITORY_POLICY.md` is `[PROPOSED]`:
+Approved exact metadata for `PUBLIC_REPOSITORY_POLICY.md`, retaining its original source-class annotation, is:
 
 - `Status: Rebecca-approved and binding on all new work; substantive v1.1 requirements unchanged.`
 - `Publication status: This metadata does not assert that the repository-public flip occurred; that is a separate Rebecca decision.`
@@ -142,7 +144,7 @@ Prospective exact metadata for `PUBLIC_REPOSITORY_POLICY.md` is `[PROPOSED]`:
 
 This corrects status only. It does not rewrite historical evidence or authorize a public flip.
 
-### 7.2 Prospective task/session-ID ban
+### 7.2 Approved task/thread/session-ID ban
 
 New public artifacts may contain stable work-item slugs, role names, repository refs, and full SHAs, but no application task/thread/session IDs, task URLs, or private local mapping identifiers `[PROPOSED]`. Historical artifacts are not rewritten absent a separate Rebecca decision. The Coordinator may keep an ephemeral, uncommitted local mapping; it is never authority, never included in a scan artifact, and is discarded at session end `[PROPOSED]`.
 
@@ -189,7 +191,7 @@ TASK BUILDER applies exact inverse commits only to mechanical tooling/templates.
 
 ## 10. STOP list and Rebecca decisions
 
-The design is complete enough for independent review, but these material choices remain inoperative until Rebecca expressly accepts them `[PROPOSED]`:
+Rebecca expressly accepted these material choices for mechanical implementation on 2026-08-21; they remain subject to the owner, verification, rollback, scientific, scoring, seed, and merge fences in this specification:
 
 1. Default post-build route is TASK BUILDER → CRITIC → Rebecca, with INTEGRATOR/RECORDER only for declared state/custody events.
 2. Concurrent preparation is allowed only for immutable, disjoint, non-dependent, non-scoring work; ball ownership remains singular.
@@ -201,4 +203,4 @@ Any CRITIC BLOCK, conflicting authority SHA, missing executable schema input, po
 
 ## 11. Prohibitions
 
-No implementation, scientific specification/bar/control change, scoring, diagnostics, seed access, rerun, L8 GPU interference, STATE/provenance/ledger edit by ARCHITECT, public flip, or merge is authorized. EFFICIENCY EVALUATOR remains proposal/audit-only. TASK BUILDER remains held until the exact applicable stage clears CRITIC and Rebecca.
+Mechanical implementation of approved P1–P10 workflow contracts, schemas, validators, role initializations, policy metadata, and local checkout/preflight tooling is authorized under Rebecca's 2026-08-21 Coordinator-owned reconciliation ruling. This does not authorize scientific specification/bar/control changes, scoring, diagnostics, seed access, rerun, L8/M4 interference, owner-bound STATE/provenance/ledger edits by another role, public-repository visibility changes, or merge. EFFICIENCY EVALUATOR remains proposal/audit-only. Owner-specific runtime events still require their canonical route and Rebecca retains every merge/gate decision.

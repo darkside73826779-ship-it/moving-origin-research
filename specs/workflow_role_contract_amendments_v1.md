@@ -1,14 +1,16 @@
-# Prospective Role-Contract Amendments — Workflow Efficiency v1
+# Approved Role-Contract Amendments — Workflow Efficiency v1
 
 **Date:** 2026-08-21
 
 **Regime:** B
 
-**Status:** Exact mechanical edit specification `[PROPOSED]`; do not apply before CRITIC CLEAR and Rebecca approval
+**Status:** Exact cumulative mechanical edit specification; Stages 1–5 approved for implementation by Rebecca on 2026-08-21
+
+**Implementation authority:** `handoffs/REBECCA_WORKFLOW_EFFICIENCY_P1_P10_IMPLEMENTATION_AND_COORDINATOR_ROLE_INIT_AUTHORIZATION_2026-08-21.md` at `8923112fde4ce95a6dad03f6c71f5235eeccc7e5`.
 
 ## Stage 1 controlling scope — P1/P7 only
 
-For the Stage 1 release, this section is the complete mechanical edit set and supersedes every later-stage instruction below until its stage is separately released. TASK BUILDER changes only the following loci; byte ranges outside the named insertions/replacements are immutable.
+This section remains the exact Stage 1 delta. Rebecca subsequently authorized all approved stages cumulatively; later-stage sections below now apply in addition to, never instead of, these Stage 1 edits. Mechanical edits remain confined to their named loci and owner boundaries.
 
 ### All seven role initialization files
 
@@ -20,7 +22,7 @@ Insert immediately before each file's `## Standing constraints` heading (or appe
 >
 > Concurrent preparation is allowed only for identical immutable inputs, disjoint outputs, no output dependency, no self-review, no scoring or protected seeds, and a declared deterministic serial commit/custody order. Failure of any condition reverts to serial and is STOP. Dependency gates, scoring custody, and INTEGRATOR-to-RECORDER attestation are always serial. Only already-authorized low-risk state/custody events may batch; every event and resulting STATE hash remains separately listed.
 
-No Stage 1 edit mentions or activates common handoff manifests, executability traces, freshness metadata, preflight/checkout helpers, public-policy metadata, session-ID scanning, or JUDGE custody. Those are Stages 2–5 and remain held.
+The Stage 1 delta itself does not activate later-stage mechanisms. Stages 2–5 are activated only through their exact cumulative sections below under Rebecca's 2026-08-21 implementation authorization.
 
 ### `WORKFLOW_COORDINATOR_INITIALIZATION.md`
 
@@ -38,7 +40,7 @@ Replace only the existing `## Subagent economy` section, from that heading up to
 >
 > Batch only already-authorized low-risk state/custody events. Every INTEGRATOR STATE commit routes serially to RECORDER for hash attestation. Independent preparation may run concurrently only when all six committed P7 predicates pass; ownership remains singular and outputs disjoint. Scientific gates, dependencies, scoring, protected seeds, and review of one's own output are never batched or parallelized.
 
-The fresh-startup and checkpoint paragraphs are not edited in Stage 1; they belong to held Stage 3.
+The fresh-startup and checkpoint paragraphs are not edited by the Stage 1 delta; the cumulative implementation applies them through Stage 3.
 
 ### `state/role_initialization/INTEGRATOR_INITIALIZATION.md`
 
@@ -53,7 +55,7 @@ with these exact two LF-separated lines:
 
 The replacement begins at the ASCII `6` of the existing line and ends immediately before that line's LF. Exactly one match is required; zero or multiple matches is STOP. Do not alter the adjacent `## Handoff format` section.
 
-Do not add state metadata text; it belongs to held Stage 3.
+The Stage 1 delta does not add state metadata text; the cumulative implementation applies it through Stage 3.
 
 ### `state/role_initialization/RECORDER_INITIALIZATION.md`
 
@@ -67,7 +69,7 @@ with this exact line:
 
 The replacement begins at the leading hyphen and ends immediately before that line's LF. Exactly one match is required; zero or multiple matches is STOP. Do not create a custody heading or alter any other `## Rules` bullet.
 
-Do not add JUDGE-publication or provenance-metadata text; those belong to held Stages 5 and 3 respectively. No other role-specific replacement below is part of Stage 1.
+The Stage 1 delta does not add JUDGE-publication or provenance-metadata text; the cumulative implementation applies those through Stages 5 and 3 respectively. No later-stage replacement is part of the Stage 1 delta itself.
 
 ## Universal insertion — all seven role initializations
 

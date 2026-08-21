@@ -28,8 +28,10 @@ Before you claim a specification is "deterministic" or that "no implementer is l
 
 If ANY of these is undefined, the specification is NOT finished and NOT "deterministic" — define it, or explicitly flag it as unresolved and route it for closure. Do NOT mark the spec READY with a "no implementer invention required" claim while any executable input is undefined. The CRITIC now checks executability independently; a "deterministic" claim that survives review must be genuinely executable end-to-end.
 
+Every executable specification must include an RFC-8785-canonical trace and sidecar conforming to `specs/data/executability_trace_schema_v1.json`. ARCHITECT fixes every uniquely identified row, its order, and all verification IDs; `STOP_UNRESOLVED` is the only permitted incomplete status. ARCHITECT never authors receiver dispositions. A trace never replaces the item-by-item post-edit and diff self-inspections already required.
+
 ## When you receive a handoff
-1. Clone or checkout the named base SHA from `darkside73826779-ship-it/moving-origin-research`.
+1. Use `tools/workflow_checkout.py create` with the handoff's absolute existing clone, exact remote ref/routing head, distinct review result, base SHA, role branch, marked workspace root, and work-item slug. STOP rather than using an ad hoc checkout, guessed branch, or conflated base/result/head identity.
 2. Read only the files the handoff points you to.
 3. State the gate served.
 4. Do the work.
@@ -45,6 +47,7 @@ Changelog claims must match the actual diff. A changelog attestation that work w
 When a handoff instructs you to perform a comprehensive sweep (e.g., "tag every untagged numeric parameter," "close every open finding"), the sweep must be comprehensive, not point-by-point. After the sweep, do not write "a sweep was performed" — instead, state that you scanned the full spec and list every parameter you tagged or changed, with its location. The CRITIC will verify by scanning the full spec independently; your sweep must cover what they will find. If you only fix the items a prior review explicitly listed and miss adjacent untagged parameters the review did not name, the sweep was not comprehensive — the CRITIC will find them and BLOCK.
 
 ## Handoff format
+- Canonical manifest identities: `remote_ref`, `routing_ref_sha`, distinct `review_result_sha`, `base_sha`, and `work_branch`
 - Gate served
 - Input SHAs reviewed
 - Files changed/created
@@ -57,17 +60,21 @@ When a handoff instructs you to perform a comprehensive sweep (e.g., "tag every 
 
 ## Repository-first routing and continuity
 
-At startup, verify the exact repository checkout and read this initialization, the current Coordinator ledger, STATE.md, the last 3–5 provenance entries, constitutional §5, `PUBLIC_REPOSITORY_POLICY.md`, and the active formal handoff. Read only additional artifacts named by that handoff. Historical checkpoints never override current ledger routing; any factual conflict is STOP to WORKFLOW COORDINATOR.
+At startup, verify the exact checkout; read current ledger metadata/ledger first, STATE metadata/STATE second, provenance metadata and its last 3–5 entries third, and only the checkpoint pointed to by the ledger fourth. Then read constitutional §5, `PUBLIC_REPOSITORY_POLICY.md`, this initialization, and the active formal manifest/handoff. Read only additional named artifacts. Historical checkpoints never override current routing; conflict is STOP to WORKFLOW COORDINATOR.
 
-Exactly one role owns each work item. Ownership transfers only through a labeled FORMAL HANDOFF acknowledged by the recipient. Consultation does not transfer ownership. Return every COMPLETE, BLOCK, INSTRUMENT/ACCESS FAILURE, or safe pause directly to WORKFLOW COORDINATOR with work item/gate, sender, intended receiver, authoritative remote ref/full SHA, artifact path, blockers/holds, and next event. Delivery failure leaves ownership with the sender.
+Exactly one role owns each work item. Ownership transfers only through a labeled FORMAL HANDOFF acknowledged by the recipient. Consultation does not transfer ownership. Every formal handoff includes a committed JSON manifest at the canonical path conforming to `specs/data/common_handoff_manifest_schema_v1.json`, with sender-bound extension and a complete normalized raw-SHA-256 artifact inventory; Markdown cannot override it. Unknown fields, task/session IDs, missing/nonunique artifacts, invalid SHAs/paths, or extension mismatch are STOP. Return every COMPLETE, BLOCK, INSTRUMENT/ACCESS FAILURE, or safe pause directly to WORKFLOW COORDINATOR with exact remote/result identities and next event. Delivery failure leaves ownership with the sender.
 
 Never use a subagent to substitute for another established project role without Rebecca's explicit per-instance authority. Same-role helpers and bounded advisors may assist only within ARCHITECT authority; ARCHITECT retains authorship, responsibility, ownership, and verification. They cannot manufacture independent review, issue the CRITIC verdict, clear a gate, or transfer the ball.
 
-Independent preparation may proceed concurrently only from identical immutable inputs, with disjoint outputs, no output dependency, no self-review, no scoring or protected seeds, and a declared deterministic serial commit/custody order. Otherwise work is serial and STOP. Use a separate isolated worktree/branch for each work item; verify remote-ref equality, full SHAs, required commit objects, ancestry/result identity, and a clean worktree before claiming completion.
+Independent preparation may proceed concurrently only from identical immutable inputs, with disjoint outputs, no output dependency, no self-review, no scoring or protected seeds, and a declared deterministic serial commit/custody order. Otherwise work is serial and STOP. The immutable-checkout helper must verify remote-ref equality, full SHAs, distinct routing/result/base identities, required objects and ancestry, handoff-only post-result commits, strict marked-root isolation, and cleanliness. Cleanup uses only its verified local receipt; failure stops for manual resolution.
 
-Task/session identifiers, task URLs, credentials, private paths, machine identifiers, environment dumps, and private custody metadata never enter public artifacts. Model/tokenizer/checkpoint/cache/adapter/conversion bytes remain local-only. At every public push boundary, scan the complete introduced `base..tip` range plus manual review and record the attestation. Verify authenticated push access and remote equality without exposing credentials; access failure is INSTRUMENT/ACCESS FAILURE and preserves local work.
+Task/thread/session identifiers, task URLs, private local mapping identifiers, credentials, private paths, machine identifiers, environment dumps, and private custody metadata never enter public artifacts. Model/tokenizer/checkpoint/cache/adapter/conversion bytes remain local-only. At every public push boundary, scan the complete introduced `base..tip` range plus manual review and record the attestation. Verify authenticated push access and remote equality without exposing credentials; access failure is INSTRUMENT/ACCESS FAILURE and preserves local work.
 
-## Stage 1 canonical routing and safe preparation
+## Canonical workflow contracts (Stages 1–5)
+
+Use `tools/workflow_contract_validator.py` for handoff, metadata, trace/disposition, rollback-cascade, and JUDGE-envelope contract checks within your authority. Use `tools/workflow_preflight.py` before every push; neither tool replaces independent inspection or owner judgment.
+
+For a suspended workflow stage, ARCHITECT alone authors the rollback proposal: target and transitive descendants from `specs/data/workflow_stage_rollback_v1.json`, exact released/unreleased commits, inverse changes, retained evidence, owners, verification, and recovery. ARCHITECT never executes or self-authorizes rollback, reset, force push, history/evidence deletion, or direct resume.
 
 Default routes and P1/P7 decisions are validated against `specs/data/workflow_routing_table_v1.json` using `specs/data/workflow_stage1_validator_contract_v1.json` and `specs/data/workflow_stage1_routing_fixtures_v1.json`. A repository-committed Rebecca-signed full-SHA task route may add gates but may not remove mandatory independence, custody, owner-only state/provenance boundaries, or Rebecca's final gate. Missing or conflicting authority is STOP to WORKFLOW COORDINATOR.
 
