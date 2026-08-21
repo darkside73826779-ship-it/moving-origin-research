@@ -1,0 +1,23 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://moving-origin-research.invalid/schemas/workflow-preflight-report-v1",
+  "title":"Workflow Preflight Report v1",
+  "x-artifact-date":"2026-08-21",
+  "x-artifact-regime":"B",
+  "x-source-class":"PROPOSED",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["schema_version","base_sha","tip_sha","introduced_commits","changed_paths","artifact_hashes","secret_scanner","regex_classes","manual_review_required","status"],
+  "properties":{
+    "schema_version":{"const":"workflow-preflight-report-v1"},
+    "base_sha":{"type":"string","pattern":"^[0-9a-f]{40}$"},
+    "tip_sha":{"type":"string","pattern":"^[0-9a-f]{40}$"},
+    "introduced_commits":{"type":"array","items":{"type":"string","pattern":"^[0-9a-f]{40}$"},"uniqueItems":true},
+    "changed_paths":{"type":"array","items":{"type":"string"},"uniqueItems":true},
+    "artifact_hashes":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["path","sha256"],"properties":{"path":{"type":"string"},"sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"}}}},
+    "secret_scanner":{"type":"object","additionalProperties":false,"required":["tool","exit_code","finding_count"],"properties":{"tool":{"const":"gitleaks"},"exit_code":{"type":"integer"},"finding_count":{"type":"integer","minimum":0}}},
+    "regex_classes":{"type":"object","additionalProperties":false,"required":["credentials","private_keys","private_absolute_paths","personal_contact","machine_identifiers","environment_dumps","pii","protected_seed_material","task_session_ids"],"properties":{"credentials":{"type":"integer","minimum":0},"private_keys":{"type":"integer","minimum":0},"private_absolute_paths":{"type":"integer","minimum":0},"personal_contact":{"type":"integer","minimum":0},"machine_identifiers":{"type":"integer","minimum":0},"environment_dumps":{"type":"integer","minimum":0},"pii":{"type":"integer","minimum":0},"protected_seed_material":{"type":"integer","minimum":0},"task_session_ids":{"type":"integer","minimum":0}}},
+    "manual_review_required":{"const":true},
+    "status":{"enum":["CLEAN","BLOCKED","ERROR"]}
+  }
+}

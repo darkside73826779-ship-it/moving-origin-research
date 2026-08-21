@@ -1,0 +1,35 @@
+{
+  "schema_version":"workflow-stage-rollback-v1",
+  "date":"2026-08-21",
+  "regime":"B",
+  "source_class":"PROPOSED",
+  "stages":[
+    {"stage":"S1","proposals":["P1","P7"],"depends_on":[]},
+    {"stage":"S2","proposals":["P2","P3"],"depends_on":["S1"]},
+    {"stage":"S3","proposals":["P4"],"depends_on":["S2"]},
+    {"stage":"S4","proposals":["P5","P6"],"depends_on":["S3"]},
+    {"stage":"S5","proposals":["P8","P9","P10"],"depends_on":["S4"]}
+  ],
+  "states":["PROPOSED","CRITIC_CLEAR","REBECCA_APPROVED","IMPLEMENTING","IMPLEMENTATION_VERIFIED","RELEASED","SUSPENDED","ROLLBACK_PROPOSED","ROLLBACK_CRITIC_CLEAR","ROLLBACK_AUTHORIZED","ROLLING_BACK","ROLLED_BACK"],
+  "transitions":[
+    {"from":"PROPOSED","to":"CRITIC_CLEAR","authority":"CRITIC"},
+    {"from":"CRITIC_CLEAR","to":"REBECCA_APPROVED","authority":"REBECCA"},
+    {"from":"REBECCA_APPROVED","to":"IMPLEMENTING","authority":"REBECCA"},
+    {"from":"IMPLEMENTING","to":"IMPLEMENTATION_VERIFIED","authority":"FRESH_CONTEXT_CRITIC"},
+    {"from":"IMPLEMENTING","to":"SUSPENDED","authority":"WORKFLOW_COORDINATOR_ON_IMPLEMENTATION_FAILURE_OR_CRITIC_BLOCK"},
+    {"from":"IMPLEMENTATION_VERIFIED","to":"RELEASED","authority":"REBECCA"},
+    {"from":"IMPLEMENTATION_VERIFIED","to":"SUSPENDED","authority":"WORKFLOW_COORDINATOR_ON_PRE_RELEASE_DEFECT_OR_REBECCA_NON_RELEASE"},
+    {"from":"RELEASED","to":"SUSPENDED","authority":"WORKFLOW_COORDINATOR_ON_REPORTED_DEFECT"},
+    {"from":"SUSPENDED","to":"ROLLBACK_PROPOSED","authority":"ARCHITECT"},
+    {"from":"ROLLBACK_PROPOSED","to":"ROLLBACK_CRITIC_CLEAR","authority":"FRESH_CONTEXT_CRITIC"},
+    {"from":"ROLLBACK_CRITIC_CLEAR","to":"ROLLBACK_AUTHORIZED","authority":"REBECCA"},
+    {"from":"ROLLBACK_AUTHORIZED","to":"ROLLING_BACK","authority":"REBECCA"},
+    {"from":"ROLLING_BACK","to":"ROLLED_BACK","authority":"FRESH_CONTEXT_CRITIC_AND_REBECCA"}
+  ],
+  "cascade_rule":"rollback_target_plus_all_transitive_dependents",
+  "suspension_rule":"target_stage_plus_all_transitive_dependents_stop_use_and_release",
+  "unlisted_transition_rule":"reject_fail_closed_return_to_rebecca",
+  "resume_rule":"no_direct_resume_from_suspended_complete_governed_rollback_then_new_rebecca_authorized_stage_cycle",
+  "history_rule":"inverse_commits_only_no_reset_no_deletion",
+  "unknown_fields":"reject"
+}

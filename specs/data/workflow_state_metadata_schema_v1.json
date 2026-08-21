@@ -1,0 +1,22 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://moving-origin-research.invalid/schemas/workflow-state-metadata-v1",
+  "title":"Workflow State Metadata v1",
+  "x-artifact-date":"2026-08-21",
+  "x-artifact-regime":"B",
+  "x-source-class":"PROPOSED",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["schema_version","as_of_utc","source_commit","document_path","document_sha256","supersedes_metadata_sha256","status","document_role","owner_role"],
+  "properties":{
+    "schema_version":{"const":"workflow-state-metadata-v1"},
+    "as_of_utc":{"type":"string","pattern":"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"},
+    "source_commit":{"type":"string","pattern":"^[0-9a-f]{40}$"},
+    "document_path":{"type":"string","pattern":"^(?!/)(?![A-Za-z]:)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)(?!.*\\\\)[A-Za-z0-9._/-]+$"},
+    "document_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "supersedes_metadata_sha256":{"type":"array","uniqueItems":true,"items":{"type":"string","pattern":"^[0-9a-f]{64}$"}},
+    "status":{"enum":["current","superseded","historical"]},
+    "document_role":{"enum":["routing","durable_state","custody_history","checkpoint"]},
+    "owner_role":{"enum":["WORKFLOW_COORDINATOR","INTEGRATOR","RECORDER"]}
+  }
+}

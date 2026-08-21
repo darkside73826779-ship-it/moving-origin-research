@@ -1,0 +1,17 @@
+{
+  "schema_version":"workflow-routing-table-v1",
+  "date":"2026-08-21",
+  "regime":"B",
+  "status":"PROPOSED",
+  "source_class":"PROPOSED",
+  "defaults":[
+    {"deliverable":"specification","route":["ARCHITECT","FRESH_CONTEXT_CRITIC","REBECCA"]},
+    {"deliverable":"mechanical_implementation","route":["TASK_BUILDER","FRESH_CONTEXT_CRITIC","REBECCA"]},
+    {"deliverable":"state_event","route":["INTEGRATOR","RECORDER","REBECCA"]},
+    {"deliverable":"scoring","route":["REBECCA_EXECUTOR","RECORDER_INTAKE","JUDGE","RECORDER_PUBLICATION","REBECCA"]}
+  ],
+  "block_return":"ORIGINATING_ROLE_ONLY",
+  "override":{"required_authority":"REBECCA_SIGNED_REPOSITORY_RULING","required_fields":["ruling_path","ruling_sha","exact_route","scope"],"may_add_gates":true,"may_remove_mandatory_independence_or_custody":false},
+  "parallel_preparation":{"single_owner":true,"required":["same_immutable_inputs","disjoint_outputs","no_output_dependency","no_self_review","no_scoring_or_protected_seeds","declared_serial_commit_order"],"always_serial":["INTEGRATOR_TO_RECORDER_ATTESTATION","DEPENDENCY_GATES","SCORING_CUSTODY"]},
+  "unknown_fields":"reject"
+}

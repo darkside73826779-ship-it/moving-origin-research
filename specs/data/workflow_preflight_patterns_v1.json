@@ -1,0 +1,19 @@
+{
+  "schema_version":"workflow-preflight-patterns-v1",
+  "date":"2026-08-21",
+  "regime":"B",
+  "source_class":"PROPOSED",
+  "engine":"python-re-ascii-multiline",
+  "patterns":[
+    {"class":"credentials","pattern":"(?i)(?:api[_-]?key|access[_-]?token|secret|password)\\s*[:=]\\s*['\\\"]?[A-Za-z0-9_./+\\-=]{8,}"},
+    {"class":"private_keys","pattern":"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"},
+    {"class":"private_absolute_paths","pattern":"(?i)(?:[A-Z]:\\\\Users\\\\[^\\\\\\s]+\\\\|/home/[^/\\s]+/)"},
+    {"class":"personal_contact","pattern":"(?i)(?:[A-Z0-9._%+-]+@(?!moving-origin-research\\.local\\b)[A-Z0-9.-]+\\.[A-Z]{2,}|\\+?1?[ .-]?(?:\\([0-9]{3}\\)|[0-9]{3})[ .-]?[0-9]{3}[ .-]?[0-9]{4})"},
+    {"class":"machine_identifiers","pattern":"(?i)(?:[0-9A-F]{2}(?:[:-][0-9A-F]{2}){5}|S-1-(?:[0-9]+-){2,}[0-9]+|(?:hostname|computername|userdomain)\\s*[:=])"},
+    {"class":"environment_dumps","pattern":"(?m)^(?:PATH|HOME|USERPROFILE|AWS_[A-Z0-9_]+|AZURE_[A-Z0-9_]+|GITHUB_TOKEN|CUDA_VISIBLE_DEVICES)="},
+    {"class":"pii","pattern":"(?i)(?:ssn|social security|date of birth|passport number)\\s*[:=]"},
+    {"class":"protected_seed_material","pattern":"(?i)(?:protected|hold[-_ ]?out|courier|scoring)[-_ ]?seed(?:s)?\\s*[:=]\\s*\\[?[0-9]"},
+    {"class":"task_session_ids","pattern":"(?i)(?:/computer/tasks/|/tasks/|task[_ -]?id|thread[_ -]?id|session[_ -]?id)[\\s:=/['\\\"]*[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}"}
+  ],
+  "finding_policy":"any_match_blocks"
+}
