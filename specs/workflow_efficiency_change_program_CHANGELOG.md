@@ -26,3 +26,11 @@
 - Added the exact RFC-8785 state metadata schema, owner-specific paths and permissions, and the prospective legacy-checkpoint historical marking contract.
 - Added the exact staged dependency graph and fail-closed suspension/rollback/review/release state machine with owner-specific inverse-edit authority.
 - Preserved the LAW_FIDELITY PASS and all protected scientific, review-independence, custody, seed, and Rebecca-only gate/merge safeguards.
+
+## v1.2 — CRITIC BF8–BF10 remediation
+
+- Replaced ambiguous multi-commit path reduction with ordered per-domain `path_events` plus a combined-domain endpoint projection; fixed exact rename detection, event ordering, hashes, and add/modify/delete/type-change histories.
+- Added exact scan-domain IDs, combined-range identity, cross-domain finding deduplication/provenance, finding order, and RFC-8785 raw-file bytes.
+- Split routing-ref head from review/design-result identity, fixed their ancestry and post-result handoff-only relationship, and required both to be verified and retained.
+- Added fail-closed transitions from `IMPLEMENTING` and `IMPLEMENTATION_VERIFIED` to `SUSPENDED`, with no direct retry/release path.
+- Added required semantic-validator and negative-fixture coverage for invariants stronger than JSON Schema.

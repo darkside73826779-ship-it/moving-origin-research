@@ -7,7 +7,7 @@
   "x-source-class":"PROPOSED",
   "type":"object",
   "additionalProperties":false,
-  "required":["schema_version","date","regime","transfer_kind","work_item","gate","sender_role","receiver_role","authority_basis","remote_ref","base_sha","result_sha","work_branch","artifacts","checks_performed","status","findings","scan_attestation","next_event","prohibited_actions","role_extension"],
+  "required":["schema_version","date","regime","transfer_kind","work_item","gate","sender_role","receiver_role","authority_basis","remote_ref","base_sha","routing_ref_sha","review_result_sha","work_branch","artifacts","checks_performed","status","findings","scan_attestation","next_event","prohibited_actions","role_extension"],
   "properties":{
     "schema_version":{"const":"common-handoff-manifest-v1"},
     "date":{"type":"string","format":"date"},
@@ -20,7 +20,8 @@
     "authority_basis":{"type":"array","minItems":1,"items":{"$ref":"#/$defs/repoPointer"}},
     "remote_ref":{"type":"string","pattern":"^(refs/heads/)?[A-Za-z0-9._/-]+$"},
     "base_sha":{"$ref":"#/$defs/sha"},
-    "result_sha":{"anyOf":[{"$ref":"#/$defs/sha"},{"type":"null"}]},
+    "routing_ref_sha":{"$ref":"#/$defs/sha"},
+    "review_result_sha":{"anyOf":[{"$ref":"#/$defs/sha"},{"type":"null"}]},
     "work_branch":{"type":"string","pattern":"^(architect|critic|taskbuilder|integrator|recorder|judge|coordinator)/[A-Za-z0-9._/-]+$"},
     "artifacts":{"type":"object","minProperties":1,"propertyNames":{"$ref":"#/$defs/repoPath"},"additionalProperties":{"$ref":"#/$defs/sha256"}},
     "checks_performed":{"type":"array","items":{"type":"string","minLength":1}},
