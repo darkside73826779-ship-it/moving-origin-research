@@ -2716,3 +2716,16 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Next authorized role:** **Rebecca**, to decide whether to incorporate this custody-only branch.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). M4 GATE SIGNED (implementation authorized, scoring gated). Provenance backlog caught up through Entry 111. STATE.md reconciled and canonically attested (Entry 112). §5 custody line: constitution SHA-256 unchanged. Seeds 201–203 and 301–303 retained, never rerun.**
+
+---
+
+## Entry 114 — M4 Item A IF1 closure, CRITIC CLEAR, and Rebecca-approved merge memorialized
+
+**Date:** 2026-08-21 · **Regime:** B [§5-P4] · **Actor:** RECORDER (provenance custody)
+
+- **Gate served:** Provenance memorialization of the Rebecca-approved M4 Item A implementation merge.
+- **Authority and predecessors:** Implementation head `0519f22cd888da1c73e18c5f3bd20b6d50c0e903`; IF1 remediation `b470241741efe1434e2299bf171957aa51b28021`; CRITIC CLEAR `critic/m4-item-a-if1-rereview` @ `ed799bf9623ed784eff536d1221773eb778a70d8`; ledger CLEAR record on main `c6e7cde3c08c0e330353ee1f6841b8c793c0ce5f`.
+- **Closure recorded:** IF1 was closed by the implementation remediation and the independent CRITIC rereview returned LAW_FIDELITY CLEAR, IMPLEMENTATION CLEAR, and combined CLEAR. Rebecca approved the merge; authoritative main merge `a0f0095e92c617a60fdfcfc3fb54f1826da9e2f7` merges the ledger record and implementation head.
+- **Scope boundary preserved:** Item A is a synthetic scaffold implementation closure only. It does not authorize model or tokenizer acquisition, local-artifact publication, serving, qualification, diagnostics, scoring, protected-seed access, training, adapter work, native-CUDA L8 activity, scientific threshold or gate changes, STATE.md mutation, rerun, or any further merge.
+- **Custody chain:** TASK BUILDER implementation/IF1 remediation → CRITIC CLEAR → WORKFLOW COORDINATOR ledger record → Rebecca merge approval → RECORDER provenance custody. No state, specification, implementation, review, model, seed, scoring, or gate action taken by RECORDER.
+- **§5 custody line:** Constitution v2 SHA-256 `c96dc32f00cafeec4a6073c9f2bb8276f05ea764f34d266abae98ed84a750b4a` — unchanged at the named main merge.
