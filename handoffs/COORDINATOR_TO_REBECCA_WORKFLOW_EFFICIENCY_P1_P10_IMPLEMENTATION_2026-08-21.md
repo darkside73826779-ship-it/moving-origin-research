@@ -41,7 +41,7 @@ Implementation choices left deterministic where the approved design did not pres
 
 ## Public-safety attestation
 
-Before public push, gitleaks 8.30.1 scanned the complete introduced range from `de473389ff63377d9117044a9bb34f8b687fe198` through this final routing-only handoff and found zero leaks. Targeted credential/private-key/LFS/model-binary checks found zero prohibited content. Apparent task-ID matches were hexadecimal digest substrings; private-path and email matches were only committed scanner-pattern/synthetic-negative fixtures and non-personal test identities. Manual review found no credentials, private custody values, private machine paths, model/tokenizer bytes, personal identifiers, or persistent task/session identifiers.
+Before public push, gitleaks 8.30.1 scanned the complete introduced range from `de473389ff63377d9117044a9bb34f8b687fe198` through the exact branch head selected for push and found zero leaks. Targeted credential/private-key/LFS/model-binary checks found zero prohibited content. Apparent task-ID matches were hexadecimal digest substrings; private-path and email matches were only committed scanner-pattern/synthetic-negative fixtures and non-personal test identities. Manual review found no credentials, private custody values, private machine paths, model/tokenizer bytes, personal identifiers, or persistent task/session identifiers.
 
 ## Holds and next decision
 
