@@ -1,0 +1,1 @@
+{"expected_artifact":"specs/data/m4_tokenizer_runtime_unavailable_interpreter_expected_v1.json","input":{"custody_lookup_performed":false,"engine_error_class":"EXECUTABLE_NOT_FOUND","process_started":false,"requested_executable":"python"},"operation":"classify_oci_start_disposition","schema_version":"m4-tokenizer-runtime-unavailable-interpreter-fixture-v1"}

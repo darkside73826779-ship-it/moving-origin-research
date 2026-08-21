@@ -35,3 +35,9 @@
 - Reconciled both prescribed `python -I` command prefixes to the pinned image's exact callable PATH executable, `python3 -I`, without changing the image identity, script, arguments, scientific construction, or custody behavior `[PROPOSED]`.
 - Bound the executable verification contract to the exact `python3` test and materialization commands and added fail-closed negative coverage for the unavailable `python` executable name `[PROPOSED]`.
 - Held execution and the still-unconsumed single materialization operation pending persistent-CRITIC review and Rebecca re-release of the changed operative contract.
+
+## v1.4.1 — RF1 executable unavailable-interpreter negative
+
+- Replaced the non-executable unavailable-interpreter test shorthand with an exact pure launcher-disposition callable, singleton input fixture, expected sanitized harness artifact, positional input mapping, validation order, deterministic output mapping, and fixed unit-test operation `[PROPOSED]`.
+- Made `PROCESS_NOT_STARTED`, no custody lookup, and no project result artifact explicit; the negative neither launches OCI nor claims a failed OCI pre-process returned materialization output.
+- Preserved both positive `python3 -I` commands and every previously banked identity, construction, schema, custody, and hold.
