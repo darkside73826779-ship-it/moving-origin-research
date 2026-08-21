@@ -1,7 +1,8 @@
 # Rebecca Directive — Comprehensive Role-Initialization Reconciliation
 
-**Date:** 2026-08-21  
-**Regime:** B  
+**Date:** 2026-08-21
+
+**Regime:** B
 **Status:** PROSPECTIVE DESIGN REQUIRED; CURRENT INITIALIZATIONS REMAIN OPERATIVE
 
 Rebecca directs a comprehensive repository-current reconciliation of every established role initialization so that a replacement role can initialize from durable repository sources without returning behind the project's current capabilities, authority boundaries, safeguards, or routing protocol.

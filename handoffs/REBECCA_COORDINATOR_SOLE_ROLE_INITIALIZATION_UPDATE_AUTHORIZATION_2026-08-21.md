@@ -1,7 +1,8 @@
 # Rebecca Authorization — Coordinator-Sole Role-Initialization Update
 
-**Date:** 2026-08-21  
-**Regime:** B  
+**Date:** 2026-08-21
+
+**Regime:** B
 **Status:** AUTHORIZED FOR COORDINATOR-SOLE AUTHORING AND VERIFICATION
 
 Rebecca explicitly assigns the complete repository-current reconciliation of all seven role-initialization files to WORKFLOW COORDINATOR alone for this instance. This supersedes the ARCHITECT → CRITIC → TASK BUILDER route stated in `handoffs/REBECCA_COMPREHENSIVE_ROLE_INITIALIZATION_RECONCILIATION_DIRECTIVE_2026-08-21.md` for this work item only.
