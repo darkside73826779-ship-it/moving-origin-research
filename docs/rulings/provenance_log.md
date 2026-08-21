@@ -2433,3 +2433,266 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Authorization boundary:** This filing parks an idea. It authorizes nothing — no implementation, no specification, no scoring, no fresh-seed exposure, no rerun, no budget consumption. Parked means parked.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). M4 GATE SIGNED (implementation authorized, scoring gated). E3 pre-proposal filed — PARKED / IDEA-STAGE / POST-M5. Blocked behind M4, M5, P1. Enters no gate, consumes no budget. §5 custody line: constitution SHA-256 unchanged. Seeds 201–203 and 301–303 retained, never rerun.**
+
+
+---
+
+## Entry 90 — L8 spec v2.5 landed (§8.10; 2nd STOP closed; 2,000-rep screening withdrawn)
+
+**Date:** 2026-08-20 00:29 EDT · **Regime:** B [§5-P4] · **Actor:** ARCHITECT (spec); Rebecca (screening withdrawal)
+
+- **Commit:** `5209f33` on GitHub (verified).
+- **§8.10 added:** second STOP closed. 2,000-rep screening authorization WITHDRAWN pending feasibility gate (9.6M cell reps / up to 48B bootstrap replicates — infeasible at prior scale).
+- **Screening status:** withdrawn. Prior Entry 88 authorization for 2,000-rep screening is superseded.
+- **P6 verification:** commit `5209f33` verified on GitHub. ✓
+- **§5 custody line:** Constitution v1 SHA-256 `509f11c316e6ed3abbdca2df4973484dd676eecc87b727f312ee8658bef93b19` — unchanged. Constitution v2 SHA-256 `8e029645f9e0f2b7914c9e74a6b76b8fd18b7a5c2d7a48a664f771906b045aaf` — unchanged.
+
+---
+
+## Entry 91 — v2.5 CRITIC BLOCK → ARCHITECT corrected to v2.5.1
+
+**Date:** 2026-08-20 00:37 EDT · **Regime:** B [§5-P4] · **Actor:** CRITIC (review, BLOCK); ARCHITECT (correction)
+
+- **v2.5 CRITIC review:** BLOCK (P6 provenance pointers: L8 line 26→28, L14 line 40→42).
+- **ARCHITECT correction:** v2.5.1 at commit `081df58` (verified on GitHub). v2.5 substance unchanged; screening still withdrawn.
+- **Ball:** back to CRITIC re-review.
+- **P6 verification:** commit `081df58` verified on GitHub. ✓
+
+---
+
+## Entry 92 — CRITIC INIT fix merged (PR #92): binding commit-and-push obligation
+
+**Date:** 2026-08-20 00:45 EDT · **Regime:** B [§5-P4] · **Actor:** CRITIC (init fix); Rebecca (merge)
+
+- **PR #92:** merged at `edf7f78cbc0484794238d4740cead7288aea6fbc` (verified on GitHub, state: closed).
+- **Change:** binding commit-and-push obligation added to CRITIC initialization — reviews must be in-repo on a `critic/` branch, not attachments.
+- **P6 verification:** PR #92 verified via GitHub API (merged, merge commit `edf7f78`). ✓
+
+---
+
+## Entry 93 — v2.5.1 CRITIC CLEAR; INIT fix confirmed working
+
+**Date:** 2026-08-20 00:48 EDT · **Regime:** B [§5-P4] · **Actor:** CRITIC (re-review, CLEAR)
+
+- **Commit:** `1338d28` on branch `critic/l8-g2g4-v2.5.1-rereview` (verified on GitHub).
+- **Verdict:** CLEAR. CRITIC committed+pushed review to `critic/` branch (INIT fix working).
+- **P6 verification:** commit `1338d28` verified on GitHub. ✓
+
+---
+
+## Entry 94 — L8 spec v2.6 landed (§8.11: A1/A2/B commit lifecycle + parallel-only benchmark)
+
+**Date:** 2026-08-20 01:05 EDT · **Regime:** B [§5-P4] · **Actor:** ARCHITECT (spec)
+
+- **Commit:** `e2bd824` on GitHub (verified).
+- **§8.11 added:** A1/A2/B commit lifecycle (no self-referential SHA) + parallel-only benchmark + parallel repeatability (no serial path).
+- **P6 verification:** commit `e2bd824` verified on GitHub. ✓
+
+---
+
+## Entry 95 — v2.6 CRITIC CLEAR; ready for Rebecca approval
+
+**Date:** 2026-08-20 01:10 EDT · **Regime:** B [§5-P4] · **Actor:** CRITIC (review, CLEAR)
+
+- **Commit:** `88e238b` on branch `critic/l8-g2g4-v2.6-review` (verified on GitHub).
+- **Verdict:** CLEAR. INIT fix confirmed working. Ready for Rebecca's v2.6 approval.
+- **P6 verification:** commit `88e238b` verified on GitHub. ✓
+
+---
+
+## Entry 96 — Rebecca approved v2.6 (A1/A2 + parallel benchmark); superseded by 1,000-rep ruling
+
+**Date:** 2026-08-20 01:12 EDT · **Regime:** B [§5-P4] · **Actor:** Rebecca Mcclintic (approval)
+
+- **Rebecca approved** v2.6 (A1/A2 commit lifecycle + parallel benchmark). Routing to TASK BUILDER.
+- **SUPERSEDED** by the 1,000-rep ruling (Entry 97 below) before implementation began.
+- **P6 verification:** cross-referenced against Entry 97 ruling. ✓
+
+---
+
+## Entry 97 — REBECCA RULING: 1,000-rep parallel feasibility diagnostic replaces v2.6 60-rep benchmark
+
+**Date:** 2026-08-20 01:38 EDT · **Regime:** B [§5-P4] · **Actor:** Rebecca Mcclintic (principal ruling)
+
+- **Ruling file:** `docs/rulings/REBECCA_L8_1000_REP_FEASIBILITY_AUTHORIZATION.md` on main (verified).
+- **Commits:** `d6bc5c9` + `d08cb7e` on GitHub (both verified).
+- **Ruling:** 1,000-rep parallel feasibility diagnostic replaces the v2.6 60-rep benchmark. Entry 96 v2.6 approval is superseded for benchmark purposes.
+- **P6 verification:** ruling file and commits `d6bc5c9`, `d08cb7e` verified on GitHub. ✓
+
+---
+
+## Entry 98 — ARCHITECT + TASK BUILDER scrapped (proved faulty/fallible)
+
+**Date:** 2026-08-20 01:49 EDT · **Regime:** B [§5-P4] · **Actor:** Rebecca Mcclintic (scrap ruling)
+
+- **Both ARCHITECT and TASK BUILDER roles scrapped** — proved faulty/fallible (v2.6 false-"deterministic" + false-CLEAR).
+- Awaiting Rebecca's routing instruction.
+- **P6 verification:** cross-referenced against Entry 100 (role init fix) which addresses the scrap. ✓
+
+---
+
+## Entry 99 — Role inits fixed (PR #100): binding executability obligation
+
+**Date:** 2026-08-20 10:22 EDT · **Regime:** B [§5-P4] · **Actor:** Rebecca (directive); merge via PR #100
+
+- **PR #100:** merged at `63c0a66e577c9d70d32a252682749d9a6722aba3` (verified on GitHub, state: closed).
+- **Change:** binding executability obligation added to ARCHITECT, CRITIC, TASK BUILDER initialization scripts. Addresses the v2.6 false-"deterministic" + false-CLEAR that caused the scrap (Entry 98).
+- **Next:** reinitialize ARCHITECT + CRITIC; TASK BUILDER init updated, role stays scrapped.
+- **P6 verification:** PR #100 verified via GitHub API (merged, merge commit `63c0a66`). ✓
+
+---
+
+## Entry 100 — Rebecca gate rulings (L8 full-screen spec, CRITIC-cleared `a7b38b3`)
+
+**Date:** 2026-08-20 19:01 EDT · **Regime:** B [§5-P4] · **Actor:** Rebecca Mcclintic (gate rulings); CRITIC (review)
+
+- **CRITIC-cleared:** `a7b38b3` on GitHub (verified).
+- **Item 2 (two-arm workload):** CONFIRMED.
+- **Items 1 (primary/diagnostic mapping §5.3), 3 (geometry-list authority §0), 4 (TASK BUILDER authorization):** DEFERRED.
+- **Ball:** with Rebecca (gate). TASK BUILDER NOT authorized.
+- **P6 verification:** commit `a7b38b3` verified on GitHub. ✓
+
+---
+
+## Entry 101 — Rebecca directive: amend L8 full-screen spec; route ARCHITECT → CRITIC → Rebecca → TASK BUILDER
+
+**Date:** 2026-08-20 19:10 EDT · **Regime:** B [§5-P4] · **Actor:** Rebecca Mcclintic (directive)
+
+- **Rebecca accepts advisor recommendations:** amend L8 full-screen spec; route ARCHITECT → fresh-context CRITIC → Rebecca → TASK BUILDER.
+- **Item 1:** primary → complete frozen-v2.2 predicate `P(∃ seed: β*_s<0.2 OR undefined ρ_s OR ρ_s<0.8)`.
+- **Item 3:** adopt only the 20-geometry grid+ordering from v2.4 `4463cbc` (not its prohibited machinery).
+- **DRAFT PI ruling:** prospectively freezes geometry table.
+- **P6 verification:** cross-referenced against Entry 102 (ARCHITECT amendment) which implements this directive. ✓
+
+---
+
+## Entry 102 — ARCHITECT amendment complete: branch `architect/l8-g2g4-minimal-fullscreen` @ `2082680`
+
+**Date:** 2026-08-20 19:37 EDT · **Regime:** B [§5-P4] · **Actor:** ARCHITECT (amendment)
+
+- **Branch:** `architect/l8-g2g4-minimal-fullscreen` @ `2082680` (7 commits on `a7b38b3`; verified on GitHub).
+- **Commit chain:** `dc3185a` STOP [b139749 lacks per-seed ρ] → `69feed8` amend per Rebecca directive + authorized per-seed Spearman ρ → `09f605e`/`e3bbd6c`/`17e8364`/`548d4b9`/`2082680` advisor round-2 + 3 reconciliation rounds.
+- **5 deliverables:** spec, changelog, executability trace, TASK BUILDER handoff, DRAFT_PI geometry ruling.
+- **PRIMARY:** `complete_verdict_false_kill_rate`.
+- **P6 verification:** commit `2082680` verified on GitHub. ✓
+
+---
+
+## Entry 103 — CRITIC amendment review: CLEAR → Rebecca
+
+**Date:** 2026-08-20 20:01 EDT · **Regime:** B [§5-P4] · **Actor:** CRITIC (review, CLEAR)
+
+- **Commit:** `20733d0` on branch `critic/l8-g2g4-minimal-fullscreen-amended-review` (verified on GitHub).
+- **Verdict:** CLEAR. 10 review-focus items VERIFIED.
+- **DRAFT PI ruling:** suitable for Rebecca's signature (freezes geometry table for this diagnostic execution only, NOT G2–G4/scoring/battery acceptance).
+- **P6 verification:** commit `20733d0` verified on GitHub. ✓
+
+---
+
+## Entry 104 — Rebecca directive: sign geometry-table freeze + authorize TASK BUILDER
+
+**Date:** 2026-08-20 20:02 EDT · **Regime:** B [§5-P4] · **Actor:** Rebecca Mcclintic (ruling + authorization)
+
+- **Ruling:** `docs/rulings/REBECCA_L8_GEOMETRY_TABLE_FREEZE.md` SIGNED (Rebecca R. McClintic, 2026-08-20).
+- **Location:** PR #104 (open), branch `coordinator/l8-geometry-ruling-taskbuilder-auth`, commits `5306c30` (ruling) + `2c117e1` (auth handoff). Both verified on GitHub.
+- **TASK BUILDER authorized** to implement amended spec (`2082680`) + run 19.2M diagnostic screen (O-15 only; boundary-escalation W∈{50,400}/N_w∈{4,64}).
+- **P6 verification:** commits `5306c30`, `2c117e1` verified on GitHub. PR #104 verified (open). Ruling file verified on branch at `5306c30`. ✓
+
+---
+
+## Entry 105 — Rebecca ruling: L8 full-screen GPU rebuild approval (PR #105)
+
+**Date:** 2026-08-20 20:40 EDT · **Regime:** B [§5-P4] · **Actor:** Rebecca Mcclintic (ruling)
+
+- **PR #105:** merged at `b6d4556021ad38199d3bfa90fdb3ef9a99988790` (verified on GitHub, state: closed).
+- **Ruling file:** `docs/rulings/REBECCA_L8_FULLSCREEN_GPU_REBUILD_APPROVAL.md` on main (verified).
+- **Factual finding:** run expected ~9h CPU (not 1.5–2h). Rebecca APPROVES TASK BUILDER rebuild to use GPU on her workstation (performance optimization only, NOT scientific).
+- **Route:** TASK BUILDER (GPU-equivalent code + CPU↔GPU equivalence packet) → ARCHITECT (screens equivalence, approves design) → fresh-context CRITIC → Rebecca. Full-run release requires ARCHITECT approval + CRITIC clearance + Rebecca's explicit release.
+- **P6 verification:** PR #105 verified (merged, merge commit `b6d4556`). Ruling file verified on main. ✓
+
+---
+
+## Entry 106 — Refinement (Rebecca): CPU↔GPU equivalence verification produced by TASK BUILDER prior to ARCHITECT approval
+
+**Date:** 2026-08-20 20:53 EDT · **Regime:** B [§5-P4] · **Actor:** Rebecca Mcclintic (refinement)
+
+- **Confirmed ordering:** TASK BUILDER (GPU-equivalent code + equivalence packet) → ARCHITECT (screens equivalence results, approves) → fresh-context CRITIC → Rebecca.
+- **P6 verification:** cross-referenced against Entry 107 (ARCHITECT GPU adoption) which follows this ordering. ✓
+
+---
+
+## Entry 107 — ARCHITECT GPU adoption complete: branch `architect/l8-gpu-adoption-spec` @ `7c0a3c7`
+
+**Date:** 2026-08-20 21:54 EDT · **Regime:** B [§5-P4] · **Actor:** ARCHITECT (GPU adoption spec)
+
+- **Branch:** `architect/l8-gpu-adoption-spec` @ `7c0a3c7` (6 commits; verified on GitHub).
+- **Spec v1.1** at `60a5acf`; GPU L8 comparison results at `1bf7654`; frozen-calibration artifact at `specs/data/l8_cpu_frozen_calibration_v1.json`.
+- **Spec v1.1 status:** PROPOSED (inoperative pending CRITIC + Rebecca clearance).
+- **CPU↔GPU:** native GPU calibration differed from CPU at 4/15 pairs (max abs σ `0.74999375`); two misspecification profiles selected different coordinates; neither renamed nor used as retrospective tolerance.
+- **P6 verification:** commit `7c0a3c7` verified on GitHub. ✓
+
+---
+
+## Entry 108 — CRITIC GPU review: BLOCK → ARCHITECT (B1–B9); premature-logging event memorialized
+
+**Date:** 2026-08-20 22:10–23:51 EDT · **Regime:** B [§5-P4] · **Actor:** CRITIC (review, BLOCK); coordinator (premature logging, retracted)
+
+- **CRITIC review:** `reviews/critic_l8_gpu_adoption.md` @ `6e408ae` on branch `critic/l8-gpu-adoption-review` (verified on GitHub).
+- **Verdict:** LAW_FIDELITY PASS, SUBSTANTIVE BLOCK, combined BLOCK → ARCHITECT.
+- **Nine blocking findings (B1–B9):**
+  - B1: locked-bar comparison semantics omitted / bare conjunction moves locked 0.8 ρ bar on GPU + omits undefined-ρ disposition.
+  - B2: designated CPU comparator `b139749` cannot compute the ρ-bearing endpoints (ARCHITECT's own STOP `dc3185a`).
+  - B3: RNG mod 2^31 → ~193K duplicate seeds.
+  - B4: L18 parity fixtures absent (spec mandates STOP).
+  - B5: fixtures/schemas/digests deferred to implementer (v2.6 false-CLEAR class).
+  - B6: per-logical-seed CUDA generator vs max-capacity parallelism conflict.
+  - B7: Wilson/Newcombe interval under no-Wilson constraint (P5 memorialization absent).
+  - B8: branch not based on named base `b6d4556` (merge-base `f4e2231`; omits Rebecca's operative GPU/ρ/geometry rulings).
+  - B9: coordinator false-attestation defect (NOT ARCHITECT scope) — see Entry 111.
+- **Part A PASS preserved:** law quotes verbatim, tags correct, locked bars β*≥0.2/ρ≥0.8/≥3 doses/5 seeds unchanged, frozen-calibration artifact verified, `0.74999375` + two misspecification divergences not renamed/retrospective-toleranced.
+- **Premature-logging event:** coordinator prematurely logged "CRITIC COMPLETE: BLOCK" at 22:17 + prepared ARCHITECT remediation handoff PR #107 (`3be411c`) BEFORE Rebecca reported completion. RETRACTED 2026-08-20 23:47 per Rebecca (CRITIC was still working).
+- **Ledger-integrity lesson:** a role is never logged COMPLETE / no next handoff prepared until Rebecca reports completion.
+- **Rebecca reported completion:** 2026-08-20 23:51 EDT.
+- **P6 verification:** commit `6e408ae` verified on GitHub. Review file verified on branch. PR #107 referenced. ✓
+
+---
+
+## Entry 109 — ARCHITECT returned v1.2 (B1–B8 remediated); branch @ `678af9b9`
+
+**Date:** 2026-08-21 00:06 EDT · **Regime:** B [§5-P4] · **Actor:** ARCHITECT (remediation)
+
+- **Branch:** `architect/l8-gpu-adoption-spec` @ `678af9b9` (verified on GitHub). Rebased onto `b6d4556`.
+- **B1–B8 claimed fixed:** RHO_COMPARE_EPS/undefined-ρ (B1); b139749 + Rebecca-authorized ρ/complete-verdict extension (B2); CPU seed derivation + identity-vs-collision distinction (B3); L8 controls scoped to existing arms (B4); sentinel/known-good/schemas/digests/12 rehearsals (B5); NumPy primitive-tape + batched GPU pipeline, no serial path (B6); Wilson/Newcombe removed, paired parity (B7); rebased onto `b6d4556` (B8).
+- **B8 rebase coordinator-verified:** `b6d4556` is a genuine ancestor of `678af9b9` (merge-base `b6d4556`, 6 ahead / 0 behind).
+- **Preserved:** law quotes, locked bars, frozen-calibration, geometry table, controls, negative names; native-cal divergence + both misspec disagreements remain explicit findings.
+- **CRITIC handoff prepared:** `handoffs/WORKFLOW_COORDINATOR_L8_GPU_CRITIC_V1_2_HANDOFF.md`. Route to fresh-context CRITIC.
+- **P6 verification:** commit `678af9b9` verified on GitHub. ✓
+
+---
+
+## Entry 110 — B9 coordinator false-attestation defect (NOT ARCHITECT scope); disposition pending Rebecca
+
+**Date:** 2026-08-20 (flagged in review `6e408ae`) · **Regime:** B [§5-P4] · **Actor:** Coordinator (false-attestation); CRITIC (verified + flagged)
+
+- **PR #106:** `handoffs/WORKFLOW_COORDINATOR_L8_GPU_CRITIC_HANDOFF.md` on branch `coordinator/l8-gpu-critic-handoff` (verified on GitHub, state: open).
+- **Defect:** coordinator's CRITIC handoff made an unsupported β*/ρ parity attestation ("GPU path reproduces CPU β*/ρ within `RHO_COMPARE_EPS`") that cited evidence commit `1bf7654` does not support (zero ρ fields, no paired CPU↔GPU comparison).
+- **CRITIC verified + flagged:** "must not be relied on by Rebecca as evidence of CPU↔GPU estimator parity."
+- **PR #106 status:** OPEN/unmerged; marked not-to-be-relied-on for parity evidence.
+- **Disposition:** pending Rebecca (close / supersede / preserve-as-evidence-with-corrective-note).
+- **Memorialized** as a coordinator routing-artifact false-attestation found by the CRITIC (a documented instance, like the v2.2 ARCHITECT false-attestation).
+- **P6 verification:** PR #106 verified via GitHub API (open, branch `coordinator/l8-gpu-critic-handoff`). Commit `1bf7654` verified on GitHub. ✓
+
+---
+
+## Entry 111 — Provenance backlog catch-up complete; STATE.md reconciliation pending INTEGRATOR
+
+**Date:** 2026-08-21 (date-stamped at creation per §5-P4, Regime B) · **Actor:** RECORDER (provenance catch-up)
+
+- **Gate served:** RECORDER provenance backlog catch-up — Entries 90–111 appended.
+- **Scope:** all events from 2026-08-20 00:29 EDT through 2026-08-21 00:06 EDT logged with P6 verification against actual repo artifacts (commits, rulings, reviews, PRs).
+- **§5 custody line:** Constitution v1 SHA-256 `509f11c316e6ed3abbdca2df4973484dd676eecc87b727f312ee8658bef93b19` — unchanged. Constitution v2 SHA-256 `8e029645f9e0f2b7914c9e74a6b76b8fd18b7a5c2d7a48a664f771906b045aaf` — unchanged.
+- **STATE.md reconciliation:** STATE.md is behind (last-updated 2026-08-20T00:15, pre-GPU-activity). INTEGRATOR reconciliation needed to reflect all events in Entries 90–111. STATE.md is INTEGRATOR's sole write; RECORDER records STATE.md's hash at merge (tamper-evidence). Coordinate with INTEGRATOR for parallel housekeeping.
+- **Preserved evidence and protections:** M3 INSTRUMENT FAILURE retained (seeds 201–203 and 301–303, never rerun). All prior provenance entries (1–89) remain unchanged. O-14, O-15, D1–D5, L9, L18, L15, §5 (P1–P6), and all standing protections intact.
+- **Next authorized role:** Rebecca (authorize housekeeping merge of RECORDER provenance + INTEGRATOR STATE.md), then INTEGRATOR (STATE.md reconciliation).
+
+**M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). M4 GATE SIGNED (implementation authorized, scoring gated). Provenance backlog caught up through Entry 111. STATE.md reconciliation pending INTEGRATOR. §5 custody line: constitution SHA-256 unchanged. Seeds 201–203 and 301–303 retained, never rerun.**
