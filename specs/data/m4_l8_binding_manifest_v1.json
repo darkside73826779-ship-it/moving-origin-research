@@ -1,1 +1,34 @@
-{"schema_version":"m4-l8-binding-manifest-v1","date":"2026-08-21","regime":"B","status":"PROVISIONAL_BLOCKED","adapter_version":"m4-l8-adapter-v1","authority":{"m4_base_sha":"7d6e499cb8a0cf9859cc05b37ec4e97767c4839e","l8_routing_head_sha":"e05550f494b2c6dffb2ea9645067395beaf56fe1","l8_design_result_sha":"a25398e599622c09d130b597b7bc83ce62a966d5","l8_critic_clear_sha":"e0aad1dabde9546e0074a7a375135eb92ee2072a","l8_rebecca_release_sha":"50260d3288a1bb24581ae0fe4b7f1883d03f5db9"},"final_binding":{"l8_routing_head_sha":null,"l8_implementation_result_sha":null,"l8_implementation_review_sha":null,"code_tree_sha256":null,"dependency_manifest_sha256":null,"config_schema_sha256":null,"adapter_module":null,"evaluate_primitive_tape_symbol":null,"evaluate_estimator_only_symbol":null},"required_operations":["PRIMITIVE_TAPE","ESTIMATOR_ONLY"],"failure_code":"M4_L8_BINDING_UNRECONCILED"}
+{
+  "schema_version": "m4-l8-binding-manifest-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "status": "PROVISIONAL_BLOCKED",
+  "adapter_version": "m4-l8-adapter-v1",
+  "authorized_backend": "PARALLEL_CPU_L8_EXACT_SHA",
+  "shelved_backends": [
+    "NATIVE_CUDA_L8"
+  ],
+  "authority": {
+    "m4_base_sha": "7d6e499cb8a0cf9859cc05b37ec4e97767c4839e",
+    "rebecca_cpu_l8_directive_sha": "d821a5c534f1c4547b99a2fb0079266497ddd537",
+    "parallel_cpu_semantic_baseline_sha": "b1397498ca369067e956479e6c2bd6b0793c3e89",
+    "parallel_cpu_evidence_sha": "6d455bb878f4b52a5b5564afac38d6fb3a20d4b3"
+  },
+  "final_binding": {
+    "parallel_cpu_l8_routing_head_sha": null,
+    "parallel_cpu_l8_implementation_result_sha": null,
+    "parallel_cpu_l8_implementation_review_sha": null,
+    "code_tree_sha256": null,
+    "dependency_manifest_sha256": null,
+    "config_schema_sha256": null,
+    "adapter_module": null,
+    "evaluate_primitive_tape_symbol": null,
+    "evaluate_estimator_only_symbol": null,
+    "parallelism_owner": null
+  },
+  "required_operations": [
+    "PRIMITIVE_TAPE",
+    "ESTIMATOR_ONLY"
+  ],
+  "failure_code": "M4_CPU_L8_BINDING_UNRECONCILED"
+}

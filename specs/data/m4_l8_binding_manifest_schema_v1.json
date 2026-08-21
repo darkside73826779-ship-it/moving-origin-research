@@ -1,1 +1,229 @@
-{"$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://moving-origin-research.invalid/schemas/m4-l8-binding-manifest-v1","title":"M4 L8 Binding Manifest v1","x-artifact-date":"2026-08-21","x-artifact-regime":"B","x-source-class":"PROPOSED","type":"object","additionalProperties":false,"required":["schema_version","date","regime","status","adapter_version","authority","final_binding","required_operations","failure_code"],"properties":{"schema_version":{"const":"m4-l8-binding-manifest-v1"},"date":{"type":"string","format":"date"},"regime":{"const":"B"},"status":{"enum":["PROVISIONAL_BLOCKED","PHASE_B_RECONCILED"]},"adapter_version":{"const":"m4-l8-adapter-v1"},"authority":{"type":"object","additionalProperties":false,"required":["m4_base_sha","l8_routing_head_sha","l8_design_result_sha","l8_critic_clear_sha","l8_rebecca_release_sha"],"properties":{"m4_base_sha":{"$ref":"#/$defs/sha"},"l8_routing_head_sha":{"$ref":"#/$defs/sha"},"l8_design_result_sha":{"$ref":"#/$defs/sha"},"l8_critic_clear_sha":{"$ref":"#/$defs/sha"},"l8_rebecca_release_sha":{"$ref":"#/$defs/sha"}}},"final_binding":{"type":"object","additionalProperties":false,"required":["l8_routing_head_sha","l8_implementation_result_sha","l8_implementation_review_sha","code_tree_sha256","dependency_manifest_sha256","config_schema_sha256","adapter_module","evaluate_primitive_tape_symbol","evaluate_estimator_only_symbol"],"properties":{"l8_routing_head_sha":{"anyOf":[{"$ref":"#/$defs/sha"},{"type":"null"}]},"l8_implementation_result_sha":{"anyOf":[{"$ref":"#/$defs/sha"},{"type":"null"}]},"l8_implementation_review_sha":{"anyOf":[{"$ref":"#/$defs/sha"},{"type":"null"}]},"code_tree_sha256":{"anyOf":[{"$ref":"#/$defs/sha256"},{"type":"null"}]},"dependency_manifest_sha256":{"anyOf":[{"$ref":"#/$defs/sha256"},{"type":"null"}]},"config_schema_sha256":{"anyOf":[{"$ref":"#/$defs/sha256"},{"type":"null"}]},"adapter_module":{"type":["string","null"]},"evaluate_primitive_tape_symbol":{"type":["string","null"]},"evaluate_estimator_only_symbol":{"type":["string","null"]}}},"required_operations":{"const":["PRIMITIVE_TAPE","ESTIMATOR_ONLY"]},"failure_code":{"const":"M4_L8_BINDING_UNRECONCILED"}},"$defs":{"sha":{"type":"string","pattern":"^[0-9a-f]{40}$"},"sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"}}}
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://moving-origin-research.invalid/schemas/m4-l8-binding-manifest-v1",
+  "title": "M4 Parallel-CPU L8 Binding Manifest v1",
+  "x-artifact-date": "2026-08-21",
+  "x-artifact-regime": "B",
+  "x-source-class": "PROPOSED",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "date",
+    "regime",
+    "status",
+    "adapter_version",
+    "authorized_backend",
+    "shelved_backends",
+    "authority",
+    "final_binding",
+    "required_operations",
+    "failure_code"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "m4-l8-binding-manifest-v1"
+    },
+    "date": {
+      "const": "2026-08-21"
+    },
+    "regime": {
+      "const": "B"
+    },
+    "status": {
+      "enum": [
+        "PROVISIONAL_BLOCKED",
+        "CPU_L8_RECONCILED"
+      ]
+    },
+    "adapter_version": {
+      "const": "m4-l8-adapter-v1"
+    },
+    "authorized_backend": {
+      "const": "PARALLEL_CPU_L8_EXACT_SHA"
+    },
+    "shelved_backends": {
+      "const": [
+        "NATIVE_CUDA_L8"
+      ]
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "m4_base_sha",
+        "rebecca_cpu_l8_directive_sha",
+        "parallel_cpu_semantic_baseline_sha",
+        "parallel_cpu_evidence_sha"
+      ],
+      "properties": {
+        "m4_base_sha": {
+          "const": "7d6e499cb8a0cf9859cc05b37ec4e97767c4839e"
+        },
+        "rebecca_cpu_l8_directive_sha": {
+          "const": "d821a5c534f1c4547b99a2fb0079266497ddd537"
+        },
+        "parallel_cpu_semantic_baseline_sha": {
+          "const": "b1397498ca369067e956479e6c2bd6b0793c3e89"
+        },
+        "parallel_cpu_evidence_sha": {
+          "const": "6d455bb878f4b52a5b5564afac38d6fb3a20d4b3"
+        }
+      }
+    },
+    "final_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "parallel_cpu_l8_routing_head_sha",
+        "parallel_cpu_l8_implementation_result_sha",
+        "parallel_cpu_l8_implementation_review_sha",
+        "code_tree_sha256",
+        "dependency_manifest_sha256",
+        "config_schema_sha256",
+        "adapter_module",
+        "evaluate_primitive_tape_symbol",
+        "evaluate_estimator_only_symbol",
+        "parallelism_owner"
+      ],
+      "properties": {
+        "parallel_cpu_l8_routing_head_sha": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sha"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "parallel_cpu_l8_implementation_result_sha": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sha"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "parallel_cpu_l8_implementation_review_sha": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sha"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "code_tree_sha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "dependency_manifest_sha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "config_schema_sha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "adapter_module": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "evaluate_primitive_tape_symbol": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "evaluate_estimator_only_symbol": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "parallelism_owner": {
+          "anyOf": [
+            {
+              "const": "PARALLEL_CPU_L8_IMPLEMENTATION"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "required_operations": {
+      "const": [
+        "PRIMITIVE_TAPE",
+        "ESTIMATOR_ONLY"
+      ]
+    },
+    "failure_code": {
+      "const": "M4_CPU_L8_BINDING_UNRECONCILED"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "PROVISIONAL_BLOCKED"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "final_binding": {
+            "const": {
+              "parallel_cpu_l8_routing_head_sha": null,
+              "parallel_cpu_l8_implementation_result_sha": null,
+              "parallel_cpu_l8_implementation_review_sha": null,
+              "code_tree_sha256": null,
+              "dependency_manifest_sha256": null,
+              "config_schema_sha256": null,
+              "adapter_module": null,
+              "evaluate_primitive_tape_symbol": null,
+              "evaluate_estimator_only_symbol": null,
+              "parallelism_owner": null
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "schema_version": "m4-l8-compatibility-expected-report-envelope-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "constructor": {
+    "algorithm": "Load m4_l8_compatibility_expected_responses_v1.json rows in stored order. For each row emit keys row_ordinal,case_kind,case_id,expected_response_sha256,observed,observed_response_sha256,pass with observed=expected, observed_response_sha256=expected_response_sha256, pass=true. RFC8785 the 13-row array to obtain payload_sha256. Duplicate that exact array for run_ordinal 0 then 1. Load failure_injections from m4_harness_executable_fixtures_v1.json in stored order; emit case_id, mutation_sha256=SHA256(RFC8785(mutation)), expected_code, observed_code=expected_code, pass=true. Assemble report with the fixed header values and key/value definitions in m4_l8_compatibility_report_schema_v1.json; RFC8785 the report and append one LF.",
+    "implementation_sha": "1111111111111111111111111111111111111111",
+    "implementation_review_sha": "2222222222222222222222222222222222222222",
+    "binding_manifest_sha256": "80f9193ef5dcb21c556e4ebe134e739b2c1f5e2f87c0815b6c3467702eda19af",
+    "fixture_sha256": "b456f3c395d9f75c8eae4c4f69f39350c5da264a5a33b1a26410c1da73cc56dc",
+    "expected_responses_sha256": "eda6c06bc6879a89818746a6cd478462a3352c6155c7d531ff9084cbeb4ec00a",
+    "run_payload_sha256": "62ce5b736a280d6c196e8ef4bfd77f254dff00f57bec880b95becd1938155d22"
+  },
+  "expected_canonical_report_byte_length": 11483,
+  "expected_canonical_report_sha256": "888ca0dca6b9110fc7419c564c8a0942d3ac80f946347beb2d10bb0bba40302a"
+}

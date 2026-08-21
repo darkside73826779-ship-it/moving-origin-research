@@ -1,1 +1,737 @@
-{"$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://moving-origin-research.invalid/schemas/m4-l8-compatibility-report-v1","title":"M4 L8 Compatibility Report v1","x-artifact-date":"2026-08-21","x-artifact-regime":"B","x-source-class":"PROPOSED","type":"object","additionalProperties":false,"required":["schema_version","date","regime","mode","implementation_sha","implementation_review_sha","binding_manifest_sha256","fixture_sha256","runs","failure_injections","repeat_payloads_equal","failure","verdict"],"properties":{"schema_version":{"const":"m4-l8-compatibility-report-v1"},"date":{"type":"string","format":"date"},"regime":{"const":"B"},"mode":{"const":"O-15-diagnostic-only"},"implementation_sha":{"type":"string","pattern":"^[0-9a-f]{40}$"},"implementation_review_sha":{"type":"string","pattern":"^[0-9a-f]{40}$"},"binding_manifest_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},"fixture_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},"runs":{"type":"array","minItems":2,"maxItems":2,"items":{"type":"object","additionalProperties":false,"required":["run_ordinal","payload_sha256","rows"],"properties":{"run_ordinal":{"enum":[0,1]},"payload_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},"rows":{"type":"array","minItems":13}}}},"failure_injections":{"type":"array","minItems":6,"maxItems":6,"items":{"type":"object","additionalProperties":false,"required":["case_id","expected_code","observed_code","pass"],"properties":{"case_id":{"enum":["schema_rejection","digest_mismatch","dependency_mismatch","cuda_unavailable","nondeterministic_repeat","unsupported_arm"]},"expected_code":{"type":"string"},"observed_code":{"type":"string"},"pass":{"type":"boolean"}}}},"repeat_payloads_equal":{"type":"boolean"},"failure":{"anyOf":[{"type":"null"},{"type":"object","additionalProperties":false,"required":["stage","message_code"],"properties":{"stage":{"enum":["preflight","compatibility","custody","publisher"]},"message_code":{"type":"string"}}}]},"verdict":{"enum":["COMPATIBLE_FOR_M4_O15","INSTRUMENT_FAILURE"]}}}
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://moving-origin-research.invalid/schemas/m4-l8-compatibility-report-v1",
+  "title": "M4 L8 Compatibility Report v1",
+  "x-artifact-date": "2026-08-21",
+  "x-artifact-regime": "B",
+  "x-source-class": "PROPOSED",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "date",
+    "regime",
+    "mode",
+    "implementation_sha",
+    "implementation_review_sha",
+    "binding_manifest_sha256",
+    "fixture_sha256",
+    "expected_responses_sha256",
+    "runs",
+    "failure_injections",
+    "repeat_payloads_equal",
+    "failure",
+    "verdict"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "m4-l8-compatibility-report-v1"
+    },
+    "date": {
+      "const": "2026-08-21"
+    },
+    "regime": {
+      "const": "B"
+    },
+    "mode": {
+      "const": "O-15-diagnostic-only"
+    },
+    "implementation_sha": {
+      "$ref": "#/$defs/sha"
+    },
+    "implementation_review_sha": {
+      "$ref": "#/$defs/sha"
+    },
+    "binding_manifest_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "fixture_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "expected_responses_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "runs": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 2,
+      "items": {
+        "$ref": "#/$defs/run"
+      }
+    },
+    "failure_injections": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 6,
+      "items": {
+        "$ref": "#/$defs/injection"
+      }
+    },
+    "repeat_payloads_equal": {
+      "type": "boolean"
+    },
+    "failure": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "stage",
+            "message_code"
+          ],
+          "properties": {
+            "stage": {
+              "enum": [
+                "preflight",
+                "compatibility",
+                "custody",
+                "publisher"
+              ]
+            },
+            "message_code": {
+              "enum": [
+                  "M4_CPU_L8_BINDING_UNRECONCILED",
+                "UNAPPROVED_IMPLEMENTATION_IDENTITY",
+                "SCHEMA_DRIFT",
+                "DIGEST_MISMATCH",
+                "DEPENDENCY_MISMATCH",
+                "CONFIGURATION_MISMATCH",
+                  "AI_CUDA_UNAVAILABLE",
+                  "AI_GPU_ALLOCATION_FAILED",
+                  "DEVICE_TRANSFER_FAILED",
+                  "DEVICE_SYNCHRONIZATION_FAILED",
+                  "UNAPPROVED_L8_BACKEND",
+                "NONFINITE_APPARATUS",
+                "NONDETERMINISTIC_RESPONSE",
+                "PUBLICATION_INTERRUPTED"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "verdict": {
+      "enum": [
+        "COMPATIBLE_FOR_M4_O15",
+        "INSTRUMENT_FAILURE"
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "verdict": {
+            "const": "COMPATIBLE_FOR_M4_O15"
+          }
+        },
+        "required": [
+          "verdict"
+        ]
+      },
+      "then": {
+        "properties": {
+          "runs": {
+            "minItems": 2,
+            "maxItems": 2,
+            "prefixItems": [
+              {
+                "$ref": "#/$defs/run",
+                "properties": {
+                  "run_ordinal": {
+                    "const": 0
+                  }
+                }
+              },
+              {
+                "$ref": "#/$defs/run",
+                "properties": {
+                  "run_ordinal": {
+                    "const": 1
+                  }
+                }
+              }
+            ],
+            "items": false
+          },
+          "failure_injections": {
+            "minItems": 6,
+            "maxItems": 6,
+            "prefixItems": [
+              {
+                "$ref": "#/$defs/injection",
+                "properties": {
+                  "case_id": {
+                    "const": "schema_rejection"
+                  },
+                  "mutation_sha256": {
+                    "const": "dfa5ef4a4fae8e9490c6f75a926a01fd116856eb7f70f3272f7c0a90c8d417d2"
+                  },
+                  "expected_code": {
+                    "const": "SCHEMA_DRIFT"
+                  },
+                  "observed_code": {
+                    "const": "SCHEMA_DRIFT"
+                  }
+                }
+              },
+              {
+                "$ref": "#/$defs/injection",
+                "properties": {
+                  "case_id": {
+                    "const": "digest_mismatch"
+                  },
+                  "mutation_sha256": {
+                    "const": "9a2393d1329c730a9ef8f275ed265086a92488999e837cca31addf7d947fb207"
+                  },
+                  "expected_code": {
+                    "const": "DIGEST_MISMATCH"
+                  },
+                  "observed_code": {
+                    "const": "DIGEST_MISMATCH"
+                  }
+                }
+              },
+              {
+                "$ref": "#/$defs/injection",
+                "properties": {
+                  "case_id": {
+                    "const": "dependency_mismatch"
+                  },
+                  "mutation_sha256": {
+                    "const": "da30446eb39aff15cf306f37e6d92144d32b9d88b560acb1210094e31de7f3e2"
+                  },
+                  "expected_code": {
+                    "const": "DEPENDENCY_MISMATCH"
+                  },
+                  "observed_code": {
+                    "const": "DEPENDENCY_MISMATCH"
+                  }
+                }
+              },
+              {
+                "$ref": "#/$defs/injection",
+                "properties": {
+                  "case_id": {
+                      "const": "cuda_ai_model_unavailable"
+                  },
+                  "mutation_sha256": {
+                      "const": "dcbd6f1a1b3cb470cd89bf9ba773d894983f83812fabcb5c12aba531685833c9"
+                  },
+                  "expected_code": {
+                      "const": "AI_CUDA_UNAVAILABLE"
+                  },
+                  "observed_code": {
+                      "const": "AI_CUDA_UNAVAILABLE"
+                  }
+                }
+              },
+              {
+                "$ref": "#/$defs/injection",
+                "properties": {
+                  "case_id": {
+                    "const": "nondeterministic_repeat"
+                  },
+                  "mutation_sha256": {
+                    "const": "ee5c15346d6143b208fb82549084712abd4d8d88f763a2b7fa8ed6929f74922d"
+                  },
+                  "expected_code": {
+                    "const": "NONDETERMINISTIC_RESPONSE"
+                  },
+                  "observed_code": {
+                    "const": "NONDETERMINISTIC_RESPONSE"
+                  }
+                }
+              },
+              {
+                "$ref": "#/$defs/injection",
+                "properties": {
+                  "case_id": {
+                      "const": "shelved_native_cuda_l8"
+                  },
+                  "mutation_sha256": {
+                      "const": "85f4ec7a27bcdd84ff1681cdec2206e8e455cbe91540a0d0f8f9af84ee099361"
+                  },
+                  "expected_code": {
+                      "const": "UNAPPROVED_L8_BACKEND"
+                  },
+                  "observed_code": {
+                      "const": "UNAPPROVED_L8_BACKEND"
+                  }
+                }
+              }
+            ],
+            "items": false
+          },
+          "repeat_payloads_equal": {
+            "const": true
+          },
+          "failure": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "verdict": {
+            "const": "INSTRUMENT_FAILURE"
+          }
+        },
+        "required": [
+          "verdict"
+        ]
+      },
+      "then": {
+        "properties": {
+          "failure": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "rho_observed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rho",
+        "rho_defined",
+        "rho_predicate"
+      ],
+      "properties": {
+        "rho": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rho_defined": {
+          "type": "boolean"
+        },
+        "rho_predicate": {
+          "type": "boolean"
+        }
+      }
+    },
+    "complete_observed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "false_kill"
+      ],
+      "properties": {
+        "false_kill": {
+          "type": "boolean"
+        }
+      }
+    },
+    "tie_observed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "coverage_indices",
+        "answered_correctness",
+        "risk",
+        "deviation",
+        "dose_summaries",
+        "beta_star",
+        "rho",
+        "beta_predicate",
+        "rho_predicate",
+        "complete_predicate"
+      ],
+      "properties": {
+        "coverage_indices": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "answered_correctness": {
+          "type": "array",
+          "items": {
+            "type": "boolean"
+          }
+        },
+        "risk": {
+          "type": "number"
+        },
+        "deviation": {
+          "type": "number"
+        },
+        "dose_summaries": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "type": "number"
+          }
+        },
+        "beta_star": {
+          "type": "number"
+        },
+        "rho": {
+          "type": "number"
+        },
+        "beta_predicate": {
+          "type": "boolean"
+        },
+        "rho_predicate": {
+          "type": "boolean"
+        },
+        "complete_predicate": {
+          "type": "boolean"
+        }
+      }
+    },
+    "row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "row_ordinal",
+        "case_kind",
+        "case_id",
+        "expected_response_sha256",
+        "observed",
+        "observed_response_sha256",
+        "pass"
+      ],
+      "properties": {
+        "row_ordinal": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 12
+        },
+        "case_kind": {
+          "enum": [
+            "rho",
+            "complete_verdict",
+            "tie"
+          ]
+        },
+        "case_id": {
+          "type": "string"
+        },
+        "expected_response_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "observed": {
+          "type": "object"
+        },
+        "observed_response_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "pass": {
+          "const": true
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "case_kind": {
+                "const": "rho"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "observed": {
+                "$ref": "#/$defs/rho_observed"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "case_kind": {
+                "const": "complete_verdict"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "observed": {
+                "$ref": "#/$defs/complete_observed"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "case_kind": {
+                "const": "tie"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "observed": {
+                "$ref": "#/$defs/tie_observed"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "run_ordinal",
+        "payload_sha256",
+        "rows"
+      ],
+      "properties": {
+        "run_ordinal": {
+          "enum": [
+            0,
+            1
+          ]
+        },
+        "payload_sha256": {
+          "const": "62ce5b736a280d6c196e8ef4bfd77f254dff00f57bec880b95becd1938155d22"
+        },
+        "rows": {
+          "type": "array",
+          "minItems": 13,
+          "maxItems": 13,
+          "prefixItems": [
+            {
+              "$ref": "#/$defs/row",
+              "properties": {
+                "row_ordinal": {
+                  "const": 0
+                },
+                "case_kind": {
+                  "const": "rho"
+                },
+                "case_id": {
+                  "const": "perfect_increasing"
+                }
+              }
+            },
+            {
+              "$ref": "#/$defs/row",
+              "properties": {
+                "row_ordinal": {
+                  "const": 1
+                },
+                "case_kind": {
+                  "const": "rho"
+                },
+                "case_id": {
+                  "const": "adjacent_inversion_threshold"
+                }
+              }
+            },
+            {
+              "$ref": "#/$defs/row",
+              "properties": {
+                "row_ordinal": {
+                  "const": 2
+                },
+                "case_kind": {
+                  "const": "rho"
+                },
+                "case_id": {
+                  "const": "no_softening"
+                }
+              }
+            },
+            {
+              "$ref": "#/$defs/row",
+              "properties": {
+                "row_ordinal": {
+                  "const": 3
+                },
+                "case_kind": {
+                  "const": "rho"
+                },
+                "case_id": {
+                  "const": "tied_responses"
+                }
+              }
+            },
+            {
+              "$ref": "#/$defs/row",
+              "properties": {
+                "row_ordinal": {
+                  "const": 4
+                },
+                "case_kind": {
+                  "const": "rho"
+                },
+                "case_id": {
+                  "const": "constant_responses"
+                }
+              }
+            },
+            {
+              "$ref": "#/$defs/row",
+              "properties": {
+                "row_ordinal": {
+                  "const": 5
+                },
+                "case_kind": {
+                  "const": "rho"
+                },
+                "case_id": {
+                  "const": "decreasing_responses"
+                }
+              }
+            },
+            {
+              "$ref": "#/$defs/row",
+              "properties": {
+                "row_ordinal": {
+                  "const": 6
+                },
+                "case_kind": {
+                  "const": "rho"
+                },
+                "case_id": {
+                  "const": "nonfinite_without_apparatus_fault"
+                }
+              }
+            },
+            {
+              "$ref": "#/$defs/row",
+              "properties": {
+                "row_ordinal": {
+                  "const": 7
+                },
+                "case_kind": {
+                  "const": "complete_verdict"
+                },
+                "case_id": {
+                  "const": "all_pass"
+                }
+              }
+            },
+            {
+              "$ref": "#/$defs/row",
+              "properties": {
+                "row_ordinal": {
+                  "const": 8
+                },
+                "case_kind": {
+                  "const": "complete_verdict"
+                },
+                "case_id": {
+                  "const": "beta_failure"
+                }
+              }
+            },
+            {
+              "$ref": "#/$defs/row",
+              "properties": {
+                "row_ordinal": {
+                  "const": 9
+                },
+                "case_kind": {
+                  "const": "complete_verdict"
+                },
+                "case_id": {
+                  "const": "undefined_rho"
+                }
+              }
+            },
+            {
+              "$ref": "#/$defs/row",
+              "properties": {
+                "row_ordinal": {
+                  "const": 10
+                },
+                "case_kind": {
+                  "const": "complete_verdict"
+                },
+                "case_id": {
+                  "const": "rho_failure"
+                }
+              }
+            },
+            {
+              "$ref": "#/$defs/row",
+              "properties": {
+                "row_ordinal": {
+                  "const": 11
+                },
+                "case_kind": {
+                  "const": "tie"
+                },
+                "case_id": {
+                  "const": "lower_clip_cutoff"
+                }
+              }
+            },
+            {
+              "$ref": "#/$defs/row",
+              "properties": {
+                "row_ordinal": {
+                  "const": 12
+                },
+                "case_kind": {
+                  "const": "tie"
+                },
+                "case_id": {
+                  "const": "upper_clip_cutoff"
+                }
+              }
+            }
+          ],
+          "items": false
+        }
+      }
+    },
+    "injection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "mutation_sha256",
+        "expected_code",
+        "observed_code",
+        "pass"
+      ],
+      "properties": {
+        "case_id": {
+          "type": "string"
+        },
+        "mutation_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "expected_code": {
+          "type": "string"
+        },
+        "observed_code": {
+          "type": "string"
+        },
+        "pass": {
+          "const": true
+        }
+      }
+    }
+  }
+}
