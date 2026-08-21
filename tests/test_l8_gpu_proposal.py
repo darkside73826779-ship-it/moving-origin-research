@@ -35,3 +35,21 @@ def test_fixed_seed_replay_when_cuda_available():
     first = subject.summary(cell, repetitions=4, seed=101)
     second = subject.summary(cell, repetitions=4, seed=101)
     assert first == second
+
+
+def test_misspecified_fixed_seed_replay_when_cuda_available():
+    if not subject.available():
+        pytest.skip("CUDA unavailable")
+    cell = subject.GpuCell(50, 4, 0.05, 1.0, 0.7, 0.1, 1.0)
+    first = subject.simulate_misspecified_batch(cell, 2, 101, "uniform_difficulty")
+    second = subject.simulate_misspecified_batch(cell, 2, 101, "uniform_difficulty")
+    assert torch.equal(first[0], second[0])
+    assert torch.equal(first[1], second[1])
+
+
+def test_unknown_misspecified_profile_fails_closed_when_cuda_available():
+    if not subject.available():
+        pytest.skip("CUDA unavailable")
+    cell = subject.GpuCell(50, 4, 0.05, 1.0, 0.7, 0.1, 1.0)
+    with pytest.raises(ValueError, match="unknown misspecified profile"):
+        subject.simulate_misspecified_batch(cell, 1, 101, "invented")

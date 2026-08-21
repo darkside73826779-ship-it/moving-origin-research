@@ -86,6 +86,61 @@ def simulate_batch(cell:GpuCell, repetitions:int, seed:int) -> tuple[torch.Tenso
     sigma=torch.sqrt(residual.square().sum(dim=(-1,-2))/(4*(cell.N_w-1)))
     return beta/sigma,_rho(means)
 
+
+def simulate_misspecified_batch(
+    cell: GpuCell, repetitions: int, seed: int, profile_name: str
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """CUDA equivalent of the CPU misspecification simulation."""
+    if repetitions <= 0:
+        raise ValueError("repetitions must be positive")
+    if cell.N_w <= 1:
+        raise ValueError("N_w must exceed one for the pooled standard deviation")
+    if not available():
+        raise RuntimeError("CUDA is unavailable")
+    if profile_name not in {"uniform_difficulty", "bimodal_difficulty"}:
+        raise ValueError(f"unknown misspecified profile: {profile_name}")
+
+    gen = torch.Generator(device="cuda")
+    gen.manual_seed(seed)
+    shape = (repetitions, cpu.N_SEEDS)
+    query_shape = shape + (cell.W,)
+    if profile_name == "uniform_difficulty":
+        p = torch.rand(query_shape, device="cuda", dtype=torch.float64, generator=gen)
+    else:
+        easy = torch.rand(query_shape, device="cuda", dtype=torch.float64, generator=gen) < 0.5
+        p = torch.where(easy, 0.9, 0.3)
+    correct = torch.rand(query_shape, device="cuda", dtype=torch.float64, generator=gen) < p
+    noise = torch.randn(query_shape, device="cuda", dtype=torch.float64, generator=gen)
+    # Preserve the legacy misspecification arm's logit expression exactly.
+    logit_p = torch.log(p / (1.0 - p + EPS) + EPS)
+    conf = torch.sigmoid(logit_p + cell.alpha + noise * math.sqrt(cell.v_mult * V_REF)).clamp(EPS, 1-EPS)
+
+    tau = torch.full(shape, 0.5, device="cuda", dtype=torch.float64)
+    deviations = torch.empty(shape + (4, cell.N_w), device="cuda", dtype=torch.float64)
+    floor = max(1, math.ceil(cell.c_min * cell.W))
+    for dose in range(4):
+        for window in range(cell.N_w):
+            if dose:
+                dose_noise = torch.randn(query_shape, device="cuda", dtype=torch.float64, generator=gen)
+                logit_c = torch.log(conf / (1.0 - conf + EPS) + EPS)
+                dose_conf = torch.sigmoid(logit_c + dose_noise * (dose * cell.sigma_dose)).clamp(EPS, 1-EPS)
+            else:
+                dose_conf = conf
+            threshold = dose_conf > tau.unsqueeze(-1)
+            top = torch.topk(dose_conf, floor, dim=-1).indices
+            forced = torch.zeros_like(threshold).scatter_(-1, top, True)
+            answered = threshold | forced
+            risk = ((~correct) & answered).sum(dim=-1, dtype=torch.float64) / answered.sum(dim=-1)
+            deviations[:, :, dose, window] = risk - R_STAR
+            tau = (tau + cell.eta * (risk - R_STAR)).clamp(0.01, 0.99)
+
+    means = deviations.mean(dim=-1)
+    doses = _doses(means.device)
+    beta = ((means-means.mean(dim=-1, keepdim=True)) * (doses-doses.mean())).mean(dim=-1) / VAR_X
+    residual = deviations - means.unsqueeze(-1)
+    sigma = torch.sqrt(residual.square().sum(dim=(-1, -2)) / (4 * (cell.N_w - 1)))
+    return beta / sigma, _rho(means)
+
 def summary(cell:GpuCell,repetitions:int,seed:int) -> dict[str,float]:
     beta,rho=simulate_batch(cell,repetitions,seed)
     complete=((beta>=.2)&(rho>=.8)).all(dim=1)
