@@ -19,7 +19,7 @@ Rebecca **AUTHORIZES** the TASK BUILDER to implement the CRITIC-cleared amended 
 | Amended spec (CRITIC-cleared) | `architect/l8-g2g4-minimal-fullscreen` @ `2082680` (5 deliverables: spec, changelog, TASK BUILDER handoff, executability trace, DRAFT PI ruling) |
 | TASK BUILDER build handoff (ARCHITECT-prepared) | `specs/l8_g2g4_minimal_full_screen_TASKBUILDER_HANDOFF.md` @ `2082680` |
 | CRITIC amendment review (CLEAR) | `reviews/critic_l8_g2g4_minimal_fullscreen_amended_review.md` @ `20733d0` |
-| Operative geometry ruling | `docs/rulings/REBECCA_L8_GEOMETRY_TABLE_FREEZE.md` (Rebecca-signed) |
+| Operative geometry ruling | `docs/rulings/REBECCA_L8_GEOMETRY_TABLE_FREEZE.md` (Rebecca-signed; on GitHub branch `coordinator/l8-geometry-ruling-taskbuilder-auth`, PR [#104](https://github.com/darkside73826779-ship-it/moving-origin-research/pull/104)) |
 | ρ-authorization ruling | `docs/rulings/REBECCA_L8_FULLSCREEN_ITEM1_RHO_AUTHORIZATION.md` (operative) |
 | Verified code baseline | `b139749` (`diagnostics/l8_power_analysis.py`; reuse `_worker_combo`, `_worker_null_control`, `calibrate_sigma_dose`, `beta_star_for_seed`, `combo_seed`, the §2 XF-5 estimator, the multiprocessing path) |
 | Reference artifact | `6d455bb` (cross-check schema only; do not reproduce as output) |
