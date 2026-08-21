@@ -13,3 +13,11 @@
 - Added checkpoint metadata and atomic-publication contracts without permitting real weights.
 - Added a later brand-neutral qualification procedure and exact model-selection/download/training/integration gate sequence.
 - Preserved `gofast` as authoritative L8, shelved `go faster`, unauthorized `GO!`, `PROVISIONAL_BLOCKED`, O-14/O-15, L18, seed fences, and Rebecca-only release/merge authority.
+
+## v1.1 — BF1–BF4 remediation
+
+- Repaired the request schema's top-level property, `$defs`, reference, and required-field structure.
+- Replaced partial prose fixtures with complete valid bases, deterministic canonical constructors, exact typed mutations, and fixed expected SHA-256 values.
+- Separated input-schema, post-schema semantic, pre-serialization internal-output, repeatability, and publication injection boundaries so every expected failure code is reachable.
+- Added all Entry 76 Ruling 5 equality identities and an executable candidate/peer manifest pair with one explicitly different independently trained instance identity.
+- Corrected the unsupported confidence-domain source tag from `[BAR-Entry 11]` to `[PROPOSED]`.

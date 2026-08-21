@@ -53,6 +53,8 @@ Calling out of order returns `ADAPTER_LIFECYCLE_VIOLATION`; no implicit initiali
 
 Every adapter validates against `specs/data/m4_model_adapter_manifest_schema_v1.json`. It declares role, scientific arm, implementation identity, parameter count, model/checkpoint/tokenizer identities, license, dimensions, dtypes, device policy, hook support, checkpoint support, and resource limits `[PROPOSED]`.
 
+The pair validator walks `manifest_pair.equality_fields` in stored order and requires JSON-value identity at every pointer. It then requires every `required_difference_fields` pointer to differ, requires both training-instance digests to be non-null, and rejects any additional candidate/peer manifest difference except role, scientific arm, and training-instance digest. The executable fixture supplies the schema-valid positive pair and exact pair digests `[OP-Entry 76] [PROPOSED]`.
+
 The scaffold profile is exactly `SYNTHETIC_STUB_V1` with public width `4`, privileged width `4`, internal width `4`, self-state target width `2`, behavioral-output width `4`, one confidence scalar, one abstention boolean, one homeostatic value, and one homeostatic action `[PROPOSED]`. These sizes test protocol topology only and do not constrain a later real model; a later model must declare fixed positive sizes and pass the same semantic validators before selection `[PROPOSED]`.
 
 Real-model manifest fields remain null and status `UNBOUND_MODEL_SELECTION_REQUIRED`. A manifest with a real brand, repository, checkpoint, tokenizer, weight digest, or license identity before the later Rebecca gate is rejected as `PREMATURE_MODEL_BINDING` `[PROPOSED]`.
@@ -63,8 +65,9 @@ Requests validate against `m4_model_adapter_request_schema_v1.json`. The ordered
 
 - `candidate`: privileged packet is required, `access_granted=true`, and packet role is `MOVING_ORIGIN_STATE`.
 - `peer`: privileged packet values must be absent, `access_granted=false`, and a redaction receipt binds the public request digest. The peer receives candidate behavioral outputs, append-log events, external events, and query history only `[LAW-L7] [BAR-Entry 11]`.
-- candidate and peer manifests must later have identical architecture fingerprint, parameter count, initialization digest, training-data digest, optimizer schedule digest, calibration contract, declared dimensions, and evaluation request stream; only privileged access and the resulting learned weights may differ `[BAR-Entry 11] [PROPOSED]`.
-- No peer request may contain internal representation, self-report, confidence, homeostatic hidden value, gradients, device pointer, checkpoint tensor, or perturbation realization. Any presence is `PRIVILEGED_STATE_LEAK` `[PROPOSED]`.
+- candidate and peer manifests must later have identical architecture fingerprint, parameter count, initialization digest, training-data digest, optimizer schedule digest, and declared dimensions; only privileged access and the resulting independently trained instance may differ `[BAR-Entry 11]`.
+- Entry 76 Ruling 5 additionally requires identical confidence-calibration, evaluation-data, ECE-definition, binning-definition, and paired-training-contract digests. `training_instance_sha256` must differ while every preceding equality field matches `[OP-Entry 76]`.
+- No peer request may carry an internal representation, self-report, confidence payload, homeostatic hidden value, gradients, device pointer, checkpoint tensor, or perturbation realization. The mandatory semantic-probe sentinel is `candidate_confidence_present=false,candidate_confidence=null`; changing either to convey a value is `PRIVILEGED_STATE_LEAK` `[PROPOSED]`.
 
 The moving-origin packet is ordered as `origin_ordinal, origin_age, internal_state_vector, memory_quality, homeostatic_value, prior_calibration_error` and includes its canonical SHA-256 `[PROPOSED]`. Retrieval selection is fixed chronological append-log truncation declared in the request; learned/nonlinear retrieval, reranking, embedding search, or adaptive retrieval is `L9_RETRIEVAL_FENCE_VIOLATION` `[LAW-L9]`.
 
@@ -75,14 +78,14 @@ Responses validate against `m4_model_adapter_response_schema_v1.json` and contai
 - behavioral output vector;
 - moving-origin internal representation vector;
 - self-state probabilities, each finite and in `[0,1]` `[PROPOSED]`;
-- confidence, finite and in `[0,1]` `[BAR-Entry 11]`;
+- confidence, finite and in `[0,1]` `[PROPOSED]`;
 - pre-abstention score and abstention decision;
 - homeostatic value, target, regulation error, and action;
 - hook receipts;
 - resource report;
 - state-before and state-after digests.
 
-Every lifecycle method returns `m4_model_adapter_operation_result_schema_v1.json`. Validation order is fixed: JSON decoding and structural schema validation; digest validation; manifest/request cross-validation; privilege/retrieval/hook/mode/checkpoint semantic validation; adapter operation; response validation; determinism/resource/publication validation. The first failure in that order is the sole emitted code. Fields intentionally admitted structurally for a negative semantic test remain forbidden by the semantic validator `[PROPOSED]`.
+Every lifecycle method returns `m4_model_adapter_operation_result_schema_v1.json`. Validation order is fixed: JSON decoding and input structural-schema validation; input digest validation; manifest/request cross-validation; privilege/retrieval/hook/mode/checkpoint semantic validation; adapter operation; internal-output semantic validation (finite values, dimensions, resource envelope, CUDA-host synchronization); response serialization; response structural-schema validation; determinism/publication validation. The first failure in that order is the sole emitted code. Fields intentionally admitted structurally for a negative semantic test remain forbidden by the semantic validator. A nonfinite injection exists only at the tagged pre-serialization internal-output boundary and is represented in the fixture by its IEEE-754 bit pattern, never as invalid JSON `[PROPOSED]`.
 
 `regulation_error` equals `abs(homeostatic_value-homeostatic_target)` exactly in binary64 `[PROPOSED]`. Candidate confidence must be generated from the candidate internal-state path; peer confidence uses the same method signature but only its public observation path `[BAR-Entry 11]`. The scaffold verifies routing, not scientific performance; no stub output may be cited as M4 evidence `[PROPOSED]`.
 
@@ -91,7 +94,7 @@ Every lifecycle method returns `m4_model_adapter_operation_result_schema_v1.json
 Every compatible real adapter must expose two distinct post-normalization, pre-head hooks `[PROPOSED]`:
 
 1. `SELF_MODEL_REPRESENTATION`: candidate-only internal representation hook used for L8 dose perturbation;
-2. `NON_SELF_PROXIMAL_COMPONENT`: a declared non-self component hook used for the standardized specificity leg `[OP-Entry 76 Ruling 3]`.
+2. `NON_SELF_PROXIMAL_COMPONENT`: a declared non-self component hook used for the standardized specificity leg under Entry 76 Ruling 3 `[OP-Entry 76]`.
 
 Each hook receipt records hook ID, tensor shape/dtype, pre/post raw digest, perturbation identity, dose ordinal, and standardized proximal-effect summary `[PROPOSED]`. A hook applied at an undeclared location, before normalization, after output generation, to the peer's prohibited private channel, or without a receipt is `PERTURBATION_BOUNDARY_MISMATCH` `[PROPOSED]`. Hook payloads are supplied by the harness; adapters never derive scoring RNG or select dose magnitude `[PROPOSED]`.
 
@@ -103,7 +106,7 @@ The scaffold variable is `stub_reserve`, target `0.5`, domain `[0,1]`, and regul
 
 ## 8. Synthetic adapters
 
-`specs/data/m4_model_scaffold_fixtures_v1.json` fixes a complete request and exact outputs for these stored-order adapters `[PROPOSED]`:
+`specs/data/m4_model_scaffold_executable_fixture_v1.json` fixes complete schema-valid candidate/peer manifests and requests, dependency/checkpoint/publication bases, six lifecycle results, nine canonical response constructors and SHA-256 values, and seventeen typed mutations with canonical failure-result SHA-256 values. Its stored adapter order is `[PROPOSED]`:
 
 1. `candidate`: reads the privileged vector;
 2. `peer`: reads public history only;
@@ -137,7 +140,7 @@ Canonical JSON is RFC 8785 UTF-8 without BOM plus one LF; sidecars are lowercase
 
 ## 11. Scaffold verification and failure injection
 
-TASK BUILDER, only after a future exact release, must implement the scaffold and collect each row in `m4_model_scaffold_fixtures_v1.json` exactly once `[PROPOSED]`. Required tests are `[PROPOSED]`:
+TASK BUILDER, only after a future exact release, must implement the scaffold and collect each stored row in `m4_model_scaffold_executable_fixture_v1.json` exactly once `[PROPOSED]`. Required tests are `[PROPOSED]`:
 
 - strict schema accept and unknown-field reject;
 - lifecycle order and episode reset;
