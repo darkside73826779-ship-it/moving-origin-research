@@ -14,6 +14,7 @@
 - Added fixed Q1–Q3 sequencing, non-adaptive escalation, Phase A transcript logging, qualification-report schemas, and closed-by-default QLoRA handling.
 - Proposed a numeric Q2 informative band as `[PROPOSED]`; it remains inoperative pending Rebecca's explicit signature.
 - Preserved every locked L7/L8/L10/L14/L18 bar, O-14/O-15, negative labels, scoring-seed fences, and Rebecca-only gate/merge authority.
+- EF1–EF2 remediation constrains published nested results and peer projection; adds canonical PASS/BLOCKED/FAIL fixtures, exact construction/order semantics, and an exact chat-template/context constructor. Expanded tokenizer-derived arrays remain a governed preflight-reconciliation STOP because current authority forbids reading/downloading the local model artifact.
 
 
 ---
