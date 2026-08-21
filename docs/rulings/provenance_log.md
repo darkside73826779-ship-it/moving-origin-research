@@ -2741,3 +2741,15 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **STATE.md canonical Git-blob SHA-256:** `6bd3a15929032bbdb7e332cd7739b31641c05e5967037230f72445aadbd42ac6` — independently verified by RECORDER. This is the authoritative committed Git-blob domain; no STATE.md edit or correction commit is required.
 - **Scope and holds:** RECORDER did not edit STATE.md. Item A remains a synthetic scaffold closure; all model, qualification, scoring, protected-seed, scientific, and merge holds remain unchanged.
 - **§5 custody line:** Constitution v2 SHA-256 `c96dc32f00cafeec4a6073c9f2bb8276f05ea764f34d266abae98ed84a750b4a` — unchanged.
+
+---
+
+## Entry 116 — Workflow Efficiency P1–P10 owner-metadata bootstrap custody attestation
+
+**Date:** 2026-08-21 · **Regime:** B [§5-P4] · **Actor:** INTEGRATOR; RECORDER
+
+- **Gate served:** Owner-metadata bootstrap.
+- **INTEGRATOR source:** 7cfc86f97e8890185bc09e0c11eb34ac994fe0e0.
+- **STATE.md canonical Git-blob SHA-256:** 6bd3a15929032bbdb7e332cd7739b31641c05e5967037230f72445aadbd42ac6; **STATE metadata raw SHA-256:** 2ce2ef58807acbe2267dc4ae49e0b25af0ffa27e928dca993a617be701607ccd — independently verified, schema-valid, current, owner INTEGRATOR; no STATE edit.
+- **Holds:** science, scoring, seed, model, and merge holds preserved.
+- **Next event:** provenance metadata publication and Coordinator merge custody.
