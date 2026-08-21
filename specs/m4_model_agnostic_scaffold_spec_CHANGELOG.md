@@ -42,3 +42,10 @@
 - Replaced hard-coded lifecycle-row identity with a complete state-object schema, transition construction, and hash contract.
 - Added callable atomic JSON/sidecar publication schemas, exact layout, syscall order, interruption retention, restoration, and recovery fixtures.
 - Changed the task boundary to require a new persistent-CRITIC CLEAR and Rebecca re-release before implementation resumes.
+
+## v1.5 — CF1–CF3 callable-state remediation
+
+- Added the complete normative `CLOSED` state object, canonical bytes, and state digest.
+- Replaced the ambiguous single operation-result state digest with required pre-state and post-state digests.
+- Added complete canonical PASS operation-result artifacts and digests for all six lifecycle transitions and fixed unchanged-state failure semantics.
+- Reconciled `describe()` as the single deterministic tuple `(manifest_bytes, operation_result_bytes)` and bound both members to exact committed canonical bytes and digests.
