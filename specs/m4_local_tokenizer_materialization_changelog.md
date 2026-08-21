@@ -47,3 +47,9 @@
 - Added exact `date="2026-08-21"` and `regime="B"` fields to both normative unavailable-interpreter JSON artifacts and required their literal validation/return without adding callable inputs `[PROPOSED]`.
 - Recomputed both LF Git-blob sidecars and bound their exact replacement SHA-256 values in the test contract and documentation `[PROPOSED]`.
 - Preserved banked RF1 substantive closure and both positive `python3 -I` commands unchanged.
+
+## v1.4.3 — Isolated unittest discovery command
+
+- Replaced only the failing dotted-module unittest invocation with exact isolated-mode discovery: `python3 -I -m unittest discover -s tests -t . -p test_m4_tokenizer_materialization.py` `[PROPOSED]`.
+- Bound the repository-root working directory, exact start/top-level/pattern inputs, standard-library discovery import mechanism, singleton selected test path, exit behavior, and no-custody/no-output expectations without `PYTHONPATH`, installation, image mutation, fallback, or application-written path mutation `[PROPOSED]`.
+- Preserved the pinned image/interpreter, unchanged materializer command, fixtures, schemas, custody, banked evidence, and unconsumed operation.
