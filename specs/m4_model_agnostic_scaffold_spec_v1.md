@@ -6,9 +6,9 @@
 
 **Status:** `[PROPOSED]`; scaffold specification only; no implementation, model selection, download, training, integration, or execution authority
 
-**Gate served:** M4 model-agnostic adapter/scaffold design following approved Phase A
+**Gate served:** M4 model-agnostic adapter/scaffold callable-contract and executable-input remediation following TASK BUILDER specification block
 
-**Authority:** `coordinator/m4-cuda-ready-cpu-l8-directive@a4d8dc054d3944d3a0efbafeea955b3570f0a272`; approved Phase A ARCHITECT head/result `e5edb1e804cc4a6553507c98140fa9fa49586a0d` / `e7419633f34c7eebadfe3cea33c84aff3883a4aa`; persistent CRITIC CLEAR `0790b4a24a868df84739199f1eab7bb16ebe0609`
+**Authority:** `coordinator/m4-scaffold-rebecca-implementation-release@81bc7991b8c05672b84cc5b52a3a6a321fa047c2`; approved prior ARCHITECT head/result `2c655fbb1bac6ba419327198062c5230e87c44db` / `b84f470af415ead5ae36ca01bb1d8e7394e7cc97`; prior persistent CRITIC CLEAR `e76ecb98e80e5bded57afe3d318a32fcfbbfe463`; durable TASK BUILDER specification block `taskbuilder/m4-model-agnostic-scaffold@cb43b7a94ef8ea54d6e689398f68cec793707005`
 
 ## 1. Versioned-law compliance
 
@@ -41,11 +41,13 @@ The immediate artifact is a model-neutral protocol and deterministic synthetic s
 The canonical adapter ID is `m4-model-adapter-v1`. An implementation must expose exactly these methods in order `[PROPOSED]`:
 
 1. `describe() -> canonical manifest bytes`;
-2. `initialize(manifest_bytes, dependency_manifest_bytes) -> initialization receipt`;
-3. `reset_episode(reset_request_bytes) -> reset receipt`;
-4. `step(step_request_bytes) -> step response bytes`;
-5. `snapshot(snapshot_request_bytes) -> checkpoint metadata bytes`;
-6. `close() -> close receipt`.
+2. `initialize(manifest_bytes, dependency_manifest_bytes) -> operation_result_bytes`;
+3. `reset_episode(reset_request_bytes) -> operation_result_bytes`;
+4. `step(step_request_bytes, perturbation_payload_bytes_or_empty) -> (response_bytes, operation_result_bytes)`;
+5. `snapshot(snapshot_request_bytes) -> (checkpoint_metadata_bytes, operation_result_bytes)`;
+6. `close() -> operation_result_bytes`.
+
+Every byte argument and returned JSON value is RFC-8785 UTF-8 without BOM or trailing LF. Tuple members have the exact left-to-right order shown. `perturbation_payload_bytes_or_empty` is zero bytes exactly when the request hook is `NONE`; otherwise it is a complete value valid under `m4_model_perturbation_payload_schema_v1.json`. No method accepts a path, mutable object, omitted argument, implicit default, or implementation-defined option `[PROPOSED]`.
 
 Calling out of order returns `ADAPTER_LIFECYCLE_VIOLATION`; no implicit initialize, reset, retry, fallback, or state carryover is permitted `[PROPOSED]`.
 
@@ -87,6 +89,8 @@ Responses validate against `m4_model_adapter_response_schema_v1.json` and contai
 
 Every lifecycle method returns `m4_model_adapter_operation_result_schema_v1.json`. Validation order is fixed: JSON decoding and input structural-schema validation; input digest validation; manifest/request cross-validation; privilege/retrieval/hook/mode/checkpoint semantic validation; adapter operation; internal-output semantic validation (finite values, dimensions, resource envelope, CUDA-host synchronization); response serialization; response structural-schema validation; determinism/publication validation. The first failure in that order is the sole emitted code. Fields intentionally admitted structurally for a negative semantic test remain forbidden by the semantic validator. A nonfinite injection exists only at the tagged pre-serialization internal-output boundary and is represented in the fixture by its IEEE-754 bit pattern, never as invalid JSON `[PROPOSED]`.
 
+`reset_episode` validates `m4_model_reset_request_schema_v1.json`; `snapshot` validates `m4_model_snapshot_request_schema_v1.json`; and `initialize` validates `m4_model_dependency_manifest_schema_v1.json`. Decode/schema/unknown-field/noncanonical failure is `SCHEMA_DRIFT`; a supplied digest mismatch is `DIGEST_MISMATCH`; an episode, ordinal, adapter-version, manifest, or dependency mismatch is `CONFIGURATION_MISMATCH`; and a call in the wrong state is `ADAPTER_LIFECYCLE_VIOLATION`. No failure mutates state. Dependency names are unique and strictly increasing by Unicode scalar-value sequence. `CPU_STUB` requires `cuda_available=false`; `CUDA_STUB_HOST_ORCHESTRATION` requires `cuda_available=true`; neither permits an import absent from the complete dependency manifest `[PROPOSED]`.
+
 `regulation_error` equals `abs(homeostatic_value-homeostatic_target)` exactly in binary64 `[PROPOSED]`. Candidate confidence must be generated from the candidate internal-state path; peer confidence uses the same method signature but only its public observation path `[BAR-Entry 11]`. The scaffold verifies routing, not scientific performance; no stub output may be cited as M4 evidence `[PROPOSED]`.
 
 ## 6. Perturbation hooks
@@ -122,6 +126,16 @@ Scientific published labels remain exactly `candidate,empty,permuted,shuffled,or
 
 Stub functions are arithmetic specified by the fixture, use no learned parameter, network, filesystem, clock, entropy source, or GPU kernel, and must produce canonical byte-identical outputs on CPU and CUDA-host orchestration `[PROPOSED]`.
 
+### 8.1 Callable construction contract
+
+`specs/data/m4_model_callable_fixture_v1.json` is the complete executable supplement. Its `artifact_wrapper_contract` defines every wrapper digest as SHA-256 over RFC-8785 bytes of `/artifact` only; sibling digest/base64 fields are metadata and cannot enter the digest domain. Its fixed base artifact digest prevents use with any other scaffold fixture `[PROPOSED]`.
+
+The six previously descriptive controls are total constructors over every schema-valid request: `oracle` copies the two privileged ground-truth values and request correctness; `empty` emits the fixed neutral scientific payload; `permuted` applies the stored privileged-vector permutation; `shuffled` applies the stored public-history permutation; `naive` uses only the final public observation; and `specificity` applies the declared non-self perturbation after constructing the candidate payload. Candidate, peer, and frozen retain their prior definitions. Each constructor replaces only the JSON pointers enumerated in `control_constructors`; all other fields are copied from the request-correlated candidate or peer envelope. The manifest/request constructor patches, complete constructed artifacts, and hashes for all six controls are normative. TASK BUILDER may not substitute lookup-table-only behavior `[PROPOSED]`.
+
+For all valid varying inputs, arithmetic follows `arithmetic_contract`: binary64 round-to-nearest, ties-to-even, with a binary64 rounding point after every listed primitive operation and in the listed array order. Clamping, absolute value, mean, subtraction, addition, and index selection have only the definitions stored there. The committed varying request and output prove the callable domain is broader than frozen examples. The exact failure precedence is decode, schema, canonical encoding, input digest, configuration, privilege/retrieval, hook, lifecycle, arithmetic/nonfinite, output schema, then publication; the first failure alone is returned and state remains unchanged `[PROPOSED]`.
+
+The two positive hook payloads validate under `m4_model_perturbation_payload_schema_v1.json`. `SELF_MODEL_REPRESENTATION` adds its four binary64 values elementwise to the normalized candidate private representation before all candidate heads. `NON_SELF_PROXIMAL_COMPONENT` adds its four values to the normalized public component used by the behavioral head only and cannot alter the private representation or self-state/confidence heads. Receipt raw digests hash the concatenation of the four little-endian IEEE-754 binary64 encodings in stored order. The complete requests, payloads, receipts, outputs, and hashes in the callable fixture are normative `[PROPOSED]`.
+
 ## 9. CUDA, host custody, and resource reporting
 
 CUDA is permitted only for model/harness computation. Every device output is synchronized, copied into a new host allocation, normalized to declared little-endian C-contiguous dtype/shape, checked finite/range-valid, hashed, frozen, and then handed to the harness `[PROPOSED]`. Device pointers, DLPack capsules, unified memory, live pinned views, and in-flight buffers cannot cross the custody boundary `[PROPOSED]`.
@@ -136,9 +150,13 @@ The supplemental executable fixture constructs the CUDA-host dependency manifest
 
 Scaffold adapters are stateless except `frozen`, whose first scientific-payload cache is reset only by `reset_episode`. The supplemental fixture fixes two requests in episode one, a reset and request in episode two, three complete responses, payload and envelope digests, and two complete fresh-process run manifests. Each run concatenates every constructed artifact's RFC-8785 bytes plus LF in stored order; both artifact-digest arrays and run digests must be identical. The nondeterminism injection changes one valid binary64 confidence bit only in run two. O-14 prohibits a third run after failure and O-15 keeps both runs diagnostic-only `[PROPOSED]`.
 
+Callable lifecycle state validates against `m4_model_adapter_state_schema_v1.json`. State SHA-256 is calculated over the complete RFC-8785 state object without LF, never over a row name or stored constant. The transition table and exact pre/post objects in `m4_model_callable_fixture_v1.json` are normative: construct and validate the next complete state; hash it; construct the operation result with the pre/post hashes; then commit the state only after successful result validation. `frozen_payload_sha256` is null until its first successful step, remains unchanged within an episode, becomes null on reset, and is null after close. Prior stored lifecycle row digests are regression expectations only, not a callable state algorithm `[PROPOSED]`.
+
 Checkpoint metadata schema records adapter manifest digest, implementation SHA, attempt ID, training status, step, data/schedule/initialization digests, candidate/peer parity digest, tensor-index digest, and parent checkpoint digest `[PROPOSED]`. For the scaffold, `training_status=NOT_APPLICABLE_STUB`, step `0`, and tensor index is empty `[PROPOSED]`. Checkpoint files from a future real model are forbidden until the later gate.
 
 Canonical JSON is RFC 8785 UTF-8 without BOM plus one LF; sidecars are lowercase SHA-256, two spaces, basename, LF. Publication uses validated temp JSON, fsync, temp sidecar, previous-pair preservation, two atomic replacements, and restoration plus `.incomplete` retention after interruption `[PROPOSED]`.
+
+The callable is `publish_pair(publication_request_bytes, payload_bytes_without_lf) -> publication_result_bytes`. Request and result validate against `m4_model_publication_request_schema_v1.json` and `m4_model_publication_result_schema_v1.json`. The fixture fixes the only scaffold layout, exact current/temp/previous/incomplete relative names, LF-appended payload bytes, sidecar bytes, and syscall order. The publisher validates canonical payload and digest, writes and fsyncs both temporary files, fsyncs the temp directory, moves any complete current pair to `.previous`, atomically replaces JSON then sidecar, and fsyncs the current directory. On interruption, it moves every partial new member into `.incomplete/<publication_id>/`, restores the complete previous pair, fsyncs both directories, and emits the fixed recovery result. If no complete previous pair exists it publishes neither current member and returns `PUBLICATION_INCOMPLETE`. A JSON without its matching sidecar is never a complete artifact `[PROPOSED]`.
 
 ## 11. Scaffold verification and failure injection
 
@@ -158,7 +176,7 @@ TASK BUILDER, only after a future exact release, must implement the scaffold and
 
 Every injected failure has one expected code fixed by the fixture. Ordinary scientific predicate failures are not apparatus failures. A scaffold failure preserves artifacts, blocks descendants, and, under O-14, receives no retry/replacement run `[PROPOSED]`.
 
-`specs/data/m4_model_scaffold_task_boundary_v1.json` is the exact machine-readable future implementation boundary. It is presently `HELD_PENDING_CRITIC_AND_REBECCA`; its allowed operations do not take effect unless Rebecca releases that exact artifact `[PROPOSED]`.
+`specs/data/m4_model_scaffold_task_boundary_v1.json` is the exact machine-readable future implementation boundary. It is presently `HELD_PENDING_NEW_CRITIC_CLEAR_AND_REBECCA_RERELEASE`; its allowed operations do not take effect unless persistent CRITIC clears this amended contract and Rebecca re-releases its exact result. The earlier release at `81bc7991b8c05672b84cc5b52a3a6a321fa047c2` does not authorize implementation of these new callable definitions `[PROPOSED]`.
 
 ## 12. Later brand-neutral model qualification
 

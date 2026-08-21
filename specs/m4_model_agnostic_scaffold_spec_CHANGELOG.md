@@ -31,3 +31,14 @@
 ## v1.3 — RF1A remediation
 
 - Moved the CUDA custody artifact under an explicit wrapper and fixed its digest domain to `/cuda_host_positive/custody_record/artifact`, eliminating the self-referential expected-digest ambiguity.
+
+## v1.4 — Callable-contract and executable-input remediation
+
+- Added exact reset and snapshot request schemas, canonical fixtures, digests, validation precedence, and no-mutation failure behavior.
+- Added the generic dependency-manifest schema and deterministic initialize validation.
+- Added complete manifest/request constructors for oracle, empty, permuted, shuffled, naive, and specificity adapters.
+- Defined total binary64 callable arithmetic for every valid request and committed a varying-input witness.
+- Added complete positive self-model and non-self perturbation payload/request/receipt/output fixtures.
+- Replaced hard-coded lifecycle-row identity with a complete state-object schema, transition construction, and hash contract.
+- Added callable atomic JSON/sidecar publication schemas, exact layout, syscall order, interruption retention, restoration, and recovery fixtures.
+- Changed the task boundary to require a new persistent-CRITIC CLEAR and Rebecca re-release before implementation resumes.
