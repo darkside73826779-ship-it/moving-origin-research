@@ -8,35 +8,52 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import Any
 
 import torch
+import l8_power_analysis as cpu
 
-R_STAR=.1; V_REF=1.0; BETA_A=8.0; BETA_B=2.0; EPS=1e-6
-TAU_INIT=.5; TAU_MIN=.05; TAU_MAX=.95
-X=torch.tensor([0.,1.,2.,3.],device="cuda",dtype=torch.float64)
-VAR_X=1.25
+# Import, rather than duplicate, every simulation constant.  The CPU module is
+# the scientific reference implementation for this proposal.
+R_STAR = cpu.R_STAR
+V_REF = cpu.V_REF
+BETA_A = cpu.BETA_A
+BETA_B = cpu.BETA_B
+EPS = cpu.EPS_C
+TAU_INIT = cpu.TAU_INIT
+TAU_MIN = cpu.TAU_MIN
+TAU_MAX = cpu.TAU_MAX
+VAR_X = cpu.VAR_X
 
 @dataclass(frozen=True)
 class GpuCell:
     W:int; N_w:int; alpha:float; v_mult:float; c_min:float; eta:float; sigma_dose:float
 
 def available() -> bool:
-    return torch.cuda.is_available() and torch.cuda.get_device_capability(0) >= (12,0)
+    return torch.cuda.is_available()
+
+
+def _doses(device: torch.device) -> torch.Tensor:
+    return torch.tensor([0.0, 1.0, 2.0, 3.0], device=device, dtype=torch.float64)
 
 def _rho(means:torch.Tensor) -> torch.Tensor:
     """Ascending midrank Pearson rho; batch shape (..., 4)."""
-    # No ties occur with probability one in the synthetic continuous path.
-    order=torch.argsort(means,dim=-1,stable=True)
-    ranks=torch.empty_like(means)
-    ranks.scatter_(-1,order,torch.arange(1,5,device=means.device,dtype=means.dtype).expand_as(means))
+    # Exact binary64 midranks: rank = 1 + count(lower) + (count(equal)-1)/2.
+    lower=(means.unsqueeze(-1)>means.unsqueeze(-2)).sum(dim=-1,dtype=means.dtype)
+    equal=(means.unsqueeze(-1)==means.unsqueeze(-2)).sum(dim=-1,dtype=means.dtype)
+    ranks=1.0+lower+(equal-1.0)/2.0
     centered=ranks-ranks.mean(dim=-1,keepdim=True)
     denom=torch.sqrt((centered.square().mean(dim=-1))*VAR_X)
-    return (centered*(X-X.mean())).mean(dim=-1)/denom
+    doses = _doses(means.device)
+    return (centered*(doses-doses.mean())).mean(dim=-1)/denom
 
 def simulate_batch(cell:GpuCell, repetitions:int, seed:int) -> tuple[torch.Tensor,torch.Tensor]:
     """Return per-seed beta-star and rho: shape (repetitions, 5)."""
-    if not available(): raise RuntimeError("CUDA RTX 50-class path unavailable")
+    if repetitions <= 0:
+        raise ValueError("repetitions must be positive")
+    if cell.N_w <= 1:
+        raise ValueError("N_w must exceed one for the pooled standard deviation")
+    if not available():
+        raise RuntimeError("CUDA is unavailable")
     gen=torch.Generator(device="cuda"); gen.manual_seed(seed)
     shape=(repetitions,5)
     deviations=torch.empty((repetitions,5,4,cell.N_w),device="cuda",dtype=torch.float64)
@@ -63,7 +80,8 @@ def simulate_batch(cell:GpuCell, repetitions:int, seed:int) -> tuple[torch.Tenso
             deviations[:,:,dose,window]=risk-R_STAR
             tau=(tau+cell.eta*(risk-R_STAR)).clamp(TAU_MIN,TAU_MAX)
     means=deviations.mean(dim=-1)
-    beta=((means-means.mean(dim=-1,keepdim=True))*(X-X.mean())).mean(dim=-1)/VAR_X
+    doses = _doses(means.device)
+    beta=((means-means.mean(dim=-1,keepdim=True))*(doses-doses.mean())).mean(dim=-1)/VAR_X
     residual=deviations-means.unsqueeze(-1)
     sigma=torch.sqrt(residual.square().sum(dim=(-1,-2))/(4*(cell.N_w-1)))
     return beta/sigma,_rho(means)
@@ -73,3 +91,21 @@ def summary(cell:GpuCell,repetitions:int,seed:int) -> dict[str,float]:
     complete=((beta>=.2)&(rho>=.8)).all(dim=1)
     return {"repetitions":float(repetitions),"mean_beta_star":float(beta.mean().cpu()),
             "mean_rho":float(rho.mean().cpu()),"complete_verdict_false_kill_rate":float((~complete).double().mean().cpu())}
+
+def calibrate(cell:GpuCell, seed:int, pilots:int=1000) -> float:
+    """GPU counterpart of the baseline fixed-reference bisection calibration."""
+    lo, hi = cpu.CAL_SIGMA_LO, cpu.CAL_SIGMA_HI
+    def mean_at(sigma:float) -> float:
+        trial=GpuCell(cell.W,cell.N_w,cell.alpha,cell.v_mult,cpu.CAL_REF_C_MIN,cpu.CAL_REF_ETA,sigma)
+        beta,_=simulate_batch(trial,pilots,seed)
+        return float(beta.mean().cpu())
+    high=mean_at(hi)
+    if high<cpu.TRUE_BETA_STAR: return hi
+    low=mean_at(lo)
+    if low>=cpu.TRUE_BETA_STAR: return lo
+    for _ in range(cpu.CAL_MAX_ITERS):
+        mid=(lo+hi)/2; value=mean_at(mid)
+        if abs(value-cpu.TRUE_BETA_STAR)<cpu.CAL_TOL: return mid
+        if value<cpu.TRUE_BETA_STAR: lo=mid
+        else: hi=mid
+    return (lo+hi)/2
