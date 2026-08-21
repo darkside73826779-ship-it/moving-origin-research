@@ -1,0 +1,108 @@
+{
+  "schema_version": "common-handoff-manifest-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "transfer_kind": "FORMAL_HANDOFF",
+  "work_item": "m4_tokenizer_bf1_execution_block",
+  "gate": "Durable specification block before the single bounded tokenizer materialization operation",
+  "sender_role": "TASK_BUILDER",
+  "receiver_role": "WORKFLOW_COORDINATOR",
+  "authority_basis": [
+    {
+      "path": "handoffs/WORKFLOW_COORDINATOR_TO_TASKBUILDER_M4_TOKENIZER_BF1_EXECUTION.manifest.json",
+      "sha": "cdfc881c31d919b397fc91a2a287fd4abbcb3e57"
+    }
+  ],
+  "remote_ref": "refs/heads/taskbuilder/m4-tokenizer-bf1-execution",
+  "base_sha": "adf626b96678db58007861523fa3b9a7c763a1f3",
+  "routing_ref_sha": "69ca4dbd6215f7f5a323935fe718b618d46d4ff4",
+  "review_result_sha": "7cecba9c93c24a826c193e0c3d609e37b1338337",
+  "work_branch": "taskbuilder/m4-tokenizer-bf1-execution",
+  "artifacts": {
+    ".gitattributes": "7811d61d53e74c99543e9d796bd8857076b022c666338ce2954ef236156a4179",
+    "handoffs/ARCHITECT_TO_COORDINATOR_M4_TOKENIZER_BF1_REMEDIATION_2026-08-21.md": "9d4da6929f8bb5cf8c890f02a8faaaa23a4a7245b7a6aaf6924becb42c2d50f2",
+    "handoffs/REBECCA_M4_TOKENIZER_BF1_EXECUTION_RERELEASE_2026-08-21.md": "732f1e4b5acc2e4d6f2527faa4120608a50ebd4879a757a61e8bdd100d8ad6fb",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_EXECUTION_SPECIFICATION_BLOCK_2026-08-21.md": "43528a55c85e7ef7f19609a3e4a08d13529fc28f849717bff9ca3ba637ae942b",
+    "handoffs/WORKFLOW_COORDINATOR_TO_TASKBUILDER_M4_TOKENIZER_BF1_EXECUTION.manifest.json": "205a3eadd682ab9af749e5b6c2229eff621711b68ff81be9777a42b66b29cab7",
+    "reviews/critic_m4_tokenizer_bf1_rereview.md": "6c8202e48a04f8e1209151a2997b74800d04185844834bfb3fc254571392c68b",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json": "93f36ebce0153068830ab471ad80d4984bd3c6ea1ef31e0f7cddf018fdad2ed5",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json.sha256": "48ad7fd859e765d122b1d44f9cfa14ad0efa21c79d3bfa3268f51bfff7449759",
+    "specs/m4_local_tokenizer_materialization_changelog.md": "9b130b9a1298ef96323ecd9b1bc7437c00b70b26edbc0c1acbf37332c40918da",
+    "specs/m4_local_tokenizer_materialization_spec_v1.md": "9a0dbfc0cb10e27fc1170fb6baf8ef619e72c6ed7ded26cb4640231d7ad00fa7"
+  },
+  "checks_performed": [
+    "validated the incoming canonical handoff manifest schema",
+    "verified every incoming inventory digest in the raw committed Git-blob domain",
+    "verified the three prescribed executable paths are absent from the released checkout",
+    "verified the preserved materialization-authority and prior IF2 commits do not contain the prescribed materializer path",
+    "ran workflow_preflight.py hotfix cee97538893989e055f49a894f066d2083da4eb5 against the exact target worktree and complete cdfc881c..69ca4db range",
+    "manually reviewed all introduced content and explicitly classified every scanner finding"
+  ],
+  "status": "BLOCKED",
+  "findings": [
+    {
+      "classification": "missing prescribed materializer",
+      "severity": "blocking",
+      "text": "diagnostics/m4_tokenizer_materialization.py and its prescribed callable are absent from the released checkout"
+    },
+    {
+      "classification": "missing prescribed test wrapper",
+      "severity": "blocking",
+      "text": "tests/run_m4_tokenizer_materialization_tests.py is absent from the released checkout"
+    },
+    {
+      "classification": "missing prescribed selected test",
+      "severity": "blocking",
+      "text": "tests/test_m4_tokenizer_materialization.py is absent from the released checkout"
+    },
+    {
+      "classification": "incomplete executable inventory",
+      "severity": "blocking",
+      "text": "the incoming manifest inventories none of the three required executable artifacts or their raw Git-blob SHA-256 identities"
+    },
+    {
+      "classification": "preserved authority lacks executable",
+      "severity": "blocking",
+      "text": "the preserved materialization-authority commit does not contain the prescribed materializer path"
+    },
+    {
+      "classification": "prior IF2 authority lacks executable",
+      "severity": "blocking",
+      "text": "the prior IF2 authority commit does not contain the prescribed materializer path"
+    },
+    {
+      "classification": "incomplete OCI launch contract",
+      "severity": "blocking",
+      "text": "the named artifacts do not prescribe the exact engine invocation, mount target, environment forwarding, network settings, or engine selection"
+    },
+    {
+      "classification": "scanner immutable-SHA heuristic",
+      "severity": "non_blocking",
+      "text": "four personal-contact findings are two duplicate-domain pairs occurring wholly inside required immutable public commit identities; manual review confirms no personal contact data"
+    }
+  ],
+  "scan_attestation": {
+    "base_sha": "cdfc881c31d919b397fc91a2a287fd4abbcb3e57",
+    "tip_sha": "69ca4dbd6215f7f5a323935fe718b618d46d4ff4",
+    "tool_status": "blocked",
+    "manual_review": true,
+    "findings": [
+      "F000001 and F000003 are duplicate scan-domain matches wholly inside the required persistent-CRITIC immutable commit SHA and are classified non-secret public reproducibility metadata",
+      "F000002 and F000004 are duplicate scan-domain matches wholly inside the required preserved materialization-authority immutable commit SHA and are classified non-secret public reproducibility metadata",
+      "gitleaks 8.30.1 returned zero findings",
+      "manual review found no credentials, personal contact data, private paths, task identifiers, custody values, model/tokenizer bytes, or other prohibited content"
+    ]
+  },
+  "next_event": "WORKFLOW COORDINATOR acknowledges the durable return and routes the exact BLOCK package to ARCHITECT for deterministic executable-package and OCI-launch remediation; the operation remains unconsumed",
+  "prohibited_actions": [
+    "implementation or invention of missing executable artifacts",
+    "custody lookup, OCI execution, retry, fallback, or alternate runtime",
+    "model/tokenizer access or publication, inference, serving, Q2/EF3, or qualification",
+    "diagnostics, scoring, protected seeds, science, durable-state mutation, merge, or gate decision"
+  ],
+  "role_extension": {
+    "role": "TASK_BUILDER",
+    "tests": [],
+    "diagnostics_executed": false
+  }
+}
