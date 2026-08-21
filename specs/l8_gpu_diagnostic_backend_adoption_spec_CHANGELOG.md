@@ -15,6 +15,7 @@
 - Closed B11 with a Rebecca-gated lexicographic coverage-floor tie rule, explicit supersession of the conflicting bit-for-bit tie requirement, and cutoff-straddling lower/upper clipping fixtures with differing correctness labels.
 - Added a hard two-block resident queue bound with blocking backpressure for the largest full-screen geometry.
 - Aligned the dependency contract to the TASK BUILDER-confirmed workstation stack: PyTorch 2.13.0+cu130 and bundled CUDA 13.0.
+- BF1–BF5 delta: restored the template's v1.4 literal date; committed fully realized cutoff-tie fixtures and downstream outputs; replaced descriptive matrix v1 with fixed-ID/value/schema matrix v2 plus a byte-exact expected trace; specified PEP 610 direct-wheel URL/hash verification; and corrected the exact-four-dose and two-child source attributions to `[PROPOSED]`.
 - Supersedes only conflicting v1.4 clauses; requires fresh-context CRITIC and Rebecca re-release before TASK BUILDER resumes.
 
 **Date:** 2026-08-20

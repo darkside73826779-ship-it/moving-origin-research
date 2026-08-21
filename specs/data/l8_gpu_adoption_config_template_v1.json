@@ -1,6 +1,6 @@
 {
   "schema_version": "l8-gpu-adoption-config-v1",
-  "date": "2026-08-21",
+  "date": "2026-08-20",
   "regime": "B",
   "implementation_sha": "COMMIT_A_SHA",
   "mode": "O-15-diagnostic-only",

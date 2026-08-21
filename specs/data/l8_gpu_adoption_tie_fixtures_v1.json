@@ -1,0 +1,10 @@
+{
+  "schema_version":"l8-gpu-adoption-tie-fixtures-v1",
+  "date":"2026-08-21",
+  "regime":"B",
+  "constants":{"EPS_C":0.000001,"R_STAR":0.1,"dose_indices":[0,1,2,3],"windows_per_dose":4,"beta_bar":0.2,"rho_bar":0.8,"rho_compare_eps":1e-12},
+  "fixtures":[
+    {"id":"lower_clip_cutoff","c_prime":[0.9,0.8,0.000001,0.000001],"correct":[true,true,false,true],"c_min":0.75,"tau":0.95,"expected_coverage_indices":[0,1,2],"expected_answered_correctness":[true,true,false],"expected_risk":0.3333333333333333,"expected_deviation":0.2333333333333333,"d_seed":[[0.2333333333333333,0,0.1,0.2],[0.2,0.1,0.2,0.3],[0.3,0.2,0.3,0.4],[0.4,0.3,0.4,0.5]],"expected_dose_summaries":[0.13333333333333333,0.2,0.30000000000000004,0.4],"expected_beta_star":1.0205040771249136,"expected_rho":1,"expected_beta_predicate":true,"expected_rho_predicate":true,"expected_complete_predicate":true},
+    {"id":"upper_clip_cutoff","c_prime":[0.999999,0.999999,0.7,0.6],"correct":[false,true,true,true],"c_min":0.25,"tau":0.999999,"expected_coverage_indices":[0],"expected_answered_correctness":[false],"expected_risk":1,"expected_deviation":0.9,"d_seed":[[0.9,0,0.1,0.2],[0.2,0.1,0.2,0.3],[0.3,0.2,0.3,0.4],[0.4,0.3,0.4,0.5]],"expected_dose_summaries":[0.3,0.2,0.30000000000000004,0.4],"expected_beta_star":0.18516401995451037,"expected_rho":0.8,"expected_beta_predicate":false,"expected_rho_predicate":true,"expected_complete_predicate":false}
+  ]
+}
