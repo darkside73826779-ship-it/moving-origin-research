@@ -78,6 +78,17 @@ At Rebecca's direction, TASK BUILDER implemented the narrowest accuracy-preservi
 
 Two new nonzero-alpha regression cases cover the sentinel geometries that previously diverged. They require identical `d_seed`, validity masks, rho masks, and predicates, plus the existing numeric tolerances. Targeted result: `21 passed in 1.58s`. Full battery: `39 passed in 88.26s`. No new sentinel or full-screen execution was performed as part of this proposed remediation.
 
+## Fully GPU-native replacement proposal
+
+Rebecca rejected the hybrid CPU-reference scientific path as inadequate GPU adoption and directed TASK BUILDER to make the computation fully GPU-native, then report before execution. The replacement keeps all scientific calculations on CUDA after the deterministic primitive tape is transferred:
+
+- selection uses a monotone logit-domain comparison, avoiding sigmoid round-trip drift at the discontinuous `c_prime > tau` boundary;
+- confidence logits, stable sorting, selection, risk updates, beta, fixed-order dose means, exact-equality midranks, and rho remain on CUDA;
+- fixed-order window accumulation prevents backend-selected parallel reductions from perturbing ties before rho ranking;
+- CPU work is limited to the already-required deterministic tape production, orchestration, and publication.
+
+The same two nonzero-alpha regression cases now pass on the fully GPU-native evaluator with identical CPU/GPU `d_seed`, masks, and predicates. Targeted result: `21 passed in 1.62s`. Full battery: `39 passed in 89.62s`. No sentinel or full-screen execution was performed for this replacement proposal before reporting to Rebecca.
+
 ## Public-repository safety attestation
 
 Before Commit A was pushed, gitleaks scanned the complete one-commit delta and found zero leaks. A separate regex/manual scan found no credentials, API keys, tokens, passwords, secrets, personal contact details, machine identifiers, private absolute paths, environment dumps, protected seeds, or other prohibited PII. The role-local Git author address was classified acceptable. `git diff --check` found only three intentional Markdown hard-break spaces in Rebecca's immutable approval artifact; they were preserved. The failure-evidence commit received the same pre-push scan before publication.
