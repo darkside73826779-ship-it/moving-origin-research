@@ -2716,3 +2716,17 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **Next authorized role:** **Rebecca**, to decide whether to incorporate this custody-only branch.
 
 **M0 COMPLETE. M1 GREEN. M2 GREEN/SEALED. M3 INSTRUMENT FAILURE (retained). M4 GATE SIGNED (implementation authorized, scoring gated). Provenance backlog caught up through Entry 111. STATE.md reconciled and canonically attested (Entry 112). §5 custody line: constitution SHA-256 unchanged. Seeds 201–203 and 301–303 retained, never rerun.**
+
+---
+
+## Entry 113 — M4 model-selection qualification-ladder ruling memorialized
+
+**Date:** 2026-08-21 · **Regime:** B [§5-P4] · **Actor:** RECORDER (provenance custody)
+
+- **Gate served:** Provenance memorialization of Rebecca's M4 model-selection qualification-ladder ruling.
+- **Authority and predecessor:** `handoffs/REBECCA_M4_MODEL_SELECTION_QUALIFICATION_LADDER_DIRECTIVE_2026-08-21.md` at source commit `0c191211d5e3ed8e0eedf59bb9955e01f35ab5e5` (`coordinator/m4-model-selection-ladder-directive`); Rebecca R. McClintic directive dated 2026-08-21.
+- **Ruling recorded:** M4 selection is a pre-registered qualification ladder, superseding any prior assumption of training-based integration. The named candidate is Qwen3-4B Instruct FP8; its qualification-failure fallback is Qwen3-8B Instruct FP8. The cross-family peer observer is Llama 3.2 3B Instruct FP8, with Llama 3.1 8B as its limited fallback for the stated lighter peer qualification.
+- **Selector and architecture:** Diagnostic-only development-seed evidence (101–105) selects through Q1 format compliance, Q2 informative-band assessment (numeric band proposed by ARCHITECT and signed by Rebecca before diagnostic execution), and Q3 frozen-output mirror calibratability. Serving is co-resident candidate/peer on the single RTX 5080 subject to preflight; when the 8B rung is selected or memory prevents co-residency, the prescribed Phase A candidate logging, Phase B peer replay, and Phase C scoring sequence applies. Phase A pre-registers the peer-task observables: prompts, outputs, logits/confidences, self-state vector, timing, and oracle correctness.
+- **Custody rules preserved:** Exact checkpoint revisions and SHA-256 weight hashes, including base weights and adapters, are verified at every session start; FP8 is the quantization floor for mirror logits; backbones remain frozen with the stated Rebecca-gated exception path only. The immediate authorization is limited to the non-scoring checkpoint-custody and serving-stack preflight; scoring, protected-seed access, adaptive changes, backbone updates, QLoRA, native-CUDA L8 adoption, scientific threshold changes, STATE mutation, and merge remain held.
+- **Custody chain:** Rebecca → WORKFLOW COORDINATOR → RECORDER. No specification, implementation, scoring, seed, model, diagnostic, STATE.md, or gate action taken by RECORDER.
+- **§5 custody line:** Constitution v2 SHA-256 `c96dc32f00cafeec4a6073c9f2bb8276f05ea764f34d266abae98ed84a750b4a` — unchanged from this named base's verified file.
