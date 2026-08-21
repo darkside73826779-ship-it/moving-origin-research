@@ -1,0 +1,66 @@
+{
+  "schema_version": "common-handoff-manifest-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "transfer_kind": "FORMAL_HANDOFF",
+  "work_item": "m4_tokenizer_executable_package_remediation",
+  "gate": "One batched deterministic closure of the tokenizer executable package and OCI launch contract",
+  "sender_role": "WORKFLOW_COORDINATOR",
+  "receiver_role": "ARCHITECT",
+  "authority_basis": [
+    {
+      "path": "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_EXECUTION_SPECIFICATION_BLOCK.manifest.json",
+      "sha": "91a8195c6d4975a57ec29c399646322aeda83f1b"
+    }
+  ],
+  "remote_ref": "refs/heads/taskbuilder/m4-tokenizer-bf1-execution",
+  "base_sha": "cdfc881c31d919b397fc91a2a287fd4abbcb3e57",
+  "routing_ref_sha": "91a8195c6d4975a57ec29c399646322aeda83f1b",
+  "review_result_sha": "69ca4dbd6215f7f5a323935fe718b618d46d4ff4",
+  "work_branch": "architect/m4-tokenizer-executable-package-remediation",
+  "artifacts": {
+    ".gitattributes": "7811d61d53e74c99543e9d796bd8857076b022c666338ce2954ef236156a4179",
+    "handoffs/REBECCA_M4_TOKENIZER_BF1_EXECUTION_RERELEASE_2026-08-21.md": "732f1e4b5acc2e4d6f2527faa4120608a50ebd4879a757a61e8bdd100d8ad6fb",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_EXECUTION_SPECIFICATION_BLOCK_2026-08-21.md": "43528a55c85e7ef7f19609a3e4a08d13529fc28f849717bff9ca3ba637ae942b",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_EXECUTION_SPECIFICATION_BLOCK.manifest.json": "bb4f0741e37643c24c835ac457a896bcf175549a41127ad4b79ca08929d5c18c",
+    "reviews/critic_m4_tokenizer_bf1_rereview.md": "6c8202e48a04f8e1209151a2997b74800d04185844834bfb3fc254571392c68b",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json": "93f36ebce0153068830ab471ad80d4984bd3c6ea1ef31e0f7cddf018fdad2ed5",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json.sha256": "48ad7fd859e765d122b1d44f9cfa14ad0efa21c79d3bfa3268f51bfff7449759",
+    "specs/m4_local_tokenizer_materialization_changelog.md": "9b130b9a1298ef96323ecd9b1bc7437c00b70b26edbc0c1acbf37332c40918da",
+    "specs/m4_local_tokenizer_materialization_spec_v1.md": "9a0dbfc0cb10e27fc1170fb6baf8ef619e72c6ed7ded26cb4640231d7ad00fa7"
+  },
+  "checks_performed": [
+    "verified TASK BUILDER durable BLOCK and remote equality",
+    "verified all seven executable-package omissions are batched",
+    "verified the single operation remains unconsumed",
+    "validated the Coordinator handoff manifest and raw Git-blob inventory"
+  ],
+  "status": "READY",
+  "findings": [
+    {
+      "classification": "batched executable-package omission",
+      "severity": "blocking",
+      "text": "materializer, wrapper, selected tests, their exact identities, and the complete OCI launch/mount/environment contract must be closed together without implementer invention"
+    }
+  ],
+  "scan_attestation": {
+    "base_sha": "cdfc881c31d919b397fc91a2a287fd4abbcb3e57",
+    "tip_sha": "91a8195c6d4975a57ec29c399646322aeda83f1b",
+    "tool_status": "blocked",
+    "manual_review": true,
+    "findings": [
+      "only immutable public SHA/digest heuristic matches were present in the upstream BLOCK package; manual review found no prohibited content"
+    ]
+  },
+  "next_event": "ARCHITECT commits one complete deterministic executable-package and OCI-launch remediation, including exact source/test artifacts, identities, commands, mounts, environment allowlist, network rule, failure mapping, and complete inventory, then returns through Coordinator for one persistent-CRITIC review.",
+  "prohibited_actions": [
+    "custody lookup or materialization execution",
+    "model/tokenizer access, inference, qualification, diagnostics, or scoring",
+    "protected seeds, scientific change, STATE/provenance mutation, merge, or gate decision",
+    "fragmenting the seven batched omissions into separate remediation cycles"
+  ],
+  "role_extension": {
+    "role": "WORKFLOW_COORDINATOR",
+    "ball_recorded": true
+  }
+}
