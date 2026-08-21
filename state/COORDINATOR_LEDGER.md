@@ -46,6 +46,41 @@ When Rebecca says a role is complete (or any phrasing suggesting it — "archite
 If the ledger, STATE.md, or a return handoff doesn't tell you what to do next: STOP and ask Rebecca. Do not start digging through GitHub main, replaying conversation history, or launching subagents to explore — that is what burned the fresh coordinator's credits. The ledger + STATE.md + the return handoff should be sufficient; if they're not, the right move is to ask Rebecca for a routing instruction, not to reconstruct the state independently.
 
 ---
+
+## Runtime routing directive — 2026-08-21 01:35 EDT (Rebecca-authorized; local metadata)
+
+**Scope:** Routing/governance only. This directive authorizes controlled Codex task-to-task handoff movement and consultation. It does **not** authorize scientific work, scoring, execution, reruns, merges, or gate decisions, and it does not resolve the conflicting durable ball states currently visible in this checkout.
+
+**Single-ball protocol:**
+- Exactly one role owns each work item.
+- Only a labeled **FORMAL HANDOFF** transfers ownership. Ownership changes when the recipient acknowledges receipt.
+- A labeled **CONSULTATION REQUEST** does not transfer ownership. The owner retains the ball; the consulted role answers only within its authority and does not edit, co-author, judge, score, merge, or take over absent a later formal handoff.
+- Every formal handoff and acknowledgement is reported to the WORKFLOW COORDINATOR with timestamp, work item/gate, sender, receiver, authoritative branch/SHA, artifact path, blockers, and next expected event.
+- Material consultation resolutions become durable only when the owning role captures them in its committed artifact or handoff.
+- CRITIC and JUDGE independence remains protected. CRITIC does not co-author work it will review. JUDGE is not consulted about how to make candidate results pass.
+- Separate isolated workspaces and branches remain mandatory; no cross-role editing in another role's checkout.
+- Automated routing stops and escalates to Rebecca for ambiguity, conflicting SHAs, missing executable inputs, failed gates, protected-seed/scoring boundaries, destructive or external actions requiring approval, and any requested merge.
+- O-14, O-15, constitutional law, locked bars, public-repository safety, and Rebecca's sole gate/merge authority remain unchanged.
+- Keep collaboration bounded: one formal owner per work item, narrow consultation questions, one authoritative handoff artifact, and no broadcast discussion unless multiple roles need the same notice.
+
+**Authorized protocol-amendment sequence:** ARCHITECT drafts a narrow Codex Collaboration Protocol amendment → CRITIC independently reviews → Rebecca approves or rejects → TASK BUILDER implements approved initialization-file changes and consistency checks → approved amendment is sent to existing role tasks and governs future initialization.
+
+**Active runtime work item:** L8 GPU v1.5 deterministic executability closure. CRITIC returned `LAW_FIDELITY: PASS` + `SUBSTANTIVE: CLEAR` at `critic/l8-gpu-v1.5-bf1-bf5-rereview` @ `e0aad1dabde9546e0074a7a375135eb92ee2072a`, review `reviews/critic_l8_gpu_v1.5_bf1_bf5_rereview.md`; BF1–BF5 independently closed with no remaining blocking or non-blocking finding in scope. FORMAL HANDOFF timestamp 2026-08-21 01:57:03 EDT; ball/current owner is Rebecca for the sole amendment approval/re-release decision. Next event: Rebecca approves or rejects v1.5 and, only if approving, explicitly re-releases TASK BUILDER and the two permitted executions. Until that ruling, v1.5 is inoperative, B11 is Rebecca-gated, and TASK BUILDER is held. No implementation, run, scoring, protected-seed exposure, rerun, package installation, or scientific/gate merge is authorized by the CRITIC verdict alone.
+
+**Separate active work item — workflow-efficiency baseline audit:** Ball/current owner is EFFICIENCY EVALUATOR. Scope is read-only analysis/proposals: map role procedures, identify waste and safer improvements, consult roles as needed, and return the specified baseline-audit package to Rebecca. No workflow change is operative without Rebecca's explicit approval. No implementation, repository change, scoring, seed access, diagnostics, gate decision, or interference with the L8 work item is authorized. The task identifier is private local coordination metadata and is intentionally excluded from this repository ledger. Next event: EFFICIENCY EVALUATOR returns its first analysis package to Rebecca and reports the formal handoff to the Coordinator.
+
+**Separate pending governance item:** The Codex Collaboration Protocol repository amendment has not been formally handed to ARCHITECT. Do not conflate it with the active L8 work item or choose among other conflicting pre-existing durable ball states.
+
+**Persistent task roster (coordination metadata only; never repository authority):**
+- WORKFLOW COORDINATOR: `01a022ca-63c4-7651-9521-c89ae81d0e7c`
+- ARCHITECT: `01a01d0c-38cc-7a12-a86f-cb9a8b3098b5`
+- TASK BUILDER: `01a01cb4-e496-7d92-a475-28dd557b6db8`
+- CRITIC: `01a022ca-6677-7c13-97c2-29ce0efda5e7`
+- INTEGRATOR: `01a022ca-6942-7c31-a8f5-48049ebecbf3`
+- RECORDER: `01a022ca-6c2b-7393-96b5-bf1a6553ca77`
+- JUDGE: `01a022ca-6ef9-7271-b089-46ff3ea4e22d`
+
+---
 ## Current state — updated 2026-08-20 10:22 EDT (role inits FIXED — binding executability obligation added to ARCHITECT, CRITIC, TASK BUILDER; reinitialize ARCHITECT + CRITIC next)
 
 **Ball:** REBECCA — reinitialize the ARCHITECT + CRITIC (fresh sessions with the updated inits). The three role inits now carry a binding executability obligation (PR #100, main `63c0a66e`): same executable-input categories (fixtures, committed artifact pairs, stochastic fixture realizations — committed arrays OR exact RNG/seed/draw-count/shape/construction-order, result schemas, expected digests) across all three.
@@ -108,6 +143,12 @@ This hybrid (build sim on spec-text estimator, then verify against the harness's
 
 ## Handoff history (compact — current state overwrites prior; full history in provenance log + git log)
 
+- 2026-08-21 01:57 — CRITIC CLEAR FORMAL HANDOFF, L8 GPU v1.5: CRITIC (`e0aad1dabde9546e0074a7a375135eb92ee2072a`) → Rebecca for sole amendment approval/re-release decision. BF1–BF5 closed; TASK BUILDER and executions remain held pending Rebecca.
+- 2026-08-21 — FORMAL HANDOFF recorded for the separate read-only workflow-efficiency baseline audit: Rebecca → EFFICIENCY EVALUATOR. L8 ownership and holds unaffected; evaluator task ID excluded from repository metadata.
+- 2026-08-21 01:50 — FORMAL HANDOFF ACKNOWLEDGED, L8 GPU v1.5 BF1–BF5 remediation: ARCHITECT (`e05550f494b2c6dffb2ea9645067395beaf56fe1`) → CRITIC for independent rereview. CRITIC owns the L8 ball; TASK BUILDER and execution held.
+- 2026-08-21 01:42 — FORMAL HANDOFF ACKNOWLEDGED after CRITIC combined BLOCK: CRITIC (`635e56f63ce61be537cfdfa026f24adf17e91b3a`) → ARCHITECT for minimal BF1–BF5 remediation. ARCHITECT owns the ball; TASK BUILDER and execution held.
+- 2026-08-21 01:38 — FORMAL HANDOFF ACKNOWLEDGED, L8 GPU v1.5 executability remediation: ARCHITECT (`b402fe07570843f3d234938a80690820dde2f849`) → CRITIC. CRITIC owns the ball; TASK BUILDER held; awaiting committed independent review and formal return handoff.
+- 2026-08-21 01:35 — Rebecca authorized the runtime single-ball Codex collaboration protocol and persistent task roster as local routing metadata. No formal handoff issued; conflicting durable ball states remain unresolved; awaiting Rebecca's instruction before routing the protocol-amendment work item to ARCHITECT.
 - 2026-08-20 10:22 — role inits FIXED (PR #100, main 63c0a66e): binding executability obligation added to ARCHITECT, CRITIC, TASK BUILDER (addresses v2.6 false-deterministic + false-CLEAR). Reinitialize ARCHITECT + CRITIC next; TASK BUILDER init updated, role stays scrapped.
 - 2026-08-20 01:49 — ARCHITECT + TASK BUILDER SCRAPPED (proved faulty/fallible); awaiting Rebecca's routing instruction
 - 2026-08-20 01:38 — REBECCA RULING (REBECCA_L8_1000_REP_FEASIBILITY_AUTHORIZATION, main d6bc5c9+d08cb7e): 1,000-rep parallel feasibility diagnostic replaces the v2.6 60-rep benchmark
