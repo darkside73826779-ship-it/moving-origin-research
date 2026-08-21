@@ -1,6 +1,6 @@
 # FORMAL HANDOFF — ARCHITECT → WORKFLOW COORDINATOR
 
-**Date:** 2026-08-21  
+**Date:** 2026-08-21
 **Regime:** B
 
 ## Gate served
