@@ -10,7 +10,7 @@ Substantive implementation `f9d5541b327f65b730b2a73735b8be3fc4f0f8e0` closes the
 
 Focused evidence: 28/28 PASS; exact reviewed substantive `56fadc894eb228927ba904b5c0db3e5032385259` killed by the new committed regression; 11/11 deterministic mutants killed with zero survivor/instrument failure; wrapper remains governed exit 2 `RUN_AUTHORITY_ABSENT`. The adjacent quality trace records the reset-boundary audit and exact commands.
 
-Standard `workflow_checkout.py create` and cleanup PASS with review result `56fadc894eb228927ba904b5c0db3e5032385259` and a handoffs-only routing tail.
+Standard `workflow_checkout.py create` and cleanup PASS at routed head `27a11061c98293cc37766db66a3d5056c37a13ee`, review result `f9d5541b327f65b730b2a73735b8be3fc4f0f8e0`, and base `dd619714d15a2cdebafc14c67e55907282047269`; the receipt and verification checkout were removed.
 
 Substantive-range preflight: gitleaks zero. Two repeated scan-domain findings reduce to one numeric substring wholly inside the required immutable public reviewed-source Git SHA; manually classified as public reproducibility metadata, with no prohibited content or suppression.
 
