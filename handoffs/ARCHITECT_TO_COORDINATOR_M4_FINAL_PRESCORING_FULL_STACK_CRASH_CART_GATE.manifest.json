@@ -1,0 +1,84 @@
+{
+  "schema_version": "common-handoff-manifest-v1",
+  "date": "2026-08-22",
+  "regime": "B",
+  "transfer_kind": "FORMAL_HANDOFF",
+  "work_item": "m4_final_prescoring_full_stack_crash_cart_gate",
+  "gate": "Persistent-CRITIC design review only; no implementation or run authority",
+  "sender_role": "ARCHITECT",
+  "receiver_role": "WORKFLOW_COORDINATOR",
+  "authority_basis": [
+    {
+      "path": "handoffs/ARCHITECT_TO_COORDINATOR_M4_REAL_TEST_READINESS_BF1_BF4_ROUTE_RECONCILIATION_2026-08-22.md",
+      "sha": "3d1e1e4ad9039ce25f311367aff5798ad7fcec07"
+    }
+  ],
+  "remote_ref": "refs/heads/architect/m4-final-prescoring-full-stack-crash-cart-gate",
+  "base_sha": "3d1e1e4ad9039ce25f311367aff5798ad7fcec07",
+  "routing_ref_sha": "82d380ea42ca4e43386f90eedc5ae3551632c8ea",
+  "review_result_sha": "b25baaac2f88bce1a5c2659e5d9b917f6bb0f158",
+  "work_branch": "architect/m4-final-prescoring-full-stack-crash-cart-gate",
+  "artifacts": {
+    ".gitattributes": "7e5c2b7afe29eca77f8d0c9464fa8e98f15fd0753beec9d7f80053c2854adcb0",
+    "handoffs/ARCHITECT_TO_COORDINATOR_M4_FINAL_PRESCORING_FULL_STACK_CRASH_CART_GATE_2026-08-22.md": "fb97eb7eca54b635fa686c503bc9a28e8be8fd037a45c8c07a86d411294e23c4",
+    "handoffs/ARCHITECT_TO_COORDINATOR_M4_REAL_TEST_READINESS_BF1_BF4_ROUTE_RECONCILIATION_2026-08-22.md": "bb5fb1e6f765a4e0626ec5a2d50727bf69f546030fa52503d76a60b74fc07fdb",
+    "specs/data/m4_final_prescoring_full_stack_crash_cart_gate_v1.json": "791ec233a68b5743a4428c5f35e46a161d55e1d4bcc0361ff9c0e576901de87e",
+    "specs/data/m4_final_prescoring_full_stack_crash_cart_gate_v1.json.sha256": "583dd4bf42dfb2b6b9881d64b0b77fab6779b458782952d14f27583669861233",
+    "specs/data/m4_final_prescoring_full_stack_crash_cart_launch_contract_v1.json": "4ee9d204e79ffe80e3f48f29512cf0fab5cd00f06eb7f0a2fe58da2a1d65ce18",
+    "specs/data/m4_final_prescoring_full_stack_crash_cart_launch_contract_v1.json.sha256": "e6806c7d92ff93fc8131ed7c6e05f0d0e772246ec9e7405cd898e32142b9e2e9",
+    "specs/data/m4_final_prescoring_full_stack_crash_cart_report_schema_v1.json": "e231418b257a00305aaf0e0b927b66957e333e300e480464982c12c89cf687ed",
+    "specs/data/m4_final_prescoring_full_stack_crash_cart_report_schema_v1.json.sha256": "50c197e8b798114ecc657ccdd2bc9f1cbba457fbf1cdab02c28d44846264453c",
+    "specs/m4_final_prescoring_full_stack_crash_cart_gate_v1.md": "338d2413810e16b90675d524d3b82820a7d237da31cbc8f73c936cb99afc41c5"
+  },
+  "checks_performed": [
+    "banked the exact readiness package and persistent-CRITIC CLEAR without reconstructing its 66-item inventory",
+    "validated JSON parsing and compiled the report schema under Draft 2020-12",
+    "reproduced all adjacent SHA-256 sidecars and all four exact warmup prompt byte/digest identities",
+    "verified LF attributes, path modes, Git blobs, raw bytes, ancestry, diff integrity, and handoffs-only routing tail",
+    "verified the route branch remote equals 82d380ea42ca4e43386f90eedc5ae3551632c8ea",
+    "ran workflow_preflight.py across the exact base-to-route range and manually classified all retained findings",
+    "verified git fsck completed without corruption and the routed worktree was clean"
+  ],
+  "status": "READY",
+  "findings": [
+    {
+      "classification": "SCANNER_FALSE_POSITIVE_FIXED_NUMERIC_CONTROL",
+      "severity": "non_blocking",
+      "text": "The final route scan contains personal-contact heuristic matches on public integer nanosecond controls; each is a fixed duration, deadline, offset, or sampling bound required by the design."
+    },
+    {
+      "classification": "SCANNER_FALSE_POSITIVE_PUBLIC_IMMUTABLE_IDENTITY",
+      "severity": "non_blocking",
+      "text": "The final route scan contains personal-contact heuristic matches wholly inside required public model revision and SHA-256 identities."
+    },
+    {
+      "classification": "GITLEAKS_FALSE_POSITIVE_PUBLIC_ARTIFACT_DIGEST",
+      "severity": "non_blocking",
+      "text": "Eight route-domain gitleaks findings are repeated detections of the declared public tokenizer and tokenizer-config SHA-256 identities; no credential is present."
+    }
+  ],
+  "scan_attestation": {
+    "base_sha": "3d1e1e4ad9039ce25f311367aff5798ad7fcec07",
+    "tip_sha": "82d380ea42ca4e43386f90eedc5ae3551632c8ea",
+    "tool_status": "blocked",
+    "manual_review": true,
+    "findings": [
+      "workflow_preflight.py retained 86 findings over the exact final route: 78 personal-contact heuristics and eight gitleaks generic-key findings; none were suppressed",
+      "the personal-contact findings are repeated scan-domain occurrences of fixed public integer timing controls or required public revision/digest values",
+      "the gitleaks findings are repeated scan-domain occurrences of two declared public artifact SHA-256 values",
+      "no credential, personal contact, private path/value, custody input, protected prompt/seed, model/tokenizer bytes, token arrays, score, science result, or prohibited durable-state mutation was found"
+    ]
+  },
+  "next_event": "WORKFLOW COORDINATOR validates the exact identities and routes the design once to the authoritative persistent CRITIC",
+  "prohibited_actions": [
+    "implementation, integration, merge, or execution from this design",
+    "model, tokenizer, custody, protected, holdout, courier, or scientific seed access",
+    "scoring, qualification, scientific aggregation, law claim, readiness claim, publication, STATE/provenance mutation, or gate decision",
+    "retry, rerun, adaptive request count, adaptive deadline, or substitution of future UNBOUND identities"
+  ],
+  "role_extension": {
+    "role": "ARCHITECT",
+    "changelog_paths": [],
+    "diff_self_inspection": true
+  }
+}
