@@ -1,6 +1,6 @@
 """Custody-free, non-executing M4 crash-cart beta production seam."""
 from __future__ import annotations
-import hashlib, json
+import hashlib, json, math, re
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -17,6 +17,7 @@ RECEIPT_FIELDS={"status","backend_code","session_id","prior_backend_state_sha256
 
 class CrashCartError(RuntimeError): pass
 def sha256(value:bytes)->str:return hashlib.sha256(value).hexdigest()
+def canonical_bytes(value:Any)->bytes:return json.dumps(value,sort_keys=True,separators=(",",":"),ensure_ascii=False).encode()
 def _bad(condition:bool,code:str)->None:
     if condition: raise CrashCartError(code)
 def warmup_prompt(ordinal:int,payload_bytes:int)->bytes:
@@ -35,9 +36,50 @@ def public_fixture(i:int):
 def fixture_inventory():return tuple(public_fixture(i)for i in range(64))
 def held_laws():return tuple({"law_id":law,"status":"HELD","claim_made":False,"meaning_source":f"docs/ARCHITECTURAL_CONSTITUTION_v2.md:{line}","evidence":[],"metrics":{},"failure_code":None,"held_reason":HELD_REASONS[law]}for law,line in zip(LAW_ORDER,(26,28,32,42,54)))
 
+def _resolve(root,ref):
+    node=root
+    for part in ref[2:].split("/"):node=node[part.replace("~1","/").replace("~0","~")]
+    return node
+def _matches(value,kind):
+    return {"object":isinstance(value,dict),"array":isinstance(value,list),"string":isinstance(value,str),"integer":type(value)is int,"number":isinstance(value,(int,float))and not isinstance(value,bool),"boolean":type(value)is bool,"null":value is None}.get(kind,False)
+def _valid(value,schema,root):
+    try:_draft_validate(value,schema,root);return True
+    except CrashCartError:return False
+def _draft_validate(value,schema,root):
+    if schema is True:return
+    if schema is False:raise CrashCartError("REPORT_SCHEMA_INVALID")
+    if "$ref"in schema:return _draft_validate(value,_resolve(root,schema["$ref"]),root)
+    if "const"in schema:_bad(value!=schema["const"],"REPORT_SCHEMA_INVALID")
+    if "enum"in schema:_bad(value not in schema["enum"],"REPORT_SCHEMA_INVALID")
+    if "type"in schema:
+        kinds=schema["type"]if isinstance(schema["type"],list)else[schema["type"]];_bad(not any(_matches(value,k)for k in kinds),"REPORT_SCHEMA_INVALID")
+    if "oneOf"in schema:_bad(sum(_valid(value,x,root)for x in schema["oneOf"])!=1,"REPORT_SCHEMA_INVALID")
+    if "anyOf"in schema:_bad(not any(_valid(value,x,root)for x in schema["anyOf"]),"REPORT_SCHEMA_INVALID")
+    for child in schema.get("allOf",[]):_draft_validate(value,child,root)
+    if "if"in schema:
+        if _valid(value,schema["if"],root):_draft_validate(value,schema.get("then",{}),root)
+        elif "else"in schema:_draft_validate(value,schema["else"],root)
+    if isinstance(value,dict):
+        _bad(any(k not in value for k in schema.get("required",[])),"REPORT_SCHEMA_INVALID");props=schema.get("properties",{})
+        _bad(schema.get("additionalProperties")is False and any(k not in props for k in value),"REPORT_SCHEMA_INVALID")
+        _bad(len(value)>schema.get("maxProperties",math.inf),"REPORT_SCHEMA_INVALID")
+        for k,v in value.items():
+            if k in props:_draft_validate(v,props[k],root)
+            elif isinstance(schema.get("additionalProperties"),dict):_draft_validate(v,schema["additionalProperties"],root)
+    if isinstance(value,list):
+        _bad(len(value)<schema.get("minItems",0)or len(value)>schema.get("maxItems",math.inf),"REPORT_SCHEMA_INVALID")
+        if schema.get("uniqueItems"):_bad(len({json.dumps(x,sort_keys=True)for x in value})!=len(value),"REPORT_SCHEMA_INVALID")
+        prefix=schema.get("prefixItems",[])
+        for i,child in enumerate(prefix):
+            if i<len(value):_draft_validate(value[i],child,root)
+        items=schema.get("items")
+        if items is False:_bad(len(value)>len(prefix),"REPORT_SCHEMA_INVALID")
+        elif isinstance(items,(dict,bool)):
+            for item in value[len(prefix):]:_draft_validate(item,items,root)
+    if isinstance(value,str):_bad(len(value)<schema.get("minLength",0)or("pattern"in schema and re.search(schema["pattern"],value)is None),"REPORT_SCHEMA_INVALID")
+    if isinstance(value,(int,float))and not isinstance(value,bool):_bad(not math.isfinite(value)or value<schema.get("minimum",-math.inf)or value>schema.get("maximum",math.inf),"REPORT_SCHEMA_INVALID")
 def _compose_schema(report:Mapping[str,Any])->None:
-    schema=json.loads((Path(__file__).resolve().parents[1]/"specs/data/m4_final_prescoring_full_stack_crash_cart_report_schema_v1.json").read_text(encoding="utf-8"))
-    _bad(any(k not in report for k in schema["required"]),"REPORT_SCHEMA_INVALID")
+    schema=json.loads((Path(__file__).resolve().parents[1]/"specs/data/m4_final_prescoring_full_stack_crash_cart_report_schema_v1.json").read_text(encoding="utf-8"));_draft_validate(report,schema,schema)
 def validate_terminal(r:Mapping[str,Any])->None:
     _bad(not isinstance(r,Mapping)or r.get("evidence_stage")not in STAGES,"EVIDENCE_STAGE_INVALID");_compose_schema(r)
     s=r["evidence_stage"];rows=r["rows"];samples=r["resource_samples"];w=r["warmup"];a=r["active_window"];tr=r["trends"];rep=r["replica_consistency"]
@@ -65,22 +107,49 @@ def execution_guard(value):
 
 @dataclass
 class CrashCartLifecycle:
-    candidate:Callable;peer:Callable;reset:Callable;cleanup:Callable;events:list[str]=field(default_factory=list)
-    def _pair(self,kind,ordinal,digest):
-        req={"kind":kind,"ordinal":ordinal,"prompt_sha256":digest};self.events.append(f"{kind}-barrier-{ordinal}")
+    candidate:Callable;peer:Callable;reset:Callable;cleanup:Callable
+    clock_ns:Callable[[],int]|None=None;sleep_until_ns:Callable[[int],None]|None=None;sampler:Callable[[int,int],Mapping[str,Any]]|None=None
+    events:list[str]=field(default_factory=list);_virtual_ns:int=0;_states:dict[str,str]=field(default_factory=lambda:{"candidate":"0"*64,"peer":"0"*64})
+    def _now(self):return self.clock_ns()if self.clock_ns else self._virtual_ns
+    def _wait(self,target):
+        if self.sleep_until_ns:self.sleep_until_ns(target)
+        else:self._virtual_ns=max(self._virtual_ns,target)
+        _bad(self._now()<target,"SCHEDULE_BYPASS")
+    def _pair(self,kind,ordinal,item):
+        controls=warmup_plan()[ordinal]if kind=="warmup"else{"temperature":0,"top_p":1.0,"top_k":-1,"n":1,"presence_penalty":0,"frequency_penalty":0,"stop":[],"logprobs":False,"prefix_caching":False}
+        req={"kind":kind,"ordinal":ordinal,"fixture_id":item.get("fixture_id"),"prompt_sha256":item["prompt_sha256"],"controls":{k:v for k,v in controls.items()if k not in{"prompt"}}};self.events.append(f"{kind}-barrier-{ordinal}")
         with ThreadPoolExecutor(max_workers=2)as pool:
             ca=pool.submit(self.candidate,req);pe=pool.submit(self.peer,req);out=(ca.result(),pe.result())
-        for receipt in out:_bad(set(receipt)!=RECEIPT_FIELDS or receipt.get("status")!="PASS"or receipt.get("request_ordinal")!=ordinal,"RECEIPT_INVALID")
+        expected_hash=sha256(canonical_bytes(req));sessions=[]
+        for role,receipt in zip(("candidate","peer"),out):
+            _bad(set(receipt)!=RECEIPT_FIELDS,"RECEIPT_SHAPE_INVALID")
+            _bad(receipt.get("status")!="PASS","RECEIPT_STATUS_INVALID");_bad(receipt.get("backend_code")is not None,"RECEIPT_BACKEND_CODE_INVALID")
+            session=receipt.get("session_id");_bad(not isinstance(session,str)or session!=role,"RECEIPT_SESSION_INVALID");sessions.append(session)
+            _bad(receipt.get("request_sha256")!=expected_hash,"RECEIPT_REQUEST_DIGEST_INVALID")
+            prior=receipt.get("prior_backend_state_sha256");result=receipt.get("result_backend_state_sha256")
+            _bad(not isinstance(prior,str)or re.fullmatch(r"[0-9a-f]{64}",prior)is None or prior!=self._states[role],"RECEIPT_PRIOR_STATE_INVALID")
+            _bad(not isinstance(result,str)or re.fullmatch(r"[0-9a-f]{64}",result)is None,"RECEIPT_RESULT_STATE_INVALID")
+            _bad(receipt.get("request_ordinal")!=ordinal,"RECEIPT_ORDINAL_INVALID");self._states[role]=result
+        _bad(sessions[0]==sessions[1],"SHARED_SESSION_INVALID")
         return out
     def warmup(self):
-        self.reset("candidate");self.reset("peer");out=[self._pair("warmup",x["ordinal"],x["prompt_sha256"])for x in warmup_plan()]
+        self.reset("candidate");self.reset("peer");self._states={"candidate":"0"*64,"peer":"0"*64};out=[self._pair("warmup",x["ordinal"],x)for x in warmup_plan()]
         self.reset("candidate");self.reset("peer");self.events.extend(("clean-barrier","rng-after-clean-barrier"));return out
     def active(self):
         _bad("rng-after-clean-barrier"not in self.events,"RNG_INSERTION_INVALID")
-        return [self._pair("active",x["ordinal"],x["prompt_sha256"])for x in fixture_inventory()]
+        start=self._now();samples=[];out=[];next_sample=start
+        for item,offset in zip(fixture_inventory(),active_schedule()):
+            target=start+offset;self._wait(target)
+            self.events.append(f"dispatch@{self._now()-start}")
+            _bad(self._now()-start>ACTIVE_DEADLINE_NS,"ACTIVE_WINDOW_TIMEOUT_NO_RETRY")
+            while next_sample<=self._now():
+                observed=dict(self.sampler(next_sample,len(out)))if self.sampler else{"monotonic_ns":next_sample,"queue_depth_pairs":0,"completed_pair_count":len(out)}
+                _bad(observed.get("monotonic_ns")!=next_sample,"TELEMETRY_OBSERVATION_INVALID");samples.append(observed);next_sample+=TELEMETRY_INTERVAL_NS
+            self.events.append("queue-depth-1");_bad(1>QUEUE_CAPACITY,"QUEUE_CAPACITY_EXCEEDED");out.append(self._pair("active",item["ordinal"],item))
+        _bad(self._now()-start<30_000_000_000,"ACTIVE_WINDOW_TOO_SHORT");return out,samples
     def run(self):
         try:
-            warm=self.warmup();active=self.active();return {"warmup_ordinals":[x[0]["request_ordinal"]for x in warm],"active_ordinals":[x[0]["request_ordinal"]for x in active],"schedule":list(active_schedule()),"telemetry_ns":list(telemetry_schedule()),"queue_capacity":QUEUE_CAPACITY}
+            warm=self.warmup();active,samples=self.active();return {"warmup_ordinals":[x[0]["request_ordinal"]for x in warm],"active_ordinals":[x[0]["request_ordinal"]for x in active],"dispatch_observed_ns":[int(x.split("@")[-1])for x in self.events if x.startswith("dispatch@")],"telemetry":samples,"max_queue_depth":1}
         except Exception as exc:
             self.events.append("rollback");self.reset("candidate");self.reset("peer")
             if isinstance(exc,CrashCartError):raise
