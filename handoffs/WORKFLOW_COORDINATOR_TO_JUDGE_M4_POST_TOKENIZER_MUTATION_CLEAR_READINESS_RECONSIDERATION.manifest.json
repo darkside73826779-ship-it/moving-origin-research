@@ -1,0 +1,88 @@
+{
+  "artifacts": {
+    "handoffs/REBECCA_M4_POST_TOKENIZER_MUTATION_CLEAR_IMPLEMENTATION_READINESS_JUDGE_AUTHORITY_2026-08-22.md": "0e4ac601776b8eeadfa962dedcf2115f6a36053730b4ff22c40c3b12051a6356",
+    "handoffs/TASK_BUILDER_M4_POST_TOKENIZER_MUTATION_APPARATUS_QUALITY_TRACE_2026-08-22.md": "8f4c8af827be92b875f32adf60520647093b44995733f5d861332c6510a3c7ba",
+    "handoffs/TASK_BUILDER_TO_WORKFLOW_COORDINATOR_M4_MUTATION_APPARATUS_REMEDIATION.manifest.json": "5acd03003b3ddc560b6e629886f6ff72eeb1e0dcce27125edc9c84b547d528e5",
+    "handoffs/TASK_BUILDER_TO_WORKFLOW_COORDINATOR_M4_MUTATION_APPARATUS_REMEDIATION_2026-08-22.md": "7439dd6a33e2b9e1adcad9ad7ff811e1a207d646730caaf490e855ec57c3f006",
+    "reviews/critic_m4_post_tokenizer_mutation_apparatus_remediation_review.md": "240e3f957763a0e7d5ada0ccf594b7047874ff517d1756c114f39f284d467e39"
+  },
+  "authority_basis": [
+    {
+      "path": "handoffs/REBECCA_M4_POST_TOKENIZER_MUTATION_CLEAR_IMPLEMENTATION_READINESS_JUDGE_AUTHORITY_2026-08-22.md",
+      "sha": "3b5fbaa74668e563ea0005b7e7488473976d0b95"
+    },
+    {
+      "path": "reviews/critic_m4_post_tokenizer_mutation_apparatus_remediation_review.md",
+      "sha": "e67f0538640334e1db6b5397bce808f098d2e6ac"
+    },
+    {
+      "authority_kind": "EXTERNAL_HISTORICAL_RECORDER_PUBLICATION",
+      "published_ref": "refs/heads/recorder/m4-post-tokenizer-implementation-readiness-ruling",
+      "published_commit_sha": "32f72c2bb708d96060eb636cb4cf7a673c85ec24",
+      "historical_repository_path": "docs/rulings/judge_m4_post_tokenizer_implementation_readiness_ruling.md",
+      "git_blob_sha1": "3841cfc260ff9c639e32a1119cb4d1041c0c77eb",
+      "raw_sha256": "ca77333e20c8a2f6accbd32d2f79b9ca3b256f8050faa7981f7f14bf10e0c5b0",
+      "byte_length": 5140,
+      "custody_manifest_repository_path": "handoffs/RECORDER_TO_WORKFLOW_COORDINATOR_M4_POST_TOKENIZER_IMPLEMENTATION_READINESS_RULING.manifest.json",
+      "custody_manifest_git_blob_sha1": "d7a43ed0fba02940823e339c8e1eda3b1753623d",
+      "custody_manifest_raw_sha256": "8774a0fb0eee86c572cbdd5ca5440e38668bb76e8b021cc267e17749ff46a628",
+      "custody_manifest_byte_length": 4786
+    }
+  ],
+  "base_sha": "909d2a4a6b4ceafb871e11c1757d873cfa1a4c41",
+  "checks_performed": [
+    "exact corrected TASK BUILDER package implementation and routing identities verified",
+    "independent CRITIC COMBINED CLEAR identity and artifact verified",
+    "production implementation and production tests verified byte-identical to the accepted baseline",
+    "active JUDGE initialization contract and private pre-custody envelope route preserved",
+    "all five current-tree intake artifacts reproduced as exact raw Git blobs",
+    "prior JUDGE ruling and RECORDER custody manifest reproduced from their external published commit identities",
+    "review-result to routing-head delta verified to contain only handoffs paths",
+    "workflow preflight completed with every finding retained and manually classified",
+    "gitleaks 8.30.1 returned zero findings"
+  ],
+  "date": "2026-08-22",
+  "findings": [
+    {
+      "classification": "SCANNER_HEURISTIC_PUBLIC_IDENTITY",
+      "severity": "non_blocking",
+      "text": "four duplicate-domain personal-contact regex findings represent two unique substrings wholly inside required immutable public commit identities; manual review confirms no contact data"
+    }
+  ],
+  "gate": "NON_SCORING_IMPLEMENTATION_READINESS_RECONSIDERATION",
+  "next_event": "JUDGE returns one private pre-custody implementation-readiness reconsideration envelope to WORKFLOW COORDINATOR for unchanged routing to RECORDER",
+  "prohibited_actions": [
+    "JUDGE commit push merge or public ruling publication",
+    "tokenizer or materializer invocation rerun or new operation",
+    "private custody model tokenizer path prompt or protected-seed access",
+    "inference serving qualification scoring Q2 EF3 native-L8 or other science",
+    "implementation changes package substitution or production behavior changes",
+    "STATE or provenance mutation by JUDGE",
+    "repository merge model publication result publication or final project gate decision"
+  ],
+  "receiver_role": "JUDGE",
+  "regime": "B",
+  "remote_ref": "refs/heads/coordinator/m4-post-tokenizer-mutation-clear-judge-route-v4",
+  "review_result_sha": "e67f0538640334e1db6b5397bce808f098d2e6ac",
+  "role_extension": {
+    "ball_recorded": true,
+    "role": "WORKFLOW_COORDINATOR"
+  },
+  "routing_ref_sha": "3b5fbaa74668e563ea0005b7e7488473976d0b95",
+  "scan_attestation": {
+    "base_sha": "e67f0538640334e1db6b5397bce808f098d2e6ac",
+    "findings": [
+      "F000001 through F000004 are duplicate scan-domain matches wholly inside required immutable public commit identities; each is non-contact reproducibility metadata and none was suppressed",
+      "gitleaks 8.30.1 returned zero findings"
+    ],
+    "manual_review": true,
+    "tip_sha": "3b5fbaa74668e563ea0005b7e7488473976d0b95",
+    "tool_status": "blocked"
+  },
+  "schema_version": "common-handoff-manifest-v1",
+  "sender_role": "WORKFLOW_COORDINATOR",
+  "status": "READY",
+  "transfer_kind": "FORMAL_HANDOFF",
+  "work_branch": "judge/m4-post-tokenizer-mutation-clear-readiness-reconsideration-v4",
+  "work_item": "m4_post_tokenizer_mutation_clear_implementation_readiness_reconsideration"
+}
