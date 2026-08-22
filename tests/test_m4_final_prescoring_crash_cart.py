@@ -388,6 +388,51 @@ class ProductionPathCorrectionTests(unittest.TestCase):
         self.assertEqual(life.run()["active_ordinals"], list(range(64)))
         self.assertEqual(life._states, backends.states)
 
+    def test_reset_valid_wrong_prior_is_atomic_rolls_back_and_cleans(self):
+        def install_valid_wrong_prior(life, backends, events, faulty_role):
+            original_reset = backends.reset
+
+            def reset(role):
+                if backends.reset_counts[role] != 1:
+                    return original_reset(role)
+                events.append(("reset", role))
+                backends.reset_counts[role] += 1
+                count = backends.reset_counts[role]
+                receipt = reset_receipt(
+                    role,
+                    "f" * 64 if role == faulty_role else backends.states[role],
+                    sha256(f"{role}:reset:{count}".encode()) if role == faulty_role
+                    else backends.states[role],
+                    count,
+                )
+                backends.reset_receipts.append((role, count, copy.deepcopy(receipt)))
+                return receipt
+
+            life.reset = reset
+
+        for faulty_role in ("candidate", "peer"):
+            with self.subTest(role=faulty_role, path="direct-atomic-boundary"):
+                direct_life, direct_backends, direct_events = self.lifecycle()
+                install_valid_wrong_prior(direct_life, direct_backends, direct_events, faulty_role)
+                with self.assertRaisesRegex(CrashCartError, "RESET_PRIOR_STATE_INVALID"):
+                    direct_life.warmup()
+                self.assertEqual(direct_life._states, direct_backends.states)
+                self.assertNotIn("reset-measured", direct_life.events)
+                self.assertFalse(any(event[1] == "active" for event in direct_events if len(event) == 3))
+
+            with self.subTest(role=faulty_role, path="public-run-rollback"):
+                life, backends, events = self.lifecycle()
+                install_valid_wrong_prior(life, backends, events, faulty_role)
+                with self.assertRaisesRegex(CrashCartError, "RESET_PRIOR_STATE_INVALID"):
+                    life.run()
+                self.assertEqual(backends.reset_counts, {"candidate": 3, "peer": 3})
+                self.assertIn("reset-rollback", life.events)
+                self.assertEqual(events.count(("cleanup",)), 1)
+                self.assertEqual(life.events.count("cleanup"), 1)
+                self.assertNotIn("reset-measured", life.events)
+                self.assertFalse(any(event[1] == "active" for event in events if len(event) == 3))
+                self.assertFalse(any(event.startswith("dispatch@") for event in life.events))
+
     def test_reset_malformed_mismatched_or_peer_failure_is_atomic_and_cleans(self):
         for fault in (("candidate", 2, "digest"), ("candidate", 2, "session"),
                       ("candidate", 2, "status"), ("candidate", 2, "prior"),

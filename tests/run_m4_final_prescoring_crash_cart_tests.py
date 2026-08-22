@@ -27,6 +27,6 @@ def main() -> int:
     contract=json.loads((ROOT/'specs/data/m4_final_prescoring_crash_cart_beta_contract_v1.json').read_text(encoding='utf-8'))
     if contract['execution']['run_authorized'] is not False or contract['artifact_version']!='beta': return 2
     sys.path.insert(0,str(ROOT)); suite=unittest.defaultTestLoader.loadTestsFromName('tests.test_m4_final_prescoring_crash_cart')
-    if suite.countTestCases()!=27: return 2
+    if suite.countTestCases()!=28: return 2
     result=unittest.TextTestRunner(verbosity=2).run(suite); return 0 if result.wasSuccessful() else 1
 if __name__=='__main__': raise SystemExit(main())

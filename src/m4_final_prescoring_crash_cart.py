@@ -347,7 +347,8 @@ class CrashCartLifecycle:
         _bad(receipt.get("status") != "PASS" or receipt.get("backend_code") is not None,
              "RESET_RECEIPT_STATUS_INVALID")
         _bad(receipt.get("session_id") != role, "RESET_RECEIPT_SESSION_INVALID")
-        _bad(not self._digest(receipt.get("prior_backend_state_sha256")),
+        prior = receipt.get("prior_backend_state_sha256")
+        _bad(not self._digest(prior) or prior != self._states[role],
              "RESET_PRIOR_STATE_INVALID")
         result = receipt.get("result_backend_state_sha256")
         _bad(not self._digest(result), "RESET_RESULT_STATE_INVALID")
