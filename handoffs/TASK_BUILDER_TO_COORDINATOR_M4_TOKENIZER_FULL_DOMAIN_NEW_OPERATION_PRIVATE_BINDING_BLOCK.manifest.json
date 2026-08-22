@@ -64,10 +64,11 @@
   "scan_attestation": {
     "base_sha": "ec3226f9d95aae28b813abf011b2a0f3b267f9e6",
     "tip_sha": "73817b313cd218d4b36ec8133df029550fa4e951",
-    "tool_status": "clean",
+    "tool_status": "blocked",
     "manual_review": true,
     "findings": [
-      "fixed-regex scanners returned zero findings and gitleaks 8.30.1 returned zero findings",
+      "the eight fixed-regex personal-contact findings are duplicate scan-domain occurrences wholly inside four required immutable public artifact SHA-256 or Git commit values in the canonical manifest; they are non-contact reproducibility metadata",
+      "gitleaks 8.30.1 returned zero findings",
       "manual review found no credentials, personal contact data, private paths, custody values, model/tokenizer bytes, complete token arrays, protected seeds, scientific output, or prohibited durable-state mutation"
     ]
   },
