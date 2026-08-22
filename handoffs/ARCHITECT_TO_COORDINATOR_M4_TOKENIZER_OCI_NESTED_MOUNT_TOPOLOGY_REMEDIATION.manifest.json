@@ -1,0 +1,90 @@
+{
+  "schema_version": "common-handoff-manifest-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "transfer_kind": "FORMAL_HANDOFF",
+  "work_item": "m4_tokenizer_oci_nested_mount_topology_remediation",
+  "gate": "One batched deterministic nested-mount topology correction before persistent-CRITIC review",
+  "sender_role": "ARCHITECT",
+  "receiver_role": "WORKFLOW_COORDINATOR",
+  "authority_basis": [
+    {
+      "path": "handoffs/REBECCA_M4_TOKENIZER_PRIVATE_BINDING_RERELEASE_2026-08-21.md",
+      "sha": "a4d780b11c9719df77acd320212a296542e5871a"
+    }
+  ],
+  "remote_ref": "refs/heads/architect/m4-tokenizer-oci-nested-mount-topology-remediation",
+  "base_sha": "1f0f41b42e28b0edb8397db3681131755163f7b7",
+  "routing_ref_sha": "64f8010c26abbc6f47c0acb38916a756d9a09ede",
+  "review_result_sha": "3cbbc52b77b21b8092ff66bf1da8126d67b374b0",
+  "work_branch": "architect/m4-tokenizer-oci-nested-mount-topology-remediation",
+  "artifacts": {
+    ".gitattributes": "68c528ede67720007d4ec15d15f6d723136a24b9a4662c94ad9cdfbbc158601d",
+    "artifacts/m4_tokenizer_materialization/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "diagnostics/m4_tokenizer_materialization.py": "90e89b5a55ff80041a8e09c0d3e96208b6d8eff5c6b39eecd6366a1afb5289af",
+    "handoffs/ARCHITECT_TO_COORDINATOR_M4_TOKENIZER_OCI_NESTED_MOUNT_TOPOLOGY_REMEDIATION_2026-08-21.md": "723fea00bfbcb28cb5d60bef9ce6cfc097368d915c4fc6993bc05fd64692d32b",
+    "handoffs/REBECCA_M4_TOKENIZER_PRIVATE_BINDING_RERELEASE_2026-08-21.md": "b9933c8823c70568824c297cf658ce0251b97e6a84aa4f2601f5e1896ec0d330",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_OCI_FAILURE_2026-08-21.md": "3bab1fdd35e0ad8d3dcd9750b06c5cab482ddbae9f8ca361fd9bf9d710d43366",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_OCI_FAILURE.manifest.json": "07c9c16da90ccd7ffbfbff54c38d4e1a6c3fa0c14c4b5def3bbc5b8b4b51599b",
+    "specs/data/m4_context_format_probe_contract_v1.json": "eab77b9f44a4e9378f5889f5aa368eabd87959a5ddafab9ca38685228f12feec",
+    "specs/data/m4_context_format_probe_contract_v1.json.sha256": "26a65895c5a82c99ebf91125dd5ef3b7f0075d28c2c20d746e01fd55e36ca85a",
+    "specs/data/m4_tokenizer_executable_package_v1.json": "d9f464db598c8e95c8ee8e7e7cce49f3fd9574235cd2fad9799650d7f4da0546",
+    "specs/data/m4_tokenizer_executable_package_v1.json.sha256": "9acb8e0075c9ea2def832f7effc66d9436a2d6f768a9e3a8de864be143af3bd2",
+    "specs/data/m4_tokenizer_materialization_request_v1.json": "b39061fd4b19321d58dd418eb5ecd486c0cf26662d70a5d0de4185c6dd7e9992",
+    "specs/data/m4_tokenizer_materialization_request_v1.json.sha256": "9fa903fcb29bb74bd0fcd027c2e591668e6aebcb6a77a4c2c179c96c59d8f9ea",
+    "specs/data/m4_tokenizer_materialization_result_schema_v1.json": "34179d41e980aca413496f3de9fbbea7b642532b50eeacba423faebe5f4075ca",
+    "specs/data/m4_tokenizer_materialization_result_schema_v1.json.sha256": "ca2494f505342959d43b9a6442c103f898e58a54a45279ada3088003536651f3",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json": "596e028a61475227f10dd2379c19a8d8322eadeabd033b60d67a64ce3df95f3c",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json.sha256": "f60da74b130f89b71ddc569b6679db159302679582588d34ce1f0ad9cbb0e2f7",
+    "specs/data/m4_tokenizer_oci_launch_contract_v1.json": "5cf1b86f281651d4724bc621878a9e5c1e8185b992e4fd28df3e24dbeeb64dd1",
+    "specs/data/m4_tokenizer_oci_launch_contract_v1.json.sha256": "4dfd3a9c394cc3bcc0de689a61105ab1e25fc2f073dfe733d6d82dc68d4b07da",
+    "specs/m4_local_tokenizer_materialization_changelog.md": "5dc36c36ba314c464ff9d152a61313ea45ad1843140f6ba26fa8d77a372c020f",
+    "specs/m4_local_tokenizer_materialization_spec_v1.md": "89a43e0e7ff1b18432c3e5649effaa6a7bb2ad15f57d767ed235f7aca2e48e85",
+    "tests/__init__.py": "6f56eb2128751f0c5c1ab27ff461b38565aa00a3dcd29c04ab8bd56c34f4a961",
+    "tests/run_m4_tokenizer_materialization_tests.py": "29dc1c0d83e71c850e9eb3c423cfd359a6c557956d1eab1fa5d9beb049271d1d",
+    "tests/test_m4_tokenizer_materialization.py": "2203c36331f083ad9ab6d241b51a8b5e2cd8d75eb7c75365609ea9ab6aa39f49"
+  },
+  "checks_performed": [
+    "validated the incoming canonical instrument-failure manifest and immutable checkout identities",
+    "independently reproduced the absent-marker evidence and every incoming artifact identity",
+    "audited every active mount and output-stage binding and reconciled all directly affected identities in one batch",
+    "verified all nine executable-package raw Git blobs and modes plus every changed adjacent sidecar",
+    "ran the exact authorized custody-free pinned-image mount smoke with exit zero, empty stage, and clean checkout",
+    "ran the exact pinned-image network-disabled repository-read-only no-custody wrapper with 35 of 35 tests passing",
+    "negatively verified superseded topology identities remain only in preserved historical records",
+    "ran workflow_preflight.py hotfix cee97538893989e055f49a894f066d2083da4eb5 against the exact target worktree and complete 1f0f41b..64f8010 range",
+    "manually classified all five substantive-range scanner occurrences without suppression"
+  ],
+  "status": "COMPLETE",
+  "findings": [],
+  "scan_attestation": {
+    "base_sha": "1f0f41b42e28b0edb8397db3681131755163f7b7",
+    "tip_sha": "64f8010c26abbc6f47c0acb38916a756d9a09ede",
+    "tool_status": "blocked",
+    "manual_review": true,
+    "findings": [
+      "F000001 and F000005 are duplicate scan-domain personal-contact heuristic matches wholly inside the required immutable public TASK BUILDER routing SHA and are classified non-secret public reproducibility metadata",
+      "F000002-F000004 are personal-contact heuristic matches wholly inside the specification's declared public immutable model/tokenizer byte counts or digests and are classified non-secret public artifact metadata",
+      "gitleaks 8.30.1 returned zero findings",
+      "manual review found no credentials, personal contact data, private paths, custody values, model/tokenizer bytes, protected seeds, scientific output, or prohibited durable-state mutation"
+    ]
+  },
+  "next_event": "WORKFLOW COORDINATOR validates remote equality and routes this exact package to persistent CRITIC for one narrow review",
+  "prohibited_actions": [
+    "materializer retry or custody-bearing OCI launch",
+    "custody, model, or tokenizer access, inference, serving, qualification, diagnostics, scoring, or protected seeds",
+    "scientific change, STATE/provenance mutation, publication, merge, or gate decision"
+  ],
+  "role_extension": {
+    "role": "ARCHITECT",
+    "specification_files_changed": [
+      "specs/m4_local_tokenizer_materialization_spec_v1.md",
+      "specs/data/m4_tokenizer_executable_package_v1.json",
+      "specs/data/m4_tokenizer_materialization_test_contract_v1.json",
+      "specs/data/m4_tokenizer_oci_launch_contract_v1.json"
+    ],
+    "changelog_files_changed": [
+      "specs/m4_local_tokenizer_materialization_changelog.md"
+    ]
+  }
+}
