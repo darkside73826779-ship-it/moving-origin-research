@@ -1,0 +1,8 @@
+--extra-index-url https://download.pytorch.org/whl/cu132
+jsonschema==4.26.0
+numpy==2.3.5
+safetensors==0.8.0
+tokenizers==0.22.2
+torch==2.13.0+cu132
+transformers==5.15.1
+vllm==0.27.1

@@ -12,6 +12,13 @@ This runbook reproduces the official M4 pre-execution test bed. It supports pinn
 
 The canonical dependency and identity lock is `specs/data/m4_wsl2_preexecution_testbed_environment_v1.json`. Private paths and custody values are deliberately absent. Operators supply them process-locally through the named environment variables and must never print or commit their values.
 
+The model under test is the public identity
+`Qwen/Qwen3-4B-Instruct-2507-FP8` at immutable revision
+`8591804019c8b22094c3b5b4454e0edc05dffc98`, using the official FP8 E4M3
+artifact. The environment lock binds its exact public weight, tokenizer, and
+tokenizer-configuration sizes and SHA-256 values; only local root paths remain
+private.
+
 ## Host prerequisites
 
 1. Windows 11 Pro build 26200 with WSL package 2.7.12.0.
