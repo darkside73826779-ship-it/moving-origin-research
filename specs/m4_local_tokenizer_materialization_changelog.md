@@ -90,3 +90,10 @@
 - Recomputed the executable-package manifest's adjacent sidecar as SHA-256 `c0025a54579ab0b51e07ac138518c7949fbb4fd276d551a978e8ee39d8ba1697` over the complete `1677` LF bytes `[PROPOSED]`.
 - Independently reproduced all eight executable-package entries against the released raw Git blobs and negatively verified that the superseded byte counts, executable digests, manifest digest, and manifest-sidecar digest remain only in preserved historical records, not active package/specification/contract/executable inputs.
 - Changed no executable, test, command, runtime, custody construction, constructor, schema, scientific logic, or operation state. The single materialization operation remains unconsumed and every execution hold remains binding.
+
+## v1.5.0 — OCI nested-mount topology closure
+
+- Added the exact inert regular Git mode `100644` empty marker `artifacts/m4_tokenizer_materialization/.gitkeep` (`0` bytes; SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`) so the nested output destination exists in every immutable checkout `[PROPOSED]`.
+- Preserved repository-read-only then nested-output-writable mount order; the empty private stage bind hides the marker and the allowed published pair remains unchanged `[PROPOSED]`.
+- Added the exact mandatory custody-free `/bin/true` mount-smoke gate using the pinned image, security/network controls, identical repository/output mounts and order, exit-zero plus empty-stage requirements, and deterministic no-consumption failure mapping `[PROPOSED]`.
+- Bound the marker and all resulting OCI/test/package raw identities, added static negative absent-marker/reordered-mount/nonempty-stage coverage, and changed no materializer science, custody construction, tokenizer construction, runtime/image identity, operation state, or held execution authority.

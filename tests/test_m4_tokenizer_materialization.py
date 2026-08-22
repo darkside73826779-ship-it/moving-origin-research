@@ -865,15 +865,39 @@ class TokenizerMaterializationTests(unittest.TestCase):
         contract_path = ROOT / "specs/data/m4_tokenizer_oci_launch_contract_v1.json"
         contract = MATERIALIZER.load(contract_path)
         test_tokens = contract["test_launch"]["command_tokens"]
+        smoke = contract["mount_smoke_gate"]
+        smoke_tokens = smoke["command_tokens"]
         materializer_tokens = contract["materialization_launch"]["command_tokens"]
-        for tokens in (test_tokens, materializer_tokens):
+        for tokens in (test_tokens, smoke_tokens, materializer_tokens):
             self.assertIn("--pull=never", tokens)
             self.assertEqual(tokens[tokens.index("--network") + 1], "none")
             self.assertEqual(tokens[tokens.index("--platform") + 1], "linux/amd64")
-            self.assertEqual(tokens[tokens.index("--entrypoint") + 1], "python3")
             self.assertIn(contract["image"]["reference"], tokens)
+        self.assertEqual(test_tokens[test_tokens.index("--entrypoint") + 1], "python3")
+        self.assertEqual(materializer_tokens[materializer_tokens.index("--entrypoint") + 1], "python3")
+        self.assertEqual(smoke_tokens[smoke_tokens.index("--entrypoint") + 1], "/bin/true")
+        repository_mount = "type=bind,src=${MOR_RELEASED_CHECKOUT},dst=/workspace,readonly"
+        output_mount = "type=bind,src=${MOR_TOKENIZER_OUTPUT_STAGE},dst=/workspace/artifacts/m4_tokenizer_materialization"
+        self.assertLess(smoke_tokens.index(repository_mount), smoke_tokens.index(output_mount))
+        self.assertLess(materializer_tokens.index(repository_mount), materializer_tokens.index(output_mount))
         self.assertNotIn("MOR_CUSTODY_M4_QWEN3_4B_FP8_PRESERVED_V1=/run/mor-custody", test_tokens)
+        self.assertNotIn("MOR_CUSTODY_M4_QWEN3_4B_FP8_PRESERVED_V1=/run/mor-custody", smoke_tokens)
         self.assertIn("MOR_CUSTODY_M4_QWEN3_4B_FP8_PRESERVED_V1=/run/mor-custody", materializer_tokens)
+        marker_contract = smoke["marker"]
+        marker = ROOT / marker_contract["path"]
+        marker_lstat = marker.lstat()
+        self.assertTrue(stat.S_ISREG(marker_lstat.st_mode))
+        self.assertFalse(marker.is_symlink())
+        self.assertEqual(marker_contract["git_mode"], "100644")
+        self.assertEqual(marker.read_bytes(), b"")
+        self.assertEqual(hashlib.sha256(marker.read_bytes()).hexdigest(), marker_contract["sha256"])
+        self.assertEqual(smoke["expected_exit_code"], 0)
+        self.assertEqual(smoke["expected_stage_files"], [])
+        self.assertEqual(
+            set(smoke["negative_topology_cases"]),
+            {"absent_marker", "nested_output_before_repository", "nonempty_stage_after_smoke"},
+        )
+        self.assertTrue(all(value == "RUNTIME_IDENTITY_MISMATCH_NO_CUSTODY_NO_CONSUMPTION_STOP_NO_RETRY" for value in smoke["negative_topology_cases"].values()))
         self.assertFalse(contract["materialization_launch"]["retry"])
 
     def test_strict_json_rejects_duplicate_and_noncanonical_bytes(self):
