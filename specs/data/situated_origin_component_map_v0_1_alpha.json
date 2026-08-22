@@ -1,0 +1,89 @@
+{
+  "schema_version": "situated-origin-component-map-v0.1-alpha",
+  "status": "IMPLEMENTATION_IN_PROGRESS",
+  "authority": {
+    "model_run": false,
+    "protected_input_access": false,
+    "scoring": false,
+    "scientific_claim": false,
+    "release": false
+  },
+  "state_owner": "SituatedOriginKernel",
+  "final_product_target": {
+    "runtime_posture": "ALWAYS_SITUATED_SELECTIVELY_DELIBERATIVE",
+    "continuous_llm_generation": false,
+    "single_cognitive_clock": true,
+    "causal_memory_required": true,
+    "provenance_grounded_self_reference": true,
+    "prediction_error_loop": "FUTURE_FAIL_CLOSED_SLOT",
+    "goal_directed_deliberation": "FUTURE_FAIL_CLOSED_SLOT",
+    "receipted_action": "FUTURE_FAIL_CLOSED_SLOT",
+    "agi_claim": false
+  },
+  "planes": {
+    "live_runtime": [
+      "L2_AUTOBIOGRAPHICAL_LEDGER",
+      "L4_ORIGIN_INDEX",
+      "L1_ACCESS_FIELD",
+      "L3_THICK_PRESENT",
+      "L5_BITEMPORAL_FACT_GRAPH",
+      "L6_EPISODIC_MEMORY",
+      "CLAIM_GROUNDER",
+      "ORIGIN_ACTUATOR",
+      "M4_PAIRED_RUNTIME"
+    ],
+    "evaluator": [
+      "M1_INSTRUMENTATION",
+      "M3_LAW_EVALUATORS",
+      "M4_LAW_EVALUATORS",
+      "L15_COUPLING_MATRIX",
+      "L16_EMERGENCE_TEST",
+      "L17_DIACHRONIC_BENCHMARK",
+      "L18_CONTROLS"
+    ],
+    "governance": ["M0_CONSTITUTION", "L19_PREREGISTRATION", "L20_HONEST_NAMING"]
+  },
+  "implemented_adapters": {
+    "E1": "src/e1_experiment.py",
+    "L1_REFERENCE": "src/m3_harness.py::_l1_priority",
+    "L3_REFERENCE": "src/m3_harness.py::_l3_compute_state",
+    "L5_REFERENCE": "src/m3_harness.py::_L5FactStore",
+    "L6_REFERENCE": "src/episodic_store.py",
+    "M4_PAIR": "src/m4_post_tokenizer_integration.py",
+    "CRASH_CART_REFERENCE": "src/m4_final_prescoring_crash_cart.py",
+    "FULL_ASSEMBLY_CRASH_CART_ALPHA": "src/situated_origin/full_crash_cart.py",
+    "E3_ALPHA_CORE": "src/situated_origin/soft_prefix_strip.py",
+    "E3_SOFT_PREFIX_ACTUATOR_ALPHA": "src/situated_origin/hf_soft_prefix_backend.py"
+  },
+  "future_fail_closed_slots": [
+    "L7_SELF_STATE_ESTIMATOR",
+    "L8_HOMEOSTATIC_CONTROLLER",
+    "L9_LINEAR_RETRIEVAL_CHANNEL",
+    "L10_CALIBRATED_ABSTENTION",
+    "L14_WHOLE_SYSTEM_STAKES_COUPLING",
+    "L15_BIDIRECTIONAL_ABLATION",
+    "L16_NO_SUBSET_EMERGENCE",
+    "L17_LOG_GROUNDED_DIACHRONIC_BENCHMARK",
+    "E3_FULL_PREDICTION_ERROR_AND_GOAL_WEIGHTED_ACCEPTANCE",
+    "CUDA_NATIVE_L8_GOFAST",
+    "ALWAYS_LIVE_CADENCE_SCHEDULER",
+    "PREDICTION_ERROR_MONITOR",
+    "GROUNDED_GOAL_STATE",
+    "BOUNDED_DELIBERATION_POLICY",
+    "RECEIPTED_ACTION_PORT",
+    "REFLECTION_CONSOLIDATOR",
+    "MULTI_RESOLUTION_RETENTION_POLICY",
+    "COLD_AUTOBIOGRAPHY_REHYDRATOR"
+  ],
+  "mandatory_pre_model_closures": [
+    "NO_GROUND_TRUTH_IN_CONTEXT",
+    "SEMANTIC_NOT_FORMATTING_ABLATIONS",
+    "ONE_ORIGIN_TRANSACTION_OWNER",
+    "PERSISTENT_PUBLIC_L3_L5_L6_APIS",
+    "ONE_VEHICLE_LIFECYCLE_OWNER",
+    "STRICT_BACKEND_VALIDATION",
+    "FINAL_PROMPT_TOKEN_BUDGET",
+    "NONZERO_SCHEDULE_AND_OBSERVED_TELEMETRY",
+    "NAMED_EXECUTABLE_TEST_EVIDENCE"
+  ]
+}

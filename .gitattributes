@@ -159,3 +159,12 @@ handoffs/TASK_BUILDER_M4_PUBLIC_MODEL_OBSERVATION_BACKEND_BF1_QUALITY_TRACE_2026
 handoffs/TASK_BUILDER_TO_WORKFLOW_COORDINATOR_M4_PUBLIC_MODEL_OBSERVATION_BACKEND_BF1_REMEDIATION_2026-08-22.md text eol=lf
 handoffs/manifests/m4_public_model_observation_backend_implementation/20260822T144211Z_task_builder_to_workflow_coordinator.json text eol=lf
 handoffs/manifests/m4_public_model_observation_backend_bf1_remediation/20260822T150019Z_task_builder_to_workflow_coordinator.json text eol=lf
+
+# Situated-origin final assembly alpha
+docs/architecture/SITUATED_ORIGIN_FINAL_ASSEMBLY_V0_1_ALPHA.md text eol=lf
+specs/data/situated_origin_component_map_v0_1_alpha.json text eol=lf
+src/situated_origin/*.py text eol=lf
+tests/test_situated_origin_*.py text eol=lf
+tools/check_soft_prefix_backward.py text eol=lf
+tools/run_integrated_origin_prefix_probe.py text eol=lf
+tools/run_soft_prefix_*.py text eol=lf
