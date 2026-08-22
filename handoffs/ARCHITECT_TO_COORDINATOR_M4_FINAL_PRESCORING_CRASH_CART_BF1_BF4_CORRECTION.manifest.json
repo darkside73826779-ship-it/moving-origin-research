@@ -1,0 +1,85 @@
+{
+  "schema_version": "common-handoff-manifest-v1",
+  "date": "2026-08-22",
+  "regime": "B",
+  "transfer_kind": "FORMAL_HANDOFF",
+  "work_item": "m4_final_prescoring_crash_cart_bf1_bf4_correction",
+  "gate": "Persistent-CRITIC BF1-BF4 design rereview only; no implementation or run authority",
+  "sender_role": "ARCHITECT",
+  "receiver_role": "WORKFLOW_COORDINATOR",
+  "authority_basis": [
+    {
+      "path": "reviews/critic_m4_final_prescoring_full_stack_crash_cart_gate_design_review.md",
+      "sha": "9a028cb0799807910900f29ef8a1ff8cb4af0b4d"
+    },
+    {
+      "path": "handoffs/REBECCA_M4_FINAL_PRESCORING_FULL_STACK_CRASH_CART_AND_EXPLORATORY_OBSERVATION_AUTHORITY_2026-08-22.md",
+      "sha": "8b4a383c450e8b29f2633f7e25107abcb62dd929"
+    }
+  ],
+  "remote_ref": "refs/heads/architect/m4-final-prescoring-crash-cart-bf1-bf4-correction",
+  "base_sha": "9a028cb0799807910900f29ef8a1ff8cb4af0b4d",
+  "routing_ref_sha": "7d98f35f78f20601825c29c1c73f436f3baa7c44",
+  "review_result_sha": "fcfe47752db70f67de1a7a63a06182e6417d6e6d",
+  "work_branch": "architect/m4-final-prescoring-crash-cart-bf1-bf4-correction",
+  "artifacts": {
+    ".gitattributes": "3dbdf4020a10e18418bd493131374109046ac0a5af41ce1fa7575271b053d7e4",
+    "handoffs/ARCHITECT_TO_COORDINATOR_M4_FINAL_PRESCORING_CRASH_CART_BF1_BF4_CORRECTION_2026-08-22.md": "6a463713fb4dec1a59883934d5f9e44a300a41f08d7eb295b7e08272afdc38ce",
+    "handoffs/REBECCA_M4_FINAL_PRESCORING_FULL_STACK_CRASH_CART_AND_EXPLORATORY_OBSERVATION_AUTHORITY_2026-08-22.md": "c759a99a563777a42ba42eb25f4679a40bb940a246bc002ef199c61e58721ecc",
+    "reviews/critic_m4_final_prescoring_full_stack_crash_cart_gate_design_review.md": "9e64b920c036292bcb63462642f9c241bea4b410df9c04fe14f5874b54966b2c",
+    "specs/data/m4_final_prescoring_full_stack_crash_cart_gate_v1.json": "2c528ac20ddcd0655bd50e483e1022991e7a4f4787c29db99aedec76dc23051b",
+    "specs/data/m4_final_prescoring_full_stack_crash_cart_gate_v1.json.sha256": "77af0787fa4b900df5a50d8d98fd907ce85640f28e1e5d7803f405fe02a32e9e",
+    "specs/data/m4_final_prescoring_full_stack_crash_cart_launch_contract_v1.json": "e8aae938e7cd0edbf4c9ead8c01ff1287eb821e62feacc57717c2b699a9a33cf",
+    "specs/data/m4_final_prescoring_full_stack_crash_cart_launch_contract_v1.json.sha256": "7619d2e7012b87119aa768985fa66d98b38f234526144db0e68dc8f8bc9073e6",
+    "specs/data/m4_final_prescoring_full_stack_crash_cart_report_schema_v1.json": "5a407fdc2b9dccff9774c40cec0239fd78c31c0b0fd5cb2a0eac6e23cdb2822c",
+    "specs/data/m4_final_prescoring_full_stack_crash_cart_report_schema_v1.json.sha256": "4ee69d1a66ea9f05bfb1c78ba3819fa05b2a986c987b09110324488ef4b5fd76",
+    "specs/m4_final_prescoring_full_stack_crash_cart_gate_v1.md": "79586ed8d06e90b7fc331e1b3ca854749132dad610671b1d12584060756293c4"
+  },
+  "checks_performed": [
+    "reproduced exact Rebecca authority remote head, 6087-byte raw identity, and LF Git blob without modifying its bytes",
+    "reproduced all four literal-LF warmup prompt sizes and SHA-256 identities and verified absence of all four superseded identities",
+    "validated zero-based warmup and measured ordinal bindings after their independent resets",
+    "parsed all changed JSON and validated the report schema against Draft 2020-12 metaschema",
+    "validated representative reports for all five evidence stages and two fabricated-evidence negative fixtures",
+    "reproduced all three adjacent SHA-256 sidecars and all manifest raw artifact digests",
+    "verified ancestry, helper-compatible handoffs-only routing tail, LF attributes, git fsck, clean worktree, workflow checkout receipt, and remote equality",
+    "ran workflow_preflight.py over the exact CRITIC-base-to-route range and manually classified all 31 retained findings"
+  ],
+  "status": "READY",
+  "findings": [
+    {
+      "classification": "SCANNER_FALSE_POSITIVE_PUBLIC_IDENTITY_OR_FIXED_DURATION",
+      "severity": "non_blocking",
+      "text": "Twenty-seven fixed-regex findings across scan domains occur wholly inside public immutable commit/model identities or exact integer nanosecond controls required by the design; none is personal-contact data."
+    },
+    {
+      "classification": "GITLEAKS_FALSE_POSITIVE_PUBLIC_ARTIFACT_DIGEST",
+      "severity": "non_blocking",
+      "text": "Four gitleaks findings across scan domains are repeated detections of the declared public tokenizer and tokenizer-config SHA-256 identities; no credential is present."
+    }
+  ],
+  "scan_attestation": {
+    "base_sha": "9a028cb0799807910900f29ef8a1ff8cb4af0b4d",
+    "tip_sha": "7d98f35f78f20601825c29c1c73f436f3baa7c44",
+    "tool_status": "blocked",
+    "manual_review": true,
+    "findings": [
+      "workflow_preflight.py retained 31 findings over the exact final route: 27 fixed-regex personal-contact heuristics and four gitleaks generic-key findings; none was suppressed",
+      "manual review mapped every fixed-regex finding to a public immutable SHA/revision or exact integer duration/deadline",
+      "the four gitleaks records are repeated scan-domain detections of public tokenizer SHA-256 aeb13307... and tokenizer-config SHA-256 a62ff0a2...",
+      "no credential, personal contact, private path/value, custody input, protected prompt/seed, model/tokenizer bytes, token array, score, scientific result, or prohibited durable-state mutation was found"
+    ]
+  },
+  "next_event": "WORKFLOW COORDINATOR validates the exact identities and routes the design delta once to the authoritative persistent CRITIC for BF1-BF4 rereview",
+  "prohibited_actions": [
+    "implementation, integration, merge, model/OCI/WSL2/gofast execution, or run release from this design",
+    "model, tokenizer, custody, protected, holdout, courier, retired, or scientific seed access",
+    "scoring, qualification, scientific aggregation, law claim, readiness claim, publication, STATE/provenance mutation, or gate decision",
+    "retry, rerun, adaptive control change, or substitution of any future UNBOUND identity"
+  ],
+  "role_extension": {
+    "role": "ARCHITECT",
+    "changelog_paths": [],
+    "diff_self_inspection": true
+  }
+}
