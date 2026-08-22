@@ -1,0 +1,160 @@
+{
+  "schema_version": "m4-final-prescoring-full-stack-crash-cart-launch-contract-v1",
+  "date": "2026-08-22",
+  "regime": "B",
+  "status": "DESIGN_ONLY_NO_RUN_AUTHORITY",
+  "artifact_version": "v0.2-alpha",
+  "artifact_versioning_authority": {
+    "path": "handoffs/REBECCA_M4_FINAL_PRESCORING_CRASH_CART_ARTIFACT_VERSIONING_AUTHORITY_2026-08-22.md",
+    "commit": "086d6a4ab34044bb8b9d637b5e575e47f8863ee2",
+    "bytes": 3498,
+    "sha256": "ad19e7080143bb6e8d8a0646a5f9f5d427ef9f255d5e8fa0a7015446455f3da8",
+    "effect": "VERSION_LABEL_ONLY_NO_EXECUTION_PROMOTION_OR_RELEASE_AUTHORITY"
+  },
+  "source_tag": "[PROPOSED]",
+  "custom_rebecca_directive_authority": {
+    "path": "handoffs/REBECCA_M4_FINAL_PRESCORING_FULL_STACK_CRASH_CART_AND_EXPLORATORY_OBSERVATION_AUTHORITY_2026-08-22.md",
+    "commit": "8b4a383c450e8b29f2633f7e25107abcb62dd929",
+    "bytes": 6087,
+    "sha256": "c759a99a563777a42ba42eb25f4679a40bb940a246bc002ef199c61e58721ecc",
+    "release_effect": "DESIGN_AND_IMPLEMENTATION_PREPARATION_ONLY_NO_EXECUTION_SCORING_SCIENCE_MERGE_READINESS_OR_GATE_AUTHORITY"
+  },
+  "run_authorized": false,
+  "one_invocation_only": true,
+  "retry": false,
+  "working_directory": "/workspace",
+  "entrypoints": {
+    "gate_runner": "tools/run_m4_final_prescoring_crash_cart.py",
+    "production_integration_module": "src/m4_post_tokenizer_integration.py",
+    "production_symbols": ["AdapterFactory", "CandidateAdapter", "PeerAdapter", "FanoutCoordinator"],
+    "candidate_backend_factory": "FINAL_CANDIDATE_BACKEND_FACTORY_UNBOUND",
+    "peer_backend_factory": "FINAL_PEER_BACKEND_FACTORY_UNBOUND",
+    "gofast_entrypoint": "FINAL_PARALLEL_CPU_GOFAST_ENTRYPOINT_UNBOUND"
+  },
+  "environment_exact": {
+    "CUDA_VISIBLE_DEVICES": "0",
+    "HF_HUB_OFFLINE": "1",
+    "PYTHONHASHSEED": "0",
+    "TRANSFORMERS_OFFLINE": "1",
+    "VLLM_USE_FLASHINFER_SAMPLER": "0",
+    "VLLM_USE_V2_MODEL_RUNNER": "0"
+  },
+  "private_environment_names": [
+    "MOR_RELEASED_CHECKOUT",
+    "MOR_TESTBED_MODEL_CANDIDATE",
+    "MOR_TESTBED_MODEL_PEER",
+    "MOR_M4_FINAL_CRASH_CART_STAGE"
+  ],
+  "command_tokens": [
+    "docker", "run", "--rm", "--pull=never", "--platform", "linux/amd64",
+    "--gpus", "device=0", "--network", "none", "--read-only", "--cap-drop", "ALL",
+    "--security-opt", "no-new-privileges",
+    "--mount", "type=bind,src=${MOR_RELEASED_CHECKOUT},dst=/workspace,readonly",
+    "--mount", "type=bind,src=${MOR_TESTBED_MODEL_CANDIDATE},dst=/models/candidate,readonly",
+    "--mount", "type=bind,src=${MOR_TESTBED_MODEL_PEER},dst=/models/peer,readonly",
+    "--mount", "type=bind,src=${MOR_M4_FINAL_CRASH_CART_STAGE},dst=/run/mor/m4-final-crash-cart,rw",
+    "--tmpfs", "/tmp:rw,noexec,nosuid,nodev,size=256m,mode=0700",
+    "--workdir", "/workspace", "--entrypoint", "python3",
+    "${FINAL_EVALUATION_OCI_IMAGE_DIGEST_UNBOUND}", "-I",
+    "tools/run_m4_final_prescoring_crash_cart.py",
+    "--gate", "specs/data/m4_final_prescoring_full_stack_crash_cart_gate_v1.json",
+    "--schema", "specs/data/m4_final_prescoring_full_stack_crash_cart_report_schema_v1.json",
+    "--stage", "/run/mor/m4-final-crash-cart"
+  ],
+  "mount_order": ["REPOSITORY_READ_ONLY", "CANDIDATE_MODEL_READ_ONLY", "PEER_MODEL_READ_ONLY", "LOCAL_EVIDENCE_READ_WRITE"],
+  "preconditions": [
+    "EVERY_REQUIRED_FUTURE_BINDING_IS_EXACT_AND_REVIEWED",
+    "CHECKOUT_SHA_EQUALS_RELEASED_FINAL_COMBINED_TREE_SHA",
+    "CLEAN_WORKTREE_CORE_AUTOCRLF_FALSE_FSCK_PASS",
+    "OCI_DIGEST_LOCAL_LINUX_AMD64_NO_PULL",
+    "TWO_DISTINCT_MODEL_ROOTS_REPRODUCE_SAME_LOCKED_IDENTITIES",
+    "TOKENIZER_RESULT_AND_SIDECAR_REPRODUCE_EXACT_BINDING",
+    "EVIDENCE_STAGE_ABSOLUTE_EXISTS_DIRECTORY_NOT_SYMLINK_EMPTY_MODE_0700",
+    "OS_NETWORK_NONE",
+    "REBECCA_EXACT_SINGLE_RUN_RELEASE_MATCHES_COMMAND_AND_IDENTITIES"
+  ],
+  "active_controls": {
+    "source_tag": "[PROPOSED]",
+    "paired_request_count": 64,
+    "queue_capacity_pairs": 8,
+    "minimum_active_window_ns": 30000000000,
+    "hard_deadline_ns": 60000000000,
+    "resource_sample_interval_ns": 250000000,
+    "dispatch_offset_rule": "0_FOR_ORDINALS_0_TO_15_ELSE_(ORDINAL_MINUS_15)_TIMES_625000000",
+    "setup_model_load_and_warmup_excluded": true
+  },
+  "warmup_controls": {
+    "source_tag": "[PROPOSED]",
+    "classification": "NON_SCORING_OPERATIONAL_WARMUP",
+    "paired_prompt_count": 4,
+    "per_pair_timeout_ns": 30000000000,
+    "sequence_deadline_ns": 120000000000,
+    "clean_barrier_deadline_ns": 10000000000,
+    "prefix_caching": false,
+    "same_order_parameters_and_barriers_both_roles": true,
+    "measured_phase_start_condition": "BOTH_ROLE_CLEAN_BARRIER_AND_INDEPENDENT_RNG_INITIALIZED",
+    "future_scoring_contract_insertion_point": "POST_WARMUP_CLEAN_BARRIER_PRE_FIRST_MEASURED_REQUEST"
+  },
+  "episode_ordinal_controls": {
+    "source_tag": "[PROPOSED]",
+    "warmup_reset_command": "PRODUCTION_RESET_EPISODE_CANDIDATE_AND_PEER",
+    "warmup_expected_request_ordinals": [0, 1, 2, 3],
+    "measured_reset_command": "PRODUCTION_RESET_EPISODE_CANDIDATE_AND_PEER",
+    "measured_expected_request_ordinal_range": [0, 63],
+    "extra_priming_request_forbidden": true
+  },
+  "expected_outputs": [
+    "m4_final_prescoring_crash_cart_report_v1.json",
+    "m4_final_prescoring_crash_cart_report_v1.json.sha256",
+    "m4_final_prescoring_crash_cart_summary_v1.md",
+    "m4_final_prescoring_crash_cart_summary_v1.md.sha256",
+    "m4_final_prescoring_crash_cart_export_manifest_v1.json",
+    "m4_final_prescoring_crash_cart_export_manifest_v1.json.sha256"
+  ],
+  "staged_terminal_contract": {
+    "source_tag": "[PROPOSED]",
+    "evidence_stages": ["PRE_ACTIVE_TERMINAL", "PARTIAL_WARMUP_TERMINAL", "PARTIAL_ACTIVE_TERMINAL", "POST_ACTIVE_TERMINAL", "COMPLETE_ACTIVE_TERMINAL"],
+    "failure_stages": ["PRE_START", "NEGATIVE_PROBES", "MODEL_LOAD", "WARMUP", "WARMUP_CLEAN_BARRIER", "ACTIVE_WINDOW", "RENDER_VALIDATE_SCAN_EXPORT", "CLEANUP"],
+    "write_rule": "AT_EVERY_TERMINAL_PATH_WRITE_ONLY_OBSERVED_STAGE_EVIDENCE_THEN_ATTEMPT_CLEANUP; DO_NOT SYNTHESIZE WARMUP ACTIVE ROW TELEMETRY TREND OR EXPORT FIELDS FOR UNREACHED STAGES",
+    "complete_success_rule": "ONLY_COMPLETE_ACTIVE_TERMINAL_MAY_REQUIRE_FOUR_WARMUP_PAIRS_64_ACTIVE_PAIRS_AT_LEAST_121_RESOURCE_SAMPLES_COMPLETE_TRENDS_CLEAR_PUBLIC_SAFETY_AND_EXPORTED_BUNDLE",
+    "partial_role_rule": "UNOBSERVED_CANDIDATE_OR_PEER_OBSERVATION_IS_NULL; NEVER FABRICATE A RECEIPT_OUTPUT_TIMESTAMP_OR_DIGEST"
+  },
+  "conditional_public_safety_clear_outputs": [
+    "m4_final_prescoring_crash_cart_bundle_v1.tar",
+    "m4_final_prescoring_crash_cart_bundle_v1.tar.sha256"
+  ],
+  "exit_mapping": {
+    "source_tag": "[PROPOSED]",
+    "0": "STRUCTURAL_PASS_OR_REPLICA_MISMATCH_WITH_VALID_COMPLETE_EVIDENCE",
+    "20": "STRUCTURAL_BLOCK_NO_RETRY",
+    "21": "INSTRUMENT_FAILURE_NO_RETRY",
+    "22": "PUBLIC_SAFETY_EXPORT_BLOCK_NO_RETRY",
+    "23": "CLEANUP_FAILURE_NO_RETRY",
+    "24": "IDENTITY_OR_RELEASE_MISMATCH_NO_START"
+  },
+  "terminal_rules": [
+    "ALWAYS_ATTEMPT_CLEANUP",
+    "NEVER_RETRY_OR_RERUN",
+    "PRESERVE_COMPLETE_LOCAL_ROWS_AND_FINDINGS",
+    "DO_NOT_COMMIT_RUNTIME_EVIDENCE",
+    "VERIFY_REPOSITORY_UNCHANGED",
+    "ROUTE_SANITIZED_TERMINAL_PACKAGE_FOR_PERSISTENT_CRITIC_ENGINEERING_REVIEW"
+  ],
+  "terminal_rules_source_tag": "[PROPOSED]",
+  "required_implementation_tests": [
+    "LITERAL_LF_WARMUP_BYTES_AND_DIGESTS_REPRODUCE",
+    "LITERAL_ASCII_BACKSLASH_N_WARMUP_SUBSTITUTION_REJECTED",
+    "ZERO_BASED_WARMUP_AND_MEASURED_ORDINAL_CHAINS_AFTER_EACH_RESET",
+    "PRE_START_PARTIAL_WARMUP_PARTIAL_ACTIVE_AND_POST_ACTIVE_FAILURE_REPORTS_VALIDATE_WITHOUT_FABRICATED_FIELDS",
+    "WARMUP_SKIPPED_BLOCKS_BEFORE_MEASURED_START",
+    "UNEQUAL_ROLE_SEQUENCE_OR_PARAMETERS_BLOCKS",
+    "PROTECTED_INPUT_SUBSTITUTION_BLOCKS_WITHOUT_MODEL_CALL",
+    "WARMUP_RNG_CARRYOVER_BLOCKS",
+    "RESIDUAL_SESSION_CONVERSATION_OR_KV_STATE_BLOCKS",
+    "ONE_ROLE_WARMUP_FAILURE_BLOCKS_AND_CLEANS_BOTH",
+    "WARMUP_TIMEOUT_BLOCKS_NO_RETRY",
+    "WARMUP_ROWS_EXCLUDED_FROM_ACTIVE_WINDOW_REPLICA_AXIS_AND_TRENDS"
+  ],
+  "required_implementation_tests_source_tag": "[PROPOSED]",
+  "source_classification": "[PROPOSED]"
+}

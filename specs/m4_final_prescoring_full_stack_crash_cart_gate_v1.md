@@ -1,0 +1,99 @@
+# M4 final pre-scoring full-stack crash-cart gate v1
+
+Date: 2026-08-22 EDT
+
+Regime: B
+
+Status: **DESIGN ONLY — MANDATORY PROSPECTIVE GATE — NO RUN AUTHORITY**
+
+Source classification: `[PROPOSED]`
+
+Artifact version: **`v0.2-alpha`**
+
+## Version lineage and maturity boundary
+
+Rebecca's exact durable artifact-versioning authority is `handoffs/REBECCA_M4_FINAL_PRESCORING_CRASH_CART_ARTIFACT_VERSIONING_AUTHORITY_2026-08-22.md` at commit `086d6a4ab34044bb8b9d637b5e575e47f8863ee2`, 3,498 raw bytes, SHA-256 `ad19e7080143bb6e8d8a0646a5f9f5d427ef9f255d5e8fa0a7015446455f3da8`. It approves existence, preservation, and version labeling only. It grants no execution, scoring, science, readiness, promotion, or release authority.
+
+The retained initial design at routing head `82d380ea42ca4e43386f90eedc5ae3551632c8ea`, substantive result `b25baaac2f88bce1a5c2659e5d9b917f6bb0f158`, is `v0.1-alpha`; its authoritative CRITIC review `9a028cb0799807910900f29ef8a1ff8cb4af0b4d` remains `COMBINED BLOCK` and immutable provenance. This corrected BF1–BF4 design is `v0.2-alpha`. It cannot become beta unless authoritative persistent CRITIC returns `COMBINED CLEAR`, and that CLEAR permits only a separate promotion decision. `v1` is prohibited until exact implementation, integration, runtime/model/gofast identities, custody-free executable evidence, final independent review, and Rebecca's explicit release decision are all durable and coherent.
+
+## Provenance and exact Rebecca authority
+
+All custom warmup, full-data, trend, timing, count, failure, rendering, sanitation, cleanup, and test criteria introduced by this package are `[PROPOSED]` under Constitution v2 §5.1. No custom label is treated as authority. Rebecca's exact durable authority is `handoffs/REBECCA_M4_FINAL_PRESCORING_FULL_STACK_CRASH_CART_AND_EXPLORATORY_OBSERVATION_AUTHORITY_2026-08-22.md` at commit `8b4a383c450e8b29f2633f7e25107abcb62dd929`, 6,087 raw bytes, SHA-256 `c759a99a563777a42ba42eb25f4679a40bb940a246bc002ef199c61e58721ecc`. That artifact requires design and implementation preparation only. It grants no execution, scoring, science, merge, publication, readiness, or gate authority, and this specification does not paraphrase it into broader authority. Exact numeric mechanics introduced here remain prospective controls requiring review. `[PROPOSED]`
+
+## Purpose and placement
+
+This gate is the last short engineering rehearsal after the complete evaluation setup is engineering-clear and before any protected or live scoring release. The exact Rebecca authority makes design and implementation preparation mandatory but grants no authority to integrate, merge, load a model, execute, qualify, score, access protected inputs, update scientific state, publish a scientific result, or decide readiness. It must receive its own persistent-CRITIC design CLEAR, exact implementation and combined-tree identities, Rebecca's exact one-run release, and a terminal persistent-CRITIC engineering review. `[PROPOSED]`
+
+The cleared M4 real-test-readiness package is banked at routing head `3d1e1e4ad9039ce25f311367aff5798ad7fcec07`, substantive result `79ef7c025676e52dced8ade5698aa87754bed172`, manifest `ac74281a4f39268fbddba7b92e5d5b04be2ec28f`, and persistent-CRITIC CLEAR `7e077a716c92536ec15f1887c418e5b2f7b63896`. Its 66 ordered identities, source classifications, authorities, and holds are not reconstructed here. This addendum composes with—not modifies—that package. It is also independent of the public-model observation-backend implementation lane and cannot substitute that control-only backend for the final candidate/peer production backends.
+
+## Fail-closed identity freeze
+
+Before release, one exact implementation package must replace every `UNBOUND` value in the machine contract with a full immutable identity and must bind path, Git mode, Git blob, raw SHA-256, and byte count for the production runner, production integration module, candidate and peer backend factories, final evaluation configuration, final parallel-CPU `gofast` entrypoint/configuration, report validator/renderer, and their focused tests. It must also bind the final combined-tree commit, pinned Linux/amd64 OCI digest, dependency lock, candidate/peer same-checkpoint manifest, tokenizer result and sidecar, GPU/runtime controls, committed Rebecca directive path/SHA, and clean immutable-checkout receipt. `[PROPOSED]`
+
+The tokenizer binding is already fixed at execution head `e462e5bd61bcbad4eb03160129dec2e088de9892`: `tokenizer_materialization.json` is 2,779 bytes, raw SHA-256 `19a49a9262be81d30866befda3801b2fc97ef23a8d946d3cc1e4b5de189b3158`, Git blob `f857e75ac3d0d6c252d29fd085fa68f921da393f`; its 97-byte sidecar has raw SHA-256 `9ca61b765be8558551a70966eda34cba8f8978d8c6c968d62bce0e5977e026b4` and Git blob `8f1d57d5a1c6dac35cd9f560ba1441cf15ea11ac`. A final tree that changes either byte sequence is a stop and requires explicit reconciliation.
+
+The two role instances must be physically distinct runtimes and access roots while using the same exact `Qwen/Qwen3-4B-Instruct-2507-FP8` revision `8591804019c8b22094c3b5b4454e0edc05dffc98`, model/training identity, tokenizer identity, and evaluation generation configuration. The locked model, tokenizer, and tokenizer-config SHA-256 values are respectively `b6154d74332140fd6dfbfbe70bbb3650dd6955861132bd59dda6789e6322b485`, `aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4`, and `a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3`. The cleared testbed/dependency authority remains result `4993711fa32ffe9ab3b2dabb2b5d5615182c6e90`, route `6d8175edb63cf6ec03c0904d640ae6f946ebcf16`, manifest `95cd17deabba6a0c84c02e26c408023b989e79bc`, and persistent-CRITIC CLEAR `4cdb5d89945b603c20cdd19233079be14b65946b`.
+
+## Exact topology and one-run contract
+
+One pinned, network-none, read-only-repository GPU container runs the future gate runner. It mounts the two model roots separately and read-only, mounts one pre-existing empty mode-0700 local evidence stage read/write outside the repository, and uses the final production `AdapterFactory`, `CandidateAdapter`, `PeerAdapter`, `FanoutCoordinator`, private tokenizer-result reconciler, production backends, and parallel-CPU `gofast` boundary. Native-CUDA L8, serial `GO!`, alternate model families, shared runtime instances, fallback backends, network acquisition, adaptive configuration, and retry are forbidden. `[PROPOSED]`
+
+The runner performs three zero-model deterministic negative probes against the same production seam before loading models: invalid lifecycle transition, private-view/request-digest mismatch with universal upstream suppression, and fanout receipt-correlation rejection with byte-identical rollback. Each must produce its bound failure mapping, zero durable output, zero retry, and exact pre-probe state/stage identity. A negative-probe defect is structural BLOCK. `[PROPOSED]`
+
+## Governed warmup barrier
+
+After exact model/runtime load and health checks, but before the measured active window, both roles receive the same ordered four-prompt public warmup sequence through the production request/decode path. Prefix caching is disabled. Each paired prompt begins behind a synchronization barrier and has the same generation parameters for candidate and peer. No prompt is added, removed, repeated, or adapted from observed behavior. `[PROPOSED]`
+
+The exact prompt generator emits UTF-8 without BOM and these five ordered lines, joined by byte `0x0a` and terminated by one more `0x0a`: `[PROPOSED]`
+
+```text
+M4_WARMUP_PUBLIC_V1
+ordinal={four-digit ordinal}
+payload_bytes={decimal N}
+payload={N lowercase x bytes}
+Respond with the ordinal only.
+```
+
+The resulting buffer contains exactly five LF bytes and must not contain the two-byte literal ASCII sequence `0x5c 0x6e` as a line-separator substitute. The ordered `(N, max_output_tokens, prompt_bytes, prompt_sha256)` tuples are `(0,8,89,eabe6b7c5cf863599f9444019b68e0e56dde640b824bfb30756aad9faa093485)`, `(32,16,122,6b5697332c8ad2d6520655f4dc94133a1c17d4d228e3143f5f9bc80d685a04b4)`, `(512,16,603,763187d517d8b35871bc5bb6a5c41df5283fd18f0589348eb299f2d2911076db)`, and `(1024,32,1116,5646b4c97252d178f3c73ccd8a2ef988674c7b3f515beb64376d4ea7ab60dd13)`. Both roles use temperature 0, public warmup seed 0 in a separate RNG domain, top-p 1.0, top-k -1, one sequence, zero presence/frequency penalties, no stop strings, no log probabilities, prefix caching disabled, and the tuple's exact maximum-output-token value. There is no expected answer and output content never gates success. Each successful backend receipt has exactly the existing seven fields, `status=PASS`, `backend_code=null`, the role's bound session identity, a valid prior/result state chain, the canonical request digest, and request ordinal 0, 1, 2, or 3 after the warmup episode reset. `[PROPOSED]`
+
+Each pair has a fixed 30,000,000,000-ns timeout; the full ordered warmup has a 120,000,000,000-ns deadline and one final 10,000,000,000-ns cleanup/barrier deadline. All prompt/output text, token counts, stop reasons, first-versus-subsequent latency, resource peaks, receipts, completion state, and barrier timing are retained in a separate `NON_SCORING_OPERATIONAL_WARMUP` section. Warmup is excluded from the 64 measured requests, the minimum 30-second active window, replica-consistency status, qualification, scoring, science, and trends over measured rows. `[PROPOSED]`
+
+After all four pairs complete, the runner waits for zero active/in-flight requests, calls the exact production episode reset for each role, verifies no request/session/conversation references remain, synchronizes the GPU, proves prefix caching stayed disabled and no reusable warmup prefix exists, and establishes a new measured-episode identity. Compiled kernels and runtime allocator reservations may remain; prompt/session/KV content may not. Both roles must reach the same completion barrier. Only after that barrier does the runner initialize crash-cart RNG state independently from the fixed public synthetic run seed. The exact insertion point for a future scoring contract is `POST_WARMUP_CLEAN_BARRIER_PRE_FIRST_MEASURED_REQUEST`: a separately authorized courier supplies the governed scoring RNG input there, never before warmup. The first measured request after this reset and each role's receipt use ordinal 0; the exact measured chain is 0 through 63, with no priming request. This design supplies no seed or scoring authority. `[PROPOSED]`
+
+Warmup timeout, error, asymmetry, protected-input substitution, RNG carryover, residual state or KV reuse, unequal sequence/parameters, skipped warmup, or one-role failure stops before measured work. The implementation test contract must include each of those adversarial cases and exact no-start/cleanup projections. `[PROPOSED]`
+
+After the clean warmup barrier and independent measured-run RNG initialization, the measured active window starts immediately before the first enqueue. Setup, identity verification, dependency import, model load, and warmup do not count. Exactly 64 paired public/synthetic request ordinals are attempted once. Ordinals 0–15 have scheduled offset zero; ordinals 16–63 have offset `(ordinal-15) * 625,000,000` nanoseconds, placing the final enqueue at 30,000,000,000 nanoseconds. The bounded queue capacity is exactly eight pairs. A producer waits when full, records every wait, never drops, and never retries. The active window ends only after both receipts for ordinal 63 and cannot be shorter than 30,000,000,000 ns; 60,000,000,000 ns is the hard active-window deadline. Deadline expiry is `BLOCKED/ACTIVE_WINDOW_TIMEOUT_NO_RETRY`, followed by cleanup. `[PROPOSED]`
+
+There are eight deterministic public fixture families with ASCII payload sizes `[0,32,64,128,256,512,768,1024]`; family is `ordinal mod 8` and repetition is `floor(ordinal/8)`. The exact UTF-8 generator, domain separator, newline policy, prompt bytes, and prompt SHA-256 inventory must be frozen by the implementation review. The authenticated tokenizer result must derive one private token array per ordinal; candidate and peer must receive byte-identical canonical private views without publishing token IDs. Prompt text is public and may be retained in the local record. Input or output token-ID arrays remain forbidden. `[PROPOSED]`
+
+## Fail-closed staged terminal evidence
+
+The terminal report is a stage-discriminated record, not an all-or-nothing success template. `evidence_stage` is exactly one of `PRE_ACTIVE_TERMINAL`, `PARTIAL_WARMUP_TERMINAL`, `PARTIAL_ACTIVE_TERMINAL`, `POST_ACTIVE_TERMINAL`, or `COMPLETE_ACTIVE_TERMINAL`; `failure_stage` is cross-checked against it. Every failure report contains a non-null sanitized failure object with the observed code, stage, monotonic timestamp, and retry count zero. A complete terminal report alone has null failure fields and structural `PASS`. `[PROPOSED]`
+
+`PRE_ACTIVE_TERMINAL` covers pre-start, negative-probe, and model-load stops and therefore has no warmup, active window, measured rows, resource samples, trends, or replica comparison. `PARTIAL_WARMUP_TERMINAL` retains only the zero through four warmup rows actually observed; each role observation may be null when that role never returned, while measured rows, active telemetry, trends, and replica comparison remain absent or empty. `PARTIAL_ACTIVE_TERMINAL` requires a complete clean warmup barrier but retains only attempted rows, role observations, and resource samples actually produced before the active-window stop; unobserved candidate or peer fields are null and trends remain null. `[PROPOSED]`
+
+`POST_ACTIVE_TERMINAL` represents a fully observed warmup and 64-pair active window followed by renderer, validation, scan, export, or cleanup failure. It retains the full active rows and samples and includes trends only when they were actually and completely rendered before the stop. `COMPLETE_ACTIVE_TERMINAL` alone requires four complete warmup pairs, 64 complete measured pairs, at least 121 resource samples, complete trends, cleanup `PASS`, public-safety `CLEAR`, and exported deterministic artifacts. No branch requires a receipt, output, timestamp, telemetry sample, trend, or export that was not observed. The semantic validator rejects mismatched stages, fabricated later-stage fields, partial reports masquerading as complete, and synthesized observations for a role that never returned. `[PROPOSED]`
+
+## Complete local evidence and exploratory trends
+
+Every request row actually produced is retained, including mismatches, errors, refused outputs, expected negatives, anomalous latencies, and incomplete/failed observations. A complete active row contains the exact public prompt and fixture identity; candidate and peer output text; input/output token counts; stop reasons; monotonic timestamps and latency; request, receipt, session, state, and output digests; error and ordering fields; retry count; lifecycle/fanout/rollback trace references; and pair comparison. A partial row contains the same public request identity while any unobserved role observation is null. GPU utilization, GPU memory, host RAM, process identities, queue depth, producer blocking, throughput, drops, and cleanup are sampled every 250,000,000 ns from active-window start through cleanup. No observed row may be filtered from the complete artifact or from applicable count denominators. `[PROPOSED]`
+
+The canonical local JSON report and concise Markdown summary are both labeled `NON_SCORING_EXPLORATORY_OBSERVATION`. For a complete active observation, predeclared descriptive outputs are count/min/mean/p50/p90/p95/max latency and output length by role; one-second throughput and 250-ms resource time series; queue-depth and block-duration distributions; candidate/peer exact-byte agreement and disagreement ordinals; per-fixture repeated-output digest multiplicity; literal stop/error counts; a fixed lexical refusal-marker count; and input-token-count-bucket descriptions of latency, length, and agreement. These are descriptions, not thresholds. No qualification score, ranking, p-value for a decision, law satisfaction, quality claim, readiness claim, protected-seed inference, or scientific PASS/FAIL may be produced. `[PROPOSED]`
+
+Law rows remain the exact five ordered eight-field HELD projection for L7/L8/L10/L14/L18: no claim, empty evidence/metrics, null failure, and the bound held reason. The current expected canonical projection is 974 bytes and SHA-256 `bb2d5f838c54c404dd73d0c697ba6f45cd983fb7e5a7bb97a36b38570267b81f`; any final-seam divergence stops for reconciliation.
+
+The report schema and semantic validator bind all cross-field counts, ordinals, derived summaries, schedule, status, and cleanup conditions. Exact-replica consistency is a separate axis: `MATCH`, `MISMATCH`, or `NOT_RUN`. Mismatch never becomes structural PASS evidence, is never discarded, and cannot be reinterpreted. A consumer requiring byte-identical replicas must stop on `MISMATCH`. Structural status is solely an engineering/testbed result: `PASS`, `BLOCKED`, or `INSTRUMENT_FAILURE`.
+
+## Rendering, export, sanitation, and cleanup
+
+The local stage contains the canonical compact UTF-8 JSON report with one LF, its sidecar, a deterministically rendered Markdown summary with LF endings, its sidecar, and a local export manifest binding every path/mode/byte count/raw SHA-256. A deterministic USTAR download bundle uses sorted member names, mtime zero, numeric owner/group zero, and mode 0600; its sidecar is outside the archive to avoid self-reference. The renderer must reproduce byte-identical JSON, Markdown, manifest, and archive from the same report.
+
+The full public prompt/output record is eligible for export only after schema plus semantic validation and explicit public-safety scans show no credentials, private paths or environment values, protected/courier/holdout inputs, undeclared personal-contact material, hidden model/tokenizer bytes, or token-ID arrays. Scanner findings are retained and manually classified, never suppressed. If sanitation fails, the complete local record is retained mode 0600, export is `BLOCKED_PUBLIC_SAFETY`, no downloadable bundle is emitted, and protected scoring remains blocked. No data row is silently removed or rewritten.
+
+Cleanup is mandatory after every terminal path: stop new work, dispose both engines, destroy both runtime processes/containers, release allocator state, remove all temp files, require no backend-owned GPU process or allocation, preserve only validated final local evidence, prove the repository remains clean, and record host/GPU post-state without claiming unrelated system memory is zero. Cleanup or evidence failure blocks protected scoring even when replica consistency is `MATCH`.
+
+## Terminal decision and holds
+
+Structural identity, topology, lifecycle, fanout, rollback, evidence, sanitation, renderer, harness, or cleanup defects block protected scoring and route to remediation. Expected negative probes pass only when their exact fail-closed mapping and rollback are observed. Replica mismatch follows the cleared two-axis contract separately. There is exactly one released invocation and no retry, rerun, fallback, adaptive request count, adaptive timeout, or post-result configuration change.
+
+This package contains no protected prompt, seed, custody value, private path, invented battery SHA, tolerance, scientific threshold, final implementation SHA, final `gofast` SHA, or run release. Scoring, qualification, aggregation, scientific interpretation, law adjudication, STATE/provenance mutation, merge, publication, and readiness remain HELD.

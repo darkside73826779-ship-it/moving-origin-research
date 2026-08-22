@@ -49,6 +49,19 @@ state/role_initialization/*.md text eol=lf
 tools/workflow_*.py text eol=lf
 tests/test_workflow_*.py text eol=lf
 PUBLIC_REPOSITORY_POLICY.md text eol=lf
+src/m4_final_prescoring_crash_cart.py text eol=lf
+tools/run_m4_final_prescoring_crash_cart.py text eol=lf
+tests/test_m4_final_prescoring_crash_cart.py text eol=lf
+tests/run_m4_final_prescoring_crash_cart_tests.py text eol=lf
+specs/data/m4_final_prescoring_crash_cart_beta_contract_v1.json text eol=lf
+specs/data/m4_final_prescoring_crash_cart_beta_contract_v1.json.sha256 text eol=lf
+src/m4_final_prescoring_crash_cart.py.sha256 text eol=lf
+tools/run_m4_final_prescoring_crash_cart.py.sha256 text eol=lf
+tests/test_m4_final_prescoring_crash_cart.py.sha256 text eol=lf
+tests/run_m4_final_prescoring_crash_cart_tests.py.sha256 text eol=lf
+specs/m4_final_prescoring_full_stack_crash_cart_gate_v1.md text eol=lf
+specs/data/m4_final_prescoring_full_stack_crash_cart_*.json text eol=lf
+specs/data/m4_final_prescoring_full_stack_crash_cart_*.json.sha256 text eol=lf
 
 # M4 tokenizer overlay
 .gitattributes text eol=lf
