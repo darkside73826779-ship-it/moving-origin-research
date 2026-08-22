@@ -3,6 +3,14 @@
   "date": "2026-08-22",
   "regime": "B",
   "status": "DESIGN_ONLY_NO_RUN_AUTHORITY",
+  "source_tag": "[PROPOSED]",
+  "custom_rebecca_directive_authority": {
+    "path": "handoffs/REBECCA_M4_FINAL_PRESCORING_FULL_STACK_CRASH_CART_AND_EXPLORATORY_OBSERVATION_AUTHORITY_2026-08-22.md",
+    "commit": "8b4a383c450e8b29f2633f7e25107abcb62dd929",
+    "bytes": 6087,
+    "sha256": "c759a99a563777a42ba42eb25f4679a40bb940a246bc002ef199c61e58721ecc",
+    "release_effect": "DESIGN_AND_IMPLEMENTATION_PREPARATION_ONLY_NO_EXECUTION_SCORING_SCIENCE_MERGE_READINESS_OR_GATE_AUTHORITY"
+  },
   "run_authorized": false,
   "one_invocation_only": true,
   "retry": false,
@@ -58,6 +66,7 @@
     "REBECCA_EXACT_SINGLE_RUN_RELEASE_MATCHES_COMMAND_AND_IDENTITIES"
   ],
   "active_controls": {
+    "source_tag": "[PROPOSED]",
     "paired_request_count": 64,
     "queue_capacity_pairs": 8,
     "minimum_active_window_ns": 30000000000,
@@ -67,6 +76,7 @@
     "setup_model_load_and_warmup_excluded": true
   },
   "warmup_controls": {
+    "source_tag": "[PROPOSED]",
     "classification": "NON_SCORING_OPERATIONAL_WARMUP",
     "paired_prompt_count": 4,
     "per_pair_timeout_ns": 30000000000,
@@ -77,6 +87,14 @@
     "measured_phase_start_condition": "BOTH_ROLE_CLEAN_BARRIER_AND_INDEPENDENT_RNG_INITIALIZED",
     "future_scoring_contract_insertion_point": "POST_WARMUP_CLEAN_BARRIER_PRE_FIRST_MEASURED_REQUEST"
   },
+  "episode_ordinal_controls": {
+    "source_tag": "[PROPOSED]",
+    "warmup_reset_command": "PRODUCTION_RESET_EPISODE_CANDIDATE_AND_PEER",
+    "warmup_expected_request_ordinals": [0, 1, 2, 3],
+    "measured_reset_command": "PRODUCTION_RESET_EPISODE_CANDIDATE_AND_PEER",
+    "measured_expected_request_ordinal_range": [0, 63],
+    "extra_priming_request_forbidden": true
+  },
   "expected_outputs": [
     "m4_final_prescoring_crash_cart_report_v1.json",
     "m4_final_prescoring_crash_cart_report_v1.json.sha256",
@@ -85,11 +103,20 @@
     "m4_final_prescoring_crash_cart_export_manifest_v1.json",
     "m4_final_prescoring_crash_cart_export_manifest_v1.json.sha256"
   ],
+  "staged_terminal_contract": {
+    "source_tag": "[PROPOSED]",
+    "evidence_stages": ["PRE_ACTIVE_TERMINAL", "PARTIAL_WARMUP_TERMINAL", "PARTIAL_ACTIVE_TERMINAL", "POST_ACTIVE_TERMINAL", "COMPLETE_ACTIVE_TERMINAL"],
+    "failure_stages": ["PRE_START", "NEGATIVE_PROBES", "MODEL_LOAD", "WARMUP", "WARMUP_CLEAN_BARRIER", "ACTIVE_WINDOW", "RENDER_VALIDATE_SCAN_EXPORT", "CLEANUP"],
+    "write_rule": "AT_EVERY_TERMINAL_PATH_WRITE_ONLY_OBSERVED_STAGE_EVIDENCE_THEN_ATTEMPT_CLEANUP; DO_NOT SYNTHESIZE WARMUP ACTIVE ROW TELEMETRY TREND OR EXPORT FIELDS FOR UNREACHED STAGES",
+    "complete_success_rule": "ONLY_COMPLETE_ACTIVE_TERMINAL_MAY_REQUIRE_FOUR_WARMUP_PAIRS_64_ACTIVE_PAIRS_AT_LEAST_121_RESOURCE_SAMPLES_COMPLETE_TRENDS_CLEAR_PUBLIC_SAFETY_AND_EXPORTED_BUNDLE",
+    "partial_role_rule": "UNOBSERVED_CANDIDATE_OR_PEER_OBSERVATION_IS_NULL; NEVER FABRICATE A RECEIPT_OUTPUT_TIMESTAMP_OR_DIGEST"
+  },
   "conditional_public_safety_clear_outputs": [
     "m4_final_prescoring_crash_cart_bundle_v1.tar",
     "m4_final_prescoring_crash_cart_bundle_v1.tar.sha256"
   ],
   "exit_mapping": {
+    "source_tag": "[PROPOSED]",
     "0": "STRUCTURAL_PASS_OR_REPLICA_MISMATCH_WITH_VALID_COMPLETE_EVIDENCE",
     "20": "STRUCTURAL_BLOCK_NO_RETRY",
     "21": "INSTRUMENT_FAILURE_NO_RETRY",
@@ -105,7 +132,12 @@
     "VERIFY_REPOSITORY_UNCHANGED",
     "ROUTE_SANITIZED_TERMINAL_PACKAGE_FOR_PERSISTENT_CRITIC_ENGINEERING_REVIEW"
   ],
+  "terminal_rules_source_tag": "[PROPOSED]",
   "required_implementation_tests": [
+    "LITERAL_LF_WARMUP_BYTES_AND_DIGESTS_REPRODUCE",
+    "LITERAL_ASCII_BACKSLASH_N_WARMUP_SUBSTITUTION_REJECTED",
+    "ZERO_BASED_WARMUP_AND_MEASURED_ORDINAL_CHAINS_AFTER_EACH_RESET",
+    "PRE_START_PARTIAL_WARMUP_PARTIAL_ACTIVE_AND_POST_ACTIVE_FAILURE_REPORTS_VALIDATE_WITHOUT_FABRICATED_FIELDS",
     "WARMUP_SKIPPED_BLOCKS_BEFORE_MEASURED_START",
     "UNEQUAL_ROLE_SEQUENCE_OR_PARAMETERS_BLOCKS",
     "PROTECTED_INPUT_SUBSTITUTION_BLOCKS_WITHOUT_MODEL_CALL",
@@ -115,5 +147,6 @@
     "WARMUP_TIMEOUT_BLOCKS_NO_RETRY",
     "WARMUP_ROWS_EXCLUDED_FROM_ACTIVE_WINDOW_REPLICA_AXIS_AND_TRENDS"
   ],
-  "source_classification": "PROPOSED_ENGINEERING_CONTRACT_REQUIRES_CRITIC_CLEAR_AND_REBECCA_RELEASE"
+  "required_implementation_tests_source_tag": "[PROPOSED]",
+  "source_classification": "[PROPOSED]"
 }

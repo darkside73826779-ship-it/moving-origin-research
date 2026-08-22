@@ -4,6 +4,15 @@
   "regime": "B",
   "status": "DESIGN_ONLY_NO_RUN_AUTHORITY",
   "classification": "NON_SCORING_EXPLORATORY_OBSERVATION",
+  "provenance": {
+    "source_tag": "[PROPOSED]",
+    "constitution_rule": "docs/ARCHITECTURAL_CONSTITUTION_v2.md#5.1",
+    "custom_rebecca_directive_path": "handoffs/REBECCA_M4_FINAL_PRESCORING_FULL_STACK_CRASH_CART_AND_EXPLORATORY_OBSERVATION_AUTHORITY_2026-08-22.md",
+    "custom_rebecca_directive_commit": "8b4a383c450e8b29f2633f7e25107abcb62dd929",
+    "custom_rebecca_directive_bytes": 6087,
+    "custom_rebecca_directive_sha256": "c759a99a563777a42ba42eb25f4679a40bb940a246bc002ef199c61e58721ecc",
+    "binding_rule": "EXACT_AUTHORITY_BINDS_DESIGN_AND_IMPLEMENTATION_PREPARATION_ONLY; ALL_CONTROLS_REMAIN_PROPOSED_UNTIL_REVIEWED_AND_NO_RUN_AUTHORITY_IS_GRANTED"
+  },
   "banked_authority": {
     "readiness_route_sha": "3d1e1e4ad9039ce25f311367aff5798ad7fcec07",
     "readiness_result_sha": "79ef7c025676e52dced8ade5698aa87754bed172",
@@ -62,6 +71,9 @@
     "deterministic_renderer_identity": "UNBOUND",
     "focused_implementation_test_identity": "UNBOUND",
     "implementation_critic_clear_sha": "UNBOUND",
+    "rebecca_custom_crash_cart_directive_path": "handoffs/REBECCA_M4_FINAL_PRESCORING_FULL_STACK_CRASH_CART_AND_EXPLORATORY_OBSERVATION_AUTHORITY_2026-08-22.md",
+    "rebecca_custom_crash_cart_directive_commit": "8b4a383c450e8b29f2633f7e25107abcb62dd929",
+    "rebecca_custom_crash_cart_directive_sha256": "c759a99a563777a42ba42eb25f4679a40bb940a246bc002ef199c61e58721ecc",
     "rebecca_single_run_release_sha": "UNBOUND"
   },
   "topology": {
@@ -107,6 +119,7 @@
     }
   ],
   "active_schedule": {
+    "source_tag": "[PROPOSED]",
     "paired_request_count": 64,
     "role_request_count": 128,
     "queue_capacity_pairs": 8,
@@ -119,17 +132,26 @@
     "fault_on_deadline": "BLOCKED_ACTIVE_WINDOW_TIMEOUT_NO_RETRY"
   },
   "warmup": {
+    "source_tag": "[PROPOSED]",
     "classification": "NON_SCORING_OPERATIONAL_WARMUP",
     "placement": "AFTER_MODEL_RUNTIME_LOAD_AND_HEALTH_BEFORE_MEASURED_OR_SCORING_REQUEST",
     "paired_prompt_count": 4,
     "role_request_count": 8,
     "ordered_prompts": [
-      {"ordinal": 0, "payload_ascii_bytes": 0, "max_output_tokens": 8, "prompt_bytes": 94, "prompt_sha256": "710a2a4732923d4296326598486190cb1d53889975fdd8b54bdae90f98287320"},
-      {"ordinal": 1, "payload_ascii_bytes": 32, "max_output_tokens": 16, "prompt_bytes": 127, "prompt_sha256": "9fbf89b42768e1460f51f12416c949d4eca65a517f7327fc22937630dc1144ef"},
-      {"ordinal": 2, "payload_ascii_bytes": 512, "max_output_tokens": 16, "prompt_bytes": 608, "prompt_sha256": "4c5e6e219b20a6c55f23df977c4bf9eb65e576dd2606958d341e74f09fac811d"},
-      {"ordinal": 3, "payload_ascii_bytes": 1024, "max_output_tokens": 32, "prompt_bytes": 1121, "prompt_sha256": "5d9b0431fca2e7dc5135ffbb51cbe960f25950df11d6caccc5f753055d79f17a"}
+      {"ordinal": 0, "payload_ascii_bytes": 0, "max_output_tokens": 8, "prompt_bytes": 89, "prompt_sha256": "eabe6b7c5cf863599f9444019b68e0e56dde640b824bfb30756aad9faa093485"},
+      {"ordinal": 1, "payload_ascii_bytes": 32, "max_output_tokens": 16, "prompt_bytes": 122, "prompt_sha256": "6b5697332c8ad2d6520655f4dc94133a1c17d4d228e3143f5f9bc80d685a04b4"},
+      {"ordinal": 2, "payload_ascii_bytes": 512, "max_output_tokens": 16, "prompt_bytes": 603, "prompt_sha256": "763187d517d8b35871bc5bb6a5c41df5283fd18f0589348eb299f2d2911076db"},
+      {"ordinal": 3, "payload_ascii_bytes": 1024, "max_output_tokens": 32, "prompt_bytes": 1116, "prompt_sha256": "5646b4c97252d178f3c73ccd8a2ef988674c7b3f515beb64376d4ea7ab60dd13"}
     ],
-    "prompt_generator": "UTF8_LF_NO_BOM:M4_WARMUP_PUBLIC_V1\\nordinal={zero_pad_4}\\npayload_bytes={decimal}\\npayload={N lowercase x bytes}\\nRespond with the ordinal only.\\n",
+    "prompt_generator": {
+      "encoding": "UTF8_NO_BOM",
+      "line_separator_hex": "0a",
+      "line_separator_count": 5,
+      "terminal_lf": true,
+      "ordered_lines": ["M4_WARMUP_PUBLIC_V1", "ordinal={zero_pad_4}", "payload_bytes={decimal}", "payload={N lowercase x bytes}", "Respond with the ordinal only."],
+      "literal_ascii_backslash_n_forbidden": true,
+      "literal_ascii_backslash_n_hex": "5c6e"
+    },
     "same_sequence_and_parameters_for_both_roles": true,
     "synchronization_barrier_each_pair": true,
     "generation_parameters": {
@@ -150,7 +172,7 @@
       "fields": ["status", "backend_code", "session_id", "prior_backend_state_sha256", "result_backend_state_sha256", "request_sha256", "request_ordinal"],
       "status": "PASS",
       "backend_code": null,
-      "request_ordinals": [1, 2, 3, 4],
+      "request_ordinals": [0, 1, 2, 3],
       "session_rule": "BOUND_DISTINCT_ROLE_SESSION",
       "state_rule": "EXACT_PRIOR_TO_RESULT_CHAIN",
       "request_rule": "SHA256_CANONICAL_REQUEST"
@@ -171,6 +193,7 @@
     "excluded_from": ["ACTIVE_WINDOW", "MEASURED_REQUEST_COUNT", "REPLICA_CONSISTENCY_AXIS", "TRENDS", "SCORING", "QUALIFICATION", "SCIENCE"]
   },
   "public_fixture": {
+    "source_tag": "[PROPOSED]",
     "fixture_family_count": 8,
     "payload_ascii_byte_counts": [0, 32, 64, 128, 256, 512, 768, 1024],
     "family_rule": "ordinal_mod_8",
@@ -197,6 +220,7 @@
     "VALIDATE_RENDER_SCAN_EXPORT"
   ],
   "resource_sampling": {
+    "source_tag": "[PROPOSED]",
     "interval_ns": 250000000,
     "start": "ACTIVE_WINDOW_START",
     "end": "CLEANUP_TERMINAL_SAMPLE",
@@ -215,6 +239,7 @@
     ]
   },
   "complete_local_evidence": {
+    "source_tag": "[PROPOSED]",
     "classification": "NON_SCORING_EXPLORATORY_OBSERVATION",
     "retain_all_rows": true,
     "retain_failures_mismatches_and_anomalies": true,
@@ -245,6 +270,7 @@
     ]
   },
   "exploratory_trends": {
+    "source_tag": "[PROPOSED]",
     "classification": "NON_SCORING_EXPLORATORY_OBSERVATION",
     "required": [
       "latency_distribution_by_role",
@@ -264,13 +290,34 @@
     "scientific_claim": false
   },
   "two_axis_status": {
+    "source_tag": "[PROPOSED]",
     "structural_status_values": ["PASS", "BLOCKED", "INSTRUMENT_FAILURE"],
     "replica_consistency_status_values": ["MATCH", "MISMATCH", "NOT_RUN"],
     "mismatch_is_separate": true,
     "exact_replica_consumer_must_stop_on_mismatch": true,
     "structural_pass_is_engineering_only": true
   },
+  "staged_terminal_evidence": {
+    "source_tag": "[PROPOSED]",
+    "rule": "RECORD_ONLY_EVIDENCE_ACTUALLY_OBSERVED_BEFORE_THE_FAIL_CLOSED_STOP; NEVER FABRICATE LATER_STAGE_FIELDS",
+    "stages": [
+      {"evidence_stage": "PRE_ACTIVE_TERMINAL", "failure_stages": ["PRE_START", "NEGATIVE_PROBES", "MODEL_LOAD"], "warmup": null, "active_window": null, "rows": 0, "resource_samples": 0, "trends": null, "replica_consistency": "NOT_RUN"},
+      {"evidence_stage": "PARTIAL_WARMUP_TERMINAL", "failure_stages": ["WARMUP", "WARMUP_CLEAN_BARRIER"], "warmup_rows_range": [0, 4], "active_window": null, "rows": 0, "resource_samples": 0, "trends": null, "replica_consistency": "NOT_RUN"},
+      {"evidence_stage": "PARTIAL_ACTIVE_TERMINAL", "failure_stages": ["ACTIVE_WINDOW"], "warmup": "COMPLETE", "active_rows_range": [0, 64], "resource_samples_range": [0, null], "trends": null, "replica_consistency": "ONLY_OVER_ACTUALLY_COMPARED_COMPLETE_PAIRS_OR_NOT_RUN"},
+      {"evidence_stage": "POST_ACTIVE_TERMINAL", "failure_stages": ["RENDER_VALIDATE_SCAN_EXPORT", "CLEANUP"], "warmup": "COMPLETE", "active_rows": 64, "resource_samples_minimum": 121, "trends": "NULL_OR_COMPLETE_ONLY_IF_ACTUALLY_RENDERED"},
+      {"evidence_stage": "COMPLETE_ACTIVE_TERMINAL", "failure_stages": [], "warmup": "COMPLETE", "active_rows": 64, "resource_samples_minimum": 121, "trends": "COMPLETE", "cleanup": "PASS", "public_safety": "CLEAR", "export": "EXPORTED"}
+    ],
+    "partial_artifact_negatives": [
+      "PRE_START_REPORT_WITH_WARMUP_OR_ACTIVE_EVIDENCE_REJECTED",
+      "PARTIAL_WARMUP_REPORT_WITH_ACTIVE_ROWS_SAMPLES_OR_TRENDS_REJECTED",
+      "PARTIAL_ACTIVE_REPORT_WITH_COMPLETE_TRENDS_REJECTED",
+      "COMPLETE_REPORT_WITH_NULL_OR_PARTIAL_REQUIRED_EVIDENCE_REJECTED",
+      "FAILURE_STAGE_AND_EVIDENCE_STAGE_MISMATCH_REJECTED",
+      "UNOBSERVED_ROLE_OUTPUT_OR_RECEIPT_MUST_BE_NULL_NOT_SYNTHESIZED"
+    ]
+  },
   "held_laws": {
+    "source_tag": "[PROPOSED]",
     "order": ["L7", "L8", "L10", "L14", "L18"],
     "status": "HELD",
     "claim_made": false,
@@ -279,6 +326,7 @@
     "expected_sha256": "bb2d5f838c54c404dd73d0c697ba6f45cd983fb7e5a7bb97a36b38570267b81f"
   },
   "render_and_export": {
+    "source_tag": "[PROPOSED]",
     "report_path": "m4_final_prescoring_crash_cart_report_v1.json",
     "summary_path": "m4_final_prescoring_crash_cart_summary_v1.md",
     "export_manifest_path": "m4_final_prescoring_crash_cart_export_manifest_v1.json",
@@ -292,6 +340,7 @@
     "export_requires_public_safety_clear": true
   },
   "public_safety": {
+    "source_tag": "[PROPOSED]",
     "scan_complete_resulting_files": true,
     "manual_classification_required": true,
     "silent_suppression": false,
@@ -309,7 +358,11 @@
     "REPOSITORY_CLEAN",
     "POST_STATE_RECORDED"
   ],
+  "cleanup_source_tag": "[PROPOSED]",
   "semantic_validation": [
+    "WARMUP_PROMPTS_CONTAIN_EXACTLY_FIVE_0A_BYTES_AND_NO_5C6E_SEQUENCE",
+    "WARMUP_RECEIPT_ORDINALS_EXACTLY_0_1_2_3_AFTER_WARMUP_RESET",
+    "MEASURED_RECEIPT_ORDINALS_EXACTLY_0_THROUGH_63_AFTER_MEASURED_RESET",
     "WARMUP_EXACT_FOUR_ORDERED_EQUAL_ROLE_PROMPTS_AND_PARAMETERS",
     "WARMUP_EVIDENCE_COMPLETE_AND_EXCLUDED_FROM_MEASURED_AGGREGATES",
     "WARMUP_CLEAN_BARRIER_PRECEDES_MEASURED_RNG_AND_ACTIVE_WINDOW",
@@ -324,9 +377,12 @@
     "ALL_AGGREGATES_RECOMPUTE_FROM_UNFILTERED_ROWS",
     "ALL_TRENDS_RECOMPUTE_FROM_UNFILTERED_ROWS_AND_SAMPLES",
     "STRUCTURAL_AND_REPLICA_AXES_CROSS_FIELD_VALID",
+    "EVIDENCE_STAGE_FAILURE_STAGE_AND_OBSERVED_FIELD_PRESENCE_CROSS_FIELD_VALID",
+    "PARTIAL_TERMINAL_EVIDENCE_CONTAINS_NO_FABRICATED_LATER_STAGE_FIELDS",
     "LAW_ROWS_EXACT_HELD_PROJECTION",
     "CLEANUP_AND_EXPORT_CROSS_FIELD_VALID"
   ],
+  "semantic_validation_source_tag": "[PROPOSED]",
   "stop_conditions": [
     "ANY_UNBOUND_REQUIRED_FUTURE_IDENTITY",
     "MISSING_DESIGN_OR_IMPLEMENTATION_CRITIC_CLEAR",
@@ -338,11 +394,12 @@
     "SCORING_QUALIFICATION_LAW_OR_READINESS_CLAIM",
     "PUBLIC_SAFETY_OR_EXPORT_FAILURE"
   ],
+  "stop_conditions_source_tag": "[PROPOSED]",
   "source_classifications": [
-    {"selector": "minimum 30-second measured active window excluding setup, model load and warmup", "source": "REBECCA_USER_DIRECTIVE_2026-08-22"},
-    {"selector": "mandatory fixed warmup, post-warmup clean barrier, independent RNG insertion point and adversarial requirements", "source": "REBECCA_USER_DIRECTIVE_2026-08-22"},
-    {"selector": "64 pairs, 60-second hard deadline, queue 8, dispatch schedule, 250-ms sampling, fixture sizes, trend set and export rules", "source": "PROPOSED_ENGINEERING_CONTROL_REQUIRES_REBECCA_RELEASE"},
-    {"selector": "all scientific bars, seed rules, same-checkpoint identity, holds and banked readiness evidence", "source": "BANKED_READINESS_CLEAR_7e077a716c92536ec15f1887c418e5b2f7b63896"}
+    {"selector": "minimum 30-second measured active window excluding setup, model load and warmup", "source_tag": "[PROPOSED]", "authority_path": "handoffs/REBECCA_M4_FINAL_PRESCORING_FULL_STACK_CRASH_CART_AND_EXPLORATORY_OBSERVATION_AUTHORITY_2026-08-22.md", "authority_commit": "8b4a383c450e8b29f2633f7e25107abcb62dd929", "authority_sha256": "c759a99a563777a42ba42eb25f4679a40bb940a246bc002ef199c61e58721ecc"},
+    {"selector": "mandatory fixed warmup, post-warmup clean barrier, independent RNG insertion point and adversarial requirements", "source_tag": "[PROPOSED]", "authority_path": "handoffs/REBECCA_M4_FINAL_PRESCORING_FULL_STACK_CRASH_CART_AND_EXPLORATORY_OBSERVATION_AUTHORITY_2026-08-22.md", "authority_commit": "8b4a383c450e8b29f2633f7e25107abcb62dd929", "authority_sha256": "c759a99a563777a42ba42eb25f4679a40bb940a246bc002ef199c61e58721ecc"},
+    {"selector": "64 pairs, 60-second hard deadline, queue 8, dispatch schedule, 250-ms sampling, fixture sizes, trend set and export rules", "source_tag": "[PROPOSED]", "authority_path": "handoffs/REBECCA_M4_FINAL_PRESCORING_FULL_STACK_CRASH_CART_AND_EXPLORATORY_OBSERVATION_AUTHORITY_2026-08-22.md", "authority_commit": "8b4a383c450e8b29f2633f7e25107abcb62dd929", "authority_sha256": "c759a99a563777a42ba42eb25f4679a40bb940a246bc002ef199c61e58721ecc", "classification_note": "exact counts, deadline, queue, schedule, interval and fixture sizes are prospective Architect controls within Rebecca's prospectively-fixed requirement"},
+    {"selector": "all exact failure, partial-evidence, validation, sanitation, export, cleanup and adversarial-test criteria introduced by this package", "source_tag": "[PROPOSED]", "authority_path": "handoffs/REBECCA_M4_FINAL_PRESCORING_FULL_STACK_CRASH_CART_AND_EXPLORATORY_OBSERVATION_AUTHORITY_2026-08-22.md", "authority_commit": "8b4a383c450e8b29f2633f7e25107abcb62dd929", "authority_sha256": "c759a99a563777a42ba42eb25f4679a40bb940a246bc002ef199c61e58721ecc", "classification_note": "exact mechanics are prospective Architect controls and do not expand Rebecca's authority"}
   ],
   "run_authorized": false,
   "merge_authorized": false,
