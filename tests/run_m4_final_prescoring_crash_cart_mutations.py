@@ -1,16 +1,20 @@
 #!/usr/bin/env python3
-"""Deterministic custody-free BF1-R2/BF2-R2 mutation runner."""
+"""Deterministic custody-free crash-cart invariant mutation runner."""
 from __future__ import annotations
 import shutil,subprocess,sys,tempfile
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 TARGETS={
  "telemetry_observed":('samples.append(observed)','samples.extend([])','test_schedule_queue_deadline_and_telemetry'),
- "required_key_schema":('_draft_validate(report,schema,schema)','_bad(any(k not in report for k in schema["required"]),"REPORT_SCHEMA_INVALID")','test_full_top_level_complete_schema_counterexample'),
- "receipt_backend_code":('_bad(receipt.get("backend_code")is not None,"RECEIPT_BACKEND_CODE_INVALID")','pass # mutant','test_invalid_receipt_fails_first_field_and_no_later_evidence'),
- "schedule_wait":('self._wait(target)','pass # mutant','test_schedule_queue_deadline_and_telemetry'),
- "queue_bound":('"max_queue_depth":1','"max_queue_depth":9','test_schedule_queue_deadline_and_telemetry'),
- "deadline":('ACTIVE_DEADLINE_NS=60_000_000_000','ACTIVE_DEADLINE_NS=1','test_schedule_queue_deadline_and_telemetry'),
+ "required_key_schema":('if next(validator.iter_errors(report), None) is not None:','if any(k not in report for k in schema["required"]):','test_full_top_level_complete_schema_counterexample'),
+ "receipt_backend_code":('_bad(receipt.get("backend_code") is not None, "RECEIPT_BACKEND_CODE_INVALID")','pass # mutant','test_invalid_receipt_fails_first_field_and_no_later_evidence'),
+ "schedule_wait":('self._wait(start + offset)','pass # mutant','test_schedule_queue_deadline_and_telemetry'),
+ "queue_bound":('"max_queue_depth": 1','"max_queue_depth": 9','test_schedule_queue_deadline_and_telemetry'),
+ "deadline":('ACTIVE_DEADLINE_NS = 60_000_000_000','ACTIVE_DEADLINE_NS = 1','test_schedule_queue_deadline_and_telemetry'),
+ "reset_rebind":('self._states = rebound','pass # mutant: retain prior states','test_reset_rebinds_fresh_measured_state_and_active_zero'),
+ "post_pair_deadline":('self._assert_pair_completion_within_deadline(start, observed_after)','pass # mutant: accept pair overrun','test_earlier_overrun_and_sleeper_underwait_fail_closed'),
+ "warmup_rng_domain":('WARMUP_RNG_DOMAIN = "M4_FINAL_CRASH_CART_WARMUP_V1"','WARMUP_RNG_DOMAIN = "STALE_WARMUP_DOMAIN"','test_governed_constants_and_every_warmup_request_are_exact'),
+ "schema_min_properties":('schema = json.loads(schema_path.read_text(encoding="utf-8"))','schema = json.loads(schema_path.read_text(encoding="utf-8"));schema["properties"]["identities"].pop("minProperties",None)','test_schema_rejects_min_properties_and_keyword_neighborhood'),
 }
 def main()->int:
  for name,(old,new,test)in TARGETS.items():
