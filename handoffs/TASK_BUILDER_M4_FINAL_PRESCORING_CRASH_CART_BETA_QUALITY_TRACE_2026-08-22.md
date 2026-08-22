@@ -1,6 +1,6 @@
 # TASK BUILDER QUALITY TRACE — M4 final pre-scoring crash-cart beta
 
-Active implementation: `3f9f685a1f88c9f18f916688ce9a574f19e246e8`.
+Active implementation: `ba5ddda7811c776dc70347d3ae549b4c822c31be`.
 
 | Requirement | Production branch | Focused evidence |
 |---|---|---|
@@ -12,9 +12,9 @@ Active implementation: `3f9f685a1f88c9f18f916688ce9a574f19e246e8`.
 | Replica-consumer boundary | `exact_replica_consumer_stop` | mismatch stops consumer |
 | No execution authority | `execution_guard`, wrapper | wrapper exits 2 before runtime access |
 
-Focused custody-free result: `python -I tests/run_m4_final_prescoring_crash_cart_tests.py` — exit 0, 13 discovered, 13/13 PASS. Production tests are `ProductionPathCorrectionTests.test_candidate_warmup_zero_failure_rolls_back_resets_and_cleans`, `test_symmetric_barriers_resets_rng_no_priming_and_receipt_ordinals`, `test_schedule_queue_deadline_and_telemetry`, `test_inventory_is_committed_ordered_unique_and_exact`, and `test_strict_schema_counterexamples`.
+Focused custody-free result: `python -I tests/run_m4_final_prescoring_crash_cart_tests.py` — exit 0, 15 discovered, 15/15 PASS. Added production tests include `test_invalid_receipt_fails_first_field_and_no_later_evidence` and `test_full_top_level_complete_schema_counterexample`; scheduling/telemetry tests now execute `CrashCartLifecycle.run` and inspect observed dispatch/sample evidence.
 
-Pre-correction proof: `python -I tests/run_m4_final_prescoring_crash_cart_precorrection_probe.py` — exit 0 with `PRECORRECTION_KILLED tests=13 prior=ff163541 failures=6`. The probe runs the committed tests against the exact prior source in a disposable checkout. Wrapper: `python tools/run_m4_final_prescoring_crash_cart.py` — governed exit 2 `RUN_AUTHORITY_ABSENT`.
+Pre-correction proof: `python -I tests/run_m4_final_prescoring_crash_cart_precorrection_probe.py` — exit 0 with `PRECORRECTION_KILLED tests=15 prior=3f9f685`. Mutation command: `python -I tests/run_m4_final_prescoring_crash_cart_mutations.py` — exit 0; required-key schema, receipt backend-code, schedule wait, queue bound, deadline, and observed-telemetry mutants all KILLED. Wrapper: `python tools/run_m4_final_prescoring_crash_cart.py` — governed exit 2 `RUN_AUTHORITY_ABSENT`.
 
 No model, tokenizer, OCI, WSL2, gofast, custody, protected input, scoring, science, or result publication occurred.
 
