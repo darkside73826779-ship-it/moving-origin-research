@@ -83,3 +83,10 @@
 - Added exact repository-committed self-rule `.gitattributes text eol=lf`, making the mounted raw `.gitattributes` identity deterministic even when ambient `core.autocrlf=true` `[PROPOSED]`.
 - Rebound the file to `1817` LF bytes and SHA-256 `7811d61d53e74c99543e9d796bd8857076b022c666338ce2954ef236156a4179`, and reconciled the test contract and its sidecar `[PROPOSED]`.
 - Preserved NF2 closure, the exact 9+9 set, wrapper/discovery/materializer commands, pinned runtime, custody/scientific contracts, and every execution hold.
+
+## v1.4.9 — Executable-package identity reconciliation
+
+- Reconciled only the raw Git-blob byte count and SHA-256 bindings for the cleared materializer (`21096` bytes, SHA-256 `90e89b5a55ff80041a8e09c0d3e96208b6d8eff5c6b39eecd6366a1afb5289af`) and selected test module (`54972` bytes, SHA-256 `964ab5b8cb5ef63627c0ab07b3f0c4c867684d7add40576c3dd61494610e8613`) in `specs/data/m4_tokenizer_executable_package_v1.json` `[PROPOSED]`.
+- Recomputed the executable-package manifest's adjacent sidecar as SHA-256 `c0025a54579ab0b51e07ac138518c7949fbb4fd276d551a978e8ee39d8ba1697` over the complete `1677` LF bytes `[PROPOSED]`.
+- Independently reproduced all eight executable-package entries against the released raw Git blobs and negatively verified that the superseded byte counts, executable digests, manifest digest, and manifest-sidecar digest remain only in preserved historical records, not active package/specification/contract/executable inputs.
+- Changed no executable, test, command, runtime, custody construction, constructor, schema, scientific logic, or operation state. The single materialization operation remains unconsumed and every execution hold remains binding.
