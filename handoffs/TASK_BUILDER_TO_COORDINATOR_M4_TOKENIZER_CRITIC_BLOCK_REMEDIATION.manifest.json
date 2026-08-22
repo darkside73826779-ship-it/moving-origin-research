@@ -1,0 +1,85 @@
+{
+  "schema_version": "common-handoff-manifest-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "transfer_kind": "FORMAL_HANDOFF",
+  "work_item": "m4_tokenizer_critic_block_remediation",
+  "gate": "Integrated TASK BUILDER remediation before one persistent-CRITIC rereview",
+  "sender_role": "TASK_BUILDER",
+  "receiver_role": "WORKFLOW_COORDINATOR",
+  "authority_basis": [
+    {
+      "path": "reviews/critic_m4_tokenizer_bf1_bf5_remediation_review.md",
+      "sha": "856cb4da1c1688f90cbd6d8c11ea0ef57b11978d"
+    }
+  ],
+  "remote_ref": "refs/heads/taskbuilder/m4-tokenizer-critic-block-remediation",
+  "base_sha": "b4837b6af3310afac36ff343e58490756cdf54cb",
+  "routing_ref_sha": "88a2555f4b1d22ce3b9a7d4c8f9d9edeb17a527f",
+  "review_result_sha": "856cb4da1c1688f90cbd6d8c11ea0ef57b11978d",
+  "work_branch": "taskbuilder/m4-tokenizer-critic-block-remediation",
+  "artifacts": {
+    ".gitattributes": "68c528ede67720007d4ec15d15f6d723136a24b9a4662c94ad9cdfbbc158601d",
+    "diagnostics/m4_tokenizer_materialization.py": "a5c73abfe3b813ce9440e6b9de94f70220064f6e78f7da47250344b7fccd5e48",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_CRITIC_BLOCK_REMEDIATION_2026-08-21.md": "9d0072069b174a15077b590c8f1867108331837f74d1d609c5d9e44e287639ba",
+    "reviews/critic_m4_tokenizer_bf1_bf5_remediation_review.md": "f55a46af6a7b39c9195361c655487d764aed8741443802b4071f625dd9abd56e",
+    "specs/data/m4_context_format_probe_contract_v1.json": "eab77b9f44a4e9378f5889f5aa368eabd87959a5ddafab9ca38685228f12feec",
+    "specs/data/m4_context_format_probe_contract_v1.json.sha256": "26a65895c5a82c99ebf91125dd5ef3b7f0075d28c2c20d746e01fd55e36ca85a",
+    "specs/data/m4_tokenizer_executable_package_v1.json": "57f448829b7a08fbb23bdb60ea29cee961352d4690806fe33abb335b0807bdc1",
+    "specs/data/m4_tokenizer_executable_package_v1.json.sha256": "975d58f3cde0c789c5a40adfe3a9d077f5f4fa9f5728a0ac253a3cd6dac20887",
+    "specs/data/m4_tokenizer_materialization_request_v1.json": "b39061fd4b19321d58dd418eb5ecd486c0cf26662d70a5d0de4185c6dd7e9992",
+    "specs/data/m4_tokenizer_materialization_request_v1.json.sha256": "9fa903fcb29bb74bd0fcd027c2e591668e6aebcb6a77a4c2c179c96c59d8f9ea",
+    "specs/data/m4_tokenizer_materialization_result_schema_v1.json": "34179d41e980aca413496f3de9fbbea7b642532b50eeacba423faebe5f4075ca",
+    "specs/data/m4_tokenizer_materialization_result_schema_v1.json.sha256": "ca2494f505342959d43b9a6442c103f898e58a54a45279ada3088003536651f3",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json": "c166a583a0612054cea826700d8e5e2c132c283e1617727170a8bd57167bb7a0",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json.sha256": "189405411c37f4333f2edd1339711bb316c0a26f3e7e54f01362ca7662277fd7",
+    "specs/data/m4_tokenizer_oci_launch_contract_v1.json": "0fdd5e8eed2fc3a7cc5e10512e6e01037d011f6cf51e862a2293d49255b32848",
+    "specs/data/m4_tokenizer_oci_launch_contract_v1.json.sha256": "2f274dbbacf64085bd3298aaaad6702ce2bfff700bd85d5c3773a29cb410448d",
+    "specs/data/m4_tokenizer_private_custody_record_schema_v1.json": "738db87ffd5dd654c69322818df0c63740a7cec8a6e12b08906e63212d7347d6",
+    "specs/data/m4_tokenizer_private_custody_record_schema_v1.json.sha256": "f0a530a39ee31cc4fb03f0c4addc5fc333307f39e638e669b3c422e2c2386cd8",
+    "specs/m4_local_tokenizer_materialization_spec_v1.md": "2f60b9ecb90628028465f17d31702fe17ce037ef60fd05ef15ae4e25512ad682",
+    "tests/__init__.py": "6f56eb2128751f0c5c1ab27ff461b38565aa00a3dcd29c04ab8bd56c34f4a961",
+    "tests/run_m4_tokenizer_materialization_tests.py": "29dc1c0d83e71c850e9eb3c423cfd359a6c557956d1eab1fa5d9beb049271d1d",
+    "tests/test_m4_tokenizer_materialization.py": "260879338330343d20bf3b6eb7ea198c60777f9e0379e80f54c1dfe810e6f85b"
+  },
+  "checks_performed": [
+    "read the authoritative CRITIC BLOCK at its exact immutable commit and created an isolated helper checkout",
+    "implemented the three findings as one integrated two-file correction while preserving BF3 and BF5",
+    "created a fresh workflow-helper exact-result checkout and verified it clean",
+    "ran the exact no-custody network-disabled pinned-container wrapper with 30 of 30 tests passing",
+    "ran workflow_preflight.py hotfix cee97538893989e055f49a894f066d2083da4eb5 against the exact target worktree and complete 856cb4d..88a2555 range",
+    "manually classified all 21 scanner occurrences as immutable-SHA or declared-public-digest heuristics; gitleaks returned zero findings"
+  ],
+  "status": "READY",
+  "findings": [
+    {
+      "classification": "integrated CRITIC-block remediation",
+      "severity": "non_blocking",
+      "text": "all three batched findings are implemented and the exact pinned-container non-custody suite passes 30 of 30"
+    }
+  ],
+  "scan_attestation": {
+    "base_sha": "856cb4da1c1688f90cbd6d8c11ea0ef57b11978d",
+    "tip_sha": "88a2555f4b1d22ce3b9a7d4c8f9d9edeb17a527f",
+    "tool_status": "blocked",
+    "manual_review": true,
+    "findings": [
+      "F000001-F000021 are duplicate scan-domain occurrences wholly inside required immutable public commit values or declared public artifact SHA-256 values and are classified non-secret public reproducibility metadata",
+      "gitleaks 8.30.1 returned zero findings",
+      "manual review found no credentials, personal contact data, private paths, task identifiers, custody values, model/tokenizer bytes, protected seeds, scientific output, or prohibited durable-state mutation"
+    ]
+  },
+  "next_event": "WORKFLOW COORDINATOR acknowledges this return and routes the exact integrated package to persistent CRITIC for one rereview",
+  "prohibited_actions": [
+    "custody lookup, OCI materialization, retry, fallback, model/tokenizer access, inference, serving, or qualification",
+    "diagnostics, scoring, protected seeds, science, STATE/provenance mutation, merge, publication, or gate decision",
+    "Workflow Efficiency maintenance or fragmentation of the integrated review"
+  ],
+  "role_extension": {
+    "role": "TASK_BUILDER",
+    "tests": [
+      "python3 -I tests/run_m4_tokenizer_materialization_tests.py — 30/30 PASS in exact pinned no-custody container"
+    ],
+    "diagnostics_executed": false
+  }
+}
