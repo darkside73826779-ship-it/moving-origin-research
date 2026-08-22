@@ -1,0 +1,63 @@
+{
+  "date": "2026-08-22",
+  "dependency_lock": {
+    "path": "tools/testbed/requirements-m4-wsl2-diagnostic.txt",
+    "raw_sha256": "8d681f00157a1f17ca7b1487fbf76f7dff0e430a9994b7f1827a22e8152f8819"
+  },
+  "downloadable_bundle_policy": {
+    "bundle_published": false,
+    "if_published_require": [
+      "immutable_annotated_tag",
+      "peeled_commit_sha1",
+      "archive_sha256",
+      "canonical_lf_manifest_sha256"
+    ],
+    "line_endings": "UTF8_NO_BOM_LF_ONE_FINAL_LF"
+  },
+  "historical_versions": [
+    {
+      "peeled_commit_sha1": "0631a019a153ec89312938982c007cf94dd3f03e",
+      "tag": "m4-wsl2-preexecution-testbed-v1.1",
+      "tag_object_sha1": "1e6fec5cb21f3c86670107d06bc637c7bd478e01"
+    }
+  ],
+  "environment_lock": {
+    "path": "specs/data/m4_wsl2_preexecution_testbed_environment_v1.json",
+    "raw_sha256": "a8e47e0ec4a831b635ce66113ddc988af5d4a4f3c5008ce58024fb702b076dbe"
+  },
+  "immutable_base": {
+    "peeled_commit_sha1": "11ea682a7f0fadfa1437a12d882402d90ffd0579",
+    "tag": "m4-wsl2-preexecution-testbed-v1.2",
+    "tag_object_sha1": "1994709b41c8e108e0b6f9a15936681f596823af"
+  },
+  "lf_paths": [
+    ".gitattributes",
+    "docs/m4_wsl2_preexecution_testbed_runbook.md",
+    "docs/m4_wsl2_preexecution_testbed_setup_command_index.md",
+    "handoffs/WORKFLOW_COORDINATOR_M4_WSL2_DUAL_MODEL_CRASH_CART_2026-08-21.md",
+    "specs/data/m4_wsl2_audit_readiness_blocked_example_v1.json",
+    "specs/data/m4_wsl2_audit_readiness_blocked_example_v1.json.sha256",
+    "specs/data/m4_wsl2_audit_readiness_contract_v1.json",
+    "specs/data/m4_wsl2_audit_readiness_contract_v1.json.sha256",
+    "specs/data/m4_wsl2_audit_readiness_report_schema_v1.json",
+    "specs/data/m4_wsl2_audit_readiness_report_schema_v1.json.sha256",
+    "specs/data/m4_wsl2_preexecution_testbed_environment_v1.json",
+    "specs/data/m4_wsl2_preexecution_testbed_environment_v1.json.sha256",
+    "tests/test_m4_wsl2_audit_readiness.py",
+    "tools/testbed/requirements-m4-wsl2-diagnostic.txt",
+    "tools/testbed/run_m4_wsl2_governed_image_gpu_smoke.sh",
+    "tools/testbed/setup_m4_wsl2_diagnostic_runtime.sh",
+    "tools/testbed/run_m4_wsl2_audit_readiness.py"
+  ],
+  "recommended_tag": "m4-wsl2-preexecution-testbed-v1.3",
+  "regime": "B",
+  "schema_version": "m4-wsl2-audit-readiness-contract-v1",
+  "scope": {
+    "authoritative_scoring": false,
+    "custody_access": false,
+    "inference": false,
+    "network_access": false,
+    "protected_seed_access": false,
+    "scientific_evidence": false
+  }
+}

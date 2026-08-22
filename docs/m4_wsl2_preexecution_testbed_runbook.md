@@ -4,7 +4,11 @@
 
 **Regime:** B
 
-**Authority:** `coordinator/m4-wsl2-preexecution-testbed`
+**Immutable version:** annotated tag `m4-wsl2-preexecution-testbed-v1.2`
+(tag object `1994709b41c8e108e0b6f9a15936681f596823af`, peeled commit
+`11ea682a7f0fadfa1437a12d882402d90ffd0579`). The mutable
+`coordinator/m4-wsl2-preexecution-testbed` branch is transport provenance only,
+not a reproducibility identity.
 
 ## Purpose and evidence boundary
 
@@ -39,6 +43,25 @@ docker image inspect docker.io/vllm/vllm-openai@sha256:df2607b26bdda2875de4832f4
 ```
 
 Every mismatch is a test-bed readiness failure. Do not install, pull, upgrade, or substitute dependencies inside a governed operation.
+
+## Custody-free one-command readiness
+
+After creating and activating the diagnostic environment in the exact setup
+order below, run this command from a clean checkout that descends from the
+immutable v1.2 tag:
+
+```bash
+python3 -I tools/testbed/run_m4_wsl2_audit_readiness.py
+```
+
+It validates the existing locked diagnostic dependencies, tag and checkout
+identity, LF/sidecar discipline, V1 compatibility, host/GPU/Docker/toolkit and
+local OCI identities, focused public tests, and a mount-free governed-image GPU
+visibility smoke. The smoke uses `--pull=never`, `--network none`, a read-only
+container, no mounts, and no environment forwarding. It cannot look up custody,
+model or tokenizer roots, prompts, protected seeds, scoring inputs, or inference
+inputs. Its JSON output is sanitized diagnostic readiness only and validates
+against `specs/data/m4_wsl2_audit_readiness_report_schema_v1.json`.
 
 ## Runtime separation
 
@@ -149,3 +172,14 @@ qualification evidence, or permission to use protected inputs.
 Each report must contain only public environment versions, public model identity, test controls, aggregate timing/memory observations, and PASS/BLOCKED status. It must state `synthetic_only=true`, `authoritative_scoring=false`, `protected_seed_access=false`, and `scientific_evidence=false`. Private paths, prompts derived from held data, model bytes, token arrays, environment dumps, and machine identifiers are prohibited.
 
 Before publication, run the repository preflight tool against the exact checkout and complete introduced range, preserve every scanner finding, classify only documented public reproducibility false positives manually, verify remote equality, and return through WORKFLOW COORDINATOR.
+
+## Immutable citation and bundle hygiene
+
+Active reproduction instructions cite annotated version tags, their tag-object
+identities, and peeled commits; moving branch heads are not reproducibility
+identities. Historical branch citations remain provenance only. No downloadable
+bundle is published by this test bed. If one is later published, it must be
+derived from an immutable annotated tag and carry both (1) SHA-256 of the exact
+downloaded archive bytes and (2) SHA-256 of a canonical UTF-8, no-BOM, LF-only
+manifest with one final LF that inventories the archive members. The tag object,
+peeled commit, archive digest, and canonical-manifest digest must all be recorded.

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "PASS"}}},
+      "then": {"properties": {"failure_code": {"type": "null"}}}
+    },
+    {
+      "if": {"properties": {"status": {"const": "BLOCKED"}}},
+      "then": {"properties": {"failure_code": {"type": "string"}}}
+    }
+  ],
+  "properties": {
+    "authoritative_scoring": {"const": false},
+    "base_commit_sha1": {"const": "11ea682a7f0fadfa1437a12d882402d90ffd0579"},
+    "base_tag": {"const": "m4-wsl2-preexecution-testbed-v1.2"},
+    "base_tag_object_sha1": {"const": "1994709b41c8e108e0b6f9a15936681f596823af"},
+    "checks": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "check_id": {"enum": ["IMMUTABLE_BASE_TAG","IMMUTABLE_CHECKOUT","LF_AND_SIDECAR_DISCIPLINE","PYTHON_RUNTIME","PYTHON_DEPENDENCIES","V1_COMPATIBILITY","WSL_GPU_IDENTITY","DOCKER_TOOLKIT_IDENTITY","OCI_PLATFORM_IDENTITY","NO_CUSTODY_NETWORK_MOUNT_CONTROLS","PUBLIC_SYNTHETIC_TESTS","OCI_GPU_VISIBILITY_SMOKE"]},
+          "ordinal": {"maximum": 11, "minimum": 0, "type": "integer"},
+          "status": {"enum": ["PASS", "FAIL", "NOT_RUN"]}
+        },
+        "required": ["check_id", "ordinal", "status"],
+        "type": "object"
+      },
+      "maxItems": 12,
+      "minItems": 12,
+      "type": "array"
+    },
+    "custody_access": {"const": false},
+    "date": {"const": "2026-08-22"},
+    "failure_code": {"type": ["string", "null"]},
+    "image_index_digest": {"const": "sha256:607442e407b0fea97f8a132a78b787c121a996dd4de181fa08e8da06e71ec2db"},
+    "image_platform_digest": {"const": "sha256:df2607b26bdda2875de4832f4d08da0055b4b6e3570347f3a849bcc652771dd6"},
+    "inference_executed": {"const": false},
+    "network_access": {"const": false},
+    "protected_seed_access": {"const": false},
+    "recommended_tag": {"const": "m4-wsl2-preexecution-testbed-v1.3"},
+    "regime": {"const": "B"},
+    "schema_version": {"const": "m4-wsl2-audit-readiness-report-v1"},
+    "scientific_evidence": {"const": false},
+    "status": {"enum": ["PASS", "BLOCKED"]},
+    "synthetic_only": {"const": true}
+  },
+  "required": ["authoritative_scoring","base_commit_sha1","base_tag","base_tag_object_sha1","checks","custody_access","date","failure_code","image_index_digest","image_platform_digest","inference_executed","network_access","protected_seed_access","recommended_tag","regime","schema_version","scientific_evidence","status","synthetic_only"],
+  "type": "object"
+}

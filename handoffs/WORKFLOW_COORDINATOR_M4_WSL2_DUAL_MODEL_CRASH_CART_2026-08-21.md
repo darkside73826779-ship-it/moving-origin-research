@@ -4,8 +4,11 @@
 
 **Regime:** B
 
-**Base authority:** `coordinator/m4-wsl2-preexecution-testbed` at
-`0631a019a153ec89312938982c007cf94dd3f03e`
+**Historical immutable base:** annotated tag
+`m4-wsl2-preexecution-testbed-v1.1` (tag object
+`1e6fec5cb21f3c86670107d06bc637c7bd478e01`, peeled commit
+`0631a019a153ec89312938982c007cf94dd3f03e`). The historical
+`coordinator/m4-wsl2-preexecution-testbed` branch name is provenance only.
 
 ## Scope and status
 
