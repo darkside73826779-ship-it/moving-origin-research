@@ -61,6 +61,7 @@ tests/test_m4_final_prescoring_crash_cart.py.sha256 text eol=lf
 tests/run_m4_final_prescoring_crash_cart_tests.py.sha256 text eol=lf
 handoffs/TASK_BUILDER_M4_FINAL_PRESCORING_CRASH_CART_BETA_QUALITY_TRACE_2026-08-22.md text eol=lf
 handoffs/TASK_BUILDER_TO_WORKFLOW_COORDINATOR_M4_FINAL_PRESCORING_CRASH_CART_BETA_IMPLEMENTATION_2026-08-22.md text eol=lf
+handoffs/manifests/m4_final_prescoring_crash_cart_beta_implementation/*.json text eol=lf
 specs/m4_final_prescoring_full_stack_crash_cart_gate_v1.md text eol=lf
 specs/data/m4_final_prescoring_full_stack_crash_cart_*.json text eol=lf
 specs/data/m4_final_prescoring_full_stack_crash_cart_*.json.sha256 text eol=lf
