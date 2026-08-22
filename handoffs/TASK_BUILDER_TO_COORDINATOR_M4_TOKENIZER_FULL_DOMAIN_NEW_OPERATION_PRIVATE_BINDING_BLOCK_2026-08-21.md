@@ -1,8 +1,8 @@
 # TASK BUILDER → WORKFLOW COORDINATOR — M4 Full-domain New Operation Private-binding BLOCK
 
-**Date:** 2026-08-21 EDT  
-**Regime:** B  
-**Terminal state:** **BLOCK**  
+**Date:** 2026-08-21 EDT
+**Regime:** B
+**Terminal state:** **BLOCK**
 **Classification:** `PRIVATE_BINDING_NOT_RETAINED`
 
 ## Immutable intake
@@ -39,4 +39,3 @@ No private value or path, custody record, model/tokenizer byte, complete token a
 ## Required next route
 
 WORKFLOW COORDINATOR must restore the exact private process-local binding through the authorized private coordination channel and issue any subsequent exact release. TASK BUILDER must not search for, infer, substitute, or retry the binding or operation absent that authority.
-
