@@ -1,0 +1,72 @@
+{
+  "schema_version": "common-handoff-manifest-v1",
+  "date": "2026-08-22",
+  "regime": "B",
+  "transfer_kind": "FORMAL_HANDOFF",
+  "work_item": "m4_public_model_observation_backend_bf1_bf5_remediation",
+  "gate": "Persistent-CRITIC BF1-BF5 design rereview",
+  "sender_role": "ARCHITECT",
+  "receiver_role": "WORKFLOW_COORDINATOR",
+  "authority_basis": [
+    {"path": "reviews/critic_m4_public_model_observation_backend_design_review.md", "sha": "55bf6de1ba31c295e5664170eae78dbd457a57a8"}
+  ],
+  "remote_ref": "refs/heads/architect/m4-public-model-observation-backend-design-bf1-bf5-remediation",
+  "base_sha": "55bf6de1ba31c295e5664170eae78dbd457a57a8",
+  "routing_ref_sha": "fc22c10dfe309031705eb81e0dd358c1e6c5c053",
+  "review_result_sha": "171677b92597125d05004bbecc51a017687967d0",
+  "work_branch": "architect/m4-public-model-observation-backend-design-bf1-bf5-remediation",
+  "artifacts": {
+    ".gitattributes": "9f4ba64562a4982df2408ed00f953020840ec5bce49e8474fca79fda76dfb608",
+    "handoffs/ARCHITECT_TO_COORDINATOR_M4_PUBLIC_MODEL_OBSERVATION_BACKEND_BF1_BF5_REMEDIATION_2026-08-22.md": "80999131b784c533a1293c7da323ae9e1c7cf20720b598a821a89297e4ae7dfb",
+    "reviews/critic_m4_public_model_observation_backend_design_review.md": "549cd3c2fb933fb89510d31f9b40fa9bbb838ccf4e7b663c8718511a52a6472a",
+    "specs/data/m4_public_model_observation_backend_contract_v1.json": "fd21a9e8fd9623837fc9e07e6704002ee365214fa2d7baf2b2e3b66d2cd7d704",
+    "specs/data/m4_public_model_observation_backend_contract_v1.json.sha256": "c4fcd8512106229a828f47c2f31dd9f2068191087a4157c9b5c3155f18b86aae",
+    "specs/data/m4_public_model_observation_backend_test_contract_v1.json": "9944fcecb8976cc36943c7aa8cb4223a5430ac98332d1869a86020a332f1a71c",
+    "specs/data/m4_public_model_observation_backend_test_contract_v1.json.sha256": "0ec8926c253473728a20d023cdd04f464f819fb7c1a33e8fdc63359a2ce4feac",
+    "specs/data/m4_public_model_observation_launch_contract_v1.json": "cd5da48a3f505c1a34f58edad8c5271a89d967d578b5f65453ff3533c5bf599c",
+    "specs/data/m4_public_model_observation_launch_contract_v1.json.sha256": "a115cc0f364b9743bcf750a86f055ee0c25153d363cb6abaa26f8a113f429c8e",
+    "specs/m4_public_model_observation_backend_design_v1.md": "977921c54bd27c9cb506782060c2741767d3b32e4ad78b8246898b5f0f68391c"
+  },
+  "checks_performed": [
+    "delta JSON, sidecars, LF attributes, and exact seam identities passed",
+    "eight-field held-law projection reproduced as 974 bytes and bb2d5f838c54c404dd73d0c697ba6f45cd983fb7e5a7bb97a36b38570267b81f",
+    "cleared dependency remote identities authenticated",
+    "OS network namespace positive and outbound-denial smokes passed without model access",
+    "standard isolated-checkout helper accepted review-result to routing-head handoff-only tail",
+    "workflow preflight manually classified with gitleaks zero",
+    "ancestry, diff, fsck, cleanliness, and remote equality checked"
+  ],
+  "status": "READY",
+  "findings": [],
+  "scan_attestation": {
+    "base_sha": "55bf6de1ba31c295e5664170eae78dbd457a57a8",
+    "tip_sha": "fc22c10dfe309031705eb81e0dd358c1e6c5c053",
+    "tool_status": "blocked",
+    "manual_review": true,
+    "findings": [
+      "11 personal-contact heuristic matches represent 3 unique substrings wholly inside required immutable public Git/SHA-256 identities; manually classified as reproducibility metadata",
+      "gitleaks 8.30.1 returned zero findings",
+      "no credential, personal contact, private path/value, prompt/output, token array, protected seed, score, or scientific output was found"
+    ]
+  },
+  "next_event": "WORKFLOW COORDINATOR validates and routes this exact delta once to persistent CRITIC for BF1-BF5 rereview",
+  "prohibited_actions": [
+    "implementation, model/tokenizer execution, custody or protected-seed access, scoring, qualification, readiness, or science",
+    "merge, publication of local observations, run authorization, or gate decision"
+  ],
+  "role_extension": {
+    "role": "ARCHITECT",
+    "changelog_paths": [
+      ".gitattributes",
+      "handoffs/ARCHITECT_TO_COORDINATOR_M4_PUBLIC_MODEL_OBSERVATION_BACKEND_BF1_BF5_REMEDIATION_2026-08-22.md",
+      "specs/data/m4_public_model_observation_backend_contract_v1.json",
+      "specs/data/m4_public_model_observation_backend_contract_v1.json.sha256",
+      "specs/data/m4_public_model_observation_backend_test_contract_v1.json",
+      "specs/data/m4_public_model_observation_backend_test_contract_v1.json.sha256",
+      "specs/data/m4_public_model_observation_launch_contract_v1.json",
+      "specs/data/m4_public_model_observation_launch_contract_v1.json.sha256",
+      "specs/m4_public_model_observation_backend_design_v1.md"
+    ],
+    "diff_self_inspection": true
+  }
+}
