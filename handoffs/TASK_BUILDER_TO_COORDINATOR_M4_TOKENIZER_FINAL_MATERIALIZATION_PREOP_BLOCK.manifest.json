@@ -1,0 +1,58 @@
+{
+  "schema_version": "common-handoff-manifest-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "transfer_kind": "FORMAL_HANDOFF",
+  "work_item": "m4_tokenizer_final_materialization_preop_block",
+  "gate": "Mandatory executable-package identity gate before the single bounded tokenizer materialization",
+  "sender_role": "TASK_BUILDER",
+  "receiver_role": "WORKFLOW_COORDINATOR",
+  "authority_basis": [{"path": "handoffs/REBECCA_M4_TOKENIZER_FINAL_MATERIALIZATION_RERELEASE_2026-08-21.md", "sha": "52b3ef2e85cb585f5dd81fc845bedfde00d42072"}],
+  "remote_ref": "refs/heads/taskbuilder/m4-tokenizer-final-materialization-execution",
+  "base_sha": "05a3e8a9abd398f1b8ce36838fcf533e46d50bd1",
+  "routing_ref_sha": "d265e47b5679819e96eff6363668297c904d1c18",
+  "review_result_sha": "472d4afeada549a939faaffa934083cdced9369c",
+  "work_branch": "taskbuilder/m4-tokenizer-final-materialization-execution",
+  "artifacts": {
+    ".gitattributes": "68c528ede67720007d4ec15d15f6d723136a24b9a4662c94ad9cdfbbc158601d",
+    "diagnostics/m4_tokenizer_materialization.py": "90e89b5a55ff80041a8e09c0d3e96208b6d8eff5c6b39eecd6366a1afb5289af",
+    "handoffs/REBECCA_M4_TOKENIZER_FINAL_MATERIALIZATION_RERELEASE_2026-08-21.md": "f785720f412ea411e4aa78a3767817744bcb9568f4cb37bcc4206e439da03348",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_FINAL_MATERIALIZATION_PREOP_BLOCK_2026-08-21.md": "927e02ea72ce0a4aa9dbf7db99f97e00ea3df351bb26cbbf677518343809ab1b",
+    "specs/data/m4_tokenizer_executable_package_v1.json": "57f448829b7a08fbb23bdb60ea29cee961352d4690806fe33abb335b0807bdc1",
+    "specs/data/m4_tokenizer_executable_package_v1.json.sha256": "975d58f3cde0c789c5a40adfe3a9d077f5f4fa9f5728a0ac253a3cd6dac20887",
+    "specs/data/m4_tokenizer_materialization_request_v1.json": "b39061fd4b19321d58dd418eb5ecd486c0cf26662d70a5d0de4185c6dd7e9992",
+    "specs/data/m4_tokenizer_materialization_request_v1.json.sha256": "9fa903fcb29bb74bd0fcd027c2e591668e6aebcb6a77a4c2c179c96c59d8f9ea",
+    "specs/data/m4_tokenizer_materialization_result_schema_v1.json": "34179d41e980aca413496f3de9fbbea7b642532b50eeacba423faebe5f4075ca",
+    "specs/data/m4_tokenizer_materialization_result_schema_v1.json.sha256": "ca2494f505342959d43b9a6442c103f898e58a54a45279ada3088003536651f3",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json": "c166a583a0612054cea826700d8e5e2c132c283e1617727170a8bd57167bb7a0",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json.sha256": "189405411c37f4333f2edd1339711bb316c0a26f3e7e54f01362ca7662277fd7",
+    "specs/data/m4_tokenizer_oci_launch_contract_v1.json": "0fdd5e8eed2fc3a7cc5e10512e6e01037d011f6cf51e862a2293d49255b32848",
+    "specs/data/m4_tokenizer_oci_launch_contract_v1.json.sha256": "2f274dbbacf64085bd3298aaaad6702ce2bfff700bd85d5c3773a29cb410448d",
+    "tests/__init__.py": "6f56eb2128751f0c5c1ab27ff461b38565aa00a3dcd29c04ab8bd56c34f4a961",
+    "tests/run_m4_tokenizer_materialization_tests.py": "29dc1c0d83e71c850e9eb3c423cfd359a6c557956d1eab1fa5d9beb049271d1d",
+    "tests/test_m4_tokenizer_materialization.py": "964ab5b8cb5ef63627c0ab07b3f0c4c867684d7add40576c3dd61494610e8613"
+  },
+  "checks_performed": [
+    "read the exact final re-release and created a fresh isolated checkout at its immutable head",
+    "verified clean worktree, exact release SHA, and git object integrity",
+    "compared every relevant executable-package identity to raw committed Git-blob bytes before any OCI launch",
+    "found two deterministic bytes-and-SHA-256 conflicts and stopped before the pre-import wrapper and materializer",
+    "proved an ordered zero-custody and zero-materializer access trace in the durable BLOCK artifact",
+    "ran preflight hotfix cee97538893989e055f49a894f066d2083da4eb5 against the exact BLOCK range with zero findings"
+  ],
+  "status": "BLOCKED",
+  "findings": [
+    {"classification": "materializer executable identity conflict", "severity": "blocking", "text": "manifest binds 12634 bytes / 42ffd11a... but the released raw Git blob is 21096 bytes / 90e89b5a..."},
+    {"classification": "selected-test executable identity conflict", "severity": "blocking", "text": "manifest binds 12302 bytes / 8a40cc59... but the released raw Git blob is 54972 bytes / 964ab5b8..."}
+  ],
+  "scan_attestation": {
+    "base_sha": "52b3ef2e85cb585f5dd81fc845bedfde00d42072",
+    "tip_sha": "d265e47b5679819e96eff6363668297c904d1c18",
+    "tool_status": "blocked",
+    "manual_review": true,
+    "findings": ["all 14 personal-contact findings are duplicate scan-domain matches wholly inside required immutable public commit values or declared public artifact digests and are non-secret reproducibility metadata", "gitleaks 8.30.1 returned zero findings", "manual review found no credentials, personal contact data, private paths, custody values, model/tokenizer bytes, protected seeds, scientific output, or prohibited durable-state mutation"]
+  },
+  "next_event": "WORKFLOW COORDINATOR acknowledges the durable BLOCK and routes executable-package identity remediation; the single operation remains unconsumed",
+  "prohibited_actions": ["test-container or materializer launch against conflicting package metadata", "custody lookup, OCI materialization, retry, fallback, or alternate runtime", "model/tokenizer access, inference, qualification, scoring, seeds, science, STATE/provenance mutation, publication, merge, rerun, or gate decision"],
+  "role_extension": {"role": "TASK_BUILDER", "tests": [], "diagnostics_executed": false}
+}
