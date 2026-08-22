@@ -2,7 +2,10 @@ import copy
 import hashlib
 import importlib.util
 import json
+import os
+import stat
 import tempfile
+import types
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -20,6 +23,67 @@ WRAPPER_SPEC.loader.exec_module(WRAPPER)
 
 
 class TokenizerMaterializationTests(unittest.TestCase):
+    def _read_result(self, output):
+        result = json.loads(output.read_text())
+        MATERIALIZER.validate(ROOT / "specs/data/m4_tokenizer_materialization_result_schema_v1.json", result)
+        return result
+
+    def _synthetic_materialize(self, tokenizer=None):
+        request = MATERIALIZER.load(ROOT / "specs/data/m4_tokenizer_materialization_request_v1.json")
+        identity = request["selected_identity"]
+        record = {key: identity[key] for key in ("repository_id", "revision", "quantization", "weight", "tokenizer", "tokenizer_config")}
+        record.update(immutable=True, status="PASS")
+
+        class FakeTokenizer:
+            chat_template = "synthetic-template"
+            eos_token_id = 151645
+            vocab_size = 200000
+            def __init__(self): self.rendered = {}
+            def apply_chat_template(self, *args, **kwargs): return [1, 10, 11, 2]
+            def encode(self, value, add_special_tokens=False):
+                if value == " x": return [12]
+                if value == "Return one JSON object whose answer field is the string A.": return [10, 11]
+                return self.rendered[value]
+            def decode(self, values, **kwargs):
+                key = "synthetic-" + str(len(self.rendered))
+                self.rendered[key] = list(values)
+                return key
+            def convert_tokens_to_ids(self, value): return 151645
+
+        fake = tokenizer or FakeTokenizer()
+        module = types.SimpleNamespace(
+            AutoTokenizer=types.SimpleNamespace(from_pretrained=lambda *args, **kwargs: fake)
+        )
+        published = []
+        def capture_publish(output, result, schema):
+            MATERIALIZER.validate(schema, result)
+            published.append(result)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / ".mor-custody-record-v1.json").write_bytes(MATERIALIZER.canonical(record) + b"\n")
+            weight = root / identity["weight"]["name"]
+            weight.write_bytes(b"")
+            (root / identity["tokenizer"]["name"]).write_bytes(b"synthetic-tokenizer")
+            (root / identity["tokenizer_config"]["name"]).write_bytes(b'{"chat_template":"synthetic-template"}')
+            output = root / "tokenizer_materialization.json"
+            real_lstat = MATERIALIZER.os.lstat
+            def selected_lstat(path, *args, **kwargs):
+                if Path(path) == weight:
+                    return types.SimpleNamespace(st_mode=stat.S_IFREG | stat.S_IRUSR, st_size=identity["weight"]["bytes"])
+                return real_lstat(path, *args, **kwargs)
+            with mock.patch.object(MATERIALIZER.sys, "orig_argv", ["python3"]), \
+                 mock.patch.dict(os.environ, {MATERIALIZER.ENV: str(root)}, clear=True), \
+                 mock.patch.dict(MATERIALIZER.sys.modules, {"transformers": module}), \
+                 mock.patch.object(MATERIALIZER.os, "lstat", side_effect=selected_lstat), \
+                 mock.patch.object(MATERIALIZER, "file_bytes", side_effect=lambda path, metadata: Path(path).read_bytes()), \
+                 mock.patch.object(MATERIALIZER, "publish", side_effect=capture_publish):
+                code = MATERIALIZER.materialize(
+                    str(ROOT / "specs/data/m4_tokenizer_materialization_request_v1.json"),
+                    MATERIALIZER.HANDLE,
+                    str(output),
+                )
+            self.assertTrue(published, f"materialize returned {code} without a governed result")
+            return code, published[-1]
     def _runtime_negative(self, ordinal):
         cases = json.loads((ROOT / "specs/data/m4_tokenizer_runtime_validation_negative_cases_v1.json").read_text())["cases"]
         expected_rows = json.loads((ROOT / "specs/data/m4_tokenizer_runtime_validation_negative_expected_v1.json").read_text())["rows"]
@@ -171,6 +235,152 @@ class TokenizerMaterializationTests(unittest.TestCase):
                     MATERIALIZER.publish(output, result, schema)
             self.assertEqual(output.read_bytes(), previous_json)
             self.assertEqual(Path(str(output) + ".sha256").read_bytes(), previous_sidecar)
+            self.assertTrue(Path(str(output) + ".incomplete").exists())
+            self.assertTrue(Path(str(output) + ".sha256.incomplete").exists())
+
+    def test_atomic_interruption_without_previous_pair_leaves_no_orphan(self):
+        result = json.loads((ROOT / "specs/data/m4_tokenizer_materialization_synthetic_pass_v1.json").read_text())
+        schema = ROOT / "specs/data/m4_tokenizer_materialization_result_schema_v1.json"
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "tokenizer_materialization.json"
+            real_replace = MATERIALIZER.os.replace
+            calls = 0
+            def interrupted(source, destination):
+                nonlocal calls
+                calls += 1
+                if calls == 2:
+                    raise OSError("synthetic interruption")
+                return real_replace(source, destination)
+            with mock.patch.object(MATERIALIZER.os, "replace", side_effect=interrupted):
+                with self.assertRaisesRegex(ValueError, "ATOMIC_PUBLICATION_FAILURE"):
+                    MATERIALIZER.publish(output, result, schema)
+            self.assertFalse(output.exists())
+            self.assertFalse(Path(str(output) + ".sha256").exists())
+            self.assertTrue(Path(str(output) + ".incomplete").exists())
+            self.assertTrue(Path(str(output) + ".sha256.incomplete").exists())
+
+    def test_materialize_publishes_governed_blocked_results(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "tokenizer_materialization.json"
+            with mock.patch.object(MATERIALIZER.sys, "orig_argv", ["not-python3"]):
+                code = MATERIALIZER.materialize(
+                    str(ROOT / "specs/data/m4_tokenizer_materialization_request_v1.json"),
+                    MATERIALIZER.HANDLE,
+                    str(output),
+                )
+            self.assertEqual(code, 2)
+            result = self._read_result(output)
+            self.assertEqual((result["status"], result["failure_code"]), ("BLOCKED", "AUTHORITY_MISSING"))
+            self.assertEqual(result["checks"], [{"check_id": "AUTHORITY", "ordinal": 0, "status": "FAIL"}])
+
+            output.unlink(); Path(str(output) + ".sha256").unlink()
+            with mock.patch.object(MATERIALIZER.sys, "orig_argv", ["python3"]), mock.patch.dict(os.environ, {}, clear=True):
+                code = MATERIALIZER.materialize(
+                    str(ROOT / "specs/data/m4_tokenizer_materialization_request_v1.json"),
+                    MATERIALIZER.HANDLE,
+                    str(output),
+                )
+            self.assertEqual(code, 2)
+            result = self._read_result(output)
+            self.assertEqual((result["status"], result["failure_code"]), ("BLOCKED", "CUSTODY_HANDLE_UNRESOLVED"))
+            self.assertEqual([row["status"] for row in result["checks"]], ["PASS", "FAIL"])
+
+    def test_constructor_digest_is_checked_before_environment_lookup(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "tokenizer_materialization.json"
+            real_sha = MATERIALIZER.sha
+            constructor_bytes = (ROOT / "specs/data/m4_context_format_probe_contract_v1.json").read_bytes()
+            def changed_constructor(data):
+                return "0" * 64 if data == constructor_bytes else real_sha(data)
+            with mock.patch.object(MATERIALIZER.sys, "orig_argv", ["python3"]), \
+                 mock.patch.object(MATERIALIZER, "sha", side_effect=changed_constructor), \
+                 mock.patch.dict(os.environ, {}, clear=True):
+                code = MATERIALIZER.materialize(
+                    str(ROOT / "specs/data/m4_tokenizer_materialization_request_v1.json"),
+                    MATERIALIZER.HANDLE,
+                    str(output),
+                )
+            self.assertEqual(code, 2)
+            self.assertEqual(self._read_result(output)["failure_code"], "CONSTRUCTOR_IDENTITY_MISMATCH")
+
+    def test_failure_projection_covers_every_governed_code(self):
+        request = MATERIALIZER.load(ROOT / "specs/data/m4_tokenizer_materialization_request_v1.json")
+        cases = [
+            ("AUTHORITY", "AUTHORITY_MISSING", True),
+            ("CUSTODY_HANDLE", "CUSTODY_HANDLE_UNRESOLVED", True),
+            ("CUSTODY_ATTESTATION", "CUSTODY_ATTESTATION_INVALID", False),
+            ("CUSTODY_ATTESTATION", "CHECKPOINT_IDENTITY_MISMATCH", False),
+            ("TOKENIZER_ORIGINAL", "TOKENIZER_IDENTITY_MISMATCH", False),
+            ("TOKENIZER_ORIGINAL", "TOKENIZER_CONFIG_IDENTITY_MISMATCH", False),
+            ("INSERTION_UNIQUENESS", "CONSTRUCTOR_INVARIANT_FAILURE", False),
+            ("ENCODE_DECODE_1024", "ENCODE_DECODE_IDENTITY_FAILURE", False),
+            ("STOP_ARRAY", "STOP_ARRAY_MISMATCH", False),
+            ("PUBLIC_SAFETY", "SERIALIZATION_MISMATCH", False),
+            ("PUBLIC_SAFETY", "LOCAL_ONLY_CUSTODY_VIOLATION", False),
+            ("PUBLIC_SAFETY", "INTERNAL_ERROR", False),
+        ]
+        schema = ROOT / "specs/data/m4_tokenizer_materialization_result_schema_v1.json"
+        for check, code, blocked in cases:
+            with self.subTest(code=code):
+                result = MATERIALIZER.failure_result(request, check, code, blocked)
+                MATERIALIZER.validate(schema, result)
+                self.assertEqual(result["failure_code"], code)
+                self.assertEqual(result["checks"][-1]["status"], "FAIL")
+                self.assertNotIn("NOT_RUN", [row["status"] for row in result["checks"]])
+
+    def test_weight_identity_uses_one_lstat_observation(self):
+        request = MATERIALIZER.load(ROOT / "specs/data/m4_tokenizer_materialization_request_v1.json")
+        identity = request["selected_identity"]
+        record = {key: identity[key] for key in ("repository_id", "revision", "quantization", "weight", "tokenizer", "tokenizer_config")}
+        record.update(immutable=True, status="PASS")
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / ".mor-custody-record-v1.json").write_bytes(MATERIALIZER.canonical(record) + b"\n")
+            weight = root / identity["weight"]["name"]
+            weight.write_bytes(b"")
+            output = root / "result.json"
+            fake_stat = types.SimpleNamespace(st_mode=stat.S_IFREG | stat.S_IRUSR, st_size=identity["weight"]["bytes"])
+            with mock.patch.object(MATERIALIZER.sys, "orig_argv", ["python3"]), \
+                 mock.patch.dict(os.environ, {MATERIALIZER.ENV: str(root)}, clear=True), \
+                 mock.patch.object(MATERIALIZER.os, "lstat", return_value=fake_stat) as observed:
+                code = MATERIALIZER.materialize(
+                    str(ROOT / "specs/data/m4_tokenizer_materialization_request_v1.json"),
+                    MATERIALIZER.HANDLE,
+                    str(output),
+                )
+            self.assertEqual(code, 3)
+            self.assertEqual([call for call in observed.call_args_list if call.args == (weight,)], [mock.call(weight)])
+            self.assertEqual(self._read_result(output)["failure_code"], "TOKENIZER_IDENTITY_MISMATCH")
+
+    def test_materialize_synthetic_positive_reaches_pass(self):
+        code, result = self._synthetic_materialize()
+        self.assertEqual(code, 0)
+        self.assertEqual(result["status"], "PASS")
+        self.assertEqual(len(result["arrays"]), 3)
+        self.assertEqual(len(result["checks"]), len(MATERIALIZER.CHECKS))
+
+    def test_materialize_synthetic_constructor_and_stop_failures(self):
+        class NonUnique:
+            chat_template = "synthetic-template"; eos_token_id = 151645; vocab_size = 200000
+            def apply_chat_template(self, *args, **kwargs): return [10, 11, 10, 11]
+            def encode(self, value, add_special_tokens=False): return [12] if value == " x" else [10, 11]
+            def convert_tokens_to_ids(self, value): return 151645
+        code, result = self._synthetic_materialize(NonUnique())
+        self.assertEqual((code, result["failure_code"]), (3, "CONSTRUCTOR_INVARIANT_FAILURE"))
+
+        class BadStop:
+            chat_template = "synthetic-template"; eos_token_id = 151644; vocab_size = 200000
+            def __init__(self): self.rendered = {}
+            def apply_chat_template(self, *args, **kwargs): return [1, 10, 11, 2]
+            def encode(self, value, add_special_tokens=False):
+                if value == " x": return [12]
+                if value.startswith("Return one"): return [10, 11]
+                return self.rendered[value]
+            def decode(self, values, **kwargs):
+                key = "rendered" + str(len(self.rendered)); self.rendered[key] = list(values); return key
+            def convert_tokens_to_ids(self, value): return 151645
+        code, result = self._synthetic_materialize(BadStop())
+        self.assertEqual((code, result["failure_code"]), (3, "STOP_ARRAY_MISMATCH"))
 
     def test_constructor_contract_is_present_and_exact(self):
         constructor = ROOT / "specs/data/m4_context_format_probe_contract_v1.json"

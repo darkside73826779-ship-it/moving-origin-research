@@ -30,6 +30,14 @@ CHECKS = [
 ]
 
 
+class GovernedFailure(Exception):
+    def __init__(self, check: str, code: str, blocked: bool = False):
+        super().__init__(code)
+        self.check = check
+        self.code = code
+        self.blocked = blocked
+
+
 def canonical(value: object) -> bytes:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
 
@@ -123,6 +131,28 @@ def base_result(request: dict[str, object]) -> dict[str, object]:
     }
 
 
+def failure_result(request: dict[str, object], check: str, code: str, blocked: bool = False) -> dict[str, object]:
+    ordinal = CHECKS.index(check)
+    result = base_result(request)
+    result.update(
+        arrays=[],
+        checks=[
+            {"check_id": value, "ordinal": index, "status": "FAIL" if index == ordinal else "PASS"}
+            for index, value in enumerate(CHECKS[:ordinal + 1])
+        ],
+        failure_code=code,
+        status="BLOCKED" if blocked else "FAIL",
+        stop_array_length=0,
+        stop_array_sha256=None,
+    )
+    return result
+
+
+def require(condition: bool, check: str, code: str, blocked: bool = False) -> None:
+    if not condition:
+        raise GovernedFailure(check, code, blocked)
+
+
 def _keys(value: object):
     if isinstance(value, dict):
         for key, child in value.items():
@@ -158,44 +188,70 @@ def publish(output: str | Path, result: dict[str, object], schema: str | Path) -
         os.replace(incomplete_json, destination)
         os.replace(incomplete_sidecar, final_sidecar)
     except OSError as error:
+        # Recover the newly staged JSON so failure evidence remains incomplete-only.
+        if destination.exists() and not incomplete_json.exists():
+            os.replace(destination, incomplete_json)
         if previous is not None:
-            destination.write_bytes(previous[0])
-            final_sidecar.write_bytes(previous[1])
+            restore_json = Path(str(destination) + ".restore")
+            restore_sidecar = Path(str(destination) + ".sha256.restore")
+            restore_json.write_bytes(previous[0])
+            restore_sidecar.write_bytes(previous[1])
+            os.replace(restore_json, destination)
+            os.replace(restore_sidecar, final_sidecar)
         raise ValueError("ATOMIC_PUBLICATION_FAILURE") from error
 
 
 def materialize(contract_path: str, custody_handle: str, output_path: str) -> int:
+    repository = Path.cwd()
+    schema = repository / "specs/data/m4_tokenizer_materialization_result_schema_v1.json"
+    request: dict[str, object] | None = None
     try:
-        if Path(sys.orig_argv[0]).name != "python3" or custody_handle != HANDLE:
-            return 2
         request = load(contract_path, REQ_SHA)
-        if request["constructor"]["artifact_sha256"] != CONSTRUCTOR:
-            return 3
+        require(Path(sys.orig_argv[0]).name == "python3" and custody_handle == HANDLE,
+                "AUTHORITY", "AUTHORITY_MISSING", True)
+        constructor_path = repository / "specs/data/m4_context_format_probe_contract_v1.json"
+        require(request["constructor"]["artifact_sha256"] == CONSTRUCTOR
+                and sha(constructor_path.read_bytes()) == CONSTRUCTOR,
+                "AUTHORITY", "CONSTRUCTOR_IDENTITY_MISMATCH", True)
         raw_root = os.environ.get(ENV)
-        if not raw_root or any(character in raw_root for character in "\0\r\n"):
-            return 2
+        require(bool(raw_root) and not any(character in raw_root for character in "\0\r\n"),
+                "CUSTODY_HANDLE", "CUSTODY_HANDLE_UNRESOLVED", True)
         literal_root = Path(raw_root)
-        if literal_root.is_symlink():
-            return 2
-        root = literal_root.resolve(strict=True)
-        if not root.is_dir():
-            return 2
+        require(not literal_root.is_symlink(), "CUSTODY_HANDLE", "CUSTODY_HANDLE_UNRESOLVED", True)
+        try:
+            root = literal_root.resolve(strict=True)
+        except OSError as error:
+            raise GovernedFailure("CUSTODY_HANDLE", "CUSTODY_HANDLE_UNRESOLVED", True) from error
+        require(root.is_dir(), "CUSTODY_HANDLE", "CUSTODY_HANDLE_UNRESOLVED", True)
         record_path = root / ".mor-custody-record-v1.json"
-        if record_path.is_symlink() or not record_path.is_file():
-            return 2
-        record = load(record_path)
-        repository = Path.cwd()
-        validate(repository / "specs/data/m4_tokenizer_private_custody_record_schema_v1.json", record)
+        require(not record_path.is_symlink() and record_path.is_file(),
+                "CUSTODY_ATTESTATION", "CUSTODY_ATTESTATION_INVALID")
+        try:
+            record = load(record_path)
+            validate(repository / "specs/data/m4_tokenizer_private_custody_record_schema_v1.json", record)
+        except (OSError, ValueError, KeyError, json.JSONDecodeError) as error:
+            raise GovernedFailure("CUSTODY_ATTESTATION", "CUSTODY_ATTESTATION_INVALID") from error
         identity = request["selected_identity"]
-        if any(record[key] != identity[key] for key in ("repository_id", "revision", "quantization", "weight", "tokenizer", "tokenizer_config")):
-            return 3
+        require(not any(record[key] != identity[key] for key in
+                        ("repository_id", "revision", "quantization", "weight", "tokenizer", "tokenizer_config")),
+                "CUSTODY_ATTESTATION", "CHECKPOINT_IDENTITY_MISMATCH")
         weight_path = root / identity["weight"]["name"]
-        if weight_path.is_symlink() or not weight_path.is_file() or weight_path.stat().st_size != identity["weight"]["bytes"]:
-            return 3
+        try:
+            weight_lstat = os.lstat(weight_path)
+        except OSError as error:
+            raise GovernedFailure("TOKENIZER_ORIGINAL", "CHECKPOINT_IDENTITY_MISMATCH") from error
+        require(stat.S_ISREG(weight_lstat.st_mode) and weight_lstat.st_size == identity["weight"]["bytes"],
+                "TOKENIZER_ORIGINAL", "CHECKPOINT_IDENTITY_MISMATCH")
         tokenizer_path = root / identity["tokenizer"]["name"]
         config_path = root / identity["tokenizer_config"]["name"]
-        tokenizer_bytes = file_bytes(tokenizer_path, identity["tokenizer"])
-        config_bytes = file_bytes(config_path, identity["tokenizer_config"])
+        try:
+            tokenizer_bytes = file_bytes(tokenizer_path, identity["tokenizer"])
+        except (OSError, ValueError) as error:
+            raise GovernedFailure("TOKENIZER_ORIGINAL", "TOKENIZER_IDENTITY_MISMATCH") from error
+        try:
+            config_bytes = file_bytes(config_path, identity["tokenizer_config"])
+        except (OSError, ValueError) as error:
+            raise GovernedFailure("TOKENIZER_ORIGINAL", "TOKENIZER_CONFIG_IDENTITY_MISMATCH") from error
         with tempfile.TemporaryDirectory() as temporary_directory:
             temporary = Path(temporary_directory)
             tokenizer_copy = temporary / "tokenizer.json"
@@ -204,15 +260,18 @@ def materialize(contract_path: str, custody_handle: str, output_path: str) -> in
             shutil.copyfile(config_path, config_copy)
             tokenizer_copy.chmod(stat.S_IRUSR)
             config_copy.chmod(stat.S_IRUSR)
-            file_bytes(tokenizer_copy, identity["tokenizer"])
-            file_bytes(config_copy, identity["tokenizer_config"])
+            try:
+                file_bytes(tokenizer_copy, identity["tokenizer"])
+                file_bytes(config_copy, identity["tokenizer_config"])
+            except (OSError, ValueError) as error:
+                raise GovernedFailure("TOKENIZER_COPY", "TOKENIZER_IDENTITY_MISMATCH") from error
             from transformers import AutoTokenizer
             tokenizer = AutoTokenizer.from_pretrained(
                 str(temporary), local_files_only=True, trust_remote_code=False, use_fast=True
             )
             config = json.loads(config_bytes.decode("utf-8"), object_pairs_hook=unique)
-            if not isinstance(config.get("chat_template"), str) or tokenizer.chat_template != config["chat_template"]:
-                return 3
+            require(isinstance(config.get("chat_template"), str) and tokenizer.chat_template == config["chat_template"],
+                    "BASE_TEMPLATE", "TOKENIZER_CONFIG_IDENTITY_MISMATCH")
             user_text = "Return one JSON object whose answer field is the string A."
             messages = [{"role": "user", "content": user_text}]
             base = tokenizer.apply_chat_template(
@@ -222,20 +281,21 @@ def materialize(contract_path: str, custody_handle: str, output_path: str) -> in
             neutral = tokenizer.encode(" x", add_special_tokens=False)
             user = tokenizer.encode(user_text, add_special_tokens=False)
             occurrences = [index for index in range(len(base) - len(user) + 1) if base[index:index + len(user)] == user]
-            if len(neutral) != 1 or len(occurrences) != 1:
-                return 3
+            require(len(occurrences) == 1, "INSERTION_UNIQUENESS", "CONSTRUCTOR_INVARIANT_FAILURE")
+            require(len(neutral) == 1, "NEUTRAL_FRAGMENT", "CONSTRUCTOR_INVARIANT_FAILURE")
             insertion = occurrences[0]
             rows = []
             for target in request["targets"]:
                 prompt_length = target["prompt_length"]
-                if prompt_length < len(base):
-                    return 3
+                check = CHECKS[9 + target["ordinal"]]
+                require(prompt_length >= len(base), check, "CONSTRUCTOR_INVARIANT_FAILURE")
                 values = base[:insertion] + [neutral[0]] * (prompt_length - len(base)) + base[insertion:]
-                if len(values) != prompt_length or any(type(item) is not int or item < 0 or item >= tokenizer.vocab_size for item in values):
-                    return 3
+                require(len(values) == prompt_length and not any(
+                    type(item) is not int or item < 0 or item >= tokenizer.vocab_size for item in values
+                ), check, "CONSTRUCTOR_INVARIANT_FAILURE")
                 rendered = tokenizer.decode(values, skip_special_tokens=False, clean_up_tokenization_spaces=False)
-                if tokenizer.encode(rendered, add_special_tokens=False) != values:
-                    return 3
+                require(tokenizer.encode(rendered, add_special_tokens=False) == values,
+                        CHECKS[12 + target["ordinal"]], "ENCODE_DECODE_IDENTITY_FAILURE")
                 rows.append({
                     "array_id": target["array_id"], "decode_reencode_equal": True,
                     "ordinal": target["ordinal"], "prompt_length": prompt_length,
@@ -243,12 +303,15 @@ def materialize(contract_path: str, custody_handle: str, output_path: str) -> in
                 })
             im_end = tokenizer.convert_tokens_to_ids("<|im_end|>")
             stops = list(dict.fromkeys([tokenizer.eos_token_id, im_end]))
-            if stops != [151645] or sha(canonical(stops)) != STOP:
-                return 3
-            if tokenizer_path.read_bytes() != tokenizer_bytes or config_path.read_bytes() != config_bytes:
-                return 3
-            file_bytes(tokenizer_copy, identity["tokenizer"])
-            file_bytes(config_copy, identity["tokenizer_config"])
+            require(stops == [151645] and sha(canonical(stops)) == STOP,
+                    "STOP_ARRAY", "STOP_ARRAY_MISMATCH")
+            require(tokenizer_path.read_bytes() == tokenizer_bytes and config_path.read_bytes() == config_bytes,
+                    "PUBLIC_SAFETY", "TOKENIZER_IDENTITY_MISMATCH")
+            try:
+                file_bytes(tokenizer_copy, identity["tokenizer"])
+                file_bytes(config_copy, identity["tokenizer_config"])
+            except (OSError, ValueError) as error:
+                raise GovernedFailure("PUBLIC_SAFETY", "TOKENIZER_IDENTITY_MISMATCH") from error
         result = base_result(request)
         result.update(
             arrays=rows,
@@ -256,11 +319,34 @@ def materialize(contract_path: str, custody_handle: str, output_path: str) -> in
             stop_array_length=1,
             stop_array_sha256=STOP,
         )
-        publish(output_path, result, repository / "specs/data/m4_tokenizer_materialization_result_schema_v1.json")
+        try:
+            publish(output_path, result, schema)
+        except ValueError as error:
+            if str(error) == "ATOMIC_PUBLICATION_FAILURE":
+                return 3
+            raise
         return 0
+    except GovernedFailure as failure:
+        if request is None:
+            return 2 if failure.blocked else 3
+        try:
+            publish(output_path, failure_result(request, failure.check, failure.code, failure.blocked), schema)
+        except (OSError, ValueError, KeyError, json.JSONDecodeError):
+            return 3
+        return 2 if failure.blocked else 3
     except (OSError, ValueError, KeyError, json.JSONDecodeError):
+        if request is not None:
+            try:
+                publish(output_path, failure_result(request, "PUBLIC_SAFETY", "INTERNAL_ERROR"), schema)
+            except Exception:
+                pass
         return 3
     except Exception:
+        if request is not None:
+            try:
+                publish(output_path, failure_result(request, "PUBLIC_SAFETY", "INTERNAL_ERROR"), schema)
+            except Exception:
+                pass
         return 4
 
 
