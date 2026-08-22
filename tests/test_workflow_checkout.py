@@ -1,6 +1,7 @@
 """Focused integration tests for immutable workflow checkout creation."""
 
 import argparse
+import hashlib
 import importlib.util
 import json
 import subprocess
@@ -43,6 +44,8 @@ class WorkflowCheckoutTests(unittest.TestCase):
         run("git", "remote", "add", "origin", str(self.remote), cwd=self.seed)
         run("git", "push", "-q", "origin", "refs/heads/intake", cwd=self.seed)
         run("git", "clone", "-q", str(self.remote), str(self.clone))
+        run("git", "config", "user.email", "tests@moving-origin-research.local", cwd=self.clone)
+        run("git", "config", "user.name", "MOR Tests", cwd=self.clone)
         self.workspace.mkdir()
         (self.workspace / ".mor-workspace-root").write_bytes(CHECKOUT.MARKER)
 
@@ -60,12 +63,82 @@ class WorkflowCheckoutTests(unittest.TestCase):
         receipt = CHECKOUT.create(self.args())
         self.assertTrue(receipt.is_file())
         document = json.loads(receipt.read_text(encoding="utf-8"))
+        self.assertEqual("origin", document["remote"])
         worktree = Path(document["worktree_path"])
         self.assertEqual(self.routing, run("git", "rev-parse", "HEAD", cwd=worktree))
         self.assertEqual("critic/review", run("git", "branch", "--show-current", cwd=worktree))
         CHECKOUT.cleanup(argparse.Namespace(receipt=str(receipt.resolve())))
         self.assertFalse(receipt.exists())
         self.assertFalse(worktree.exists())
+
+    def _created(self):
+        receipt = CHECKOUT.create(self.args())
+        document = json.loads(receipt.read_text(encoding="utf-8"))
+        return receipt, document, Path(document["worktree_path"])
+
+    def _discard(self, receipt: Path, worktree: Path):
+        run("git", "worktree", "remove", "--force", str(worktree), cwd=self.clone)
+        if receipt.exists():
+            receipt.unlink()
+
+    def _advance_and_publish(self, worktree: Path):
+        (worktree / "review.txt").write_text("reviewed\n", encoding="utf-8")
+        run("git", "add", "review.txt", cwd=worktree)
+        run("git", "commit", "-qm", "review result", cwd=worktree)
+        head = run("git", "rev-parse", "HEAD", cwd=worktree)
+        run("git", "push", "-qu", "origin", "HEAD:refs/heads/critic/review", cwd=worktree)
+        return head
+
+    def test_cleanup_accepts_exact_published_fast_forward(self):
+        receipt, _, worktree = self._created()
+        self._advance_and_publish(worktree)
+        CHECKOUT.cleanup(argparse.Namespace(receipt=str(receipt.resolve())))
+        self.assertFalse(receipt.exists())
+        self.assertFalse(worktree.exists())
+
+    def test_cleanup_accepts_legacy_receipt_with_unique_exact_remote(self):
+        receipt, document, worktree = self._created()
+        document.pop("remote")
+        payload = dict(document)
+        payload.pop("receipt_sha256")
+        document["receipt_sha256"] = hashlib.sha256(CHECKOUT._canonical(payload)).hexdigest()
+        receipt.write_bytes(CHECKOUT._canonical(document) + b"\n")
+        self._advance_and_publish(worktree)
+        CHECKOUT.cleanup(argparse.Namespace(receipt=str(receipt.resolve())))
+        self.assertFalse(worktree.exists())
+
+    def test_cleanup_rejects_unpublished_fast_forward(self):
+        receipt, _, worktree = self._created()
+        (worktree / "review.txt").write_text("local only\n", encoding="utf-8")
+        run("git", "add", "review.txt", cwd=worktree)
+        run("git", "commit", "-qm", "local only", cwd=worktree)
+        with self.assertRaises(CHECKOUT.Stop):
+            CHECKOUT.cleanup(argparse.Namespace(receipt=str(receipt.resolve())))
+        self._discard(receipt, worktree)
+
+    def test_cleanup_rejects_published_diverged_tip(self):
+        receipt, _, worktree = self._created()
+        tree = run("git", "rev-parse", "HEAD^{tree}", cwd=worktree)
+        unrelated = run("git", "commit-tree", tree, "-m", "unrelated", cwd=worktree)
+        run("git", "reset", "--hard", "-q", unrelated, cwd=worktree)
+        run("git", "push", "-q", "origin", "+HEAD:refs/heads/critic/review", cwd=worktree)
+        with self.assertRaises(CHECKOUT.Stop):
+            CHECKOUT.cleanup(argparse.Namespace(receipt=str(receipt.resolve())))
+        self._discard(receipt, worktree)
+
+    def test_cleanup_rejects_branch_identity_change(self):
+        receipt, _, worktree = self._created()
+        run("git", "branch", "-m", "critic/renamed", cwd=worktree)
+        with self.assertRaises(CHECKOUT.Stop):
+            CHECKOUT.cleanup(argparse.Namespace(receipt=str(receipt.resolve())))
+        self._discard(receipt, worktree)
+
+    def test_cleanup_rejects_dirty_worktree(self):
+        receipt, _, worktree = self._created()
+        (worktree / "untracked.txt").write_text("dirty\n", encoding="utf-8")
+        with self.assertRaises(CHECKOUT.Stop):
+            CHECKOUT.cleanup(argparse.Namespace(receipt=str(receipt.resolve())))
+        self._discard(receipt, worktree)
 
     def test_missing_marker_stops(self):
         (self.workspace / ".mor-workspace-root").unlink()

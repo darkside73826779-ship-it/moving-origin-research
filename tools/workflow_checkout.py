@@ -88,6 +88,7 @@ def _receipt_payload(args: argparse.Namespace, repo: Path, root: Path, worktree:
         "base_sha": args.base,
         "created_utc": created,
         "remote_ref": args.ref,
+        "remote": args.remote,
         "repo_path": str(repo),
         "review_result_sha": None if args.review_result == "none" else args.review_result,
         "routing_ref_sha": args.ref_head,
@@ -179,14 +180,47 @@ def _load_receipt(path: Path) -> dict[str, Any]:
         value = json.loads(raw)
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
         raise Stop(f"invalid receipt: {exc}") from exc
-    required = {"base_sha", "created_utc", "remote_ref", "repo_path", "review_result_sha", "routing_ref_sha", "work_branch", "workspace_root", "worktree_path", "receipt_sha256"}
-    if not isinstance(value, dict) or set(value) != required or raw != _canonical(value) + b"\n":
+    legacy = {"base_sha", "created_utc", "remote_ref", "repo_path", "review_result_sha", "routing_ref_sha", "work_branch", "workspace_root", "worktree_path", "receipt_sha256"}
+    current = legacy | {"remote"}
+    if not isinstance(value, dict) or set(value) not in (legacy, current) or raw != _canonical(value) + b"\n":
         raise Stop("receipt fields or canonical encoding are invalid")
     supplied = value.pop("receipt_sha256")
     if not isinstance(supplied, str) or supplied != hashlib.sha256(_canonical(value)).hexdigest():
         raise Stop("receipt digest mismatch")
     value["receipt_sha256"] = supplied
     return value
+
+
+def _exact_remote_ref(repo: Path, remote: str, ref: str, expected: str) -> bool:
+    result = _git(repo, "ls-remote", "--refs", remote, ref, check=False)
+    if result.returncode:
+        return False
+    rows = [row.split() for row in result.stdout.splitlines() if row.strip()]
+    return rows == [[expected, ref]]
+
+
+def _receipt_remote(repo: Path, value: dict[str, Any]) -> str:
+    stored = value.get("remote")
+    if stored is not None:
+        if not isinstance(stored, str) or not stored or not _exact_remote_ref(
+            repo, stored, value["remote_ref"], value["routing_ref_sha"]
+        ):
+            raise Stop("receipt remote no longer has the exact routing ref")
+        return stored
+    # Backward compatibility for receipts created before the remote field was
+    # added: accept only one configured remote that still exposes the exact
+    # immutable routing ref. Ambiguity remains fail-closed.
+    candidates = [
+        remote
+        for remote in _git(repo, "remote").stdout.splitlines()
+        if remote
+        and _exact_remote_ref(
+            repo, remote, value["remote_ref"], value["routing_ref_sha"]
+        )
+    ]
+    if len(candidates) != 1:
+        raise Stop("legacy receipt remote is missing or ambiguous")
+    return candidates[0]
 
 
 def cleanup(args: argparse.Namespace) -> None:
@@ -207,8 +241,17 @@ def cleanup(args: argparse.Namespace) -> None:
         raise Stop("receipt worktree is not exactly registered")
     if any(other != worktree and _is_strict_child(other, worktree) for other in registered):
         raise Stop("registered nested worktree exists")
-    if _git(worktree, "rev-parse", "HEAD").stdout.strip() != value["routing_ref_sha"]:
-        raise Stop("worktree HEAD no longer equals routing-ref SHA")
+    branch = _git(worktree, "symbolic-ref", "--quiet", "--short", "HEAD", check=False)
+    if branch.returncode or branch.stdout.strip() != value["work_branch"]:
+        raise Stop("worktree branch no longer equals receipt work branch")
+    head = _git(worktree, "rev-parse", "HEAD").stdout.strip()
+    if head != value["routing_ref_sha"]:
+        if not _is_ancestor(worktree, value["routing_ref_sha"], head):
+            raise Stop("worktree HEAD is not routing-ref SHA or its descendant")
+        remote = _receipt_remote(repo, value)
+        published_ref = f"refs/heads/{value['work_branch']}"
+        if not _exact_remote_ref(repo, remote, published_ref, head):
+            raise Stop("advanced worktree HEAD is not the exact published work-branch tip")
     review = value["review_result_sha"]
     if review is not None and review != value["routing_ref_sha"] and not _is_ancestor(worktree, review, value["routing_ref_sha"]):
         raise Stop("review-result ancestry check failed")
