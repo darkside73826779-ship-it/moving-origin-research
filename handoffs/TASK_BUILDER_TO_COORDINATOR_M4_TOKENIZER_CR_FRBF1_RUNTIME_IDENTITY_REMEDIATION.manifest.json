@@ -1,0 +1,80 @@
+{
+  "schema_version": "common-handoff-manifest-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "transfer_kind": "FORMAL_HANDOFF",
+  "work_item": "m4_tokenizer_cr_frbf1_runtime_identity_remediation",
+  "gate": "CR-FRBF1 pre-custody runtime identity remediation before persistent-CRITIC rereview",
+  "sender_role": "TASK_BUILDER",
+  "receiver_role": "WORKFLOW_COORDINATOR",
+  "authority_basis": [{
+    "path": "reviews/critic_m4_tokenizer_cr_rbf1_final_rereview.md",
+    "sha": "1f6107f416a2ad4ce13ed0fcc8e7f0ae8ca2e2be"
+  }],
+  "remote_ref": "refs/heads/taskbuilder/m4-tokenizer-cr-frbf1-runtime-identity-remediation",
+  "base_sha": "e7810f546b7985145c177e760cd2ca2b29b0b249",
+  "routing_ref_sha": "c4502b6d465c4ded9194e8b78e5a79716cdcf4a0",
+  "review_result_sha": "1f6107f416a2ad4ce13ed0fcc8e7f0ae8ca2e2be",
+  "work_branch": "taskbuilder/m4-tokenizer-cr-frbf1-runtime-identity-remediation",
+  "artifacts": {
+    ".gitattributes": "68c528ede67720007d4ec15d15f6d723136a24b9a4662c94ad9cdfbbc158601d",
+    "diagnostics/m4_tokenizer_materialization.py": "122e0be59d64b271bec086bda747ac64dd0c84045594f1b271d3545fd17c66e2",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_CR_FRBF1_RUNTIME_IDENTITY_REMEDIATION_2026-08-21.md": "0e027101928f867b8c5d90da35353ea1cdff17f2b9ee9932bc46b078fcd3b9c8",
+    "reviews/critic_m4_tokenizer_cr_rbf1_final_rereview.md": "11431a7422005c6adc8ced7fa32dd34ec0ebd15fd6e3d53b3fa4606c15582cc2",
+    "specs/data/m4_context_format_probe_contract_v1.json": "eab77b9f44a4e9378f5889f5aa368eabd87959a5ddafab9ca38685228f12feec",
+    "specs/data/m4_context_format_probe_contract_v1.json.sha256": "26a65895c5a82c99ebf91125dd5ef3b7f0075d28c2c20d746e01fd55e36ca85a",
+    "specs/data/m4_tokenizer_executable_package_v1.json": "57f448829b7a08fbb23bdb60ea29cee961352d4690806fe33abb335b0807bdc1",
+    "specs/data/m4_tokenizer_executable_package_v1.json.sha256": "975d58f3cde0c789c5a40adfe3a9d077f5f4fa9f5728a0ac253a3cd6dac20887",
+    "specs/data/m4_tokenizer_materialization_request_v1.json": "b39061fd4b19321d58dd418eb5ecd486c0cf26662d70a5d0de4185c6dd7e9992",
+    "specs/data/m4_tokenizer_materialization_request_v1.json.sha256": "9fa903fcb29bb74bd0fcd027c2e591668e6aebcb6a77a4c2c179c96c59d8f9ea",
+    "specs/data/m4_tokenizer_materialization_result_schema_v1.json": "34179d41e980aca413496f3de9fbbea7b642532b50eeacba423faebe5f4075ca",
+    "specs/data/m4_tokenizer_materialization_result_schema_v1.json.sha256": "ca2494f505342959d43b9a6442c103f898e58a54a45279ada3088003536651f3",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json": "c166a583a0612054cea826700d8e5e2c132c283e1617727170a8bd57167bb7a0",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json.sha256": "189405411c37f4333f2edd1339711bb316c0a26f3e7e54f01362ca7662277fd7",
+    "specs/data/m4_tokenizer_oci_launch_contract_v1.json": "0fdd5e8eed2fc3a7cc5e10512e6e01037d011f6cf51e862a2293d49255b32848",
+    "specs/data/m4_tokenizer_oci_launch_contract_v1.json.sha256": "2f274dbbacf64085bd3298aaaad6702ce2bfff700bd85d5c3773a29cb410448d",
+    "specs/data/m4_tokenizer_private_custody_record_schema_v1.json": "738db87ffd5dd654c69322818df0c63740a7cec8a6e12b08906e63212d7347d6",
+    "specs/data/m4_tokenizer_private_custody_record_schema_v1.json.sha256": "f0a530a39ee31cc4fb03f0c4addc5fc333307f39e638e669b3c422e2c2386cd8",
+    "specs/m4_local_tokenizer_materialization_spec_v1.md": "2f60b9ecb90628028465f17d31702fe17ce037ef60fd05ef15ae4e25512ad682",
+    "tests/__init__.py": "6f56eb2128751f0c5c1ab27ff461b38565aa00a3dcd29c04ab8bd56c34f4a961",
+    "tests/run_m4_tokenizer_materialization_tests.py": "29dc1c0d83e71c850e9eb3c423cfd359a6c557956d1eab1fa5d9beb049271d1d",
+    "tests/test_m4_tokenizer_materialization.py": "838ec2e7b62ececb9a7b39985ec500c6f94159561fef14edd561a91b98fcb9f3"
+  },
+  "checks_performed": [
+    "read the authoritative CRITIC BLOCK and created an exact isolated helper checkout",
+    "mapped every CR-FRBF1 branch to production code, separate materialize subcases, exact governed assertions, and ordered access traces in the return artifact",
+    "instrumented forbidden custody, private artifact, tokenizer/model, loader-import, and from_pretrained events to raise immediately",
+    "audited every RUNTIME_IDENTITY_MISMATCH occurrence in materialize and kept later loader execution exceptions distinct",
+    "confirmed all banked production rows remain covered and passing",
+    "created a fresh workflow-helper exact-result checkout and ran the exact pinned suite with 33 of 33 tests passing",
+    "ran workflow_preflight.py hotfix cee97538893989e055f49a894f066d2083da4eb5 against the exact target worktree and complete range",
+    "manually classified all 18 final scanner occurrences without suppression"
+  ],
+  "status": "READY",
+  "findings": [{
+    "classification": "CR-FRBF1 integrated remediation",
+    "severity": "non_blocking",
+    "text": "all seven runtime identity failure branches reject through materialize before every forbidden access event; pinned suite passes 33 of 33"
+  }],
+  "scan_attestation": {
+    "base_sha": "1f6107f416a2ad4ce13ed0fcc8e7f0ae8ca2e2be",
+    "tip_sha": "c4502b6d465c4ded9194e8b78e5a79716cdcf4a0",
+    "tool_status": "blocked",
+    "manual_review": true,
+    "findings": [
+      "the 15 personal-contact findings among F000001-F000018 are duplicate scan-domain matches wholly inside required immutable public commit values or declared public artifact digests and are non-secret reproducibility metadata",
+      "the three credential findings among F000001-F000018 are duplicate gitleaks generic-key matches on the declared public AutoTokenizer loader-file SHA-256 and are non-secret runtime identity metadata",
+      "manual review found no credential, personal contact data, private path, task identifier, custody value, model/tokenizer byte, protected seed, scientific output, or prohibited durable-state mutation"
+    ]
+  },
+  "next_event": "WORKFLOW COORDINATOR acknowledges this return and routes the exact package to authoritative persistent CRITIC for one rereview",
+  "prohibited_actions": [
+    "custody lookup, OCI materialization, retry, fallback, model/tokenizer access, inference, serving, or qualification",
+    "diagnostics, scoring, protected seeds, science, STATE/provenance mutation, merge, publication, or gate decision"
+  ],
+  "role_extension": {
+    "role": "TASK_BUILDER",
+    "tests": ["python3 -I tests/run_m4_tokenizer_materialization_tests.py — 33/33 PASS in exact pinned no-custody container"],
+    "diagnostics_executed": false
+  }
+}
