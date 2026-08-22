@@ -1,0 +1,78 @@
+{
+  "schema_version": "common-handoff-manifest-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "transfer_kind": "FORMAL_HANDOFF",
+  "work_item": "m4_tokenizer_cr_rbf1_residual_remediation",
+  "gate": "Integrated CR-RBF1 residual remediation before persistent-CRITIC rereview",
+  "sender_role": "TASK_BUILDER",
+  "receiver_role": "WORKFLOW_COORDINATOR",
+  "authority_basis": [{
+    "path": "reviews/critic_m4_tokenizer_critic_block_remediation_rereview.md",
+    "sha": "6d86c529d7f53d827a1b8a69c910292855fee0b3"
+  }],
+  "remote_ref": "refs/heads/taskbuilder/m4-tokenizer-cr-rbf1-residual-remediation",
+  "base_sha": "b30b20775b9c501766fc120b5d871124f8d88a18",
+  "routing_ref_sha": "c8d67451ba344acfa56aa44c9a490b56ea8e77c0",
+  "review_result_sha": "6d86c529d7f53d827a1b8a69c910292855fee0b3",
+  "work_branch": "taskbuilder/m4-tokenizer-cr-rbf1-residual-remediation",
+  "artifacts": {
+    ".gitattributes": "68c528ede67720007d4ec15d15f6d723136a24b9a4662c94ad9cdfbbc158601d",
+    "diagnostics/m4_tokenizer_materialization.py": "6b2429ecfb887df8b7e953b6d49c5d2f497a90032402d38b64437abaed7c48f1",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_CR_RBF1_RESIDUAL_REMEDIATION_2026-08-21.md": "41ba6fa2db3c7a468256fb3a4b196f7278e3534f270bb740973975336e98ff8b",
+    "reviews/critic_m4_tokenizer_critic_block_remediation_rereview.md": "8af1ae22ece59c7649e02d48c851a444cf4f034232706fb03fba1ae0dfa019ef",
+    "specs/data/m4_context_format_probe_contract_v1.json": "eab77b9f44a4e9378f5889f5aa368eabd87959a5ddafab9ca38685228f12feec",
+    "specs/data/m4_context_format_probe_contract_v1.json.sha256": "26a65895c5a82c99ebf91125dd5ef3b7f0075d28c2c20d746e01fd55e36ca85a",
+    "specs/data/m4_tokenizer_executable_package_v1.json": "57f448829b7a08fbb23bdb60ea29cee961352d4690806fe33abb335b0807bdc1",
+    "specs/data/m4_tokenizer_executable_package_v1.json.sha256": "975d58f3cde0c789c5a40adfe3a9d077f5f4fa9f5728a0ac253a3cd6dac20887",
+    "specs/data/m4_tokenizer_materialization_request_v1.json": "b39061fd4b19321d58dd418eb5ecd486c0cf26662d70a5d0de4185c6dd7e9992",
+    "specs/data/m4_tokenizer_materialization_request_v1.json.sha256": "9fa903fcb29bb74bd0fcd027c2e591668e6aebcb6a77a4c2c179c96c59d8f9ea",
+    "specs/data/m4_tokenizer_materialization_result_schema_v1.json": "34179d41e980aca413496f3de9fbbea7b642532b50eeacba423faebe5f4075ca",
+    "specs/data/m4_tokenizer_materialization_result_schema_v1.json.sha256": "ca2494f505342959d43b9a6442c103f898e58a54a45279ada3088003536651f3",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json": "c166a583a0612054cea826700d8e5e2c132c283e1617727170a8bd57167bb7a0",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json.sha256": "189405411c37f4333f2edd1339711bb316c0a26f3e7e54f01362ca7662277fd7",
+    "specs/data/m4_tokenizer_oci_launch_contract_v1.json": "0fdd5e8eed2fc3a7cc5e10512e6e01037d011f6cf51e862a2293d49255b32848",
+    "specs/data/m4_tokenizer_oci_launch_contract_v1.json.sha256": "2f274dbbacf64085bd3298aaaad6702ce2bfff700bd85d5c3773a29cb410448d",
+    "specs/data/m4_tokenizer_private_custody_record_schema_v1.json": "738db87ffd5dd654c69322818df0c63740a7cec8a6e12b08906e63212d7347d6",
+    "specs/data/m4_tokenizer_private_custody_record_schema_v1.json.sha256": "f0a530a39ee31cc4fb03f0c4addc5fc333307f39e638e669b3c422e2c2386cd8",
+    "specs/m4_local_tokenizer_materialization_spec_v1.md": "2f60b9ecb90628028465f17d31702fe17ce037ef60fd05ef15ae4e25512ad682",
+    "tests/__init__.py": "6f56eb2128751f0c5c1ab27ff461b38565aa00a3dcd29c04ab8bd56c34f4a961",
+    "tests/run_m4_tokenizer_materialization_tests.py": "29dc1c0d83e71c850e9eb3c423cfd359a6c557956d1eab1fa5d9beb049271d1d",
+    "tests/test_m4_tokenizer_materialization.py": "4fc041971618c4cf1c7140c4056ff64688604725409b2a38d453f20154c4affa"
+  },
+  "checks_performed": [
+    "read the authoritative CRITIC BLOCK at its exact immutable commit and created an isolated helper checkout",
+    "implemented CR-RBF1 as one integrated two-file correction without reopening banked findings",
+    "created a fresh workflow-helper exact-result checkout and verified it clean",
+    "ran the exact no-custody network-disabled pinned-container wrapper with 32 of 32 tests passing",
+    "ran workflow_preflight.py hotfix cee97538893989e055f49a894f066d2083da4eb5 against the exact target worktree and complete 6d86c52..c8d6745 range",
+    "manually classified all 18 scanner occurrences as immutable-SHA or declared-public-digest heuristics; gitleaks returned zero findings"
+  ],
+  "status": "READY",
+  "findings": [{
+    "classification": "CR-RBF1 integrated remediation",
+    "severity": "non_blocking",
+    "text": "the complete residual matrix is realized through materialize and the exact pinned-container suite passes 32 of 32"
+  }],
+  "scan_attestation": {
+    "base_sha": "6d86c529d7f53d827a1b8a69c910292855fee0b3",
+    "tip_sha": "c8d67451ba344acfa56aa44c9a490b56ea8e77c0",
+    "tool_status": "blocked",
+    "manual_review": true,
+    "findings": [
+      "F000001-F000018 are duplicate scan-domain occurrences wholly inside required immutable public commit values or declared public artifact SHA-256 values and are classified non-secret public reproducibility metadata",
+      "gitleaks 8.30.1 returned zero findings",
+      "manual review found no credentials, personal contact data, private paths, task identifiers, custody values, model/tokenizer bytes, protected seeds, scientific output, or prohibited durable-state mutation"
+    ]
+  },
+  "next_event": "WORKFLOW COORDINATOR acknowledges this return and routes the exact package to authoritative persistent CRITIC for one rereview",
+  "prohibited_actions": [
+    "custody lookup, OCI materialization, retry, fallback, model/tokenizer access, inference, serving, or qualification",
+    "diagnostics, scoring, protected seeds, science, STATE/provenance mutation, merge, publication, or gate decision"
+  ],
+  "role_extension": {
+    "role": "TASK_BUILDER",
+    "tests": ["python3 -I tests/run_m4_tokenizer_materialization_tests.py — 32/32 PASS in exact pinned no-custody container"],
+    "diagnostics_executed": false
+  }
+}
