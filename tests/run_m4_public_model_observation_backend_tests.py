@@ -19,6 +19,7 @@ IDENTITY_PATHS = (
     "specs/data/m4_public_model_observation_prompt_contract_v1.json",
     "specs/data/m4_public_model_local_observation_schema_v1.json",
     "specs/data/m4_public_model_observation_backend_implementation_v1.json",
+    "specs/data/m4_public_model_observation_backend_mutation_contract_v1.json",
     "src/m4_public_model_observation_backend.py",
     "tests/test_m4_public_model_observation_backend.py",
     "tests/run_m4_public_model_observation_backend_tests.py",
@@ -83,7 +84,7 @@ def main() -> int:
     suite = unittest.defaultTestLoader.loadTestsFromName(
         "tests.test_m4_public_model_observation_backend"
     )
-    if suite.countTestCases() != 17:
+    if suite.countTestCases() != 19:
         print("INSTRUMENT_FAILURE: TEST_DISCOVERY_COUNT_MISMATCH", file=sys.stderr)
         return 2
     result = unittest.TextTestRunner(verbosity=2).run(suite)

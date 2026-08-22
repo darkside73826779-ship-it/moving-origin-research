@@ -469,7 +469,8 @@ class PublicModelObservationBackend:
                 bytes(mutable[:19]) != PRIVATE_MAGIC):
             raise ObservationFailure("OBSERVATION_PRIVATE_VIEW_INVALID")
         count = struct.unpack(">I", mutable[19:23])[0]
-        if count != tokens.context_length or len(mutable) != 23 + 8 * count:
+        if (min(count, tokens.context_length) < 1 or count != tokens.context_length or
+                len(mutable) != 23 + 8 * count):
             raise ObservationFailure("OBSERVATION_PRIVATE_VIEW_INVALID")
         items = [struct.unpack(">q", mutable[23 + 8 * i:31 + 8 * i])[0] for i in range(count)]
         if any(item < 0 or item not in self._deps.valid_token_ids for item in items):
@@ -508,7 +509,8 @@ class PublicModelObservationBackend:
                 any(type(value[field]) is not int or value[field] < 0 for field in (
                     "request_ordinal", "prompt_ordinal", "input_token_count", "output_token_count",
                     "monotonic_start_ns", "monotonic_end_ns", "duration_ns")) or
-                value["prompt_ordinal"] > 2 or value["output_token_count"] > 12 or
+                value["input_token_count"] < 1 or value["prompt_ordinal"] > 2 or
+                value["output_token_count"] > 12 or
                 value["monotonic_end_ns"] < value["monotonic_start_ns"] or
                 value["duration_ns"] != value["monotonic_end_ns"] - value["monotonic_start_ns"] or
                 value["model_identity_sha256"] != MODEL_IDENTITY_SHA256 or

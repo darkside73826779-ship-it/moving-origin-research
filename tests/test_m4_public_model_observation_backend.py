@@ -27,6 +27,7 @@ from src.m4_public_model_observation_backend import (
     LAW_PROJECTION_SHA256,
     MODEL_IDENTITY,
     MODEL_IDENTITY_SHA256,
+    ObservationFailure,
     PROMPT_SHA256,
     PublicModelObservationBackend,
     PublicObservationFactory,
@@ -208,8 +209,8 @@ def reset_adapter(adapter, ordinal=1, episode="episode-public"):
     adapter.reset_episode(request("reset", episode_id=episode, reset_ordinal=ordinal))
 
 
-def step_request(ordinal=0, prompt_ordinal=0, episode="episode-public"):
-    return request("step", episode_id=episode, request_ordinal=ordinal, context_length=3,
+def step_request(ordinal=0, prompt_ordinal=0, episode="episode-public", context_length=3):
+    return request("step", episode_id=episode, request_ordinal=ordinal, context_length=context_length,
                    is_terminal_request=True, prompt_ordinal=prompt_ordinal,
                    prompt_sha256=PROMPT_SHA256[prompt_ordinal])
 
@@ -399,6 +400,28 @@ class PublicObservationBackendTests(unittest.TestCase):
                 adapter.step(step_request(), view)
             self.assertEqual(fixture.box["calls"], 0)
             self.assertEqual(list(fixture.stage.iterdir()), [])
+
+    def test_zero_count_private_view_is_rejected_before_engine_and_restored_exactly(self):
+        fixture = Fixture(); self.addCleanup(fixture.close)
+        adapter = initialize_adapter(fixture); reset_adapter(adapter)
+        before_adapter = deepcopy(adapter.capture_transaction())
+        before_backend = deepcopy(adapter.backend.capture_state())
+        with self.assertRaisesRegex(IntegrationError, "BACKEND_DECLARED_FAILURE") as caught:
+            adapter.step(step_request(context_length=0), private_view((), context=0))
+        self.assertEqual(caught.exception.backend_code, "SYNTHETIC_REJECTED")
+        self.assertEqual(fixture.box["calls"], 0)
+        self.assertEqual(list(fixture.stage.iterdir()), [])
+        self.assertEqual(adapter.capture_transaction(), before_adapter)
+        self.assertEqual(adapter.backend.capture_state(), before_backend)
+
+    def test_observation_validator_enforces_positive_input_count(self):
+        fixture = Fixture(); self.addCleanup(fixture.close)
+        adapter = initialize_adapter(fixture); reset_adapter(adapter)
+        adapter.step(step_request(), private_view())
+        observation = json.loads(next(fixture.stage.glob("*.json")).read_bytes())
+        observation["input_token_count"] = 0
+        with self.assertRaisesRegex(ObservationFailure, "OBSERVATION_EVIDENCE_BOUNDARY_FAILURE"):
+            PublicModelObservationBackend._validate_observation(observation)
 
     def test_prompt_ordinal_digest_and_order_negatives_are_pre_generation(self):
         mutations = (

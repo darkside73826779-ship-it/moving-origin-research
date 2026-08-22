@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import shutil
 import subprocess
 import sys
@@ -33,12 +34,39 @@ MUTANTS = (
     ("OUTPUT_ZEROIZATION_REMOVED", 'for index in range(len(output_ids)):\n                    output_ids[index] = 0',
      'for index in range(0):\n                    output_ids[index] = 0',
      "test_three_stub_only_episodes_publish_sanitized_pairs_and_zeroize_arrays"),
+    ("ZERO_COUNT_LOWER_BOUND_REMOVED", 'min(count, tokens.context_length) < 1',
+     'min(count, tokens.context_length) < 0',
+     "test_zero_count_private_view_is_rejected_before_engine_and_restored_exactly"),
 )
+
+
+def validate_contract(original_sha256: str) -> bool:
+    path = ROOT / "specs/data/m4_public_model_observation_backend_mutation_contract_v1.json"
+    raw = path.read_bytes()
+    contract = json.loads(raw)
+    expected_rows = [
+        {"expected_exit": 1, "id": mutant_id,
+         "new_text_sha256": hashlib.sha256(new.encode()).hexdigest(),
+         "old_text_sha256": hashlib.sha256(old.encode()).hexdigest(), "target": target}
+        for mutant_id, old, new, target in MUTANTS
+    ]
+    expected_closure = [str(path).replace("\\", "/") for path in (
+        SOURCE, Path("src/m4_post_tokenizer_integration.py"), Path("tests/__init__.py"),
+        Path("tests/test_m4_public_model_observation_backend.py"),
+    )]
+    return (json.dumps(contract, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode() + b"\n" == raw and
+            contract.get("mutants") == expected_rows and
+            contract.get("copy_dependency_closure") == expected_closure and
+            contract.get("restoration", {}).get("original_source_sha256") == original_sha256 and
+            contract.get("baseline", {}).get("expected_tests") == 19)
 
 
 def main() -> int:
     original = (ROOT / SOURCE).read_bytes()
     original_sha256 = hashlib.sha256(original).hexdigest()
+    if not validate_contract(original_sha256):
+        print("INSTRUMENT_FAILURE MUTATION_CONTRACT", file=sys.stderr)
+        return 2
     baseline = subprocess.run(
         [sys.executable, "-I", "tests/run_m4_public_model_observation_backend_tests.py"],
         cwd=ROOT, capture_output=True, text=True, timeout=60,
@@ -48,7 +76,15 @@ def main() -> int:
         return 2
     with tempfile.TemporaryDirectory(prefix="m4-observation-mutants-") as temporary:
         disposable = Path(temporary) / "repo"
-        shutil.copytree(ROOT, disposable, ignore=shutil.ignore_patterns(".git", "__pycache__", "*.pyc"))
+        (disposable / "src").mkdir(parents=True)
+        (disposable / "tests").mkdir()
+        for relative in (
+            SOURCE,
+            Path("src/m4_post_tokenizer_integration.py"),
+            Path("tests/__init__.py"),
+            Path("tests/test_m4_public_model_observation_backend.py"),
+        ):
+            shutil.copy2(ROOT / relative, disposable / relative)
         for mutant_id, old, new, target in MUTANTS:
             path = disposable / SOURCE
             text = original.decode("utf-8")
@@ -71,7 +107,7 @@ def main() -> int:
     if hashlib.sha256((ROOT / SOURCE).read_bytes()).hexdigest() != original_sha256:
         print("INSTRUMENT_FAILURE ORIGINAL_IDENTITY", file=sys.stderr)
         return 2
-    print(f"PASS baseline=17/17 mutants={len(MUTANTS)}/{len(MUTANTS)}")
+    print(f"PASS baseline=19/19 mutants={len(MUTANTS)}/{len(MUTANTS)}")
     return 0
 
 
