@@ -1,0 +1,89 @@
+{
+  "schema_version": "common-handoff-manifest-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "transfer_kind": "FORMAL_HANDOFF",
+  "work_item": "m4_tokenizer_private_binding_oci_failure",
+  "gate": "Single bounded tokenizer materialization after private binding restoration",
+  "sender_role": "TASK_BUILDER",
+  "receiver_role": "WORKFLOW_COORDINATOR",
+  "authority_basis": [
+    {
+      "path": "handoffs/REBECCA_M4_TOKENIZER_PRIVATE_BINDING_RERELEASE_2026-08-21.md",
+      "sha": "a4d780b11c9719df77acd320212a296542e5871a"
+    }
+  ],
+  "remote_ref": "refs/heads/taskbuilder/m4-tokenizer-private-binding-materialization-execution",
+  "base_sha": "bc2b82b87185d50fbdb4d77ce4482100de6feaa0",
+  "routing_ref_sha": "79fb90382a17087594f4ec9c81651fa3c02b6075",
+  "review_result_sha": "6b78259830c0aa5c7c24f71bd768745aab2a0706",
+  "work_branch": "taskbuilder/m4-tokenizer-private-binding-materialization-execution",
+  "artifacts": {
+    ".gitattributes": "68c528ede67720007d4ec15d15f6d723136a24b9a4662c94ad9cdfbbc158601d",
+    "diagnostics/m4_tokenizer_materialization.py": "90e89b5a55ff80041a8e09c0d3e96208b6d8eff5c6b39eecd6366a1afb5289af",
+    "handoffs/REBECCA_M4_TOKENIZER_PRIVATE_BINDING_RERELEASE_2026-08-21.md": "b9933c8823c70568824c297cf658ce0251b97e6a84aa4f2601f5e1896ec0d330",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_OCI_FAILURE_2026-08-21.md": "3bab1fdd35e0ad8d3dcd9750b06c5cab482ddbae9f8ca361fd9bf9d710d43366",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_RECONCILED_MATERIALIZATION_PREOP_BLOCK.manifest.json": "6f75cb640fc0396817dd507d321f0e137bcaecfb8e3ecf2ddf0d132a11adee46",
+    "specs/data/m4_context_format_probe_contract_v1.json": "eab77b9f44a4e9378f5889f5aa368eabd87959a5ddafab9ca38685228f12feec",
+    "specs/data/m4_context_format_probe_contract_v1.json.sha256": "26a65895c5a82c99ebf91125dd5ef3b7f0075d28c2c20d746e01fd55e36ca85a",
+    "specs/data/m4_tokenizer_executable_package_v1.json": "c0025a54579ab0b51e07ac138518c7949fbb4fd276d551a978e8ee39d8ba1697",
+    "specs/data/m4_tokenizer_executable_package_v1.json.sha256": "a9ab45ae4b146f3e6ac85115208c3063423fd0b19ab8154be93f68cd76302895",
+    "specs/data/m4_tokenizer_materialization_request_v1.json": "b39061fd4b19321d58dd418eb5ecd486c0cf26662d70a5d0de4185c6dd7e9992",
+    "specs/data/m4_tokenizer_materialization_request_v1.json.sha256": "9fa903fcb29bb74bd0fcd027c2e591668e6aebcb6a77a4c2c179c96c59d8f9ea",
+    "specs/data/m4_tokenizer_materialization_result_schema_v1.json": "34179d41e980aca413496f3de9fbbea7b642532b50eeacba423faebe5f4075ca",
+    "specs/data/m4_tokenizer_materialization_result_schema_v1.json.sha256": "ca2494f505342959d43b9a6442c103f898e58a54a45279ada3088003536651f3",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json": "c166a583a0612054cea826700d8e5e2c132c283e1617727170a8bd57167bb7a0",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json.sha256": "189405411c37f4333f2edd1339711bb316c0a26f3e7e54f01362ca7662277fd7",
+    "specs/data/m4_tokenizer_oci_launch_contract_v1.json": "0fdd5e8eed2fc3a7cc5e10512e6e01037d011f6cf51e862a2293d49255b32848",
+    "specs/data/m4_tokenizer_oci_launch_contract_v1.json.sha256": "2f274dbbacf64085bd3298aaaad6702ce2bfff700bd85d5c3773a29cb410448d",
+    "tests/__init__.py": "6f56eb2128751f0c5c1ab27ff461b38565aa00a3dcd29c04ab8bd56c34f4a961",
+    "tests/run_m4_tokenizer_materialization_tests.py": "29dc1c0d83e71c850e9eb3c423cfd359a6c557956d1eab1fa5d9beb049271d1d",
+    "tests/test_m4_tokenizer_materialization.py": "964ab5b8cb5ef63627c0ab07b3f0c4c867684d7add40576c3dd61494610e8613"
+  },
+  "checks_performed": [
+    "created a fresh helper-managed checkout at the exact private-binding re-release head and verified clean worktree, exact SHA, and Git object integrity",
+    "reproduced all eight executable-package raw Git-blob byte counts and SHA-256 identities plus the adjacent sidecar",
+    "verified Docker client/server 29.1.3, linux/amd64 engine identity, and exact pinned local image platform digest with pull disabled",
+    "validated the private binding, canonical regular non-link custody root, fixed regular non-link record, and empty distinct output stage without publishing private values",
+    "ran the exact pinned network-disabled read-only no-custody wrapper: 35 tests passed, exit 0",
+    "issued exactly one authorized materializer invocation and observed OCI engine exit 125 before container process start due to absent nested output mountpoint beneath the read-only repository mount",
+    "verified the private output stage contained zero files, removed it, cleared process-local private bindings, and did not retry the materializer",
+    "under explicit user authorization, ran one custody-free feasibility smoke with a temporarily pre-existing nested target and /bin/true only: exit 0, stage empty, checkout restored clean",
+    "documented the requirement-to-production-to-evidence trace, ordered access trace, deterministic root cause, and minimal durable marker-directory correction",
+    "ran workflow_preflight.py hotfix cee97538893989e055f49a894f066d2083da4eb5 against the exact worktree and complete release-to-return range and manually classified every finding without suppression"
+  ],
+  "status": "BLOCKED",
+  "findings": [
+    {
+      "classification": "OCI nested mountpoint instrument failure",
+      "severity": "blocking",
+      "text": "the immutable release lacks artifacts/m4_tokenizer_materialization, so OCI cannot create the nested output destination after /workspace is bound read-only; engine exit 125 occurred before process start"
+    },
+    {
+      "classification": "feasibility-proven minimal correction",
+      "severity": "non_blocking",
+      "text": "a tracked inert marker that makes the nested target exist in fresh checkouts, plus a mandatory custody-free mount-smoke gate, resolves the mount topology without relaxing repository read-only or stage postconditions"
+    }
+  ],
+  "scan_attestation": {
+    "base_sha": "a4d780b11c9719df77acd320212a296542e5871a",
+    "tip_sha": "79fb90382a17087594f4ec9c81651fa3c02b6075",
+    "tool_status": "blocked",
+    "manual_review": true,
+    "findings": []
+  },
+  "next_event": "WORKFLOW COORDINATOR acknowledges the instrument failure and routes the feasibility-proven nested-mountpoint correction to the authorized specification role; contract mapping leaves the operation unconsumed, but no retry is authorized by this release",
+  "prohibited_actions": [
+    "another materializer invocation or custody-bearing OCI launch under this release",
+    "unreviewed launch-contract mutation, alternate mount order, writable repository bind, alternate output target, fallback, or invention",
+    "model/tokenizer access, inference, qualification, diagnostics/scoring, seeds, science, STATE/provenance mutation, publication, merge, rerun, or gate decision"
+  ],
+  "role_extension": {
+    "role": "TASK_BUILDER",
+    "tests": [
+      "exact pinned no-custody wrapper: 35/35 PASS, exit 0",
+      "user-authorized custody-free pre-existing-target mount smoke: PASS, exit 0"
+    ],
+    "diagnostics_executed": false
+  }
+}
