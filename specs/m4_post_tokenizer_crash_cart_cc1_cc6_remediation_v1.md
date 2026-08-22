@@ -103,14 +103,14 @@ Negatives are: candidate or peer received digest divergence `FANOUT_RECEIVED_DIG
 
 ## CC5 — exact law meanings and honest projections
 
-The source authority is `docs/ARCHITECTURAL_CONSTITUTION.md`: L7 line 24, L8 line 26, L10 line 30, L14 line 40, and L18 line 52. This design neither changes those meanings nor selects held thresholds.
+The source authority is `docs/ARCHITECTURAL_CONSTITUTION_v2.md`: L7 line 26, L8 line 28, L10 line 32, L14 line 42, and L18 line 54. This design neither changes those meanings nor selects held thresholds.
 
 Every row contains `law_id`, `status`, `claim_made`, `meaning_source`, `evidence`, `metrics`, `failure_code`, and `held_reason`. Order is exactly L7, L8, L10, L14, L18. PASS requires `claim_made=true`, all law-specific evidence keys and metrics, no failure or held reason. FAIL requires `claim_made=false`, a law-specific failure, and the evidence that supports failure. HELD requires `claim_made=false`, empty metrics/evidence arrays, null failure, and one enumerated held reason. NOT_RUN is allowed only for instrument failure, also makes no claim, and cites the instrument-failure artifact.
 
 | Law | Exact meaning and required PASS evidence shape | Deterministic law failures |
 |---|---|---|
 | L7 | Candidate self-report is calibrated against ground-truth internals and beats the matched peer observer; peer has behavioral outputs only; empty/permuted/shuffled contamination rows are present. Evidence keys: candidate/peer manifests, channel/redaction receipt, ground-truth receipt, AUROC, ECE, paired margin, contamination battery. | `L7_CALIBRATION_FAIL`, `L7_PEER_MARGIN_FAIL`, `L7_PEER_CHANNEL_INVALID`, `L7_CONTAMINATION_FAIL` |
-| L8 | Regulation error responds dose-dependently when mirror calibration is degraded and satisfies the governed specificity controls; Level 0 and every governed dose are represented. Evidence keys: variable identity, dose schedule, mirror degradation receipt, regulation-error series, dose-response statistic, specificity panel. | `L8_DOSE_RESPONSE_FAIL`, `L8_SPECIFICITY_FAIL`, `L8_PREREQUISITE_HELD` |
+| L8 | Regulation error responds dose-dependently when mirror calibration is degraded and satisfies the governed specificity controls; Level 0 and every governed dose are represented. Evidence keys: variable identity, dose schedule, mirror degradation receipt, regulation-error series, dose-response statistic, specificity panel. | `L8_DOSE_RESPONSE_FAIL`, `L8_SPECIFICITY_FAIL` |
 | L10 | Below-threshold retrieval abstains rather than blending; the primary claim is evaluated under drift, with clean performance only a ceiling/context. Evidence keys: threshold identity, complete drift population, pre-abstention scores, abstention decisions, drift metric, clean secondary metric. | `L10_BLEND_BELOW_THRESHOLD`, `L10_DRIFT_METRIC_FAIL`, `L10_ABSTENTION_CALIBRATION_FAIL` |
 | L14 | The same stakes variables are visible to the self-model, affected by memory quality, and targets for the thick present. Evidence keys: shared variable identity, visibility receipt, memory perturbation linkage, thick-present target linkage, coupling metrics. | `L14_VISIBILITY_FAIL`, `L14_MEMORY_COUPLING_FAIL`, `L14_THICK_PRESENT_FAIL` |
 | L18 | Every positive claim has empty/permuted/shuffled negative controls, oracle positive control, frozen and naive baselines, and at least three governed seeds. Evidence keys: claim inventory, six-arm matrix, transforms, oracle reachability, seed-count receipt. | `L18_ARM_MISSING`, `L18_CONTROL_BEHAVIOR_FAIL`, `L18_ORACLE_FAIL`, `L18_SEED_REQUIREMENT_FAIL` |
@@ -157,8 +157,10 @@ Implementation publication first requires Coordinator designation of exact `MAIN
 34. `tests/run_m4_tokenizer_materialization_tests.py`
 35. `tests/test_m4_tokenizer_materialization.py`
 36. `tools/testbed/run_m4_tokenizer_topology_smoke_matrix.sh`
+37. `artifacts/m4_tokenizer_materialization/tokenizer_materialization.json`
+38. `artifacts/m4_tokenizer_materialization/tokenizer_materialization.json.sha256`
 
-No glob, extra path, deletion, rename, or whole-tree merge is permitted. Every source blob and mode must equal `TOKENIZER_SHA`; every non-overlay base path must equal `MAIN_SHA`.
+No glob, extra path, deletion, rename, or whole-tree merge is permitted. Every source blob and mode must equal `TOKENIZER_SHA`; every non-overlay base path must equal `MAIN_SHA`. The result pair must be a cleared, canonical PASS pair whose sidecar, schema, sanitized-only policy, ordered 1024/4096/8192 rows, and stop digest all verify. If `TOKENIZER_SHA` has no such pair—or contains BLOCKED, FAIL, empty, partial, mismatched, or unreviewed bytes—construction stops `CLEARED_TOKENIZER_RESULT_REQUIRED` without substituting another source.
 
 The `.gitattributes` base must end in exactly one LF and contain no tokenizer-overlay heading. Otherwise construction stops. Append these exact ASCII bytes, beginning with one LF and ending with one LF:
 
@@ -167,6 +169,8 @@ The `.gitattributes` base must end in exactly one LF and contain no tokenizer-ov
 # M4 tokenizer overlay
 .gitattributes text eol=lf
 artifacts/m4_tokenizer_materialization/.gitkeep text eol=lf
+artifacts/m4_tokenizer_materialization/tokenizer_materialization.json text eol=lf
+artifacts/m4_tokenizer_materialization/tokenizer_materialization.json.sha256 text eol=lf
 diagnostics/m4_tokenizer_materialization.py text eol=lf
 specs/data/m4_context_format_probe_contract_v1.json text eol=lf
 specs/data/m4_context_format_probe_contract_v1.json.sha256 text eol=lf
@@ -202,6 +206,10 @@ tests/__init__.py text eol=lf
 tests/run_m4_tokenizer_materialization_tests.py text eol=lf
 tests/test_m4_tokenizer_materialization.py text eol=lf
 tools/testbed/run_m4_tokenizer_topology_smoke_matrix.sh text eol=lf
+src/__init__.py text eol=lf
+src/m4_post_tokenizer_integration.py text eol=lf
+src/test_m4_post_tokenizer_integration.py text eol=lf
+tests/run_m4_post_tokenizer_integration_tests.py text eol=lf
 ```
 
 Before implementation publication the seam filenames are frozen as `src/__init__.py`, `src/m4_post_tokenizer_integration.py`, `src/test_m4_post_tokenizer_integration.py`, and `tests/run_m4_post_tokenizer_integration_tests.py`. Their modes, byte counts, raw SHA-256, and Git blobs must be added to the combined inventory; until those bytes exist, publication is blocked rather than guessed.
