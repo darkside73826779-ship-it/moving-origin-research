@@ -1,0 +1,89 @@
+{
+  "schema_version": "common-handoff-manifest-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "transfer_kind": "FORMAL_HANDOFF",
+  "work_item": "m4_tokenizer_topology_fixture_clear_materialization_pass",
+  "gate": "Exactly one topology-fixture-clear new tokenizer-materialization operation",
+  "sender_role": "TASK_BUILDER",
+  "receiver_role": "WORKFLOW_COORDINATOR",
+  "authority_basis": [
+    {
+      "path": "handoffs/REBECCA_M4_TOKENIZER_TOPOLOGY_FIXTURE_CLEAR_NEW_OPERATION_RELEASE_2026-08-21.md",
+      "sha": "7b909f452dc7c86a11979298da312b72f41a7382"
+    }
+  ],
+  "remote_ref": "refs/heads/taskbuilder/m4-tokenizer-topology-fixture-clear-execution",
+  "base_sha": "7b909f452dc7c86a11979298da312b72f41a7382",
+  "routing_ref_sha": "56e6919584baf670921cbd0449c6c41e30bcfe33",
+  "review_result_sha": "5d5d8528005d2047751c056bfcb4c64a4092ffe2",
+  "work_branch": "taskbuilder/m4-tokenizer-topology-fixture-clear-execution",
+  "artifacts": {
+    ".gitattributes": "998b713a5094f924efa62fc0c65f1195f385ea08476ee1d150ea2527d6e04c4c",
+    "artifacts/m4_tokenizer_materialization/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m4_tokenizer_materialization/tokenizer_materialization.json": "19a49a9262be81d30866befda3801b2fc97ef23a8d946d3cc1e4b5de189b3158",
+    "artifacts/m4_tokenizer_materialization/tokenizer_materialization.json.sha256": "9ca61b765be8558551a70966eda34cba8f8978d8c6c968d62bce0e5977e026b4",
+    "diagnostics/m4_tokenizer_materialization.py": "2aa18bebcfd6c8d7ffb5c65784d5e459650cd540494ae5cfc29e35372c87612b",
+    "handoffs/ARCHITECT_TO_COORDINATOR_M4_TOPOLOGY_ABSENT_MARKER_FIXTURE_RECONCILIATION_2026-08-21.md": "bdb23aef55cfcd4bb173fa5906271ad32f47758d38b3797b9858c286520acc74",
+    "handoffs/REBECCA_M4_TOKENIZER_TOPOLOGY_FIXTURE_CLEAR_NEW_OPERATION_RELEASE_2026-08-21.md": "e45bbf6d587f7526a8c71fcdebbb2f052a08b07d32d2ad4a89ab77769174cd18",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_TOPOLOGY_FIXTURE_CLEAR_MATERIALIZATION_PASS_2026-08-21.md": "61de09d76fd611ff7d872a0325eb62a98ef1a4ec8b9e6b6282310e23fcbf15c6",
+    "reviews/critic_m4_tokenizer_topology_absent_marker_fixture_rereview.md": "d7dee9106e15e865271ae2ba378f397fabf5409553697f58f4294ccf6a9a545e",
+    "specs/data/m4_context_format_probe_contract_v1.json": "eab77b9f44a4e9378f5889f5aa368eabd87959a5ddafab9ca38685228f12feec",
+    "specs/data/m4_tokenizer_executable_package_v1.json": "bf1a99cb6d3047a8dafed9a56031b7254a881b0b09bb10b0d38f1318829d672d",
+    "specs/data/m4_tokenizer_executable_package_v1.json.sha256": "4f13b589bd3afe35d5f06f8987575a80d707b9f8ad24cc5ee3578ff4d6fa15e2",
+    "specs/data/m4_tokenizer_materialization_request_v1.json": "b39061fd4b19321d58dd418eb5ecd486c0cf26662d70a5d0de4185c6dd7e9992",
+    "specs/data/m4_tokenizer_materialization_request_v1.json.sha256": "9fa903fcb29bb74bd0fcd027c2e591668e6aebcb6a77a4c2c179c96c59d8f9ea",
+    "specs/data/m4_tokenizer_materialization_result_schema_v1.json": "34179d41e980aca413496f3de9fbbea7b642532b50eeacba423faebe5f4075ca",
+    "specs/data/m4_tokenizer_materialization_result_schema_v1.json.sha256": "ca2494f505342959d43b9a6442c103f898e58a54a45279ada3088003536651f3",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json": "79aef0ab5c5b832868dedb0d5b61a6b11ee81c726fcf195d0e1c5d8f35a0eeaa",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json.sha256": "88a63d36252ad31d0b85ca314a0644942601a6150fbd0f46427845e3b6ae5926",
+    "specs/data/m4_tokenizer_oci_launch_contract_v1.json": "0a5d65e04c55896f603b3a9c611096a242f19b2e293ce356313a22c6e891d9c4",
+    "specs/data/m4_tokenizer_oci_launch_contract_v1.json.sha256": "b245473cec2bc3188c12266c1070468be607d869aeb4b3392c66b9c7765339e5",
+    "tests/__init__.py": "6f56eb2128751f0c5c1ab27ff461b38565aa00a3dcd29c04ab8bd56c34f4a961",
+    "tests/run_m4_tokenizer_materialization_tests.py": "4f4aa5a873f59c3dbc368c550a84f61564c181f5570fdbcb2e54b6b8f8f8d734",
+    "tests/test_m4_tokenizer_materialization.py": "3930fdb47986850f4c6c47e5ec1479136c96b74ab51a1c46615591477fb58c1d",
+    "tools/testbed/run_m4_tokenizer_topology_smoke_matrix.sh": "860cf3a7522e0c9806c100fdb4d61b47b9c98f7fdb74a0fe62f672c253a2dfde"
+  },
+  "checks_performed": [
+    "created a fresh helper-managed checkout at the exact topology-fixture-clear release and verified immutable clean release identity",
+    "reproduced all nine executable-package artifacts and five governed adjacent sidecars from raw committed Git blob bytes",
+    "verified WSL2-backed Docker 29.1.3, linux/amd64, and the exact locally present pinned platform image with pull disabled",
+    "ran the exact pinned network-disabled read-only no-custody wrapper: 37 tests passed, exit 0",
+    "ran the corrected committed custody-free topology matrix: all four cases passed and cleanup completed",
+    "verified the exact supplied private root and fixed record kinds without emitting or publishing a private value or path",
+    "started the exact committed materializer command once: exit 0, no retry",
+    "validated the exact two-file result as regular non-links, schema-valid canonical JSON plus one LF, matching sidecar, and public-safe sanitized content",
+    "published the exact result bytes with SHA-256 19a49a9262be81d30866befda3801b2fc97ef23a8d946d3cc1e4b5de189b3158",
+    "reproduced the complete 24-entry public artifact inventory from raw committed Git blob bytes",
+    "ran workflow_preflight.py hotfix cee97538893989e055f49a894f066d2083da4eb5 against the exact worktree and complete release-to-return range and manually classified every finding without suppression"
+  ],
+  "status": "READY",
+  "findings": [],
+  "scan_attestation": {
+    "base_sha": "7b909f452dc7c86a11979298da312b72f41a7382",
+    "tip_sha": "56e6919584baf670921cbd0449c6c41e30bcfe33",
+    "tool_status": "blocked",
+    "manual_review": true,
+    "findings": [
+      "the nine fixed-regex personal-contact findings are duplicate scan-domain occurrences wholly inside the contract-permitted public 4096-array SHA-256, immutable public model revision, or declared public weight SHA-256; they are public reproducibility metadata, not contact data",
+      "the six gitleaks generic-api-key findings are duplicate scan-domain occurrences of the contract-permitted public tokenizer_config_sha256 and tokenizer_sha256 values; they are public artifact identities, not credentials",
+      "manual review found no credential, personal contact data, private path or binding value, custody data, model/tokenizer bytes, complete token arrays, rendered private text, protected seeds, scientific output, or prohibited durable-state mutation"
+    ]
+  },
+  "next_event": "WORKFLOW COORDINATOR validates the exact sanitized execution package and routes it once to the authoritative persistent CRITIC for independent execution review",
+  "prohibited_actions": [
+    "materializer retry, fallback, alternate root, image, interpreter, runtime, topology, command, normalization, copying of governed inputs, synthesis, invention, or further operation",
+    "private binding publication, inference, qualification, diagnostics/scoring, protected seeds, science, STATE/provenance mutation, model/tokenizer publication, merge, or gate decision"
+  ],
+  "role_extension": {
+    "role": "TASK_BUILDER",
+    "tests": [
+      "raw executable-package and governed sidecar identities: PASS",
+      "exact pinned no-custody wrapper: 37/37 PASS, exit 0",
+      "corrected four-case custody-free topology matrix: PASS with cleanup complete",
+      "single materializer: exit 0, PASS at ATOMIC_PUBLICATION",
+      "sanitized pair: schema/canonical/sidecar/public-safety validation PASS"
+    ],
+    "diagnostics_executed": false
+  }
+}
