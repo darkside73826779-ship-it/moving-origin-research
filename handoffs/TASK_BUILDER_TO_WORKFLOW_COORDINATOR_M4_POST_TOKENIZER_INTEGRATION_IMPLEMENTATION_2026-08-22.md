@@ -35,7 +35,7 @@ The complete requirement → production branch → test → evidence matrix and 
 - Materializer invocations: zero.
 - Custody/model/tokenizer access: zero.
 
-The complete-range workflow preflight retained duplicate-domain `personal_contact` fixed-regex findings. Manual inspection classified every match as a numeric substring wholly inside a required immutable public Git/SHA-256 identity or a declared public synthetic-fixture integer; no contact data is present. The independent gitleaks range scan retained only `generic-api-key` findings whose matches are declared public tokenizer/config/artifact SHA-256 identities or the required cleared-tokenizer commit identity. No credential or secret is present. Both finding classes are retained and explicitly classified; none is suppressed.
+The complete-range workflow preflight retained duplicate-domain `personal_contact` fixed-regex findings. Manual inspection classified every match as a numeric substring wholly inside a required immutable public Git/SHA-256 identity, the declared public weight byte measurement, or the validator's literal hexadecimal alphabet; no contact data is present. The independent gitleaks range scan retained only `generic-api-key` findings whose matches are declared public tokenizer/config/artifact SHA-256 identities or the required cleared-tokenizer commit identity. No credential or secret is present. Both finding classes are retained and explicitly classified; none is suppressed.
 
 ## Public safety and boundaries
 
