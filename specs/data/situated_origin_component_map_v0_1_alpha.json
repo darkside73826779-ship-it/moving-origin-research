@@ -55,6 +55,24 @@
     "E3_ALPHA_CORE": "src/situated_origin/soft_prefix_strip.py",
     "E3_SOFT_PREFIX_ACTUATOR_ALPHA": "src/situated_origin/hf_soft_prefix_backend.py"
   },
+  "current_mechanism_evidence": {
+    "NATIVE_WORKING_CONTEXT": {
+      "status": "CONTROL_PASS",
+      "prediction_correct": "5_OF_6_WITH_UNEXPECTED_REVERSAL_MISS",
+      "heldout_state_queries": "4_OF_4",
+      "ledger_replay": "EXACT"
+    },
+    "SEQUENTIAL_OBSERVATION_PREFIX": {
+      "status": "REJECTED_NONTRANSFER",
+      "heldout_state_queries": "NO_BETTER_THAN_BASELINE"
+    },
+    "TEACHER_CONSOLIDATED_PREFIX": {
+      "status": "REJECTED_CUE_MEMORIZATION",
+      "heldout_state_queries": "1_OF_4_EQUAL_TO_BASELINE"
+    },
+    "DURABLE_COMPRESSED_NEURAL_STATE": "UNBOUND",
+    "E3_ALPHA_LOAD_BEARING": false
+  },
   "future_fail_closed_slots": [
     "L7_SELF_STATE_ESTIMATOR",
     "L8_HOMEOSTATIC_CONTROLLER",

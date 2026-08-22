@@ -326,6 +326,53 @@ class FrozenQwenSoftPrefixBackend:
         if not 1 <= token_limit <= 256:
             raise SoftPrefixBackendError("GENERATION_TOKEN_LIMIT_INVALID")
         prompt_ids = self._ids(public_prompt, special=True)
+        return self._generate_ids(prompt_ids, prefix=prefix, token_limit=token_limit)
+
+    def generate_chat(
+        self,
+        messages: tuple[dict[str, str], ...],
+        *,
+        prefix: Any | None,
+        max_new_tokens: int | None = None,
+    ) -> PrefixGenerationResult:
+        """Generate through the checkpoint's native instruction template."""
+
+        self._require_loaded()
+        token_limit = self.max_new_tokens if max_new_tokens is None else int(max_new_tokens)
+        if not 1 <= token_limit <= 256:
+            raise SoftPrefixBackendError("GENERATION_TOKEN_LIMIT_INVALID")
+        if (
+            not isinstance(messages, tuple)
+            or not messages
+            or any(
+                not isinstance(row, dict)
+                or set(row) != {"role", "content"}
+                or row["role"] not in {"system", "user", "assistant"}
+                or type(row["content"]) is not str
+                or not row["content"]
+                for row in messages
+            )
+        ):
+            raise SoftPrefixBackendError("CHAT_MESSAGES_INVALID")
+        prompt_ids = self.tokenizer.apply_chat_template(
+            list(messages),
+            tokenize=True,
+            add_generation_prompt=True,
+            return_tensors="pt",
+        )
+        if isinstance(prompt_ids, dict):
+            prompt_ids = prompt_ids["input_ids"]
+        prompt_ids = prompt_ids.to(self.device)
+        return self._generate_ids(prompt_ids, prefix=prefix, token_limit=token_limit)
+
+    def _generate_ids(
+        self,
+        prompt_ids: Any,
+        *,
+        prefix: Any | None,
+        token_limit: int,
+    ) -> PrefixGenerationResult:
+        torch = self.torch
         prompt_digest = _sha(
             _canonical([int(item) for item in prompt_ids[0].detach().cpu().tolist()])
         )

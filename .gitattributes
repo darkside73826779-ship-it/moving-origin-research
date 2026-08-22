@@ -167,4 +167,5 @@ src/situated_origin/*.py text eol=lf
 tests/test_situated_origin_*.py text eol=lf
 tools/check_soft_prefix_backward.py text eol=lf
 tools/run_integrated_origin_prefix_probe.py text eol=lf
+tools/run_native_context_conversation_control.py text eol=lf
 tools/run_soft_prefix_*.py text eol=lf

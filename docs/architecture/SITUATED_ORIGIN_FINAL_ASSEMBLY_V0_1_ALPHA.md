@@ -177,6 +177,37 @@ through `inputs_embeds`: base-model parameters remain frozen while a bounded
 prefix projection may change. Both paths retain the same ledger/provenance
 contract; neither permits a projection to become autobiographical truth.
 
+## Current causal evidence and retained product boundary
+
+One fixed, non-scoring local-model observation tested the smallest relevant
+temporal behavior.  With Qwen's native chat template and the complete public
+conversation in active context, the frozen 4B model correctly predicted 5 of 6
+subsequent observations.  Its sole error was the deliberately unexpected rule
+reversal; it then adapted on the next observation.  Four distinct final queries
+about current state, next state, temporal predecessor, and its prediction-error
+trajectory were all answered correctly.  Every turn was committed through the
+situated ledger and deterministic replay reproduced its head.
+
+That result establishes a capable **working-context control**, not durable
+plastic memory.  Two prospective compressed-state mechanisms were also tested
+and rejected:
+
+- sequential observation-loss prefix updates answered 0 of 4 fixed held-out
+  queries under the original raw interface and only the same 1 of 4 as the
+  no-state baseline after the native chat interface was corrected; and
+- active-context teacher answers were all correct and prefix training loss fell
+  near zero, but transcript-free paraphrases again scored 1 of 4, identical to
+  baseline.  This was cue memorization, not transferable state.
+
+No parameter tuning followed those failures.  The rejected update and
+consolidation implementations are not product code.  The retained alpha
+therefore consists of the frozen model's native working context plus the
+append-only origin/provenance system.  `SoftPrefixExperienceStrip` remains an
+experimental port and is not load-bearing evidence of an evolving self or world
+model.  A durable compressed neural state remains unbound until a prospective
+mechanism beats active-context, no-state, wrong-state, and restart ablations on
+unseen prompts.
+
 ## Claim grounding
 
 - Self-experience claims require supporting autobiographical event IDs.
