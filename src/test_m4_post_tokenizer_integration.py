@@ -6,8 +6,11 @@ import json
 import threading
 import unittest
 from copy import deepcopy
+from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
+
+import src.m4_post_tokenizer_integration as seam
 
 from src.m4_post_tokenizer_integration import (
     AdapterFactory, CandidateAdapter, ControlAdapter, FanoutCoordinator, IntegrationError,
@@ -528,7 +531,8 @@ class RemediationProductionTests(unittest.TestCase):
             for status in ("HELD","PASS","FAIL","NOT_RUN"):
                 rows=deepcopy(held);row=rows[index]
                 if status=="PASS":
-                    metrics={key:(True if kind is bool else 3 if kind is int else 0.5) for key,kind in LAW_METRIC_SCHEMAS[law].items()}
+                    metrics={key:(True if kind is bool else 6 if key=="arms_present" else 3 if kind is int else 0.5)
+                             for key,kind in LAW_METRIC_SCHEMAS[law].items()}
                     row.update(status=status,claim_made=True,evidence=list(LAW_REQUIRED_EVIDENCE[law]),metrics=metrics,failure_code=None,held_reason=None)
                 elif status=="FAIL":
                     row.update(status=status,claim_made=False,evidence=list(LAW_FAILURE_EVIDENCE[law]),metrics={},
@@ -536,7 +540,10 @@ class RemediationProductionTests(unittest.TestCase):
                 elif status=="NOT_RUN":
                     row.update(status=status,claim_made=False,evidence=list(LAW_NOT_RUN_EVIDENCE[law]),metrics={},
                                failure_code=f"INSTRUMENT_FAILURE:{law}",held_reason=None)
-                validate_laws(rows)
+                if status == "PASS":
+                    with self.assertRaisesRegex(IntegrationError,"LAW_PASS_UNAVAILABLE"): validate_laws(rows)
+                else:
+                    validate_laws(rows)
                 mutations={"meaning_source":"wrong","claim_made":not row["claim_made"],"evidence":["wrong"],
                            "metrics":{"extra":1},"failure_code":"WRONG","held_reason":"WRONG","status":"UNKNOWN"}
                 for field,value in mutations.items():
@@ -702,6 +709,104 @@ class RereviewRemediationTests(unittest.TestCase):
         c,p,_,_=FanoutTests()._pair();receipt=FanoutCoordinator(nondeterministic).step(sanitized_rows(),stop_row(),1024,FanoutTests()._req(),c,p)
         self.assertEqual(counts,{1024:1,"stop":1});self.assertEqual(receipt["length"],1024)
         self.assertEqual(receipt["expected_sha256"],sanitized_rows()[0]["expected_sha256"])
+
+    def test_public_fanout_reconciles_fabricated_views_metadata_stop_and_request(self):
+        self.assertFalse(hasattr(FanoutCoordinator,"step_verified"))
+        self.assertNotIn("VerifiedFanoutInput",seam.__all__)
+        request_a=FanoutTests()._req()
+        coordinator=FanoutCoordinator(provider)
+        seed_candidate,seed_peer,_,_=FanoutTests()._pair()
+        verified=coordinator._phase_one(sanitized_rows(),stop_row(),1024,seed_candidate,seed_peer,request_a)
+        altered=verified.candidate_view.bytes_view[:-1]+bytes([verified.candidate_view.bytes_view[-1]^1])
+        cases=(
+            (replace(verified,candidate_view=PrivateTokenView(1024,altered)),request_a,"FANOUT_RECEIVED_DIGEST_MISMATCH"),
+            (replace(verified,length=1,expected_sha256="0"*64),request_a,"VERIFIED_FANOUT_IDENTITY_INVALID"),
+            (replace(verified,stop_sha256="0"*64),request_a,"STOP_REDERIVATION_MISMATCH"),
+            (verified,{**request_a,"operation_id":"drifted-operation"},"FANOUT_REQUEST_IDENTITY_MISMATCH"),
+            (object(),request_a,"VERIFIED_FANOUT_IDENTITY_INVALID"),
+        )
+        for fabricated,actual_request,code in cases:
+            candidate,peer,cb,pb=FanoutTests()._pair();before=(len(cb.calls),len(pb.calls))
+            with self.subTest(code=code),patch.object(coordinator,"_phase_one",return_value=fabricated),self.assertRaisesRegex(IntegrationError,code):
+                coordinator.step(sanitized_rows(),stop_row(),1024,actual_request,candidate,peer)
+            self.assertEqual((len(cb.calls),len(pb.calls)),before)
+
+    def test_pass_law_rows_fail_closed_without_full_artifacts_and_reject_domains(self):
+        def pass_rows(law):
+            rows=thaw(held_law_projection())
+            row=rows[seam.LAW_ORDER.index(law)]
+            metrics={key:(True if kind is bool else 6 if key=="arms_present" else 3 if kind is int else 0.5)
+                     for key,kind in LAW_METRIC_SCHEMAS[law].items()}
+            row.update(status="PASS",claim_made=True,evidence=list(LAW_REQUIRED_EVIDENCE[law]),metrics=metrics,
+                       failure_code=None,held_reason=None)
+            return rows
+        for law in seam.LAW_ORDER:
+            with self.subTest(law=law),self.assertRaisesRegex(IntegrationError,"LAW_PASS_UNAVAILABLE"): validate_laws(pass_rows(law))
+        invalid={
+            "L7": (("candidate_auroc",-0.01),("candidate_ece",1.01),("paired_peer_margin",-1.01)),
+            "L8": (("regulation_error",-0.01),("dose_response_statistic",1.01),("specificity_statistic",-1.01)),
+            "L10": (("drift_primary_metric",-0.01),("clean_secondary_metric",1.01),("abstention_rate",1.01)),
+            "L14": (("self_model_visibility",-0.01),("memory_coupling",1.01),("thick_present_coupling",-1.01)),
+            "L18": (("governed_seed_count",0),("governed_seed_count",2),("arms_present",0),("arms_present",5),("controls_passed",False)),
+        }
+        for law,mutations in invalid.items():
+            index=seam.LAW_ORDER.index(law)
+            for metric,value in mutations:
+                rows=pass_rows(law);rows[index]["metrics"][metric]=value
+                with self.subTest(law=law,metric=metric,value=value),self.assertRaisesRegex(IntegrationError,"LAW_PROJECTION_INVALID"):
+                    validate_laws(rows)
+            rows=pass_rows(law);rows[index]["claim_made"]=False
+            with self.subTest(law=law,claim=False),self.assertRaisesRegex(IntegrationError,"LAW_PROJECTION_INVALID"):validate_laws(rows)
+
+    def test_episode_history_is_durable_consistent_and_prevents_restored_reuse(self):
+        adapter_a,backend_a=ready();state=json.loads(adapter_a.durable_state())
+        self.assertEqual(state["used_episode_ids"],["episode-a"]);self.assertEqual(state["reset_ordinal"],1)
+        snapshot=adapter_a.capture()
+        malformed=[]
+        for history in ([],["episode-b"],["episode-a","episode-a"],["episode-a",1]):
+            bad=deepcopy(snapshot);bad[0]["used_episode_ids"]=history;malformed.append(bad)
+        bad=deepcopy(snapshot);bad[0]["episode_id"]="episode-b";malformed.append(bad)
+        bad=deepcopy(snapshot);bad[0]["reset_ordinal"]=2;malformed.append(bad)
+        for ordinal,bad in enumerate(malformed):
+            target,_=adapter()
+            with self.subTest(ordinal=ordinal),self.assertRaisesRegex(IntegrationError,"STATE_SEMANTIC_FAILURE"):target.restore(bad)
+        adapter_a.step(request("terminal",episode_id="episode-a",request_ordinal=0,context_length=1024,is_terminal_request=True),
+                       PrivateTokenView(1024,encode_private_view(provider(1024))))
+        completed=adapter_a.capture();target,target_backend=adapter();target.restore(completed);before=len(target_backend.calls)
+        with self.assertRaisesRegex(IntegrationError,"EPISODE_ID_REUSE"):
+            target.reset_episode(request("reuse",episode_id="episode-a",reset_ordinal=2))
+        self.assertEqual(len(target_backend.calls),before)
+        adapter_a.close(request("close"));closed=json.loads(adapter_a.durable_state())
+        self.assertEqual(closed["used_episode_ids"],["episode-a"]);validate_state(closed)
+        adapter_a._state["used_episode_ids"]=[];before=len(backend_a.calls)
+        with self.assertRaisesRegex(IntegrationError,"STATE_SEMANTIC_FAILURE"):adapter_a.close(request("again"))
+        self.assertEqual(len(backend_a.calls),before)
+
+    def test_factory_requires_live_attestation_and_cleans_each_role(self):
+        made=[]
+        def ctor(session,mode="live"):
+            def build():
+                backend=SpyBackend(session)
+                if mode=="dead":backend.real_state["live"]=False
+                if mode=="throw":
+                    backend.is_live=lambda:(_ for _ in ()).throw(RuntimeError("live probe"))
+                made.append(backend);return backend
+            return build
+        factory,cman,pman,ccfg,pcfg=self._pair_specs(ctor("candidate-session-v1","dead"),ctor("peer-session-v1"))
+        with self.assertRaisesRegex(IntegrationError,"CANDIDATE_BACKEND_NOT_LIVE"):
+            factory.create_pair(canonical(cman),canonical(pman),canonical(ccfg),canonical(pcfg),provider)
+        self.assertEqual(len(made),1);self.assertFalse(made[0].real_state["live"])
+        made.clear();factory,cman,pman,ccfg,pcfg=self._pair_specs(ctor("candidate-session-v1"),ctor("peer-session-v1","dead"))
+        with self.assertRaisesRegex(IntegrationError,"PEER_BACKEND_NOT_LIVE"):
+            factory.create_pair(canonical(cman),canonical(pman),canonical(ccfg),canonical(pcfg),provider)
+        self.assertEqual(len(made),2);self.assertTrue(all(not item.real_state["live"] for item in made))
+        made.clear();factory,cman,pman,ccfg,pcfg=self._pair_specs(ctor("candidate-session-v1","throw"),ctor("peer-session-v1"))
+        with self.assertRaisesRegex(IntegrationError,"CANDIDATE_BACKEND_NOT_LIVE"):
+            factory.create_pair(canonical(cman),canonical(pman),canonical(ccfg),canonical(pcfg),provider)
+        self.assertEqual(len(made),1);self.assertFalse(made[0].real_state["live"])
+        made.clear();factory,cman,pman,ccfg,pcfg=self._pair_specs(ctor("candidate-session-v1"),ctor("peer-session-v1"))
+        candidate,peer=factory.create_pair(canonical(cman),canonical(pman),canonical(ccfg),canonical(pcfg),provider)
+        self.assertTrue(candidate.backend.is_live());self.assertTrue(peer.backend.is_live())
 
 
 if __name__ == "__main__":

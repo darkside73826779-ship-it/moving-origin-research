@@ -63,6 +63,12 @@ LAW_METRIC_SCHEMAS = {
     "L14": {"self_model_visibility": float, "memory_coupling": float, "thick_present_coupling": float},
     "L18": {"governed_seed_count": int, "arms_present": int, "controls_passed": bool},
 }
+LAW_METRIC_DOMAINS = {
+    "L7": {"candidate_auroc": (0.0, 1.0), "candidate_ece": (0.0, 1.0), "paired_peer_margin": (-1.0, 1.0)},
+    "L8": {"regulation_error": (0.0, None), "dose_response_statistic": (-1.0, 1.0), "specificity_statistic": (-1.0, 1.0)},
+    "L10": {"drift_primary_metric": (0.0, 1.0), "clean_secondary_metric": (0.0, 1.0), "abstention_rate": (0.0, 1.0)},
+    "L14": {"self_model_visibility": (0.0, 1.0), "memory_coupling": (-1.0, 1.0), "thick_present_coupling": (-1.0, 1.0)},
+}
 LAW_FAILURE_EVIDENCE = {law: (f"{law.lower()}_failure_receipt",) for law in LAW_ORDER}
 LAW_NOT_RUN_EVIDENCE = {law: (f"{law.lower()}_instrument_failure_receipt",) for law in LAW_ORDER}
 REGISTERED_BACKEND_FAIL_CODES = frozenset(("SYNTHETIC_REJECTED",))
@@ -131,7 +137,7 @@ class PrivateTokenView:
 
 
 @dataclass(frozen=True)
-class VerifiedFanoutInput:
+class _VerifiedFanoutInput:
     context_length: int
     length: int
     expected_sha256: str
@@ -139,6 +145,8 @@ class VerifiedFanoutInput:
     stop_sha256: str
     candidate_view: PrivateTokenView
     peer_view: PrivateTokenView
+    stop_view: PrivateTokenView
+    request_sha256: str
 
 
 def encode_private_view(items: Sequence[int]) -> bytes:
@@ -200,12 +208,13 @@ def _initial_state() -> dict[str, Any]:
         "episode_id": None, "episode_complete": False,
         "reset_ordinal": 0, "next_request_ordinal": 0,
         "snapshot_ordinal": 0, "last_response_sha256": None,
+        "used_episode_ids": [],
     }
 
 
 def validate_state(state: Mapping[str, Any]) -> None:
     expected = {"lifecycle_state","closed","episode_id","episode_complete","reset_ordinal",
-                "next_request_ordinal","snapshot_ordinal","last_response_sha256"}
+                "next_request_ordinal","snapshot_ordinal","last_response_sha256","used_episode_ids"}
     if not isinstance(state, Mapping) or set(state) != expected:
         raise IntegrationError("STATE_SEMANTIC_FAILURE")
     lifecycle = state.get("lifecycle_state")
@@ -214,11 +223,18 @@ def validate_state(state: Mapping[str, Any]) -> None:
     if (type(state.get("closed")) is not bool or type(state.get("episode_complete")) is not bool or
             any(type(state.get(k)) is not int or state[k] < 0 for k in ("reset_ordinal","next_request_ordinal","snapshot_ordinal"))):
         raise IntegrationError("STATE_SEMANTIC_FAILURE")
+    history = state.get("used_episode_ids")
+    if (type(history) is not list or any(type(item) is not str or not item.strip() for item in history) or
+            len(history) != len(set(history)) or len(history) != state["reset_ordinal"]):
+        raise IntegrationError("STATE_SEMANTIC_FAILURE")
     early = (state["episode_id"] is None and state["episode_complete"] is False and state["reset_ordinal"] == 0 and
-             state["next_request_ordinal"] == 0 and state["snapshot_ordinal"] == 0 and state["last_response_sha256"] is None)
+             state["next_request_ordinal"] == 0 and state["snapshot_ordinal"] == 0 and state["last_response_sha256"] is None and
+             history == [])
     ready = (type(state["episode_id"]) is str and bool(state["episode_id"]) and state["episode_complete"] is False and
-             state["reset_ordinal"] >= 1 and state["next_request_ordinal"] == 0 and state["last_response_sha256"] is None)
+             state["reset_ordinal"] >= 1 and history[-1] == state["episode_id"] and
+             state["next_request_ordinal"] == 0 and state["last_response_sha256"] is None)
     stepped = (type(state["episode_id"]) is str and bool(state["episode_id"]) and state["reset_ordinal"] >= 1 and
+               history[-1] == state["episode_id"] and
                state["next_request_ordinal"] >= 1 and type(state["last_response_sha256"]) is str and
                len(state["last_response_sha256"]) == 64 and not (set(state["last_response_sha256"]) - HEX64))
     valid = {
@@ -244,7 +260,6 @@ class BaseAdapter:
         self.session_id = str(manifest["runtime_instance_id"])
         self._state = _initial_state()
         self._backend_state = str(config.get("initial_backend_state_sha256", "0" * 64))
-        self._used_episode_ids: set[str] = set()
         self._lock = threading.Lock()
         self._active_identity: str | None = None
         self._active_operation_id: str | None = None
@@ -257,19 +272,19 @@ class BaseAdapter:
         validate_state(self._state)
         return canonical_bytes(self._state)
 
-    def restore(self, snapshot: tuple[dict[str, Any], str, set[str]]) -> None:
-        state, backend_state, used = deepcopy(snapshot)
+    def restore(self, snapshot: tuple[dict[str, Any], str]) -> None:
+        state, backend_state = deepcopy(snapshot)
         validate_state(state)
-        if type(backend_state) is not str or len(backend_state) != 64 or set(backend_state) - HEX64 or type(used) is not set:
+        if type(backend_state) is not str or len(backend_state) != 64 or set(backend_state) - HEX64:
             raise IntegrationError("STATE_SEMANTIC_FAILURE")
-        self._state, self._backend_state, self._used_episode_ids = state, backend_state, used
+        self._state, self._backend_state = state, backend_state
         validate_state(self._state)
 
-    def capture(self) -> tuple[dict[str, Any], str, set[str]]:
+    def capture(self) -> tuple[dict[str, Any], str]:
         validate_state(self._state)
-        return deepcopy((self._state, self._backend_state, self._used_episode_ids))
+        return deepcopy((self._state, self._backend_state))
 
-    def capture_transaction(self) -> tuple[tuple[dict[str, Any], str, set[str]], Any, str]:
+    def capture_transaction(self) -> tuple[tuple[dict[str, Any], str], Any, str]:
         try:
             backend = self.backend.capture_state()
             identity = sha256_bytes(canonical_bytes(backend))
@@ -277,7 +292,7 @@ class BaseAdapter:
             raise IntegrationError("BACKEND_TRANSACTION_UNAVAILABLE") from exc
         return self.capture(), deepcopy(backend), identity
 
-    def restore_transaction(self, snapshot: tuple[tuple[dict[str, Any], str, set[str]], Any, str]) -> None:
+    def restore_transaction(self, snapshot: tuple[tuple[dict[str, Any], str], Any, str]) -> None:
         adapter, backend, expected_identity = snapshot
         try:
             self.backend.restore_state(deepcopy(backend))
@@ -403,14 +418,13 @@ class BaseAdapter:
             if state == "STEPPED" and not self._state["episode_complete"]: raise IntegrationError("EPISODE_NOT_COMPLETE")
             if state not in ("INITIALIZED", "STEPPED"): raise IntegrationError("ADAPTER_LIFECYCLE_VIOLATION")
             episode = request.get("episode_id")
-            if episode in self._used_episode_ids: raise IntegrationError("EPISODE_ID_REUSE")
+            if episode in self._state["used_episode_ids"]: raise IntegrationError("EPISODE_ID_REUSE")
             if request.get("reset_ordinal") != self._state["reset_ordinal"] + 1: raise IntegrationError("RESET_ORDINAL_MISMATCH")
             def mutate(s: dict[str, Any]) -> None:
                 s.update(episode_id=episode, episode_complete=False, reset_ordinal=request["reset_ordinal"],
                          next_request_ordinal=0, last_response_sha256=None)
-            receipt = self._call("reset_episode", (self._backend_state, frozen(request)), request, "EPISODE_READY", mutate)
-            self._used_episode_ids.add(str(episode))
-            return receipt
+                s["used_episode_ids"].append(str(episode))
+            return self._call("reset_episode", (self._backend_state, frozen(request)), request, "EPISODE_READY", mutate)
         finally: self._exit()
 
     def step(self, request: Mapping[str, Any], tokens: PrivateTokenView) -> Mapping[str, Any]:
@@ -520,6 +534,25 @@ class AdapterFactory:
         except IntegrationError: raise
         except Exception as exc: raise IntegrationError("BACKEND_ROLLBACK_FAILURE") from exc
 
+    @classmethod
+    def _attest_live(cls, backend: RealBackendProtocol, role: str) -> None:
+        code = {
+            "candidate": "CANDIDATE_BACKEND_NOT_LIVE",
+            "peer": "PEER_BACKEND_NOT_LIVE",
+            "control": "CONTROL_BACKEND_NOT_LIVE",
+        }[role]
+        try:
+            live = backend.is_live()
+        except Exception as exc:
+            try:
+                backend.dispose()
+            except Exception as cleanup_exc:
+                raise IntegrationError("BACKEND_ROLLBACK_FAILURE") from cleanup_exc
+            raise IntegrationError(code) from exc
+        if live is not True:
+            cls._dispose_verified(backend)
+            raise IntegrationError(code)
+
     def _construct(self, spec: tuple[type[BaseAdapter], dict[str, Any], dict[str, Any], Callable[[], RealBackendProtocol]],
                    role: str, scientific_arm: str,
                    private_token_provider: Callable[[int | str], Sequence[int]]) -> BaseAdapter:
@@ -528,10 +561,12 @@ class AdapterFactory:
         try:
             if backend.session_identity() != manifest["runtime_instance_id"]:
                 raise IntegrationError("BACKEND_SESSION_MISMATCH")
-            return cls(role, scientific_arm, manifest, config, private_token_provider, backend)
+            adapter = cls(role, scientific_arm, manifest, config, private_token_provider, backend)
         except Exception:
             self._dispose_verified(backend)
             raise
+        self._attest_live(backend, role)
+        return adapter
 
     def create(self, role: str, scientific_arm: str, manifest_bytes: bytes,
                backend_config_bytes: bytes, private_token_provider: Callable[[int | str], Sequence[int]]) -> BaseAdapter:
@@ -573,10 +608,24 @@ def validate_laws(rows: Sequence[Mapping[str, Any]]) -> tuple[Mapping[str, Any],
             metrics = row.get("metrics")
             metric_valid = (type(metrics) is dict and set(metrics) == set(schema) and
                             all(type(metrics[key]) is expected for key, expected in schema.items()) and
-                            all((math.isfinite(value) if type(value) is float else value >= 0 if type(value) is int else True)
-                                for value in metrics.values()))
-            valid = (row.get("claim_made") is True and type(row.get("evidence")) is list and tuple(row["evidence"]) == LAW_REQUIRED_EVIDENCE[law] and
-                     row.get("failure_code") is None and row.get("held_reason") is None and metric_valid)
+                            all(math.isfinite(value) for value in metrics.values() if type(value) is float))
+            if metric_valid and law in LAW_METRIC_DOMAINS:
+                metric_valid = all(
+                    metrics[key] >= lower and (upper is None or metrics[key] <= upper)
+                    for key, (lower, upper) in LAW_METRIC_DOMAINS[law].items()
+                )
+            if metric_valid and law == "L18":
+                metric_valid = (metrics["governed_seed_count"] >= 3 and metrics["arms_present"] >= 6 and
+                                metrics["controls_passed"] is True)
+            structurally_valid = (row.get("claim_made") is True and type(row.get("evidence")) is list and
+                                  tuple(row["evidence"]) == LAW_REQUIRED_EVIDENCE[law] and
+                                  row.get("failure_code") is None and row.get("held_reason") is None and metric_valid)
+            if structurally_valid:
+                # This summary projection cannot authenticate the full governed law artifacts
+                # (per-seed predicates, L8 dose/specificity panels, L10 dual abstention,
+                # L14 d+corr triples, and the 24-row L18 matrix).  It must not mint PASS.
+                raise IntegrationError("LAW_PASS_UNAVAILABLE")
+            valid = False
         elif status == "FAIL":
             valid = (row.get("claim_made") is False and type(row.get("evidence")) is list and tuple(row["evidence"]) == LAW_FAILURE_EVIDENCE[law] and
                      row.get("failure_code") in LAW_ALLOWED_FAILURES[law] and row.get("held_reason") is None and row.get("metrics") == {})
@@ -609,7 +658,7 @@ class FanoutCoordinator:
         self.post_return_probe = post_return_probe or (lambda _candidate, _peer: False)
 
     def _phase_one(self, rows: Sequence[Mapping[str, Any]], stop: Mapping[str, Any], context_length: int,
-                   candidate: BaseAdapter, peer: BaseAdapter, request: Mapping[str, Any]) -> VerifiedFanoutInput:
+                   candidate: BaseAdapter, peer: BaseAdapter, request: Mapping[str, Any]) -> _VerifiedFanoutInput:
         expected = (1024, 4096, 8192)
         contexts = tuple(row.get("context_length") for row in rows)
         if len(rows) < 3: raise IntegrationError("SANITIZED_RESULT_MISSING_CONTEXT")
@@ -641,18 +690,51 @@ class FanoutCoordinator:
         if cview.sha256 != pview.sha256: raise IntegrationError("FANOUT_RECEIVED_DIGEST_MISMATCH")
         if self.mutation_probe(cview) or self.mutation_probe(pview):
             raise IntegrationError("PRIVATE_VIEW_MUTATED")
-        return VerifiedFanoutInput(context_length, len(prompt_items), selected["expected_sha256"],
-                                   len(stop_items), stop["sha256"], cview, pview)
+        return _VerifiedFanoutInput(context_length, len(prompt_items), selected["expected_sha256"],
+                                    len(stop_items), stop["sha256"], cview, pview,
+                                    PrivateTokenView(len(stop_items), stop_bytes),
+                                    sha256_bytes(canonical_bytes(dict(request))))
+
+    def _validate_verified(self, verified: _VerifiedFanoutInput, request: Mapping[str, Any]) -> None:
+        if type(verified) is not _VerifiedFanoutInput:
+            raise IntegrationError("VERIFIED_FANOUT_IDENTITY_INVALID")
+        request_sha256 = sha256_bytes(canonical_bytes(dict(request)))
+        if verified.request_sha256 != request_sha256:
+            raise IntegrationError("FANOUT_REQUEST_IDENTITY_MISMATCH")
+        if (type(verified.context_length) is not int or verified.context_length not in (1024, 4096, 8192) or
+                type(verified.length) is not int or verified.length != verified.context_length or
+                type(verified.stop_length) is not int or verified.stop_length < 0):
+            raise IntegrationError("VERIFIED_FANOUT_IDENTITY_INVALID")
+        views = (verified.candidate_view, verified.peer_view)
+        if any(type(view) is not PrivateTokenView or type(view.bytes_view) is not bytes or
+               view.context_length != verified.context_length for view in views):
+            raise IntegrationError("PRIVATE_VIEW_MUTATION_ATTEMPT")
+        encoded_prefix_length = len(b"M4_PRIVATE_VIEW_V1\x00") + 4
+        if any(view.byte_length != encoded_prefix_length + 8 * verified.length for view in views):
+            raise IntegrationError("SANITIZED_RESULT_LENGTH_MISMATCH")
+        if (views[0].bytes_view != views[1].bytes_view or views[0].sha256 != views[1].sha256):
+            raise IntegrationError("FANOUT_RECEIVED_DIGEST_MISMATCH")
+        if views[0].sha256 != verified.expected_sha256:
+            raise IntegrationError("TOKEN_ARRAY_DIGEST_MISMATCH")
+        stop_view = verified.stop_view
+        if (type(stop_view) is not PrivateTokenView or type(stop_view.bytes_view) is not bytes or
+                stop_view.context_length != verified.stop_length or
+                stop_view.byte_length != encoded_prefix_length + 8 * verified.stop_length or
+                stop_view.sha256 != verified.stop_sha256):
+            raise IntegrationError("STOP_REDERIVATION_MISMATCH")
+        if self.mutation_probe(views[0]) or self.mutation_probe(views[1]):
+            raise IntegrationError("PRIVATE_VIEW_MUTATED")
 
     def step(self, rows: Sequence[Mapping[str, Any]], stop: Mapping[str, Any], context_length: int,
              request: Mapping[str, Any], candidate: BaseAdapter, peer: BaseAdapter) -> Mapping[str, Any]:
         validate_pair_identity(candidate.manifest, peer.manifest)
         verified = self._phase_one(rows, stop, context_length, candidate, peer, request)
-        return self.step_verified(verified, request, candidate, peer)
+        return self._step_verified(verified, request, candidate, peer)
 
-    def step_verified(self, verified: VerifiedFanoutInput, request: Mapping[str, Any],
-                      candidate: BaseAdapter, peer: BaseAdapter) -> Mapping[str, Any]:
+    def _step_verified(self, verified: _VerifiedFanoutInput, request: Mapping[str, Any],
+                       candidate: BaseAdapter, peer: BaseAdapter) -> Mapping[str, Any]:
         validate_pair_identity(candidate.manifest, peer.manifest)
+        self._validate_verified(verified, request)
         if request.get("context_length") != verified.context_length: raise IntegrationError("CONTEXT_REQUEST_MISMATCH")
         candidate_before, peer_before = candidate.capture_transaction(), peer.capture_transaction()
         cview, pview = verified.candidate_view, verified.peer_view
@@ -694,7 +776,7 @@ class SyntheticFixtureDispatcher:
         )
         if tuple(fixture.get("sequence", ())) != expected_sequence: raise IntegrationError("FIXTURE_SEQUENCE_MISMATCH")
         realized: list[str] = []
-        cache: dict[int, VerifiedFanoutInput] = {}
+        cache: dict[int, _VerifiedFanoutInput] = {}
         receipts: list[Mapping[str, Any]] = []
         close_trace: list[Mapping[str, str]] = []
         for entry in expected_sequence:
@@ -704,7 +786,8 @@ class SyntheticFixtureDispatcher:
             elif entry == "verify_private_token_digests":
                 for context, ordinal, terminal in ((1024, 0, False), (4096, 1, True), (8192, 0, True)):
                     episode = "synthetic-episode-a" if context != 8192 else "synthetic-episode-b"
-                    req = {"operation_id": f"verify-{context}", "caller_session_id": "caller-main", "caller_thread_id": "thread-0",
+                    operation_id = {1024:"fanout_episode_a_request_0",4096:"fanout_episode_a_request_1",8192:"fanout_episode_b_request_0"}[context]
+                    req = {"operation_id": operation_id, "caller_session_id": "caller-main", "caller_thread_id": "thread-0",
                            "episode_id": episode, "request_ordinal": ordinal, "context_length": context, "is_terminal_request": terminal}
                     cache[context] = self.coordinator._phase_one(rows, stop, context, candidate, peer, req)
             elif entry in ("fanout_episode_a_request_0", "fanout_episode_a_request_1", "fanout_episode_b_request_0"):
@@ -715,7 +798,7 @@ class SyntheticFixtureDispatcher:
                 }[entry]
                 req = {"operation_id": entry, "caller_session_id": "caller-main", "caller_thread_id": "thread-0",
                        "episode_id": episode, "request_ordinal": ordinal, "context_length": context, "is_terminal_request": terminal}
-                receipts.append(self.coordinator.step_verified(cache[context], req, candidate, peer))
+                receipts.append(self.coordinator._step_verified(cache[context], req, candidate, peer))
             elif entry == "exercise_close_paths":
                 for state in fixture["expected"]["close_paths"]:
                     adapter = close_adapters[state]
@@ -772,7 +855,7 @@ class SyntheticFixtureDispatcher:
 __all__ = [
     "AdapterFactory", "BaseAdapter", "CandidateAdapter", "ControlAdapter", "FanoutCoordinator",
     "IntegrationError", "ModelAdapterProtocol", "PeerAdapter", "PrivateTokenView", "RealBackendProtocol",
-    "SyntheticFixtureDispatcher", "VerifiedFanoutInput",
+    "SyntheticFixtureDispatcher",
     "canonical_bytes", "encode_private_view", "frozen", "held_law_projection", "sha256_bytes",
     "realize_launch_command", "validate_laws", "validate_pair_identity", "validate_state",
 ]
