@@ -8,4 +8,6 @@ Focused validation passed 8/8. The wrapper is deliberately `RUN_AUTHORITY_ABSENT
 
 Public-safety preflight findings for the exact implementation/packaging range are explicitly classified `CLASSIFIED_CLEAR_FOR_REVIEW_PACKAGING` by `handoffs/WORKFLOW_COORDINATOR_M4_CRASH_CART_BETA_PREFLIGHT_CLASSIFICATION_2026-08-22.md` at `82416ec6bd40dbc4c2755d6ebb42ea5dbd664721`; no finding was suppressed.
 
+The final packaging-only preflight reported 139 findings: 131 fixed-regex matches and the same eight declared public tokenizer-identity gitleaks detections. They are solely the identity/control categories already classified by that authority; no prohibited content was introduced and none was suppressed.
+
 Next route: WORKFLOW COORDINATOR → authoritative persistent CRITIC for one implementation review.
