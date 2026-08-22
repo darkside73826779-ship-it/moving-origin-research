@@ -69,7 +69,11 @@
     "tip_sha": "67d631cdde1572fc2906b638e14d8bc05ecbf45d",
     "tool_status": "blocked",
     "manual_review": true,
-    "findings": []
+    "findings": [
+      "the 22 fixed-regex personal-contact findings are duplicate scan-domain matches wholly inside required immutable public Git SHAs or declared public model/tokenizer/artifact digest values and are non-secret reproducibility metadata",
+      "the six gitleaks generic-api-key findings are three scan-domain occurrences each on the declared public tokenizer_config_sha256 and tokenizer_sha256 values in the contract-permitted sanitized result; they are public artifact identities, not credentials",
+      "manual review found no credentials, personal contact data, private paths, custody values, model/tokenizer bytes, complete token arrays, protected seeds, scientific output, or prohibited durable-state mutation"
+    ]
   },
   "next_event": "WORKFLOW COORDINATOR acknowledges the terminal FAIL and routes the exact sanitized execution package to the authoritative persistent CRITIC for independent execution review",
   "prohibited_actions": [
