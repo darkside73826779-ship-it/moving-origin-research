@@ -1,0 +1,75 @@
+{
+  "schema_version": "common-handoff-manifest-v1",
+  "date": "2026-08-22",
+  "regime": "B",
+  "transfer_kind": "FORMAL_HANDOFF",
+  "work_item": "m4_wsl2_two_axis_dependency_lock_bf1_bf2_remediation",
+  "gate": "Persistent-CRITIC narrow BF1-BF2 rereview",
+  "sender_role": "ARCHITECT",
+  "receiver_role": "WORKFLOW_COORDINATOR",
+  "authority_basis": [
+    {"path": "reviews/critic_m4_wsl2_two_axis_dependency_lock_review.md", "sha": "31dd464ad1bcdfcef713b4636b4df653782dc1c8"}
+  ],
+  "remote_ref": "refs/heads/architect/m4-wsl2-two-axis-dependency-lock-bf1-bf2-remediation",
+  "base_sha": "31dd464ad1bcdfcef713b4636b4df653782dc1c8",
+  "routing_ref_sha": "6d8175edb63cf6ec03c0904d640ae6f946ebcf16",
+  "review_result_sha": "4993711fa32ffe9ab3b2dabb2b5d5615182c6e90",
+  "work_branch": "architect/m4-wsl2-two-axis-dependency-lock-bf1-bf2-remediation",
+  "artifacts": {
+    "docs/m4_wsl2_preexecution_testbed_runbook.md": "753395ec54f83b6578048eb56c72f33c1af479fe3b034a3d9b4089380d3f9c6c",
+    "handoffs/ARCHITECT_TO_COORDINATOR_M4_WSL2_TWO_AXIS_DEPENDENCY_LOCK_BF1_BF2_REMEDIATION_2026-08-22.md": "dd3faff69c68c06b7e61c390b0a576ba84fd018219f899d3411b3e89a0622775",
+    "reviews/critic_m4_wsl2_two_axis_dependency_lock_review.md": "6e0de57d4779d846918bf4aa38788e375ffa1df138f9113e5bb8b0ba6d29b9bf",
+    "specs/data/m4_wsl2_dual_model_probe_two_axis_report_schema_v2.json": "5ad3099617eff1fb5e67d8dc14ec3fb1264b6e8fb24afb337dc03da98b32c0ad",
+    "specs/data/m4_wsl2_dual_model_probe_two_axis_report_schema_v2.json.sha256": "93656a7f1d188958f4d268f49143c3d1d2988feaa2a4234cad9f0e9fed2ee091",
+    "specs/data/m4_wsl2_two_axis_dependency_lock_package_v1.json": "1955da3ddb823ae83efc2dbc096880544c7c8d88be8ffbefbfdf395c59916839",
+    "specs/data/m4_wsl2_two_axis_dependency_lock_package_v1.json.sha256": "b28fe6186046903214a5c6226f4e42eae9e4bf4c1d4ec0102112ef1f8b52d203",
+    "specs/m4_wsl2_two_axis_dependency_lock_amendment_v1.md": "1152cde311a0f01cfa7ccad882312b8106727adfe1e651081f5172ee847745de",
+    "tests/test_m4_wsl2_two_axis_dependency_lock.py": "c7c776fd30d369e3769fa227a0f2dfefc29ce71d2ce5e5ba3e59d34ec7889f7c",
+    "tools/testbed/derive_m4_wsl2_two_axis_report.py": "ddaf0ec2425adb9a41577ae8814cd2927bdb697c248f0749f12bce88ae2adbd4"
+  },
+  "checks_performed": [
+    "exact CRITIC BF1-BF2 review read and scoped",
+    "exact v1 schema vocabulary equality and all-code projection tests passed",
+    "v2 schema conditionals and semantic invariant negatives passed",
+    "exact-replica consumer guard STOP tests for MISMATCH and NOT_RUN passed",
+    "pinned network-none read-only governed OCI testbed suite 34 of 34 passed",
+    "Draft 2020-12 metaschema validation passed",
+    "retained v1 report and projection bytes independently reproduced unchanged",
+    "complete eighteen-entry package inventory and sidecars independently reproduced",
+    "workflow preflight manually classified with gitleaks zero",
+    "git diff check and fsck completed"
+  ],
+  "status": "READY",
+  "findings": [],
+  "scan_attestation": {
+    "base_sha": "31dd464ad1bcdfcef713b4636b4df653782dc1c8",
+    "tip_sha": "6d8175edb63cf6ec03c0904d640ae6f946ebcf16",
+    "tool_status": "blocked",
+    "manual_review": true,
+    "findings": [
+      "31 personal-contact heuristic matches represent 10 unique substrings wholly inside required immutable public Git/SHA-256 identities in the inventory, handoff, and pre-existing runbook; manually classified as reproducibility metadata",
+      "gitleaks 8.30.1 returned zero findings",
+      "no personal contact, credential, private path/value, custody material, protected prompt/seed, score, or scientific output was found"
+    ]
+  },
+  "next_event": "WORKFLOW COORDINATOR validates and routes this exact package once to persistent CRITIC for narrow BF1-BF2 rereview",
+  "prohibited_actions": [
+    "model rerun, network acquisition, protected-input or custody access, scoring, qualification, science, or readiness claim",
+    "production merge, gate decision, or inference beyond the exact diagnostic package"
+  ],
+  "role_extension": {
+    "role": "ARCHITECT",
+    "changelog_paths": [
+      "docs/m4_wsl2_preexecution_testbed_runbook.md",
+      "handoffs/ARCHITECT_TO_COORDINATOR_M4_WSL2_TWO_AXIS_DEPENDENCY_LOCK_BF1_BF2_REMEDIATION_2026-08-22.md",
+      "specs/data/m4_wsl2_dual_model_probe_two_axis_report_schema_v2.json",
+      "specs/data/m4_wsl2_dual_model_probe_two_axis_report_schema_v2.json.sha256",
+      "specs/data/m4_wsl2_two_axis_dependency_lock_package_v1.json",
+      "specs/data/m4_wsl2_two_axis_dependency_lock_package_v1.json.sha256",
+      "specs/m4_wsl2_two_axis_dependency_lock_amendment_v1.md",
+      "tests/test_m4_wsl2_two_axis_dependency_lock.py",
+      "tools/testbed/derive_m4_wsl2_two_axis_report.py"
+    ],
+    "diff_self_inspection": true
+  }
+}
