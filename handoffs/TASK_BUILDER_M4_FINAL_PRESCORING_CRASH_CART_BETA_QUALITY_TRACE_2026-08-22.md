@@ -25,6 +25,8 @@ The shared-session reset check is defense in depth and unreachable after both ro
 
 The skeptical review compared the complete modified lifecycle and validator paths with the cleared gate, launch contract, report schema, beta contract, and production seam. The incomplete custom Draft implementation is absent and unreachable. All non-handoff bytes were finalized in `56fadc894eb228927ba904b5c0db3e5032385259`; the routing tail is handoffs-only.
 
+WF1 receiver simulation: standard `workflow_checkout.py create` accepted routed head `3a10352691c076803afee697390aad4875a836e7`, review result `56fadc894eb228927ba904b5c0db3e5032385259`, and base `cc55da04c0689c30b6d52c2aefcd1986f1c03da2`; standard cleanup removed the verification checkout and receipt.
+
 Substantive-range preflight `cc55da04c0689c30b6d52c2aefcd1986f1c03da2..56fadc894eb228927ba904b5c0db3e5032385259`: gitleaks zero. Two scan-domain findings are repeats of one fixed-regex numeric substring wholly inside the declared public SHA-256 identity for `tests/run_m4_final_prescoring_crash_cart_tests.py`; manually classified as public reproducibility metadata. No personal-contact data, prohibited content, or suppression.
 
 No model, tokenizer, OCI, WSL2, gofast, custody, held/protected input, scoring, science, merge, publication, readiness, retry, or gate action occurred.
