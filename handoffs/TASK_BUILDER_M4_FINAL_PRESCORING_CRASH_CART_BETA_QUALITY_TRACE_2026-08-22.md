@@ -1,25 +1,30 @@
-# TASK BUILDER QUALITY TRACE — M4 final pre-scoring crash-cart beta
+# TASK BUILDER QUALITY TRACE — M4 crash-cart beta R3
 
-Active implementation: `ba5ddda7811c776dc70347d3ae549b4c822c31be`.
+Active implementation: `56fadc894eb228927ba904b5c0db3e5032385259`.
 
-| Requirement | Production branch | Focused evidence |
-|---|---|---|
-| Literal-LF four-prompt warmup | `warmup_prompt` / `warmup_plan` | all byte sizes, LF count, and SHA-256 values asserted |
-| Post-clean-barrier measured sequence | `active_schedule` | 64 ordinals, zero offsets through 15, final 30s offset |
-| Eight public fixture families | `public_fixture` | exact payload family sequence asserted |
-| HELD-only laws | `held_laws` | ordered five-row no-claim projection asserted |
-| Staged evidence | `validate_terminal` | fabricated pre-active evidence and incomplete complete-stage evidence rejected |
-| Replica-consumer boundary | `exact_replica_consumer_stop` | mismatch stops consumer |
-| No execution authority | `execution_guard`, wrapper | wrapper exits 2 before runtime access |
+## Invariant map
 
-Focused custody-free result: `python -I tests/run_m4_final_prescoring_crash_cart_tests.py` — exit 0, 15 discovered, 15/15 PASS. Added production tests include `test_invalid_receipt_fails_first_field_and_no_later_evidence` and `test_full_top_level_complete_schema_counterexample`; scheduling/telemetry tests now execute `CrashCartLifecycle.run` and inspect observed dispatch/sample evidence.
+| Requirement | Governing artifact | Production branch | Success invariant | Failure precedence / terminal projection | Boundary evidence |
+|---|---|---|---|---|---|
+| Complete staged-report validation | `specs/data/m4_final_prescoring_full_stack_crash_cart_report_schema_v1.json`; gate `semantic_validation` and `staged_terminal_evidence` | `_compose_schema` before `validate_terminal` semantics | repository-supported `Draft202012Validator` accepts the exact committed schema and all five valid stage representatives | any Draft 2020-12 error becomes `REPORT_SCHEMA_INVALID` before semantic acceptance/export | `test_schema_accepts_all_five_stage_representatives`; `test_schema_rejects_min_properties_and_keyword_neighborhood`; `test_each_incomplete_stage_rejects_an_otherwise_complete_nested_defect`; `test_schema_failure_precedes_semantics` |
+| Clean measured reset | gate `warmup.post_sequence_commands`, `episode_ordinal_controls`, and `semantic_validation` | `_validate_reset_receipt`, `_reset_pair`, `warmup`, `_validate_role_receipt` | both exact seven-field reset receipts validate, role/session identities bind, and both post-reset state digests rebind atomically before active ordinal 0 | malformed/status/session/prior/result/correlation or second-role failure stops before active; rollback is attempted; rollback failure projects `PAIR_ROLLBACK`; cleanup remains `finally` | `test_reset_rebinds_fresh_measured_state_and_active_zero`; `test_reset_same_digest_is_valid`; `test_reset_malformed_mismatched_or_peer_failure_is_atomic_and_cleans`; `test_rollback_reset_failure_projects_pair_rollback_and_still_cleans` |
+| Observed 60-second active deadline | beta contract `active_window`; launch `active_controls`; gate `active_schedule` | `_wait`, `_assert_within_deadline`, `_assert_pair_completion_within_deadline`, `active` | below and exactly 60 seconds are accepted; samples/rows derive only from observed time and completed work | pre-dispatch, post-pair, and pre-success observations above 60 seconds project `ACTIVE_WINDOW_TIMEOUT_NO_RETRY`; no later row/sample is fabricated; rollback/reset/cleanup follow | `test_final_pair_deadline_below_exact_and_over_boundary`; `test_earlier_overrun_and_sleeper_underwait_fail_closed`; `test_invalid_telemetry_observation_fails_closed_and_cleans` |
+| Governed warmup RNG and controls | gate `warmup.generation_parameters`; launch `warmup_controls`; beta contract `warmup` | `WARMUP_RNG_DOMAIN`, `warmup_plan`, `_request` | every candidate/peer warmup request carries `M4_FINAL_CRASH_CART_WARMUP_V1` plus exact generation, timeout, barrier, ordinal, and no-prefix-cache controls | stale constant/control makes direct production-request equality fail before evidence is accepted | `test_governed_constants_and_every_warmup_request_are_exact`; `test_symmetric_barriers_resets_rng_no_priming_and_receipt_ordinals` |
+| Schedule, queue, telemetry, receipt, and 64-prompt inventory banked closure | beta contract `active_window`; gate `public_fixture`, `resource_sampling`, `semantic_validation` | `active_schedule`, `_collect_samples`, `_pair`, `fixture_inventory` | exact 64 ordinals, queue ≤8, 250-ms observations, exact receipt chain, ordered immutable prompt hashes | under-wait, bad receipt field, queue/deadline bypass, or fabricated telemetry fails closed | `test_schedule_queue_deadline_and_telemetry`; `test_invalid_receipt_fails_first_field_and_no_later_evidence`; `test_inventory_is_committed_ordered_unique_and_exact` |
+| No workload authority | beta contract `execution.run_authorized=false` | `execution_guard`; wrapper | no runtime starts | `RUN_AUTHORITY_ABSENT`, exit 2 | `test_wrapper_guard_never_starts_runtime`; wrapper command below |
 
-Pre-correction proof: `python -I tests/run_m4_final_prescoring_crash_cart_precorrection_probe.py` — exit 0 with `PRECORRECTION_KILLED tests=15 prior=3f9f685`. Mutation command: `python -I tests/run_m4_final_prescoring_crash_cart_mutations.py` — exit 0; required-key schema, receipt backend-code, schedule wait, queue bound, deadline, and observed-telemetry mutants all KILLED. Wrapper: `python tools/run_m4_final_prescoring_crash_cart.py` — governed exit 2 `RUN_AUTHORITY_ABSENT`.
+The shared-session reset check is defense in depth and unreachable after both role-specific session checks succeed; malformed shared/mismatched sessions are covered by the candidate-session adversary. All other changed conditionals have direct success and failure-path evidence above.
 
-No model, tokenizer, OCI, WSL2, gofast, custody, protected input, scoring, science, or result publication occurred.
+## Exact verification
 
-WF1 checkout: standard `workflow_checkout.py create` accepted head `a541491fb5a5c5db5e68e3c275f991444888666c` with review result `ba5ddda7811c776dc70347d3ae549b4c822c31be`; `cleanup` removed the verification checkout and receipt successfully.
+- `python -I tests/run_m4_final_prescoring_crash_cart_tests.py` — exit 0; 27 discovered, 27/27 PASS.
+- `python -I tests/run_m4_final_prescoring_crash_cart_precorrection_probe.py` — exit 0; `PRECORRECTION_KILLED tests=27 prior=ba5ddda`.
+- `python -I tests/run_m4_final_prescoring_crash_cart_mutations.py` — exit 0; 10/10 KILLED, zero survivor, zero instrument failure: `telemetry_observed`, `required_key_schema`, `receipt_backend_code`, `schedule_wait`, `queue_bound`, `deadline`, `reset_rebind`, `post_pair_deadline`, `warmup_rng_domain`, `schema_min_properties`.
+- `python -m py_compile src/m4_final_prescoring_crash_cart.py tests/test_m4_final_prescoring_crash_cart.py` — exit 0.
+- `python tools/run_m4_final_prescoring_crash_cart.py` — governed exit 2, `RUN_AUTHORITY_ABSENT`.
 
-Final correction-range preflight through `a541491fb5a5c5db5e68e3c275f991444888666c`: gitleaks zero; 12 scan-domain findings reduce to four unique fixed-regex numeric substrings wholly inside required public SHA-256 identities in the canonical manifest. Manual classification: public reproducibility metadata, no personal-contact data or prohibited content, and no suppression.
+The skeptical review compared the complete modified lifecycle and validator paths with the cleared gate, launch contract, report schema, beta contract, and production seam. The incomplete custom Draft implementation is absent and unreachable. All non-handoff bytes were finalized in `56fadc894eb228927ba904b5c0db3e5032385259`; the routing tail is handoffs-only.
 
-BF1–BF4 correction: the injected lifecycle now binds paired warmup barriers, reset, post-clean-barrier RNG insertion, all 64 public fixtures, rollback boundary, and cleanup; `validate_terminal` rejects invalid stage/failure pairings and fabricated/incomplete staged evidence; `.gitattributes` is included in the return inventory.
+Substantive-range preflight `cc55da04c0689c30b6d52c2aefcd1986f1c03da2..56fadc894eb228927ba904b5c0db3e5032385259`: gitleaks zero. Two scan-domain findings are repeats of one fixed-regex numeric substring wholly inside the declared public SHA-256 identity for `tests/run_m4_final_prescoring_crash_cart_tests.py`; manually classified as public reproducibility metadata. No personal-contact data, prohibited content, or suppression.
+
+No model, tokenizer, OCI, WSL2, gofast, custody, held/protected input, scoring, science, merge, publication, readiness, retry, or gate action occurred.
