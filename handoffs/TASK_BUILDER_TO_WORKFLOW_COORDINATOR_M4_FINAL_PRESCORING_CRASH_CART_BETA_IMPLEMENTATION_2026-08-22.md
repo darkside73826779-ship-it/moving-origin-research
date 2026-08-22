@@ -14,4 +14,6 @@ The final packaging-only preflight reported 139 findings: 131 fixed-regex matche
 
 The BF1–BF3 correction-range preflight reported 65 fixed-regex findings and zero gitleaks findings. Manual inspection classifies every match as a substring of an immutable public Git/SHA-256 identity or a fixed public timing/count control; no personal-contact data or prohibited content was present, and no finding was suppressed.
 
+The final BF1-R2/BF2-R2/BF3-R2 packaging preflight through `a541491fb5a5c5db5e68e3c275f991444888666c` reported gitleaks zero. Its 12 scan-domain findings are repeats of four fixed-regex numeric substrings wholly inside required public SHA-256 identities in the canonical manifest; they are manually classified as public reproducibility metadata, with no personal-contact data, prohibited content, or suppression.
+
 Next route: WORKFLOW COORDINATOR → authoritative persistent CRITIC for one implementation review.

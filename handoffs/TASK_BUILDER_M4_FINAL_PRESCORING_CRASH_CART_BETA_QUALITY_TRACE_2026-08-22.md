@@ -18,4 +18,8 @@ Pre-correction proof: `python -I tests/run_m4_final_prescoring_crash_cart_precor
 
 No model, tokenizer, OCI, WSL2, gofast, custody, protected input, scoring, science, or result publication occurred.
 
+WF1 checkout: standard `workflow_checkout.py create` accepted head `a541491fb5a5c5db5e68e3c275f991444888666c` with review result `ba5ddda7811c776dc70347d3ae549b4c822c31be`; `cleanup` removed the verification checkout and receipt successfully.
+
+Final correction-range preflight through `a541491fb5a5c5db5e68e3c275f991444888666c`: gitleaks zero; 12 scan-domain findings reduce to four unique fixed-regex numeric substrings wholly inside required public SHA-256 identities in the canonical manifest. Manual classification: public reproducibility metadata, no personal-contact data or prohibited content, and no suppression.
+
 BF1–BF4 correction: the injected lifecycle now binds paired warmup barriers, reset, post-clean-barrier RNG insertion, all 64 public fixtures, rollback boundary, and cleanup; `validate_terminal` rejects invalid stage/failure pairings and fabricated/incomplete staged evidence; `.gitattributes` is included in the return inventory.
