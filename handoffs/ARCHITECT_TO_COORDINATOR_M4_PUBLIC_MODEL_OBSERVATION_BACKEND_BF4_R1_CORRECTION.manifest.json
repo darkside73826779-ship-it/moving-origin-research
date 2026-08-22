@@ -1,0 +1,64 @@
+{
+  "schema_version": "common-handoff-manifest-v1",
+  "date": "2026-08-22",
+  "regime": "B",
+  "transfer_kind": "FORMAL_HANDOFF",
+  "work_item": "m4_public_model_observation_backend_bf4_r1_correction",
+  "gate": "Persistent-CRITIC BF4-R1 final rereview",
+  "sender_role": "ARCHITECT",
+  "receiver_role": "WORKFLOW_COORDINATOR",
+  "authority_basis": [
+    {"path": "reviews/critic_m4_public_model_observation_backend_bf1_bf5_rereview.md", "sha": "632426122e8d3d308640b05f4484b61404667c2a"}
+  ],
+  "remote_ref": "refs/heads/architect/m4-public-model-observation-backend-bf4-r1-correction",
+  "base_sha": "632426122e8d3d308640b05f4484b61404667c2a",
+  "routing_ref_sha": "89bf97e53af7a8852fc6c3dc67623fc14d11650e",
+  "review_result_sha": "515e1d553858f4675a5ee5f347ffbc395b8fdd78",
+  "work_branch": "architect/m4-public-model-observation-backend-bf4-r1-correction",
+  "artifacts": {
+    ".gitattributes": "47ef335b1e69839585476359479c794a6a58488fcca21f94b946718169c16976",
+    "handoffs/ARCHITECT_TO_COORDINATOR_M4_PUBLIC_MODEL_OBSERVATION_BACKEND_BF4_R1_CORRECTION_2026-08-22.md": "eeaf99bfeebc2cc4fb62e66d0b75f23a9100527f147a7f0c21cfce8a899b8058",
+    "reviews/critic_m4_public_model_observation_backend_bf1_bf5_rereview.md": "e9bfce88fc41bd092c5f0906e62e49ff202fc37e3f248e6ae53acf9f3ee940ed",
+    "specs/data/m4_public_model_observation_backend_test_contract_v1.json": "a72eb1d565ea64fee114ae4ac0f840a76cf366d25c82509e83b76453941f593c",
+    "specs/data/m4_public_model_observation_backend_test_contract_v1.json.sha256": "7ef66aaccb9840c57e33436c46dc4816519e4a582ad26b4d89a836ac1dd59f44",
+    "specs/m4_public_model_observation_backend_design_v1.md": "b1e5ccfced902022d2599266de650e102dee79ea801245c2eb611bbc48374f50"
+  },
+  "checks_performed": [
+    "exact positive namespace smoke exit zero",
+    "exact errno-101 classified outbound-denial smoke exit zero",
+    "test-contract positive cases and required assertions unique",
+    "JSON, sidecar, LF, and diff checks passed",
+    "standard isolated-checkout helper accepted the handoff-only routing tail",
+    "workflow preflight manually classified with gitleaks zero",
+    "ancestry, fsck, cleanliness, and remote equality checked"
+  ],
+  "status": "READY",
+  "findings": [],
+  "scan_attestation": {
+    "base_sha": "632426122e8d3d308640b05f4484b61404667c2a",
+    "tip_sha": "89bf97e53af7a8852fc6c3dc67623fc14d11650e",
+    "tool_status": "blocked",
+    "manual_review": true,
+    "findings": [
+      "2 personal-contact heuristic matches represent 2 substrings wholly inside unchanged required public model/tokenizer SHA-256 identities in the complete resulting design file; manually classified as reproducibility metadata",
+      "gitleaks 8.30.1 returned zero findings",
+      "no credential, personal contact, private value/path, protected seed, score, or scientific output was found"
+    ]
+  },
+  "next_event": "WORKFLOW COORDINATOR validates and returns this exact BF4-R1 correction to current persistent CRITIC",
+  "prohibited_actions": [
+    "BF1-BF3 or BF5 reopening, implementation, model/tokenizer execution, custody or protected-seed access",
+    "scoring, qualification, science, readiness, merge, run authorization, or gate decision"
+  ],
+  "role_extension": {
+    "role": "ARCHITECT",
+    "changelog_paths": [
+      ".gitattributes",
+      "handoffs/ARCHITECT_TO_COORDINATOR_M4_PUBLIC_MODEL_OBSERVATION_BACKEND_BF4_R1_CORRECTION_2026-08-22.md",
+      "specs/data/m4_public_model_observation_backend_test_contract_v1.json",
+      "specs/data/m4_public_model_observation_backend_test_contract_v1.json.sha256",
+      "specs/m4_public_model_observation_backend_design_v1.md"
+    ],
+    "diff_self_inspection": true
+  }
+}
