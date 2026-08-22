@@ -973,6 +973,7 @@ class TokenizerMaterializationTests(unittest.TestCase):
     def test_oci_launch_contract_is_fail_closed(self):
         contract_path = ROOT / "specs/data/m4_tokenizer_oci_launch_contract_v1.json"
         contract = MATERIALIZER.load(contract_path)
+        test_contract = MATERIALIZER.load(ROOT / "specs/data/m4_tokenizer_materialization_test_contract_v1.json")
         test_tokens = contract["test_launch"]["command_tokens"]
         smoke = contract["mount_smoke_gate"]
         smoke_tokens = smoke["command_tokens"]
@@ -1027,6 +1028,15 @@ class TokenizerMaterializationTests(unittest.TestCase):
         self.assertEqual(hashlib.sha256(runner.read_bytes()).hexdigest(), runner_contract["sha256"])
         self.assertEqual(runner_contract["git_mode"], "100755")
         runner_text = runner.read_text()
+        self.assertIn('rm -rf -- "$snapshot/artifacts/m4_tokenizer_materialization"', runner_text)
+        self.assertNotIn('rm -f -- "$snapshot/artifacts/m4_tokenizer_materialization/.gitkeep"', runner_text)
+        self.assertNotIn('rmdir -- "$snapshot/artifacts/m4_tokenizer_materialization"', runner_text)
+        absent_fixture = realizations["absent_marker"]["fixture_construction"]
+        self.assertEqual(absent_fixture["scope"], "DISPOSABLE_MKTEMP_SNAPSHOT_ONLY")
+        self.assertEqual(absent_fixture["delete_exact_relative_subtree"], "artifacts/m4_tokenizer_materialization")
+        self.assertFalse(absent_fixture["immutable_release_mutated"])
+        self.assertFalse(absent_fixture["historical_result_pair_mutated"])
+        self.assertTrue(test_contract["mount_smoke_gate"]["absent_marker_fixture"]["preserve_release_and_historical_pair"])
         for test_id in (
             "test_mount_smoke_positive_repository_then_nested_output",
             "mount_smoke_negative_absent_marker_engine_125",

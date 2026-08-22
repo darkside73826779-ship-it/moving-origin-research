@@ -35,8 +35,7 @@ run_absent_marker() {
   local error="$root/absent-marker-engine.stderr"
   mkdir -m 700 "$snapshot" "$stage"
   tar -C "$repo" --exclude=.git -cf - . | tar -C "$snapshot" -xf -
-  rm -f -- "$snapshot/artifacts/m4_tokenizer_materialization/.gitkeep"
-  rmdir -- "$snapshot/artifacts/m4_tokenizer_materialization"
+  rm -rf -- "$snapshot/artifacts/m4_tokenizer_materialization"
   set +e
   docker run --rm --pull=never --platform linux/amd64 --network none --read-only \
     --cap-drop ALL --security-opt no-new-privileges \
