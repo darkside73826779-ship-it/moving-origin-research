@@ -70,7 +70,11 @@
     "tip_sha": "79fb90382a17087594f4ec9c81651fa3c02b6075",
     "tool_status": "blocked",
     "manual_review": true,
-    "findings": []
+    "findings": [
+      "F000001-F000006 are three duplicate scan-domain pairs of the personal-contact heuristic, each occurring wholly inside a required immutable public artifact SHA-256 value; they are non-secret reproducibility metadata",
+      "gitleaks 8.30.1 returned zero findings",
+      "manual review found no credentials, personal contact data, private paths, custody values, model/tokenizer bytes, protected seeds, scientific output, or prohibited durable-state mutation"
+    ]
   },
   "next_event": "WORKFLOW COORDINATOR acknowledges the instrument failure and routes the feasibility-proven nested-mountpoint correction to the authorized specification role; contract mapping leaves the operation unconsumed, but no retry is authorized by this release",
   "prohibited_actions": [
