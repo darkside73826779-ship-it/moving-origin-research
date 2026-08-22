@@ -1,0 +1,84 @@
+{
+  "schema_version": "common-handoff-manifest-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "transfer_kind": "FORMAL_HANDOFF",
+  "work_item": "m4_tokenizer_reconciled_materialization_preop_block",
+  "gate": "Mandatory identity, executable, runtime, and host-input gate before the single reconciled bounded tokenizer materialization",
+  "sender_role": "TASK_BUILDER",
+  "receiver_role": "WORKFLOW_COORDINATOR",
+  "authority_basis": [
+    {
+      "path": "handoffs/REBECCA_M4_TOKENIZER_RECONCILED_MATERIALIZATION_RERELEASE_2026-08-21.md",
+      "sha": "ed31a60b5b3f7a15591525f1ddfc3f8190a2e5e5"
+    }
+  ],
+  "remote_ref": "refs/heads/taskbuilder/m4-tokenizer-reconciled-materialization-execution",
+  "base_sha": "bc2b82b87185d50fbdb4d77ce4482100de6feaa0",
+  "routing_ref_sha": "0316be0ba3e3b97f0c0cc4ab89e0fe81e726723b",
+  "review_result_sha": "6b78259830c0aa5c7c24f71bd768745aab2a0706",
+  "work_branch": "taskbuilder/m4-tokenizer-reconciled-materialization-execution",
+  "artifacts": {
+    ".gitattributes": "68c528ede67720007d4ec15d15f6d723136a24b9a4662c94ad9cdfbbc158601d",
+    "diagnostics/m4_tokenizer_materialization.py": "90e89b5a55ff80041a8e09c0d3e96208b6d8eff5c6b39eecd6366a1afb5289af",
+    "handoffs/ARCHITECT_TO_COORDINATOR_M4_TOKENIZER_EXECUTABLE_PACKAGE_IDENTITY_RECONCILIATION_2026-08-21.md": "be8287ceb572ebbf4cb892bddfb1f5474721efdaf101f52259f8afc4113efa64",
+    "handoffs/REBECCA_M4_TOKENIZER_FINAL_MATERIALIZATION_RERELEASE_2026-08-21.md": "f785720f412ea411e4aa78a3767817744bcb9568f4cb37bcc4206e439da03348",
+    "handoffs/REBECCA_M4_TOKENIZER_RECONCILED_MATERIALIZATION_RERELEASE_2026-08-21.md": "aea5a91c7af8d800db879c41212b56e577b01ab94f81a3c94e06db5da290a4d4",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_FINAL_MATERIALIZATION_PREOP_BLOCK_2026-08-21.md": "927e02ea72ce0a4aa9dbf7db99f97e00ea3df351bb26cbbf677518343809ab1b",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_FINAL_MATERIALIZATION_PREOP_BLOCK.manifest.json": "324ad5ce68b970190c3e2232fa4598118b6869a2b04b6afdd5bb050696d32f66",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_RECONCILED_MATERIALIZATION_PREOP_BLOCK_2026-08-21.md": "5c4d52bbf7809bbdfd4569017ccf3b87f96696808c253ba1c1fccfba554f7b6d",
+    "specs/data/m4_context_format_probe_contract_v1.json": "eab77b9f44a4e9378f5889f5aa368eabd87959a5ddafab9ca38685228f12feec",
+    "specs/data/m4_context_format_probe_contract_v1.json.sha256": "26a65895c5a82c99ebf91125dd5ef3b7f0075d28c2c20d746e01fd55e36ca85a",
+    "specs/data/m4_tokenizer_executable_package_v1.json": "c0025a54579ab0b51e07ac138518c7949fbb4fd276d551a978e8ee39d8ba1697",
+    "specs/data/m4_tokenizer_executable_package_v1.json.sha256": "a9ab45ae4b146f3e6ac85115208c3063423fd0b19ab8154be93f68cd76302895",
+    "specs/data/m4_tokenizer_materialization_request_v1.json": "b39061fd4b19321d58dd418eb5ecd486c0cf26662d70a5d0de4185c6dd7e9992",
+    "specs/data/m4_tokenizer_materialization_request_v1.json.sha256": "9fa903fcb29bb74bd0fcd027c2e591668e6aebcb6a77a4c2c179c96c59d8f9ea",
+    "specs/data/m4_tokenizer_materialization_result_schema_v1.json": "34179d41e980aca413496f3de9fbbea7b642532b50eeacba423faebe5f4075ca",
+    "specs/data/m4_tokenizer_materialization_result_schema_v1.json.sha256": "ca2494f505342959d43b9a6442c103f898e58a54a45279ada3088003536651f3",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json": "c166a583a0612054cea826700d8e5e2c132c283e1617727170a8bd57167bb7a0",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json.sha256": "189405411c37f4333f2edd1339711bb316c0a26f3e7e54f01362ca7662277fd7",
+    "specs/data/m4_tokenizer_oci_launch_contract_v1.json": "0fdd5e8eed2fc3a7cc5e10512e6e01037d011f6cf51e862a2293d49255b32848",
+    "specs/data/m4_tokenizer_oci_launch_contract_v1.json.sha256": "2f274dbbacf64085bd3298aaaad6702ce2bfff700bd85d5c3773a29cb410448d",
+    "specs/m4_local_tokenizer_materialization_changelog.md": "846fdc5aa0d4c00dca2c2d063f9357a0ea8f6340abb0baec61ea446388569e2c",
+    "specs/m4_local_tokenizer_materialization_spec_v1.md": "2f60b9ecb90628028465f17d31702fe17ce037ef60fd05ef15ae4e25512ad682",
+    "tests/__init__.py": "6f56eb2128751f0c5c1ab27ff461b38565aa00a3dcd29c04ab8bd56c34f4a961",
+    "tests/run_m4_tokenizer_materialization_tests.py": "29dc1c0d83e71c850e9eb3c423cfd359a6c557956d1eab1fa5d9beb049271d1d",
+    "tests/test_m4_tokenizer_materialization.py": "964ab5b8cb5ef63627c0ab07b3f0c4c867684d7add40576c3dd61494610e8613"
+  },
+  "checks_performed": [
+    "created a fresh isolated helper checkout at the exact reconciled re-release head and verified clean worktree, exact SHA, and Git object integrity",
+    "validated release ancestry and independently reproduced the complete 23-entry canonical reconciliation inventory from raw committed Git blobs",
+    "independently reproduced all eight executable-package byte counts and SHA-256 identities plus adjacent sidecar",
+    "verified Docker client/server 29.1.3, WSL2-backed linux/amd64 engine identity, and the exact locally present platform image digest with pull disabled",
+    "performed a presence-only check for the required private custody host input in Windows and WSL without emitting or resolving any value",
+    "found the required host input absent in both execution contexts and stopped before custody resolution, output-stage creation, OCI test launch, and materializer start",
+    "documented the complete requirement-to-gate-to-evidence trace and ordered zero-custody/zero-materializer access trace",
+    "ran workflow_preflight.py hotfix cee97538893989e055f49a894f066d2083da4eb5 against the exact worktree and complete release-to-return range and manually classified all findings without suppression"
+  ],
+  "status": "BLOCKED",
+  "findings": [
+    {
+      "classification": "required private custody host binding absent",
+      "severity": "blocking",
+      "text": "MOR_CUSTODY_M4_QWEN3_4B_FP8_PRESERVED_V1 is absent from both the TASK BUILDER Windows process and WSL execution context; no authorized alternate binding, directory search, fallback, or invention exists"
+    }
+  ],
+  "scan_attestation": {
+    "base_sha": "ed31a60b5b3f7a15591525f1ddfc3f8190a2e5e5",
+    "tip_sha": "0316be0ba3e3b97f0c0cc4ab89e0fe81e726723b",
+    "tool_status": "pending",
+    "manual_review": true,
+    "findings": []
+  },
+  "next_event": "WORKFLOW COORDINATOR acknowledges the durable BLOCK and restores the required private host binding through authorized custody channels; the single operation remains unconsumed",
+  "prohibited_actions": [
+    "custody directory search, generated binding, fallback, normalization, or invention",
+    "test-container or materializer launch before all mandatory preconditions pass",
+    "custody/model/tokenizer access, retry, alternate runtime, inference, qualification, scoring, seeds, science, STATE/provenance mutation, publication, merge, rerun, or gate decision"
+  ],
+  "role_extension": {
+    "role": "TASK_BUILDER",
+    "tests": [],
+    "diagnostics_executed": false
+  }
+}
