@@ -1,0 +1,93 @@
+{
+  "schema_version": "common-handoff-manifest-v1",
+  "date": "2026-08-22",
+  "regime": "B",
+  "transfer_kind": "FORMAL_HANDOFF",
+  "work_item": "m4_final_prescoring_crash_cart_v0_2_alpha_bf1_bf4_correction",
+  "gate": "Persistent-CRITIC BF1-BF4 design rereview only; no promotion, implementation, or run authority",
+  "sender_role": "ARCHITECT",
+  "receiver_role": "WORKFLOW_COORDINATOR",
+  "authority_basis": [
+    {
+      "path": "reviews/critic_m4_final_prescoring_full_stack_crash_cart_gate_design_review.md",
+      "sha": "9a028cb0799807910900f29ef8a1ff8cb4af0b4d"
+    },
+    {
+      "path": "handoffs/REBECCA_M4_FINAL_PRESCORING_FULL_STACK_CRASH_CART_AND_EXPLORATORY_OBSERVATION_AUTHORITY_2026-08-22.md",
+      "sha": "8b4a383c450e8b29f2633f7e25107abcb62dd929"
+    },
+    {
+      "path": "handoffs/REBECCA_M4_FINAL_PRESCORING_CRASH_CART_ARTIFACT_VERSIONING_AUTHORITY_2026-08-22.md",
+      "sha": "086d6a4ab34044bb8b9d637b5e575e47f8863ee2"
+    }
+  ],
+  "remote_ref": "refs/heads/architect/m4-final-prescoring-crash-cart-bf1-bf4-correction",
+  "base_sha": "9a028cb0799807910900f29ef8a1ff8cb4af0b4d",
+  "routing_ref_sha": "757dc3bf3b7eec554ee15882af94fce4a6ebb006",
+  "review_result_sha": "7674fb1a9b2762fd7fafb68f9547f22da83194b5",
+  "work_branch": "architect/m4-final-prescoring-crash-cart-bf1-bf4-correction",
+  "artifacts": {
+    ".gitattributes": "d4578fc5973ec4384ccf2fbe284d7e85e0275e35fe14a1c415d528e8f3cb2ef1",
+    "handoffs/ARCHITECT_TO_COORDINATOR_M4_FINAL_PRESCORING_CRASH_CART_BF1_BF4_CORRECTION_2026-08-22.md": "9e05d9e53532ed7e5288ff50ee6c246a98f894310e1bd0b740a3c3d6a232fde4",
+    "handoffs/ARCHITECT_TO_COORDINATOR_M4_FINAL_PRESCORING_CRASH_CART_BF1_BF4_VERSIONED_ROUTING_2026-08-22.md": "4ba7144a660856d5b5c267bdca6bdf4ec98561ad96f9fed7c9a840a827b3df1c",
+    "handoffs/REBECCA_M4_FINAL_PRESCORING_CRASH_CART_ARTIFACT_VERSIONING_AUTHORITY_2026-08-22.md": "ad19e7080143bb6e8d8a0646a5f9f5d427ef9f255d5e8fa0a7015446455f3da8",
+    "handoffs/REBECCA_M4_FINAL_PRESCORING_FULL_STACK_CRASH_CART_AND_EXPLORATORY_OBSERVATION_AUTHORITY_2026-08-22.md": "c759a99a563777a42ba42eb25f4679a40bb940a246bc002ef199c61e58721ecc",
+    "reviews/critic_m4_final_prescoring_full_stack_crash_cart_gate_design_review.md": "9e64b920c036292bcb63462642f9c241bea4b410df9c04fe14f5874b54966b2c",
+    "specs/data/m4_final_prescoring_full_stack_crash_cart_gate_v1.json": "1c5ab2fc2e8a791b74231cc3bed3bb6e6d52c28764a4ee0711d7f65567170e5c",
+    "specs/data/m4_final_prescoring_full_stack_crash_cart_gate_v1.json.sha256": "0d3c1af86672442a5542fbb050f62640160e7264629cb50f74a2aec1aadf757e",
+    "specs/data/m4_final_prescoring_full_stack_crash_cart_launch_contract_v1.json": "cf12f246492f5e4dd0645ddb5db641c1d9e77cfc89f2b1d93021b03343492ce9",
+    "specs/data/m4_final_prescoring_full_stack_crash_cart_launch_contract_v1.json.sha256": "8454fc5669d151929e58eeb33e72e9d8b7c1a5df60de9961c3dd16a62cadd09a",
+    "specs/data/m4_final_prescoring_full_stack_crash_cart_report_schema_v1.json": "6a689319af14767b82949013c6c42d547f8edb47c89af0a502a5bdb894d9586e",
+    "specs/data/m4_final_prescoring_full_stack_crash_cart_report_schema_v1.json.sha256": "ad1108f48d1e9fcd88b9419368a41b8c273fac05b4da840e21feadaeab1e934c",
+    "specs/m4_final_prescoring_full_stack_crash_cart_gate_v1.md": "168a86ab76d582354ae0431f06781dcade67c7cce1df29886a861e7370c5c628"
+  },
+  "checks_performed": [
+    "reproduced exact design and versioning authority remote heads, raw byte lengths, SHA-256 identities, and LF Git blobs",
+    "bound retained v0.1-alpha BLOCK identities and corrected v0.2-alpha maturity without self-promotion",
+    "preserved BF1-BF4 closure and reran only versioning-affected JSON, metaschema, sidecar, LF, ancestry, routing, and inventory checks",
+    "validated the report schema against Draft 2020-12 metaschema with v0.2-alpha annotation",
+    "reproduced all three adjacent SHA-256 sidecars and all 13 canonical manifest artifact digests",
+    "verified helper-compatible handoffs-only result-to-route tail through an isolated workflow checkout receipt",
+    "verified git fsck, clean worktree, remote equality, and exact route ancestry",
+    "ran workflow_preflight.py over the exact CRITIC-base-to-versioned-route range and manually classified all 76 retained findings"
+  ],
+  "status": "READY",
+  "findings": [
+    {
+      "classification": "SCANNER_FALSE_POSITIVE_PUBLIC_IDENTITY_OR_FIXED_DURATION",
+      "severity": "non_blocking",
+      "text": "Seventy fixed-regex findings across duplicate scan domains occur wholly inside required public immutable commits/revisions/digests or exact integer nanosecond controls; none is personal-contact data."
+    },
+    {
+      "classification": "GITLEAKS_FALSE_POSITIVE_PUBLIC_ARTIFACT_DIGEST",
+      "severity": "non_blocking",
+      "text": "Six gitleaks findings across duplicate scan domains are repeated detections of the declared public tokenizer and tokenizer-config SHA-256 identities; no credential is present."
+    }
+  ],
+  "scan_attestation": {
+    "base_sha": "9a028cb0799807910900f29ef8a1ff8cb4af0b4d",
+    "tip_sha": "757dc3bf3b7eec554ee15882af94fce4a6ebb006",
+    "tool_status": "blocked",
+    "manual_review": true,
+    "findings": [
+      "workflow_preflight.py retained 76 findings over the exact versioned route: 70 fixed-regex personal-contact heuristics and six gitleaks generic-key findings; none was suppressed",
+      "manual review mapped every fixed-regex finding to an immutable public commit/revision/digest substring or exact integer duration/deadline",
+      "the six gitleaks records are duplicate-domain detections of public tokenizer SHA-256 aeb13307... and tokenizer-config SHA-256 a62ff0a2...",
+      "the versioning authority itself explicitly classifies its duplicate-domain CRITIC-SHA heuristic as public reproducibility metadata",
+      "no credential, personal contact, private path/value, custody input, protected prompt/seed, model/tokenizer bytes, token array, score, scientific result, or prohibited durable-state mutation was found"
+    ]
+  },
+  "next_event": "WORKFLOW COORDINATOR validates the exact v0.2-alpha identities and routes the design delta once to the authoritative persistent CRITIC for BF1-BF4 rereview",
+  "prohibited_actions": [
+    "self-promotion to beta or v1, or treating artifact existence/version approval as execution authority",
+    "implementation, integration, merge, model/OCI/WSL2/gofast execution, crash-cart run, or protected scoring release",
+    "model, tokenizer, custody, protected, holdout, courier, retired, or scientific seed access",
+    "scoring, qualification, scientific aggregation, law claim, readiness claim, publication, STATE/provenance mutation, or gate decision",
+    "retry, rerun, adaptive control change, or substitution of any future UNBOUND identity"
+  ],
+  "role_extension": {
+    "role": "ARCHITECT",
+    "changelog_paths": [],
+    "diff_self_inspection": true
+  }
+}
