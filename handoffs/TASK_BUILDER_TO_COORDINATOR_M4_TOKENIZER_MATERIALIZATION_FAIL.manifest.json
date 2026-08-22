@@ -1,0 +1,89 @@
+{
+  "schema_version": "common-handoff-manifest-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "transfer_kind": "FORMAL_HANDOFF",
+  "work_item": "m4_tokenizer_topology_clear_materialization_fail",
+  "gate": "Single bounded tokenizer materialization after topology-clear release",
+  "sender_role": "TASK_BUILDER",
+  "receiver_role": "WORKFLOW_COORDINATOR",
+  "authority_basis": [
+    {
+      "path": "handoffs/REBECCA_M4_TOKENIZER_TOPOLOGY_CLEAR_MATERIALIZATION_RERELEASE_2026-08-21.md",
+      "sha": "5e6a6eb4d7de5c634c5b9a5881076d066c397c7c"
+    }
+  ],
+  "remote_ref": "refs/heads/taskbuilder/m4-tokenizer-topology-clear-materialization-execution",
+  "base_sha": "522b01d42ceef90ee2390c169f29fb163e610470",
+  "routing_ref_sha": "67d631cdde1572fc2906b638e14d8bc05ecbf45d",
+  "review_result_sha": "41d844063416b68090c933a76f31e82c4d83e458",
+  "work_branch": "taskbuilder/m4-tokenizer-topology-clear-materialization-execution",
+  "artifacts": {
+    ".gitattributes": "998b713a5094f924efa62fc0c65f1195f385ea08476ee1d150ea2527d6e04c4c",
+    "artifacts/m4_tokenizer_materialization/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m4_tokenizer_materialization/tokenizer_materialization.json": "10a14c1a4f7b257aa195636ab86b7a85a68fc084af13bead7b5d4b3ecfa55728",
+    "artifacts/m4_tokenizer_materialization/tokenizer_materialization.json.sha256": "da7a294daf21aa308cb0b7ac83dafba85323c2e0667a33a0844829a18b86756a",
+    "diagnostics/m4_tokenizer_materialization.py": "90e89b5a55ff80041a8e09c0d3e96208b6d8eff5c6b39eecd6366a1afb5289af",
+    "handoffs/REBECCA_M4_TOKENIZER_TOPOLOGY_CLEAR_MATERIALIZATION_RERELEASE_2026-08-21.md": "485520f00f8e54853820314b6813ffeeeab84c2083a370fde5abef80f13d5d88",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_MATERIALIZATION_FAIL_2026-08-21.md": "fc16d16e2471a0305bca9d65a0af36be0d1e2ff22dcb7919efa57706f88438f4",
+    "specs/data/m4_context_format_probe_contract_v1.json": "eab77b9f44a4e9378f5889f5aa368eabd87959a5ddafab9ca38685228f12feec",
+    "specs/data/m4_tokenizer_executable_package_v1.json": "1f726f6a01cae44595beafcf96baa8c6fded3263173d9a4dcfbc2a6c4681c4d4",
+    "specs/data/m4_tokenizer_executable_package_v1.json.sha256": "8505a0b7540c767acc3a8493531884e41b3afdbe25dc0e34c8efd07a97f6cc01",
+    "specs/data/m4_tokenizer_materialization_request_v1.json": "b39061fd4b19321d58dd418eb5ecd486c0cf26662d70a5d0de4185c6dd7e9992",
+    "specs/data/m4_tokenizer_materialization_request_v1.json.sha256": "9fa903fcb29bb74bd0fcd027c2e591668e6aebcb6a77a4c2c179c96c59d8f9ea",
+    "specs/data/m4_tokenizer_materialization_result_schema_v1.json": "34179d41e980aca413496f3de9fbbea7b642532b50eeacba423faebe5f4075ca",
+    "specs/data/m4_tokenizer_materialization_result_schema_v1.json.sha256": "ca2494f505342959d43b9a6442c103f898e58a54a45279ada3088003536651f3",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json": "561bae3e04ce81422b73601b0ae9e6835522919dc10e340fcc39e4b03791a1c2",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json.sha256": "d703e696525787ac0b87ca565d59ac89331ababd60c856c4addda037686299a6",
+    "specs/data/m4_tokenizer_oci_launch_contract_v1.json": "ca465aa11dbafff74a62126c3e263dda547796cd9003983c93a015ae74bca0e9",
+    "specs/data/m4_tokenizer_oci_launch_contract_v1.json.sha256": "6ec63d1baf5ae66e0e0659ff88b06cd1bcffe3d59711c534df2a2bb8a5a95eba",
+    "tests/__init__.py": "6f56eb2128751f0c5c1ab27ff461b38565aa00a3dcd29c04ab8bd56c34f4a961",
+    "tests/run_m4_tokenizer_materialization_tests.py": "4f4aa5a873f59c3dbc368c550a84f61564c181f5570fdbcb2e54b6b8f8f8d734",
+    "tests/test_m4_tokenizer_materialization.py": "79f319c9dcb7129332f4cc03d47415b1d2cbb2d3e4a993f20bf73e899f3da0ea",
+    "tools/testbed/run_m4_tokenizer_topology_smoke_matrix.sh": "a0f4383913a38cdde9f93947865d990e36b41fb538ff1468b121f4b1db2b137a"
+  },
+  "checks_performed": [
+    "created a fresh helper-managed checkout at the exact topology-clear re-release and verified clean worktree, exact SHA, Git object integrity, and authenticated remote identities",
+    "reproduced all nine executable-package raw Git-blob byte counts, modes, and SHA-256 identities plus the adjacent sidecar",
+    "verified the fetched persistent-CRITIC COMBINED CLEAR and official WSL2 test-bed immutable identities",
+    "verified Docker client/server 29.1.3, linux/amd64 engine identity, and exact pinned local image platform digest with pull disabled",
+    "ran the exact pinned network-disabled read-only no-custody wrapper first: 35 tests passed, exit 0",
+    "ran the committed four-case custody-free topology smoke matrix second: every projection, empty-stage assertion, and cleanup check passed, exit 0",
+    "validated the retained private binding, canonical regular non-link custody root, fixed regular non-link record, and empty distinct output stage without publishing private values",
+    "started exactly one materializer invocation; it returned governed exit 3 with CONSTRUCTOR_INVARIANT_FAILURE at ARRAY_1024 and no retry",
+    "validated the exact two-file sanitized pair as regular non-links, canonical UTF-8 JSON, Draft 2020-12 schema-valid, sidecar-matching, and free of private fields",
+    "copied the validated pair byte-for-byte into the repository and reproduced the committed raw Git-blob result and sidecar identities",
+    "documented the complete requirement-to-production-to-evidence matrix and ordered execution/access trace",
+    "ran workflow_preflight.py hotfix cee97538893989e055f49a894f066d2083da4eb5 against the exact worktree and complete release-to-return range and manually classified every finding without suppression"
+  ],
+  "status": "BLOCKED",
+  "findings": [
+    {
+      "classification": "governed tokenizer materialization failure",
+      "severity": "blocking",
+      "text": "the single production materializer returned exit 3 with CONSTRUCTOR_INVARIANT_FAILURE at ordered check ARRAY_1024 after checks 0 through 8 passed; the operation is consumed and no retry occurred"
+    }
+  ],
+  "scan_attestation": {
+    "base_sha": "5e6a6eb4d7de5c634c5b9a5881076d066c397c7c",
+    "tip_sha": "67d631cdde1572fc2906b638e14d8bc05ecbf45d",
+    "tool_status": "blocked",
+    "manual_review": true,
+    "findings": []
+  },
+  "next_event": "WORKFLOW COORDINATOR acknowledges the terminal FAIL and routes the exact sanitized execution package to the authoritative persistent CRITIC for independent execution review",
+  "prohibited_actions": [
+    "materializer retry, rerun, fallback, alternate custody binding, image, interpreter, runtime, topology, or command",
+    "unreviewed diagnosis using private token arrays or model/tokenizer bytes",
+    "inference, serving, qualification, diagnostics/scoring, protected seeds, Q2/EF3, science, STATE/provenance mutation, model/tokenizer publication, merge, further operation, or gate decision"
+  ],
+  "role_extension": {
+    "role": "TASK_BUILDER",
+    "tests": [
+      "exact pinned no-custody wrapper: 35/35 PASS, exit 0",
+      "committed custody-free topology smoke matrix: PASS, exit 0",
+      "sanitized result pair schema/canonical/sidecar/public-safety validation: PASS"
+    ],
+    "diagnostics_executed": true
+  }
+}
