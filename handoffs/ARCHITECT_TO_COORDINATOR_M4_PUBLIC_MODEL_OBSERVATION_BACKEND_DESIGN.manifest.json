@@ -1,0 +1,82 @@
+{
+  "schema_version": "common-handoff-manifest-v1",
+  "date": "2026-08-22",
+  "regime": "B",
+  "transfer_kind": "FORMAL_HANDOFF",
+  "work_item": "m4_public_model_observation_backend_design",
+  "gate": "Persistent-CRITIC design review before TASK BUILDER implementation",
+  "sender_role": "ARCHITECT",
+  "receiver_role": "WORKFLOW_COORDINATOR",
+  "authority_basis": [
+    {"path": "specs/m4_post_tokenizer_crash_cart_cc1_cc6_remediation_v1.md", "sha": "013af72e7dce566e7605d8e1e68fbfbf5d5cda28"},
+    {"path": "src/m4_post_tokenizer_integration.py", "sha": "909d2a4a6b4ceafb871e11c1757d873cfa1a4c41"}
+  ],
+  "remote_ref": "refs/heads/architect/m4-public-model-observation-backend-design",
+  "base_sha": "909d2a4a6b4ceafb871e11c1757d873cfa1a4c41",
+  "routing_ref_sha": "0945a5e7debf87c15c1985137cd056d6b32bdbda",
+  "review_result_sha": "6644d02337db29fcdceeb38f22afe8801c98cc2b",
+  "work_branch": "architect/m4-public-model-observation-backend-design",
+  "artifacts": {
+    ".gitattributes": "5ed1dd1246dffcffd2e3e1df596d650ecd05c9b4e36f13b6d06d370fe05730f4",
+    "handoffs/ARCHITECT_TO_COORDINATOR_M4_PUBLIC_MODEL_OBSERVATION_BACKEND_DESIGN_2026-08-22.md": "ab20fc1074992831bddfe0e2deb918e4c94236d68954dac52105810d3e908dde",
+    "specs/data/m4_public_model_local_observation_schema_v1.json": "f59829c3baef8a0a4614c2e5a38ed7cb228f09630afcdb39f3609dc00d383a0c",
+    "specs/data/m4_public_model_local_observation_schema_v1.json.sha256": "93b3f6fd7e12a5c3cb81aee43def3804c28efe9ca394202e0e9e0f7efb26a318",
+    "specs/data/m4_public_model_observation_backend_contract_v1.json": "3a4014619a34e79d6bcc2570306af119c14c6d6fb96ece34a52e5ccee4f7dad0",
+    "specs/data/m4_public_model_observation_backend_contract_v1.json.sha256": "78f04906a7cc2c1e225c8a2cd164961ce2eaf5c1b55f1b8bf03749660b4bf0e7",
+    "specs/data/m4_public_model_observation_backend_test_contract_v1.json": "ee301de553b324e286223821f84e7ef47809b3d33a7a782030b0b75964d6d4c3",
+    "specs/data/m4_public_model_observation_backend_test_contract_v1.json.sha256": "90d2761381824c5ea3af4673ca52181dba012431dbe4a064a8dfd3841c60fe94",
+    "specs/data/m4_public_model_observation_launch_contract_v1.json": "348ca3a14db58967c70fa80ef457028cb0761b309f385f66a689850236f758dd",
+    "specs/data/m4_public_model_observation_launch_contract_v1.json.sha256": "108d75dfa0defac23a95e166626484d8f08cfda68d3a7ef153f607886a355999",
+    "specs/data/m4_public_model_observation_prompt_contract_v1.json": "d1b40087c5cb35cb63d07005ed9450df87116fe8268724b017cfd914983bde76",
+    "specs/data/m4_public_model_observation_prompt_contract_v1.json.sha256": "13b343544620ed8cbda1198f35e865aba475780636ebb0bf420e2f39e87d0dd8",
+    "specs/m4_public_model_observation_backend_design_v1.md": "ccf746bf7ef98f125bcc7179d28a5baba9bac10baaf7c8e9970b2c14279fac2a",
+    "specs/m4_post_tokenizer_crash_cart_cc1_cc6_remediation_v1.md": "d9466c724af7f20e96fad48b01d51deba7daa62ec9bfcf9571dab1ef13cddfbb",
+    "src/m4_post_tokenizer_integration.py": "8964de5daf745226771818ab59f2cc75ef29ccbc5d09b43b6dae102b876b2f1b"
+  },
+  "checks_performed": [
+    "exact protocol and authority objects independently read",
+    "JSON parse and Draft 2020-12 metaschema validation passed",
+    "all sidecars and raw artifact identities independently reproduced",
+    "model, runtime, held-law projection, law-semantics, and fixed-prompt digests independently reproduced",
+    "diff and LF bindings inspected",
+    "workflow preflight completed with manual classification and gitleaks zero",
+    "git fsck completed"
+  ],
+  "status": "READY",
+  "findings": [],
+  "scan_attestation": {
+    "base_sha": "909d2a4a6b4ceafb871e11c1757d873cfa1a4c41",
+    "tip_sha": "0945a5e7debf87c15c1985137cd056d6b32bdbda",
+    "tool_status": "blocked",
+    "manual_review": true,
+    "findings": [
+      "27 personal-contact heuristic matches represent 7 unique substrings wholly inside required immutable Git and SHA-256 identities; manually classified as public reproducibility metadata",
+      "gitleaks 8.30.1 returned zero findings",
+      "no personal contact, credential, private path/value, prompt/output, token array, protected seed, score, or scientific output was found"
+    ]
+  },
+  "next_event": "WORKFLOW COORDINATOR validates and routes this exact design package once to persistent CRITIC before any TASK BUILDER implementation",
+  "prohibited_actions": [
+    "model or tokenizer execution, custody access, protected-seed access, scoring, qualification, readiness, or scientific claim",
+    "implementation, merge, publication of runtime observations, run authorization, or gate decision"
+  ],
+  "role_extension": {
+    "role": "ARCHITECT",
+    "changelog_paths": [
+      ".gitattributes",
+      "handoffs/ARCHITECT_TO_COORDINATOR_M4_PUBLIC_MODEL_OBSERVATION_BACKEND_DESIGN_2026-08-22.md",
+      "specs/data/m4_public_model_local_observation_schema_v1.json",
+      "specs/data/m4_public_model_local_observation_schema_v1.json.sha256",
+      "specs/data/m4_public_model_observation_backend_contract_v1.json",
+      "specs/data/m4_public_model_observation_backend_contract_v1.json.sha256",
+      "specs/data/m4_public_model_observation_backend_test_contract_v1.json",
+      "specs/data/m4_public_model_observation_backend_test_contract_v1.json.sha256",
+      "specs/data/m4_public_model_observation_launch_contract_v1.json",
+      "specs/data/m4_public_model_observation_launch_contract_v1.json.sha256",
+      "specs/data/m4_public_model_observation_prompt_contract_v1.json",
+      "specs/data/m4_public_model_observation_prompt_contract_v1.json.sha256",
+      "specs/m4_public_model_observation_backend_design_v1.md"
+    ],
+    "diff_self_inspection": true
+  }
+}
