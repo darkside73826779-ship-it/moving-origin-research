@@ -1,3 +1,4 @@
+import ast
 import copy
 import contextlib
 import builtins
@@ -42,9 +43,16 @@ class TokenizerMaterializationTests(unittest.TestCase):
         class FakeTokenizer:
             chat_template = "synthetic-template"
             eos_token_id = 151645
-            vocab_size = 200000
-            def __init__(self): self.rendered = {}
-            def apply_chat_template(self, *args, **kwargs): return [1, 10, 11, 2]
+            vocab_size = 100
+            def __init__(self):
+                self.rendered = {}
+                self.get_vocab_calls = 0
+                self.vocab = {"base_1": 1, "user_0": 10, "user_1": 11, "neutral": 12,
+                              "<|im_end|>": 151645}
+            def get_vocab(self):
+                self.get_vocab_calls += 1
+                return self.vocab
+            def apply_chat_template(self, *args, **kwargs): return [1, 10, 11, 151645]
             def encode(self, value, add_special_tokens=False):
                 if value == " x": return [12]
                 if value == "Return one JSON object whose answer field is the string A.": return [10, 11]
@@ -711,11 +719,105 @@ class TokenizerMaterializationTests(unittest.TestCase):
             self.assertEqual(self._read_result(output)["failure_code"], "TOKENIZER_IDENTITY_MISMATCH")
 
     def test_materialize_synthetic_positive_reaches_pass(self):
-        code, result = self._synthetic_materialize()
+        class AddedTokenTokenizer:
+            chat_template = "synthetic-template"
+            eos_token_id = 151645
+            vocab_size = 100
+            def __init__(self):
+                self.rendered = {}
+                self.get_vocab_calls = 0
+                self.vocab = {"base_1": 1, "user_0": 10, "user_1": 11, "neutral": 12,
+                              "<|im_end|>": 151645}
+            def get_vocab(self):
+                self.get_vocab_calls += 1
+                return self.vocab
+            def apply_chat_template(self, *args, **kwargs): return [1, 10, 11, 151645]
+            def encode(self, value, add_special_tokens=False):
+                if value == " x": return [12]
+                if value.startswith("Return one"): return [10, 11]
+                return self.rendered[value]
+            def decode(self, values, **kwargs):
+                key = "added-token-" + str(len(self.rendered)); self.rendered[key] = list(values); return key
+            def convert_tokens_to_ids(self, value): return 151645
+
+        tokenizer = AddedTokenTokenizer()
+        code, result = self._synthetic_materialize(tokenizer)
         self.assertEqual(code, 0)
         self.assertEqual(result["status"], "PASS")
         self.assertEqual(len(result["arrays"]), 3)
         self.assertEqual(len(result["checks"]), len(MATERIALIZER.CHECKS))
+        self.assertLess(tokenizer.vocab_size, tokenizer.eos_token_id)
+        self.assertIn(tokenizer.eos_token_id, tokenizer.vocab.values())
+        self.assertEqual(tokenizer.get_vocab_calls, 1)
+        passed = {row["check_id"] for row in result["checks"] if row["status"] == "PASS"}
+        self.assertTrue({"ARRAY_1024", "ARRAY_4096", "ARRAY_8192",
+                         "ENCODE_DECODE_1024", "ENCODE_DECODE_4096", "ENCODE_DECODE_8192"} <= passed)
+
+    def test_materialize_full_token_id_domain_negative_matrix(self):
+        class InvalidDomainTokenizer:
+            chat_template = "synthetic-template"
+            eos_token_id = 151645
+            vocab_size = 100
+            def __init__(self, invalid):
+                self.invalid = invalid
+                self.decode_calls = 0
+                self.get_vocab_calls = 0
+            def get_vocab(self):
+                self.get_vocab_calls += 1
+                vocab = {"base_1": 1, "user_0": 10, "user_1": 11, "neutral": 12,
+                         "<|im_end|>": 151645}
+                if self.invalid != 777:
+                    vocab["invalid_integer_domain"] = self.invalid
+                return vocab
+            def apply_chat_template(self, *args, **kwargs): return [1, 10, 11, self.invalid]
+            def encode(self, value, add_special_tokens=False):
+                if value == " x": return [12]
+                if value.startswith("Return one"): return [10, 11]
+                raise AssertionError("round-trip encode must not run after ARRAY_1024 failure")
+            def decode(self, values, **kwargs):
+                self.decode_calls += 1
+                raise AssertionError("decode must not run after ARRAY_1024 failure")
+            def convert_tokens_to_ids(self, value): return 151645
+
+        for name, invalid in (("nonmember", 777), ("negative", -1),
+                              ("bool", False), ("non_int", "151645")):
+            with self.subTest(name=name):
+                tokenizer = InvalidDomainTokenizer(invalid)
+                code, result = self._synthetic_materialize(tokenizer)
+                self.assertEqual((code, result["status"], result["failure_code"]),
+                                 (3, "FAIL", "CONSTRUCTOR_INVARIANT_FAILURE"))
+                self.assertEqual(result["checks"][-1],
+                                 {"check_id": "ARRAY_1024", "ordinal": 9, "status": "FAIL"})
+                self.assertEqual(result["arrays"], [])
+                self.assertEqual(tokenizer.get_vocab_calls, 1)
+                self.assertEqual(tokenizer.decode_calls, 0)
+
+    def test_full_token_id_domain_source_and_fake_audit(self):
+        materializer_source = (ROOT / "diagnostics/m4_tokenizer_materialization.py").read_text()
+        self.assertEqual(materializer_source.count("frozenset(tokenizer.get_vocab().values())"), 1)
+        self.assertNotIn("item >= tokenizer.vocab_size", materializer_source)
+        self.assertIn("item not in valid_token_ids", materializer_source)
+
+        test_tree = ast.parse((ROOT / "tests/test_m4_tokenizer_materialization.py").read_text())
+        construction_fakes = []
+        for node in ast.walk(test_tree):
+            if not isinstance(node, ast.ClassDef):
+                continue
+            methods = {item.name for item in node.body if isinstance(item, ast.FunctionDef)}
+            if "apply_chat_template" not in methods:
+                continue
+            vocab_sizes = [
+                item.value.value
+                for item in node.body if isinstance(item, ast.Assign) and isinstance(item.value, ast.Constant)
+                for target in item.targets if isinstance(target, ast.Name) and target.id == "vocab_size"
+            ]
+            self.assertIn("get_vocab", methods, node.name)
+            self.assertEqual(len(vocab_sizes), 1, node.name)
+            self.assertLess(vocab_sizes[0], 151645, node.name)
+            construction_fakes.append(node.name)
+        self.assertEqual(sorted(construction_fakes),
+                         ["AddedTokenTokenizer", "BadStop", "ConfigurableTokenizer",
+                          "FakeTokenizer", "InvalidDomainTokenizer", "NonUnique"])
 
     def test_materialize_identity_negative_matrix(self):
         cases = [
@@ -793,14 +895,17 @@ class TokenizerMaterializationTests(unittest.TestCase):
     def test_materialize_constructor_negative_matrix(self):
         class ConfigurableTokenizer:
             eos_token_id = 151645
-            vocab_size = 200000
+            vocab_size = 100
             def __init__(self, chat_template="synthetic-template", neutral=(12,), mismatch=None, stops=151645):
                 self.chat_template = chat_template
                 self.neutral = list(neutral)
                 self.mismatch = mismatch
                 self.stop = stops
                 self.rendered = {}
-            def apply_chat_template(self, *args, **kwargs): return [1, 10, 11, 2]
+            def get_vocab(self):
+                return {"base_1": 1, "user_0": 10, "user_1": 11, "neutral": 12,
+                        "<|im_end|>": 151645}
+            def apply_chat_template(self, *args, **kwargs): return [1, 10, 11, 151645]
             def encode(self, value, add_special_tokens=False):
                 if value == " x": return self.neutral
                 if value.startswith("Return one"): return [10, 11]
@@ -832,7 +937,8 @@ class TokenizerMaterializationTests(unittest.TestCase):
 
     def test_materialize_synthetic_constructor_and_stop_failures(self):
         class NonUnique:
-            chat_template = "synthetic-template"; eos_token_id = 151645; vocab_size = 200000
+            chat_template = "synthetic-template"; eos_token_id = 151645; vocab_size = 100
+            def get_vocab(self): return {"user_0": 10, "user_1": 11, "neutral": 12, "<|im_end|>": 151645}
             def apply_chat_template(self, *args, **kwargs): return [10, 11, 10, 11]
             def encode(self, value, add_special_tokens=False): return [12] if value == " x" else [10, 11]
             def convert_tokens_to_ids(self, value): return 151645
@@ -840,9 +946,12 @@ class TokenizerMaterializationTests(unittest.TestCase):
         self.assertEqual((code, result["failure_code"]), (3, "CONSTRUCTOR_INVARIANT_FAILURE"))
 
         class BadStop:
-            chat_template = "synthetic-template"; eos_token_id = 151644; vocab_size = 200000
+            chat_template = "synthetic-template"; eos_token_id = 151644; vocab_size = 100
             def __init__(self): self.rendered = {}
-            def apply_chat_template(self, *args, **kwargs): return [1, 10, 11, 2]
+            def get_vocab(self):
+                return {"base_1": 1, "user_0": 10, "user_1": 11, "neutral": 12,
+                        "<|eos|>": 151644, "<|im_end|>": 151645}
+            def apply_chat_template(self, *args, **kwargs): return [1, 10, 11, 151645]
             def encode(self, value, add_special_tokens=False):
                 if value == " x": return [12]
                 if value.startswith("Return one"): return [10, 11]

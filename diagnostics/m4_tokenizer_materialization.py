@@ -346,6 +346,10 @@ def materialize(contract_path: str, custody_handle: str, output_path: str) -> in
             occurrences = [index for index in range(len(base) - len(user) + 1) if base[index:index + len(user)] == user]
             require(len(occurrences) == 1, "INSERTION_UNIQUENESS", "CONSTRUCTOR_INVARIANT_FAILURE")
             require(len(neutral) == 1, "NEUTRAL_FRAGMENT", "CONSTRUCTOR_INVARIANT_FAILURE")
+            try:
+                valid_token_ids = frozenset(tokenizer.get_vocab().values())
+            except (AttributeError, TypeError) as error:
+                raise GovernedFailure("ARRAY_1024", "CONSTRUCTOR_INVARIANT_FAILURE") from error
             insertion = occurrences[0]
             rows = []
             for target in request["targets"]:
@@ -354,7 +358,7 @@ def materialize(contract_path: str, custody_handle: str, output_path: str) -> in
                 require(prompt_length >= len(base), check, "CONSTRUCTOR_INVARIANT_FAILURE")
                 values = base[:insertion] + [neutral[0]] * (prompt_length - len(base)) + base[insertion:]
                 require(len(values) == prompt_length and not any(
-                    type(item) is not int or item < 0 or item >= tokenizer.vocab_size for item in values
+                    type(item) is not int or item < 0 or item not in valid_token_ids for item in values
                 ), check, "CONSTRUCTOR_INVARIANT_FAILURE")
                 rendered = tokenizer.decode(values, skip_special_tokens=False, clean_up_tokenization_spaces=False)
                 require(tokenizer.encode(rendered, add_special_tokens=False) == values,
