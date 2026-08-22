@@ -6,7 +6,6 @@ import json
 import threading
 import unittest
 from copy import deepcopy
-from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
 
@@ -712,24 +711,32 @@ class RereviewRemediationTests(unittest.TestCase):
 
     def test_public_fanout_reconciles_fabricated_views_metadata_stop_and_request(self):
         self.assertFalse(hasattr(FanoutCoordinator,"step_verified"))
+        self.assertFalse(hasattr(FanoutCoordinator,"_step_verified"))
+        self.assertFalse(hasattr(seam,"_VerifiedFanoutInput"))
         self.assertNotIn("VerifiedFanoutInput",seam.__all__)
-        request_a=FanoutTests()._req()
-        coordinator=FanoutCoordinator(provider)
-        seed_candidate,seed_peer,_,_=FanoutTests()._pair()
-        verified=coordinator._phase_one(sanitized_rows(),stop_row(),1024,seed_candidate,seed_peer,request_a)
-        altered=verified.candidate_view.bytes_view[:-1]+bytes([verified.candidate_view.bytes_view[-1]^1])
-        cases=(
-            (replace(verified,candidate_view=PrivateTokenView(1024,altered)),request_a,"FANOUT_RECEIVED_DIGEST_MISMATCH"),
-            (replace(verified,length=1,expected_sha256="0"*64),request_a,"VERIFIED_FANOUT_IDENTITY_INVALID"),
-            (replace(verified,stop_sha256="0"*64),request_a,"STOP_REDERIVATION_MISMATCH"),
-            (verified,{**request_a,"operation_id":"drifted-operation"},"FANOUT_REQUEST_IDENTITY_MISMATCH"),
-            (object(),request_a,"VERIFIED_FANOUT_IDENTITY_INVALID"),
-        )
-        for fabricated,actual_request,code in cases:
-            candidate,peer,cb,pb=FanoutTests()._pair();before=(len(cb.calls),len(pb.calls))
-            with self.subTest(code=code),patch.object(coordinator,"_phase_one",return_value=fabricated),self.assertRaisesRegex(IntegrationError,code):
-                coordinator.step(sanitized_rows(),stop_row(),1024,actual_request,candidate,peer)
-            self.assertEqual((len(cb.calls),len(pb.calls)),before)
+        arbitrary_prompt=[7]*1024;arbitrary_stop=[8,9]
+        prompt_digest=sha256_bytes(encode_private_view(arbitrary_prompt));stop_digest=sha256_bytes(encode_private_view(arbitrary_stop))
+        arbitrary_rows=[{"context_length":n,"length":n,"sha256":prompt_digest,"expected_sha256":prompt_digest} for n in (1024,4096,8192)]
+        arbitrary_stop_row={"length":2,"sha256":stop_digest,"expected_sha256":stop_digest}
+        provider_calls=[]
+        def forbidden_provider(key):provider_calls.append(key);raise AssertionError("provider reconciliation required")
+        candidate,peer,cb,pb=FanoutTests()._pair();before=(len(cb.calls),len(pb.calls))
+        with self.assertRaisesRegex(AssertionError,"provider reconciliation required"):
+            FanoutCoordinator(forbidden_provider).step(arbitrary_rows,arbitrary_stop_row,1024,FanoutTests()._req(),candidate,peer)
+        self.assertEqual(provider_calls,[1024]);self.assertEqual((len(cb.calls),len(pb.calls)),before)
+        coordinator=FanoutCoordinator(provider);candidate,peer,_,_=FanoutTests()._pair();request_a=FanoutTests()._req()
+        receipt=coordinator.step(sanitized_rows(),stop_row(),1024,request_a,candidate,peer)
+        frozen_request_sha=receipt["request_sha256"];request_a["operation_id"]="caller-drift-after-return"
+        self.assertEqual(frozen_request_sha,sha256_bytes(canonical(FanoutTests()._req())))
+        request_b=FanoutTests()._req();original_request=deepcopy(request_b)
+        class DriftingBackend(SpyBackend):
+            def step(self,prior,backend_request,tokens):
+                request_b["operation_id"]="caller-drift-during-candidate"
+                return super().step(prior,backend_request,tokens)
+        candidate,_=ready("candidate",DriftingBackend("candidate-session-v1"));peer,_=ready("peer")
+        receipt=coordinator.step(sanitized_rows(),stop_row(),1024,request_b,candidate,peer)
+        self.assertEqual(request_b["operation_id"],"caller-drift-during-candidate")
+        self.assertEqual(receipt["request_sha256"],sha256_bytes(canonical(original_request)))
 
     def test_pass_law_rows_fail_closed_without_full_artifacts_and_reject_domains(self):
         def pass_rows(law):
@@ -784,12 +791,20 @@ class RereviewRemediationTests(unittest.TestCase):
 
     def test_factory_requires_live_attestation_and_cleans_each_role(self):
         made=[]
-        def ctor(session,mode="live"):
+        def ctor(session,mode="live",disposal="exact"):
             def build():
                 backend=SpyBackend(session)
                 if mode=="dead":backend.real_state["live"]=False
-                if mode=="throw":
-                    backend.is_live=lambda:(_ for _ in ()).throw(RuntimeError("live probe"))
+                if mode in ("throw_once","throw_always"):
+                    probes={"count":0}
+                    def probe():
+                        probes["count"]+=1
+                        if mode=="throw_always" or probes["count"]==1:raise RuntimeError("live probe")
+                        return backend.real_state["live"]
+                    backend.is_live=probe
+                if disposal=="noop":backend.dispose=lambda:None
+                elif disposal=="partial":backend.dispose=lambda:backend.real_state["payload"].append("partial-dispose")
+                elif disposal=="throw":backend.dispose=lambda:(_ for _ in ()).throw(RuntimeError("dispose"))
                 made.append(backend);return backend
             return build
         factory,cman,pman,ccfg,pcfg=self._pair_specs(ctor("candidate-session-v1","dead"),ctor("peer-session-v1"))
@@ -800,10 +815,33 @@ class RereviewRemediationTests(unittest.TestCase):
         with self.assertRaisesRegex(IntegrationError,"PEER_BACKEND_NOT_LIVE"):
             factory.create_pair(canonical(cman),canonical(pman),canonical(ccfg),canonical(pcfg),provider)
         self.assertEqual(len(made),2);self.assertTrue(all(not item.real_state["live"] for item in made))
-        made.clear();factory,cman,pman,ccfg,pcfg=self._pair_specs(ctor("candidate-session-v1","throw"),ctor("peer-session-v1"))
+        made.clear();factory,cman,pman,ccfg,pcfg=self._pair_specs(ctor("candidate-session-v1","throw_once"),ctor("peer-session-v1"))
         with self.assertRaisesRegex(IntegrationError,"CANDIDATE_BACKEND_NOT_LIVE"):
             factory.create_pair(canonical(cman),canonical(pman),canonical(ccfg),canonical(pcfg),provider)
         self.assertEqual(len(made),1);self.assertFalse(made[0].real_state["live"])
+        made.clear();factory,cman,pman,ccfg,pcfg=self._pair_specs(ctor("candidate-session-v1","throw_once","noop"),ctor("peer-session-v1"))
+        with self.assertRaisesRegex(IntegrationError,"BACKEND_ROLLBACK_FAILURE"):
+            factory.create_pair(canonical(cman),canonical(pman),canonical(ccfg),canonical(pcfg),provider)
+        self.assertEqual(len(made),1);self.assertTrue(made[0].real_state["live"])
+        made.clear();factory,cman,pman,ccfg,pcfg=self._pair_specs(ctor("candidate-session-v1"),ctor("peer-session-v1","throw_once","partial"))
+        with self.assertRaisesRegex(IntegrationError,"BACKEND_ROLLBACK_FAILURE"):
+            factory.create_pair(canonical(cman),canonical(pman),canonical(ccfg),canonical(pcfg),provider)
+        self.assertEqual(len(made),2);self.assertFalse(made[0].real_state["live"]);self.assertTrue(made[1].real_state["live"])
+        made.clear();factory,cman,pman,ccfg,pcfg=self._pair_specs(ctor("candidate-session-v1","throw_always"),ctor("peer-session-v1"))
+        with self.assertRaisesRegex(IntegrationError,"BACKEND_ROLLBACK_FAILURE"):
+            factory.create_pair(canonical(cman),canonical(pman),canonical(ccfg),canonical(pcfg),provider)
+        self.assertEqual(len(made),1);self.assertFalse(made[0].real_state["live"])
+        made.clear();control_manifest=manifest("candidate");control_manifest.update(
+            role="control",scientific_arm="empty",runtime_instance_id="control-session-v1",
+            access_policy_id="control-empty-v1",channel_policy="EMPTY_CONTROL",redaction_receipt_sha256="0"*64)
+        control_config={"backend_name":"control-real","implementation_sha256":"a"*64,"dependency_sha256":"b"*64,
+                        "model_sha256":control_manifest["checkpoint_sha256"],"tokenizer_sha256":control_manifest["tokenizer_sha256"],
+                        "adapter_instance_id":"control-real","production_path":True}
+        control_factory=AdapterFactory({"control-real":(ctor("control-session-v1","throw_once","throw"),"a"*64,"b"*64,
+                                                        sha256_bytes(canonical(control_config)))})
+        with self.assertRaisesRegex(IntegrationError,"BACKEND_ROLLBACK_FAILURE"):
+            control_factory.create("control","empty",canonical(control_manifest),canonical(control_config),provider)
+        self.assertEqual(len(made),1);self.assertTrue(made[0].real_state["live"])
         made.clear();factory,cman,pman,ccfg,pcfg=self._pair_specs(ctor("candidate-session-v1"),ctor("peer-session-v1"))
         candidate,peer=factory.create_pair(canonical(cman),canonical(pman),canonical(ccfg),canonical(pcfg),provider)
         self.assertTrue(candidate.backend.is_live());self.assertTrue(peer.backend.is_live())

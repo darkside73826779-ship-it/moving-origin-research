@@ -13,8 +13,8 @@ ROOT = pathlib.Path("/workspace") if pathlib.Path("/workspace").is_dir() else pa
 EXPECTED = {
     ".gitattributes": "03a4a697fd0aefe179874343764ac8fba05ea1f7df2076a1b0ff9b31acb6d994",
     "src/__init__.py": "7bfcb8aa72784807a9d941e2f5784593906f0f216624d5cd736c82339027bdca",
-    "src/m4_post_tokenizer_integration.py": "9db0155a5de800774ff8476bf02993e340dfd785336890860587ab22daf2dfb7",
-    "src/test_m4_post_tokenizer_integration.py": "4aa5690e9ccc8935b1d0753f11932754b69af539d9049a801d94a040770057d4",
+    "src/m4_post_tokenizer_integration.py": "54ecc77b9062683f56043984b297c1472f781797e1e5af4af861e069418a5d47",
+    "src/test_m4_post_tokenizer_integration.py": "5d46c7a39d61fee888b5948e026e8b887235af8c5c46f17386f30d87b07f4227",
     "specs/data/m4_tokenizer_executable_package_v1.json": "ee5f7bc601d94153d5819453d2f22a8fc6110103c88bd8242ac3ebe5c78ea2bc",
     "specs/data/m4_tokenizer_executable_package_v1.json.sha256": "8237c04033cb77f90ce62fecd2f7adf8866426cdfd95360623f8088b3989903c",
     "specs/data/m4_post_tokenizer_integration_contract_v1.json": "9b562397a7b322e9ac27406d33572815b04eb06978f204ea6d8c5ba13514c778",

@@ -136,19 +136,6 @@ class PrivateTokenView:
         return sha256_bytes(self.bytes_view)
 
 
-@dataclass(frozen=True)
-class _VerifiedFanoutInput:
-    context_length: int
-    length: int
-    expected_sha256: str
-    stop_length: int
-    stop_sha256: str
-    candidate_view: PrivateTokenView
-    peer_view: PrivateTokenView
-    stop_view: PrivateTokenView
-    request_sha256: str
-
-
 def encode_private_view(items: Sequence[int]) -> bytes:
     if len(items) > 0xFFFFFFFF:
         raise IntegrationError("PRIVATE_TOKEN_LENGTH_INVALID")
@@ -544,10 +531,7 @@ class AdapterFactory:
         try:
             live = backend.is_live()
         except Exception as exc:
-            try:
-                backend.dispose()
-            except Exception as cleanup_exc:
-                raise IntegrationError("BACKEND_ROLLBACK_FAILURE") from cleanup_exc
+            cls._dispose_verified(backend)
             raise IntegrationError(code) from exc
         if live is not True:
             cls._dispose_verified(backend)
@@ -658,7 +642,7 @@ class FanoutCoordinator:
         self.post_return_probe = post_return_probe or (lambda _candidate, _peer: False)
 
     def _phase_one(self, rows: Sequence[Mapping[str, Any]], stop: Mapping[str, Any], context_length: int,
-                   candidate: BaseAdapter, peer: BaseAdapter, request: Mapping[str, Any]) -> _VerifiedFanoutInput:
+                   candidate: BaseAdapter, peer: BaseAdapter, request: Mapping[str, Any]) -> tuple[PrivateTokenView, PrivateTokenView, int, str, int, str]:
         expected = (1024, 4096, 8192)
         contexts = tuple(row.get("context_length") for row in rows)
         if len(rows) < 3: raise IntegrationError("SANITIZED_RESULT_MISSING_CONTEXT")
@@ -690,73 +674,35 @@ class FanoutCoordinator:
         if cview.sha256 != pview.sha256: raise IntegrationError("FANOUT_RECEIVED_DIGEST_MISMATCH")
         if self.mutation_probe(cview) or self.mutation_probe(pview):
             raise IntegrationError("PRIVATE_VIEW_MUTATED")
-        return _VerifiedFanoutInput(context_length, len(prompt_items), selected["expected_sha256"],
-                                    len(stop_items), stop["sha256"], cview, pview,
-                                    PrivateTokenView(len(stop_items), stop_bytes),
-                                    sha256_bytes(canonical_bytes(dict(request))))
-
-    def _validate_verified(self, verified: _VerifiedFanoutInput, request: Mapping[str, Any]) -> None:
-        if type(verified) is not _VerifiedFanoutInput:
-            raise IntegrationError("VERIFIED_FANOUT_IDENTITY_INVALID")
-        request_sha256 = sha256_bytes(canonical_bytes(dict(request)))
-        if verified.request_sha256 != request_sha256:
-            raise IntegrationError("FANOUT_REQUEST_IDENTITY_MISMATCH")
-        if (type(verified.context_length) is not int or verified.context_length not in (1024, 4096, 8192) or
-                type(verified.length) is not int or verified.length != verified.context_length or
-                type(verified.stop_length) is not int or verified.stop_length < 0):
-            raise IntegrationError("VERIFIED_FANOUT_IDENTITY_INVALID")
-        views = (verified.candidate_view, verified.peer_view)
-        if any(type(view) is not PrivateTokenView or type(view.bytes_view) is not bytes or
-               view.context_length != verified.context_length for view in views):
-            raise IntegrationError("PRIVATE_VIEW_MUTATION_ATTEMPT")
-        encoded_prefix_length = len(b"M4_PRIVATE_VIEW_V1\x00") + 4
-        if any(view.byte_length != encoded_prefix_length + 8 * verified.length for view in views):
-            raise IntegrationError("SANITIZED_RESULT_LENGTH_MISMATCH")
-        if (views[0].bytes_view != views[1].bytes_view or views[0].sha256 != views[1].sha256):
-            raise IntegrationError("FANOUT_RECEIVED_DIGEST_MISMATCH")
-        if views[0].sha256 != verified.expected_sha256:
-            raise IntegrationError("TOKEN_ARRAY_DIGEST_MISMATCH")
-        stop_view = verified.stop_view
-        if (type(stop_view) is not PrivateTokenView or type(stop_view.bytes_view) is not bytes or
-                stop_view.context_length != verified.stop_length or
-                stop_view.byte_length != encoded_prefix_length + 8 * verified.stop_length or
-                stop_view.sha256 != verified.stop_sha256):
-            raise IntegrationError("STOP_REDERIVATION_MISMATCH")
-        if self.mutation_probe(views[0]) or self.mutation_probe(views[1]):
-            raise IntegrationError("PRIVATE_VIEW_MUTATED")
+        return cview, pview, len(prompt_items), selected["expected_sha256"], len(stop_items), stop["sha256"]
 
     def step(self, rows: Sequence[Mapping[str, Any]], stop: Mapping[str, Any], context_length: int,
              request: Mapping[str, Any], candidate: BaseAdapter, peer: BaseAdapter) -> Mapping[str, Any]:
         validate_pair_identity(candidate.manifest, peer.manifest)
-        verified = self._phase_one(rows, stop, context_length, candidate, peer, request)
-        return self._step_verified(verified, request, candidate, peer)
-
-    def _step_verified(self, verified: _VerifiedFanoutInput, request: Mapping[str, Any],
-                       candidate: BaseAdapter, peer: BaseAdapter) -> Mapping[str, Any]:
-        validate_pair_identity(candidate.manifest, peer.manifest)
-        self._validate_verified(verified, request)
-        if request.get("context_length") != verified.context_length: raise IntegrationError("CONTEXT_REQUEST_MISMATCH")
+        if not isinstance(request, Mapping): raise IntegrationError("REQUEST_STRUCTURE_INVALID")
+        request_snapshot = deepcopy(dict(request))
+        cview, pview, length, expected_sha256, stop_length, stop_sha256 = self._phase_one(
+            rows, stop, context_length, candidate, peer, request_snapshot)
         candidate_before, peer_before = candidate.capture_transaction(), peer.capture_transaction()
-        cview, pview = verified.candidate_view, verified.peer_view
         try:
-            candidate_receipt = candidate.step(request, cview)
+            candidate_receipt = candidate.step(request_snapshot, cview)
         except IntegrationError:
             candidate.restore_transaction(candidate_before); peer.restore_transaction(peer_before); raise
         try:
-            peer_receipt = peer.step(request, pview)
+            peer_receipt = peer.step(request_snapshot, pview)
         except IntegrationError as exc:
             candidate.restore_transaction(candidate_before); peer.restore_transaction(peer_before)
             raise IntegrationError("FANOUT_ATOMICITY_FAILURE", backend_code=exc.code) from exc
         if cview.sha256 != pview.sha256 or self.post_return_probe(cview, pview):
             candidate.restore_transaction(candidate_before); peer.restore_transaction(peer_before)
             raise IntegrationError("PRIVATE_VIEW_MUTATED")
-        request_digest = sha256_bytes(canonical_bytes(dict(request)))
-        return frozen({"status": "PASS", "context_id": str(verified.context_length), "context_length": verified.context_length,
-                       "length": verified.length, "expected_sha256": verified.expected_sha256,
+        request_digest = sha256_bytes(canonical_bytes(request_snapshot))
+        return frozen({"status": "PASS", "context_id": str(context_length), "context_length": context_length,
+                       "length": length, "expected_sha256": expected_sha256,
                        "candidate_sha256": cview.sha256, "peer_sha256": pview.sha256, "equal": True,
                        "runtime_instance_ids": [candidate.session_id, peer.session_id],
-                       "request_sha256": request_digest, "stop_length": verified.stop_length,
-                       "stop_sha256": verified.stop_sha256, "candidate": candidate_receipt,
+                       "request_sha256": request_digest, "stop_length": stop_length,
+                       "stop_sha256": stop_sha256, "candidate": candidate_receipt,
                        "peer": peer_receipt, "laws": held_law_projection()})
 
 
@@ -776,7 +722,7 @@ class SyntheticFixtureDispatcher:
         )
         if tuple(fixture.get("sequence", ())) != expected_sequence: raise IntegrationError("FIXTURE_SEQUENCE_MISMATCH")
         realized: list[str] = []
-        cache: dict[int, _VerifiedFanoutInput] = {}
+        verified_contexts: list[int] = []
         receipts: list[Mapping[str, Any]] = []
         close_trace: list[Mapping[str, str]] = []
         for entry in expected_sequence:
@@ -789,7 +735,8 @@ class SyntheticFixtureDispatcher:
                     operation_id = {1024:"fanout_episode_a_request_0",4096:"fanout_episode_a_request_1",8192:"fanout_episode_b_request_0"}[context]
                     req = {"operation_id": operation_id, "caller_session_id": "caller-main", "caller_thread_id": "thread-0",
                            "episode_id": episode, "request_ordinal": ordinal, "context_length": context, "is_terminal_request": terminal}
-                    cache[context] = self.coordinator._phase_one(rows, stop, context, candidate, peer, req)
+                    self.coordinator._phase_one(rows, stop, context, candidate, peer, req)
+                    verified_contexts.append(context)
             elif entry in ("fanout_episode_a_request_0", "fanout_episode_a_request_1", "fanout_episode_b_request_0"):
                 context, episode, ordinal, terminal = {
                     "fanout_episode_a_request_0": (1024, "synthetic-episode-a", 0, False),
@@ -798,7 +745,7 @@ class SyntheticFixtureDispatcher:
                 }[entry]
                 req = {"operation_id": entry, "caller_session_id": "caller-main", "caller_thread_id": "thread-0",
                        "episode_id": episode, "request_ordinal": ordinal, "context_length": context, "is_terminal_request": terminal}
-                receipts.append(self.coordinator._step_verified(cache[context], req, candidate, peer))
+                receipts.append(self.coordinator.step(rows, stop, context, req, candidate, peer))
             elif entry == "exercise_close_paths":
                 for state in fixture["expected"]["close_paths"]:
                     adapter = close_adapters[state]
@@ -826,7 +773,7 @@ class SyntheticFixtureDispatcher:
                     candidate.manifest["checkpoint_sha256"] == peer.manifest["checkpoint_sha256"] and
                     candidate.manifest["training_instance_sha256"] == peer.manifest["training_instance_sha256"]),
             },
-            "sanitized_context_order": list(cache),
+            "sanitized_context_order": verified_contexts,
             "terminal_state": json.loads(candidate.durable_state())["lifecycle_state"],
         }
         return frozen({"sequence": realized, "expected": realized_expected, "close_call_trace": close_trace,
