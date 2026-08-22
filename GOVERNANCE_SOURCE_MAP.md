@@ -21,6 +21,12 @@ The binding decisions adopted from those sources are represented through:
 
 11. [`reviews/critic_m4_v1.3_law_fidelity_review.md`](reviews/critic_m4_v1.3_law_fidelity_review.md) — CRITIC R2 law-fidelity review of M4 spec v1.3: **BLOCK** at review commit `89a0d57` for BF1 (P3 source-tag defect). Merged to main with the R2 re-review via PR #42 (main merge commit `21c71e4`).
 12. [`reviews/critic_m4_v1.3_r2_rereview.md`](reviews/critic_m4_v1.3_r2_rereview.md) — CRITIC R2 re-review of M4 spec v1.3.1 after the ARCHITECT tags-only remediation: **CLEAR** at `433aef9`; scope-violation check clean. Merged to main via PR #42 (main merge commit `21c71e4`).
+13. [`reviews/critic_m4_v1.6.2_final_rereview.md`](reviews/critic_m4_v1.6.2_final_rereview.md) — final independent clearance of M4 specification v1.6.2 after the complete correction sequence. The cleared specification is published as [`specs/m4_specification.md`](specs/m4_specification.md).
+14. [`specs/m4_task_spec.md`](specs/m4_task_spec.md) — build-facing extraction from the cleared M4 specification. It preserves the implementation-only authority boundary and the downstream scoring gates.
+15. [Entry 78](docs/rulings/provenance_log.md#entry-78--principal-gate-signature-m4-graveyard-gate-signed-implementation-only) — Rebecca's M4 graveyard-gate signature authorizes implementation only. It explicitly does not authorize scoring. The accompanying implementation rerelease is recorded in [`handoffs/REBECCA_M4_ITEM_A_IMPLEMENTATION_RERELEASE_2026-08-21.md`](handoffs/REBECCA_M4_ITEM_A_IMPLEMENTATION_RERELEASE_2026-08-21.md).
+16. [`RESEARCH_STATUS.md`](RESEARCH_STATUS.md) — a concise public index. It is not itself a ruling and cannot supersede the specifications, signed rulings, independent reviews, provenance log, or [`state/STATE.md`](state/STATE.md).
+
+Engineering, remediation, test-bed, mutation, and crash-cart evidence cannot become a scientific score by relabeling. A scoring result requires the separately governed authorization, protected-input custody, execution, review, and ruling chain.
 
 ## Verification rule
 
