@@ -1,0 +1,33 @@
+{
+  "schema_version":"common-handoff-manifest-v1",
+  "date":"2026-08-21",
+  "regime":"B",
+  "transfer_kind":"FORMAL_HANDOFF",
+  "work_item":"m4_post_tokenizer_rr_f1_peer_reset_receipt_reconciliation",
+  "gate":"Persistent-CRITIC narrow rereview of four role-specific reset receipt bindings",
+  "sender_role":"ARCHITECT",
+  "receiver_role":"WORKFLOW_COORDINATOR",
+  "authority_basis":[{"path":"handoffs/ARCHITECT_TO_COORDINATOR_M4_POST_TOKENIZER_RR_CC1_RR_CC3_RECONCILIATION_2026-08-21.md","sha":"73c8394994aa172727ffff93dc42ade4348d4823"}],
+  "remote_ref":"refs/heads/architect/m4-post-tokenizer-rr-f1-peer-reset-reconciliation",
+  "base_sha":"73c8394994aa172727ffff93dc42ade4348d4823",
+  "routing_ref_sha":"b5b8028a7126e838c239ba0927b526f9cec8b7e2",
+  "review_result_sha":"c0711b5fbf964a56d48f6be3c6bd1b6008548832",
+  "work_branch":"architect/m4-post-tokenizer-rr-f1-peer-reset-reconciliation",
+  "artifacts":{
+    "handoffs/ARCHITECT_M4_POST_TOKENIZER_RR_F1_ROUTING_TAIL_2026-08-21.md":"a3b7407a41a10d52fc4629d53586c4f8e0cf9d0e24be1106643f40557ab84a0d",
+    "handoffs/ARCHITECT_TO_COORDINATOR_M4_POST_TOKENIZER_RR_CC1_RR_CC3_RECONCILIATION_2026-08-21.md":"10c58159f335ec3ab6a16a9eb5a0fb3fa9473ac6728fe9ecaae36e46aa4324f2",
+    "handoffs/ARCHITECT_TO_COORDINATOR_M4_POST_TOKENIZER_RR_F1_PEER_RESET_RECEIPT_RECONCILIATION_2026-08-21.md":"01c697edf39d2d4c451255b4e560413f746f141628319f2284a0a499cbf4ce6b",
+    "specs/data/m4_post_tokenizer_rr_cc2_precedence_map_v1.json":"7596186d4458ca916bb9783b4761449e9a55b7858f00ea29d0a534e4c2a37904",
+    "specs/data/m4_post_tokenizer_rr_cc2_precedence_map_v1.json.sha256":"63b0d6e8861a03039a218e1a1e2289c63e8590f5984a12084023efed7238d174",
+    "specs/data/m4_post_tokenizer_rr_cc3_lifecycle_realizations_v1.json":"1b5c3e33de5b8e452561ff14d308acddbccad14addb204b7467516d76666508b",
+    "specs/data/m4_post_tokenizer_rr_cc3_lifecycle_realizations_v1.json.sha256":"f8cb8136cb37ba4118a1450b6becd02078b4070af8be621d4d995b78aeb16eee",
+    "specs/m4_post_tokenizer_rr_cc1_rr_cc3_reconciliation_v1.md":"7e4499463cf08001cafed47cb931fe1eb54af0802b9f6f97853cbe156c11e335"
+  },
+  "checks_performed":["read the exact authoritative RR-F1 review","bound four distinct candidate/peer reset-A/reset-B canonical receipts and digests","verified all four references, session identities, one-call totals, sidecars, and embedded hashes","verified all unrelated banked bytes unchanged","workflow preflight scanned the exact input-to-return range; 213 fixed-regex findings were manually classified as immutable public digests and gitleaks returned zero"],
+  "status":"COMPLETE",
+  "findings":[],
+  "scan_attestation":{"base_sha":"73c8394994aa172727ffff93dc42ade4348d4823","tip_sha":"b5b8028a7126e838c239ba0927b526f9cec8b7e2","tool_status":"blocked_manual_review_complete","manual_review":true,"findings":["213 duplicate-domain fixed-regex matches occur wholly inside required immutable public object, artifact, sidecar, and commit digests; all are non-contact reproducibility metadata","gitleaks 8.30.1 returned zero findings","no credential, personal contact, private path, custody value, model/tokenizer byte, token array, seed, score, or scientific output was found"]},
+  "next_event":"WORKFLOW COORDINATOR routes the exact RR-F1 package once to persistent CRITIC",
+  "prohibited_actions":["implementation or OCI/materializer execution","custody/model/tokenizer access","scoring, seeds, science, Q2/EF3/native-L8 work, durable-state mutation, publication, merge, or gate decision"],
+  "role_extension":{"role":"ARCHITECT","tests":["four reset-reference/session assertions PASS","canonical sidecars and embedded digests PASS","git diff check PASS"],"diagnostics_executed":false}
+}
