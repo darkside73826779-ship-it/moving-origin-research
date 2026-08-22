@@ -3,6 +3,14 @@
   "date": "2026-08-22",
   "regime": "B",
   "status": "DESIGN_ONLY_NO_RUN_AUTHORITY",
+  "artifact_version": "v0.2-alpha",
+  "artifact_versioning_authority": {
+    "path": "handoffs/REBECCA_M4_FINAL_PRESCORING_CRASH_CART_ARTIFACT_VERSIONING_AUTHORITY_2026-08-22.md",
+    "commit": "086d6a4ab34044bb8b9d637b5e575e47f8863ee2",
+    "bytes": 3498,
+    "sha256": "ad19e7080143bb6e8d8a0646a5f9f5d427ef9f255d5e8fa0a7015446455f3da8",
+    "effect": "VERSION_LABEL_ONLY_NO_EXECUTION_PROMOTION_OR_RELEASE_AUTHORITY"
+  },
   "source_tag": "[PROPOSED]",
   "custom_rebecca_directive_authority": {
     "path": "handoffs/REBECCA_M4_FINAL_PRESCORING_FULL_STACK_CRASH_CART_AND_EXPLORATORY_OBSERVATION_AUTHORITY_2026-08-22.md",

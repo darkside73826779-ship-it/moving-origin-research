@@ -347,6 +347,14 @@
   ],
   "x-semantic-validator-required": true,
   "x-staged-evidence-rule": "FIELDS_MUST_REPRESENT_ONLY_OBSERVED_EVIDENCE; NULL_OR_EMPTY_VALUES_ARE_REQUIRED_WHEN_A_STAGE_WAS_NOT_REACHED",
+  "x-design-artifact-version": "v0.2-alpha",
+  "x-versioning-authority": {
+    "path": "handoffs/REBECCA_M4_FINAL_PRESCORING_CRASH_CART_ARTIFACT_VERSIONING_AUTHORITY_2026-08-22.md",
+    "commit": "086d6a4ab34044bb8b9d637b5e575e47f8863ee2",
+    "bytes": 3498,
+    "sha256": "ad19e7080143bb6e8d8a0646a5f9f5d427ef9f255d5e8fa0a7015446455f3da8",
+    "effect": "VERSION_LABEL_ONLY_NO_RUN_SCORING_SCIENCE_READINESS_OR_GATE_AUTHORITY"
+  },
   "x-classification": "NON_SCORING_EXPLORATORY_OBSERVATION",
   "x-source-tag": "[PROPOSED]",
   "x-run-authorized": false

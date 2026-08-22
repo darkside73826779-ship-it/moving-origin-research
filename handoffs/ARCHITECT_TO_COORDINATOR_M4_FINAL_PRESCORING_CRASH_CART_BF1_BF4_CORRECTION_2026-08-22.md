@@ -6,11 +6,14 @@ Regime: B
 
 Terminal state: **COMPLETE — DESIGN ONLY — NO RUN AUTHORITY**
 
+Artifact version: **`v0.2-alpha`**
+
 ## Immutable result
 
 - Substantive result: `fcfe47752db70f67de1a7a63a06182e6417d6e6d`.
 - Base CRITIC BLOCK: `9a028cb0799807910900f29ef8a1ff8cb4af0b4d`.
 - Exact Rebecca authority: `handoffs/REBECCA_M4_FINAL_PRESCORING_FULL_STACK_CRASH_CART_AND_EXPLORATORY_OBSERVATION_AUTHORITY_2026-08-22.md`, source commit `8b4a383c450e8b29f2633f7e25107abcb62dd929`, 6,087 bytes, raw SHA-256 `c759a99a563777a42ba42eb25f4679a40bb940a246bc002ef199c61e58721ecc`.
+- Exact versioning authority: `handoffs/REBECCA_M4_FINAL_PRESCORING_CRASH_CART_ARTIFACT_VERSIONING_AUTHORITY_2026-08-22.md`, source commit `086d6a4ab34044bb8b9d637b5e575e47f8863ee2`, 3,498 bytes, raw SHA-256 `ad19e7080143bb6e8d8a0646a5f9f5d427ef9f255d5e8fa0a7015446455f3da8`.
 
 ## Delta closure
 
@@ -18,6 +21,7 @@ Terminal state: **COMPLETE — DESIGN ONLY — NO RUN AUTHORITY**
 - **BF2:** both reset episodes are zero-based: warmup receipts use ordinals 0–3 and measured receipts use ordinals 0–63, with no priming request.
 - **BF3:** the report schema is a fail-closed five-stage union for pre-active, partial-warmup, partial-active, post-active, and complete terminal evidence. Unreached fields are null or empty; unobserved role observations are null; only the complete branch requires four warmup pairs, 64 active pairs, at least 121 resource samples, complete trends, cleanup PASS, public-safety CLEAR, and export. A future semantic validator remains mandatory for exact cross-field counts, order, receipt chains, and derived values.
 - **BF4:** all four substantive artifacts use permitted `[PROPOSED]` provenance. The exact Rebecca authority is bound without expansion and grants design/implementation preparation only; all Architect-selected mechanics remain proposed pending review and an exact later release.
+- **Versioning:** the original `82d380e…` design is retained as blocked `v0.1-alpha`; this correction is `v0.2-alpha`. Beta requires authoritative persistent-CRITIC `COMBINED CLEAR` plus a separate promotion decision, and `v1` remains prohibited until every exact implementation/evidence/review/release prerequisite in the authority is durable.
 
 ## Focused validation
 

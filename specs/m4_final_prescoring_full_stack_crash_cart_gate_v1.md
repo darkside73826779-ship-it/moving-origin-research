@@ -8,6 +8,14 @@ Status: **DESIGN ONLY — MANDATORY PROSPECTIVE GATE — NO RUN AUTHORITY**
 
 Source classification: `[PROPOSED]`
 
+Artifact version: **`v0.2-alpha`**
+
+## Version lineage and maturity boundary
+
+Rebecca's exact durable artifact-versioning authority is `handoffs/REBECCA_M4_FINAL_PRESCORING_CRASH_CART_ARTIFACT_VERSIONING_AUTHORITY_2026-08-22.md` at commit `086d6a4ab34044bb8b9d637b5e575e47f8863ee2`, 3,498 raw bytes, SHA-256 `ad19e7080143bb6e8d8a0646a5f9f5d427ef9f255d5e8fa0a7015446455f3da8`. It approves existence, preservation, and version labeling only. It grants no execution, scoring, science, readiness, promotion, or release authority.
+
+The retained initial design at routing head `82d380ea42ca4e43386f90eedc5ae3551632c8ea`, substantive result `b25baaac2f88bce1a5c2659e5d9b917f6bb0f158`, is `v0.1-alpha`; its authoritative CRITIC review `9a028cb0799807910900f29ef8a1ff8cb4af0b4d` remains `COMBINED BLOCK` and immutable provenance. This corrected BF1–BF4 design is `v0.2-alpha`. It cannot become beta unless authoritative persistent CRITIC returns `COMBINED CLEAR`, and that CLEAR permits only a separate promotion decision. `v1` is prohibited until exact implementation, integration, runtime/model/gofast identities, custody-free executable evidence, final independent review, and Rebecca's explicit release decision are all durable and coherent.
+
 ## Provenance and exact Rebecca authority
 
 All custom warmup, full-data, trend, timing, count, failure, rendering, sanitation, cleanup, and test criteria introduced by this package are `[PROPOSED]` under Constitution v2 §5.1. No custom label is treated as authority. Rebecca's exact durable authority is `handoffs/REBECCA_M4_FINAL_PRESCORING_FULL_STACK_CRASH_CART_AND_EXPLORATORY_OBSERVATION_AUTHORITY_2026-08-22.md` at commit `8b4a383c450e8b29f2633f7e25107abcb62dd929`, 6,087 raw bytes, SHA-256 `c759a99a563777a42ba42eb25f4679a40bb940a246bc002ef199c61e58721ecc`. That artifact requires design and implementation preparation only. It grants no execution, scoring, science, merge, publication, readiness, or gate authority, and this specification does not paraphrase it into broader authority. Exact numeric mechanics introduced here remain prospective controls requiring review. `[PROPOSED]`

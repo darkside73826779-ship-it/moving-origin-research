@@ -3,6 +3,17 @@
   "date": "2026-08-22",
   "regime": "B",
   "status": "DESIGN_ONLY_NO_RUN_AUTHORITY",
+  "artifact_version": "v0.2-alpha",
+  "artifact_versioning": {
+    "authority_path": "handoffs/REBECCA_M4_FINAL_PRESCORING_CRASH_CART_ARTIFACT_VERSIONING_AUTHORITY_2026-08-22.md",
+    "authority_commit": "086d6a4ab34044bb8b9d637b5e575e47f8863ee2",
+    "authority_bytes": 3498,
+    "authority_sha256": "ad19e7080143bb6e8d8a0646a5f9f5d427ef9f255d5e8fa0a7015446455f3da8",
+    "predecessor": {"version": "v0.1-alpha", "routing_head": "82d380ea42ca4e43386f90eedc5ae3551632c8ea", "substantive_result": "b25baaac2f88bce1a5c2659e5d9b917f6bb0f158", "critic_review": "9a028cb0799807910900f29ef8a1ff8cb4af0b4d", "status": "COMBINED_BLOCK_RETAINED"},
+    "beta_rule": "PROHIBITED_UNLESS_AUTHORITATIVE_PERSISTENT_CRITIC_RETURNS_COMBINED_CLEAR; PROMOTION_REQUIRES_SEPARATE_DECISION",
+    "v1_rule": "PROHIBITED_UNTIL_EXACT_IMPLEMENTATION_INTEGRATION_RUNTIME_MODEL_GOFAST_IDENTITIES_CUSTODY_FREE_EXECUTABLE_EVIDENCE_FINAL_INDEPENDENT_REVIEW_AND_REBECCA_RELEASE_ARE_DURABLE_AND_COHERENT",
+    "authority_effect": "EXISTENCE_PRESERVATION_AND_VERSION_LABELING_ONLY_NO_RUN_SCORING_SCIENCE_READINESS_OR_GATE_AUTHORITY"
+  },
   "classification": "NON_SCORING_EXPLORATORY_OBSERVATION",
   "provenance": {
     "source_tag": "[PROPOSED]",
