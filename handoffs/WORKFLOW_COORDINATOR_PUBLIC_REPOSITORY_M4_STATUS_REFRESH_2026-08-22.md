@@ -23,7 +23,7 @@ The M4 landing-page claims are tied to immutable public commits and records. The
 - post-tokenizer engineering readiness is clear for return to Rebecca for a separate integration decision;
 - the WSL2 paired diagnostic achieved structural PASS with replica MISMATCH while retaining its original blocked v1 disposition;
 - the custody-free public observation backend implementation is independently clear but remains `run_authorized=false`; and
-- the final pre-scoring crash cart is a corrected `v0.2-alpha` design under review, not a cleared or runnable release.
+- the final pre-scoring crash cart is a corrected, independently cleared `v0.2-alpha` design, but is not promoted, implemented, runnable, released, or authorized for execution.
 
 No M4 protected-seed scoring result or scientific verdict is claimed. No historical result, threshold, seed rule, model identity, scientific bar, or retained negative is changed.
 
