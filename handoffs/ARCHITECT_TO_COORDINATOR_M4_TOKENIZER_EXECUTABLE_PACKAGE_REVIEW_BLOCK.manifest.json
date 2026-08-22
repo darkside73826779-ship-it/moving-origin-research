@@ -1,0 +1,101 @@
+{
+  "schema_version": "common-handoff-manifest-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "transfer_kind": "FORMAL_HANDOFF",
+  "work_item": "m4_tokenizer_executable_package_review_block",
+  "gate": "One-batch ARCHITECT design-fidelity review before persistent-CRITIC review",
+  "sender_role": "ARCHITECT",
+  "receiver_role": "WORKFLOW_COORDINATOR",
+  "authority_basis": [
+    {
+      "path": "handoffs/WORKFLOW_COORDINATOR_TO_ARCHITECT_M4_TOKENIZER_EXECUTABLE_PACKAGE_DRAFT_2026-08-21.md",
+      "sha": "31d4da460fd8a41959c198c1b70db0231945dfde"
+    }
+  ],
+  "remote_ref": "refs/heads/architect/m4-tokenizer-executable-package-remediation",
+  "base_sha": "47e06c361c361843916668304432f7a748ac514e",
+  "routing_ref_sha": "bdbc1ad0eead7ff8dafd5e38b667f5a5810b5212",
+  "review_result_sha": "0a8c738d6b730f4f2da9fcd333e68467bd669158",
+  "work_branch": "architect/m4-tokenizer-executable-package-remediation",
+  "artifacts": {
+    ".gitattributes": "68c528ede67720007d4ec15d15f6d723136a24b9a4662c94ad9cdfbbc158601d",
+    "diagnostics/m4_tokenizer_materialization.py": "42ffd11ac11ec882dc824906f2a9995b8d932094e4e01a8b36ee7911dd22d5af",
+    "handoffs/ARCHITECT_TO_COORDINATOR_M4_TOKENIZER_EXECUTABLE_PACKAGE_REVIEW_BLOCK_2026-08-21.md": "4d65b620ec2820171517197f595d514d57f41f8758ea7ea177f96bf8314d27b3",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_EXECUTION_SPECIFICATION_BLOCK_2026-08-21.md": "43528a55c85e7ef7f19609a3e4a08d13529fc28f849717bff9ca3ba637ae942b",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_EXECUTION_SPECIFICATION_BLOCK.manifest.json": "bb4f0741e37643c24c835ac457a896bcf175549a41127ad4b79ca08929d5c18c",
+    "handoffs/WORKFLOW_COORDINATOR_TO_ARCHITECT_M4_TOKENIZER_EXECUTABLE_PACKAGE_DRAFT_2026-08-21.md": "2a6d7bc675a1de0fa0a48627dccbbba1fe3458c070bc03b6f50ff94658aadfca",
+    "reviews/critic_m4_tokenizer_bf1_rereview.md": "6c8202e48a04f8e1209151a2997b74800d04185844834bfb3fc254571392c68b",
+    "specs/data/m4_context_format_probe_contract_v1.json": "eab77b9f44a4e9378f5889f5aa368eabd87959a5ddafab9ca38685228f12feec",
+    "specs/data/m4_context_format_probe_contract_v1.json.sha256": "26a65895c5a82c99ebf91125dd5ef3b7f0075d28c2c20d746e01fd55e36ca85a",
+    "specs/data/m4_tokenizer_executable_package_v1.json": "57f448829b7a08fbb23bdb60ea29cee961352d4690806fe33abb335b0807bdc1",
+    "specs/data/m4_tokenizer_executable_package_v1.json.sha256": "975d58f3cde0c789c5a40adfe3a9d077f5f4fa9f5728a0ac253a3cd6dac20887",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json": "c166a583a0612054cea826700d8e5e2c132c283e1617727170a8bd57167bb7a0",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json.sha256": "189405411c37f4333f2edd1339711bb316c0a26f3e7e54f01362ca7662277fd7",
+    "specs/data/m4_tokenizer_oci_launch_contract_v1.json": "0fdd5e8eed2fc3a7cc5e10512e6e01037d011f6cf51e862a2293d49255b32848",
+    "specs/data/m4_tokenizer_oci_launch_contract_v1.json.sha256": "2f274dbbacf64085bd3298aaaad6702ce2bfff700bd85d5c3773a29cb410448d",
+    "specs/m4_local_tokenizer_materialization_spec_v1.md": "2f60b9ecb90628028465f17d31702fe17ce037ef60fd05ef15ae4e25512ad682",
+    "tests/__init__.py": "6f56eb2128751f0c5c1ab27ff461b38565aa00a3dcd29c04ab8bd56c34f4a961",
+    "tests/run_m4_tokenizer_materialization_tests.py": "29dc1c0d83e71c850e9eb3c423cfd359a6c557956d1eab1fa5d9beb049271d1d",
+    "tests/test_m4_tokenizer_materialization.py": "8a40cc5956e413b3748775d83be18ae8bd91e9b3d2d791d9a032d299b1e39d80"
+  },
+  "checks_performed": [
+    "validated corrected intake identities and complete raw Git-blob inventory",
+    "reviewed the integrated materializer, wrapper, selected tests, constructor, executable identity manifest, OCI launch contract, governing specification, test contract, originating BLOCK, and BF1 review in one batch",
+    "verified the single materialization operation remains unconsumed",
+    "inspected the complete ARCHITECT-authored diff"
+  ],
+  "status": "BLOCKED",
+  "findings": [
+    {
+      "classification": "missing governed failure artifacts",
+      "severity": "blocking",
+      "text": "materialize returns generic exit codes instead of publishing exact schema-valid BLOCKED/FAIL results with ordered check prefixes and failure codes"
+    },
+    {
+      "classification": "incomplete selected test suite",
+      "severity": "blocking",
+      "text": "the 19-test suite does not invoke materialize or realize most binding positive and negative cases"
+    },
+    {
+      "classification": "atomic publication state violation",
+      "severity": "blocking",
+      "text": "second-replacement interruption can leave a final orphan JSON and does not preserve required incomplete evidence"
+    },
+    {
+      "classification": "constructor pre-custody validation absent",
+      "severity": "blocking",
+      "text": "the materializer does not reproduce the committed constructor artifact digest before custody lookup"
+    },
+    {
+      "classification": "weight lstat contract absent",
+      "severity": "blocking",
+      "text": "weight file kind and size are observed through link-following Path methods instead of the prescribed single lstat result"
+    }
+  ],
+  "scan_attestation": {
+    "base_sha": "47e06c361c361843916668304432f7a748ac514e",
+    "tip_sha": "bdbc1ad0eead7ff8dafd5e38b667f5a5810b5212",
+    "tool_status": "blocked",
+    "manual_review": true,
+    "findings": [
+      "F000001-F000003 are duplicate scan-domain personal-contact heuristic matches occurring wholly inside required immutable public routing SHA 47e06c361c361843916668304432f7a748ac514e; manual review confirms no personal contact data",
+      "gitleaks 8.30.1 returned zero findings on the substantive branch range",
+      "the manifest-branch preflight findings occur wholly inside required immutable public commit SHA and declared public artifact-digest values; its generic-key matches are declared SHA-256 identities, not credentials",
+      "manual complete-range review found no credential, personal contact, private path, custody value, model/tokenizer byte content, task identifier, or prohibited material"
+    ]
+  },
+  "next_event": "WORKFLOW COORDINATOR routes the exact package and batched BF1-BF5 return to TASK BUILDER for one implementation batch, then routes the completed package to persistent CRITIC",
+  "prohibited_actions": [
+    "ARCHITECT implementation of executable code or tests",
+    "custody lookup or materialization execution",
+    "model/tokenizer access, inference, qualification, diagnostics, or scoring",
+    "protected seeds, scientific change, STATE/provenance mutation, merge, publication, or gate decision",
+    "fragmenting BF1-BF5 into serial remediation cycles"
+  ],
+  "role_extension": {
+    "role": "ARCHITECT",
+    "specification_files_changed": [],
+    "changelog_files_changed": []
+  }
+}
