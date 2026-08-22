@@ -38,4 +38,3 @@ Implementation-range preflight retained 64 duplicate-domain scanner findings. Fi
 All unaffected IR1/IR2 infrastructure, the prior 40-case suite within the expanded 45 tests, the 42 lifecycle cells, the 37 banked tokenizer tests, the tokenizer evidence/PASS pair, sidecars, and identities remain preserved. No tokenizer/materializer invocation, private custody/model/tokenizer access, inference/serving, qualification, scoring, protected seed, science, durable-state/provenance mutation, publication, merge, or gate decision occurred.
 
 Return custody to WORKFLOW COORDINATOR for exactly one authoritative persistent-CRITIC rereview. No downstream action is authorized by this return.
-

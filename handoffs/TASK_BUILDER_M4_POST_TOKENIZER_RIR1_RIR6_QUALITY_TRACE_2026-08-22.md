@@ -41,4 +41,3 @@ Six selected production mutations were independently applied and each was killed
 - Combined inventory SHA-256: `6e2265535975dd96a922a6a6afa4a925d02a396e6f4a8f2573556bc64d69e078`.
 - Integration launch-contract SHA-256: `34abb1107a555b18010b6987dff5de96d6e63c20c20675422a1697b732792607`.
 - Materializer/tokenizer invocation and private custody/model/tokenizer access: zero.
-
