@@ -183,3 +183,8 @@ derived from an immutable annotated tag and carry both (1) SHA-256 of the exact
 downloaded archive bytes and (2) SHA-256 of a canonical UTF-8, no-BOM, LF-only
 manifest with one final LF that inventories the archive members. The tag object,
 peeled commit, archive digest, and canonical-manifest digest must all be recorded.
+## Prospective two-axis diagnostic amendment
+
+The retained 2026-08-22 v1 report remains byte-identical and remains `BLOCKED / OUTPUT_DIGEST_MISMATCH`. A derived v2 projection may separately report structural feasibility and replica consistency `[PROPOSED]`. Structural `PASS` requires the configured 30-second minimum, nonzero paired consumption, zero drops, FIFO order, overlap for every execution, observed backpressure, successful cleanup to zero reported MiB, and absence of every structural failure code `[PROPOSED]`. Replica consistency is independently `MATCH`, `MISMATCH`, or `NOT_RUN` with exact compared/agreement/mismatch counts and a sanitized ordered mismatch-ordinal digest `[PROPOSED]`. A consumer requiring byte-identical replicas stops on `MISMATCH` `[PROPOSED]`. Neither axis is scoring, qualification, equivalence, or scientific evidence.
+
+The text-only diagnostic setup retains every direct package pin. It requires the resolver-produced `torchaudio==2.11.0` distribution, verifies the observed CUDA-13 incompatibility marker against governed `torch==2.13.0+cu132`, removes only that unused audio distribution, asserts its absence, then requires the pinned `vllm==0.27.1` import and every locked-version check `[PROPOSED]`. A missing or different distribution, different failure marker, successful pre-exclusion import, failed removal, failed vLLM import, or version drift is a terminal STOP; there is no fallback `[PROPOSED]`.

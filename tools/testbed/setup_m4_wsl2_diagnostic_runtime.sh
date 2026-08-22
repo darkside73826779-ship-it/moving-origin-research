@@ -24,20 +24,19 @@ python3 -m venv "$venv_path"
 
 "${venv_path}/bin/python" - <<'PY'
 import importlib.metadata as metadata
-import platform
-
-expected = {
-    "jsonschema": "4.26.0",
-    "numpy": "2.3.5",
-    "safetensors": "0.8.0",
-    "tokenizers": "0.22.2",
-    "torch": "2.13.0+cu132",
-    "transformers": "5.15.1",
-    "vllm": "0.27.1",
-}
-assert platform.python_version() == "3.12.3", platform.python_version()
-for name, version in expected.items():
-    actual = metadata.version(name)
-    assert actual == version, (name, actual, version)
-print("diagnostic runtime verified")
+try:
+    actual = metadata.version("torchaudio")
+except metadata.PackageNotFoundError as exc:
+    raise SystemExit("STOP: expected incompatible torchaudio distribution absent before exclusion") from exc
+if actual != "2.11.0":
+    raise SystemExit(f"STOP: unexpected torchaudio identity: {actual}")
+try:
+    import torchaudio  # noqa: F401
+except BaseException as exc:
+    if "libcudart.so.13" not in str(exc):
+        raise SystemExit("STOP: torchaudio incompatibility marker mismatch") from exc
+else:
+    raise SystemExit("STOP: torchaudio unexpectedly importable; lock requires review")
 PY
+"${venv_path}/bin/python" -m pip uninstall --yes torchaudio
+"${venv_path}/bin/python" "${script_dir}/verify_m4_wsl2_text_only_runtime.py"

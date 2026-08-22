@@ -81,4 +81,9 @@ verify_model_identity "$MOR_TESTBED_MODEL_B" || {
   exit 2
 }
 
+"$(command -v python)" "$(dirname -- "${BASH_SOURCE[0]}")/verify_m4_wsl2_text_only_runtime.py" || {
+  echo 'STOP: text-only dependency closure invalid' >&2
+  exit 2
+}
+
 echo 'M4 WSL2 test-bed readiness verified; private values not emitted'
