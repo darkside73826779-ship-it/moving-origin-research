@@ -1,0 +1,85 @@
+{
+  "schema_version": "common-handoff-manifest-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "transfer_kind": "FORMAL_HANDOFF",
+  "work_item": "m4_tokenizer_full_domain_new_operation_private_binding_block",
+  "gate": "Required retained private process binding before the corrected new tokenizer-materialization operation",
+  "sender_role": "TASK_BUILDER",
+  "receiver_role": "WORKFLOW_COORDINATOR",
+  "authority_basis": [
+    {
+      "path": "handoffs/REBECCA_M4_TOKENIZER_FULL_DOMAIN_NEW_OPERATION_RELEASE_2026-08-21.md",
+      "sha": "ec3226f9d95aae28b813abf011b2a0f3b267f9e6"
+    }
+  ],
+  "remote_ref": "refs/heads/taskbuilder/m4-tokenizer-full-domain-new-operation-execution",
+  "base_sha": "ec3226f9d95aae28b813abf011b2a0f3b267f9e6",
+  "routing_ref_sha": "417880caf009e33f277bd99cac56415d59ccb45d",
+  "review_result_sha": "482bdeceea8461438c516dcb8944bbaa21e5192c",
+  "work_branch": "taskbuilder/m4-tokenizer-full-domain-new-operation-execution",
+  "artifacts": {
+    ".gitattributes": "998b713a5094f924efa62fc0c65f1195f385ea08476ee1d150ea2527d6e04c4c",
+    "artifacts/m4_tokenizer_materialization/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/m4_tokenizer_materialization/tokenizer_materialization.json": "10a14c1a4f7b257aa195636ab86b7a85a68fc084af13bead7b5d4b3ecfa55728",
+    "artifacts/m4_tokenizer_materialization/tokenizer_materialization.json.sha256": "da7a294daf21aa308cb0b7ac83dafba85323c2e0667a33a0844829a18b86756a",
+    "diagnostics/m4_tokenizer_materialization.py": "2aa18bebcfd6c8d7ffb5c65784d5e459650cd540494ae5cfc29e35372c87612b",
+    "handoffs/REBECCA_M4_TOKENIZER_FULL_DOMAIN_NEW_OPERATION_RELEASE_2026-08-21.md": "29bca723ffaa9267ebd83258605fbeb15f9c37b3c06dae1768d4b2d2759acf7e",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_FULL_TOKEN_ID_DOMAIN_REMEDIATION_2026-08-21.md": "1c0dc526c816c3eb9c6cdedb14f62ffb229e25866e5901d51835f50a05e024b9",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_FULL_DOMAIN_NEW_OPERATION_PRIVATE_BINDING_BLOCK_2026-08-21.md": "02be1ee707ba67377358db2c026f1eba70e1d7beacecb936f1f2a6aa92998a63",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_MATERIALIZATION_FAIL_2026-08-21.md": "fc16d16e2471a0305bca9d65a0af36be0d1e2ff22dcb7919efa57706f88438f4",
+    "specs/data/m4_context_format_probe_contract_v1.json": "eab77b9f44a4e9378f5889f5aa368eabd87959a5ddafab9ca38685228f12feec",
+    "specs/data/m4_tokenizer_executable_package_v1.json": "f8e97a6ce4f0da4bb47a4b720e82cd3c909da128a41146374c9faa490c4429fa",
+    "specs/data/m4_tokenizer_executable_package_v1.json.sha256": "cd43a495b383ebd3201d6828c685838c3b0787a9d7333449035de93a066d6e66",
+    "specs/data/m4_tokenizer_materialization_request_v1.json": "b39061fd4b19321d58dd418eb5ecd486c0cf26662d70a5d0de4185c6dd7e9992",
+    "specs/data/m4_tokenizer_materialization_request_v1.json.sha256": "9fa903fcb29bb74bd0fcd027c2e591668e6aebcb6a77a4c2c179c96c59d8f9ea",
+    "specs/data/m4_tokenizer_materialization_result_schema_v1.json": "34179d41e980aca413496f3de9fbbea7b642532b50eeacba423faebe5f4075ca",
+    "specs/data/m4_tokenizer_materialization_result_schema_v1.json.sha256": "ca2494f505342959d43b9a6442c103f898e58a54a45279ada3088003536651f3",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json": "561bae3e04ce81422b73601b0ae9e6835522919dc10e340fcc39e4b03791a1c2",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json.sha256": "d703e696525787ac0b87ca565d59ac89331ababd60c856c4addda037686299a6",
+    "specs/data/m4_tokenizer_oci_launch_contract_v1.json": "ca465aa11dbafff74a62126c3e263dda547796cd9003983c93a015ae74bca0e9",
+    "specs/data/m4_tokenizer_oci_launch_contract_v1.json.sha256": "6ec63d1baf5ae66e0e0659ff88b06cd1bcffe3d59711c534df2a2bb8a5a95eba",
+    "tests/__init__.py": "6f56eb2128751f0c5c1ab27ff461b38565aa00a3dcd29c04ab8bd56c34f4a961",
+    "tests/run_m4_tokenizer_materialization_tests.py": "4f4aa5a873f59c3dbc368c550a84f61564c181f5570fdbcb2e54b6b8f8f8d734",
+    "tests/test_m4_tokenizer_materialization.py": "5c2c123f9c64ca034b7f4c40307026cc476a1dc5bdf02e7dc6fc85c5b82a8eab",
+    "tools/testbed/run_m4_tokenizer_topology_smoke_matrix.sh": "a0f4383913a38cdde9f93947865d990e36b41fb538ff1468b121f4b1db2b137a"
+  },
+  "checks_performed": [
+    "authenticated fetch reproduced the exact new-operation release and a fresh helper-managed checkout was created at that immutable head",
+    "verified release ancestry from the corrected package and independently read the exact persistent-CRITIC COMBINED CLEAR",
+    "performed only a presence check for the required process-local private binding without resolving, logging, serializing, or returning any value",
+    "found that the exact required private binding is not retained in the TASK BUILDER process and stopped without search, substitution, inference, normalization, copying, synthesis, or invention",
+    "verified that no governed wrapper, topology container, output stage, custody lookup, model/tokenizer access, OCI materializer process, or loader invocation started and the new operation remains UNCONSUMED",
+    "reproduced the complete 24-entry public artifact inventory from raw committed Git blob bytes",
+    "ran workflow_preflight.py hotfix cee97538893989e055f49a894f066d2083da4eb5 against the exact worktree and complete release-to-return range and manually classified every finding without suppression"
+  ],
+  "status": "BLOCKED",
+  "findings": [
+    {
+      "classification": "PRIVATE_BINDING_NOT_RETAINED",
+      "severity": "blocking",
+      "text": "the exact release-required process-local private custody binding is absent; the release prohibits search, substitution, inference, or invention"
+    }
+  ],
+  "scan_attestation": {
+    "base_sha": "ec3226f9d95aae28b813abf011b2a0f3b267f9e6",
+    "tip_sha": "417880caf009e33f277bd99cac56415d59ccb45d",
+    "tool_status": "clean",
+    "manual_review": true,
+    "findings": [
+      "fixed-regex scanners returned zero findings and gitleaks 8.30.1 returned zero findings",
+      "manual review found no credentials, personal contact data, private paths, custody values, model/tokenizer bytes, complete token arrays, protected seeds, scientific output, or prohibited durable-state mutation"
+    ]
+  },
+  "next_event": "WORKFLOW COORDINATOR restores the exact private process-local binding through authorized private coordination and determines whether to issue a subsequent exact release; the new operation remains unconsumed",
+  "prohibited_actions": [
+    "private-path or custody directory search, generated binding, alternate root, fallback, substitution, normalization, copying, synthesis, or invention",
+    "wrapper, topology, or materializer launch after the blocking binding check",
+    "custody/model/tokenizer access, retry, alternate runtime, inference, qualification, scoring, seeds, science, STATE/provenance mutation, model/tokenizer publication, merge, further operation, or gate decision"
+  ],
+  "role_extension": {
+    "role": "TASK_BUILDER",
+    "tests": [],
+    "diagnostics_executed": false
+  }
+}
