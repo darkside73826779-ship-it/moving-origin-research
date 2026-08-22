@@ -12,4 +12,6 @@ Public-safety preflight findings for the exact implementation/packaging range ar
 
 The final packaging-only preflight reported 139 findings: 131 fixed-regex matches and the same eight declared public tokenizer-identity gitleaks detections. They are solely the identity/control categories already classified by that authority; no prohibited content was introduced and none was suppressed.
 
+The BF1–BF3 correction-range preflight reported 65 fixed-regex findings and zero gitleaks findings. Manual inspection classifies every match as a substring of an immutable public Git/SHA-256 identity or a fixed public timing/count control; no personal-contact data or prohibited content was present, and no finding was suppressed.
+
 Next route: WORKFLOW COORDINATOR → authoritative persistent CRITIC for one implementation review.
