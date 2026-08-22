@@ -65,6 +65,10 @@ This authority does not permit:
 - inclusion of uncleared crash-cart design bytes as a cleared package;
 - scientific-result publication or a final readiness/gate decision.
 
+## Public-safety classification
+
+The workflow preflight's duplicate-domain `personal_contact` heuristic on the crash-cart CRITIC review identity is a numeric substring wholly inside the required immutable public Git commit SHA. It is public reproducibility metadata, not personal contact data. This classification is explicit and no finding is suppressed. Gitleaks reports zero findings.
+
 ## Expected next event
 
 WORKFLOW COORDINATOR routes this exact authority, the cleared package, and the authoritative CRITIC review to INTEGRATOR. INTEGRATOR publishes one exact combined checkpoint, updates and pushes the Coordinator ledger, advances remote `main` only after all checks pass, and returns the new canonical restart SHA to WORKFLOW COORDINATOR.
