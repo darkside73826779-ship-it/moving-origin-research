@@ -1,4 +1,5 @@
 import copy
+import contextlib
 import hashlib
 import importlib.util
 import json
@@ -28,7 +29,8 @@ class TokenizerMaterializationTests(unittest.TestCase):
         MATERIALIZER.validate(ROOT / "specs/data/m4_tokenizer_materialization_result_schema_v1.json", result)
         return result
 
-    def _synthetic_materialize(self, tokenizer=None, record_mutator=None, file_bytes=None):
+    def _synthetic_materialize(self, tokenizer=None, record_mutator=None, file_bytes=None,
+                               canonical_override=None, base_result_override=None, loader_error=None):
         request = MATERIALIZER.load(ROOT / "specs/data/m4_tokenizer_materialization_request_v1.json")
         identity = request["selected_identity"]
         record = {key: identity[key] for key in ("repository_id", "revision", "quantization", "weight", "tokenizer", "tokenizer_config")}
@@ -53,11 +55,16 @@ class TokenizerMaterializationTests(unittest.TestCase):
             def convert_tokens_to_ids(self, value): return 151645
 
         fake = tokenizer or FakeTokenizer()
-        module = types.SimpleNamespace(
-            AutoTokenizer=types.SimpleNamespace(from_pretrained=lambda *args, **kwargs: fake)
-        )
+        def load_fake(*args, **kwargs):
+            if loader_error:
+                raise loader_error
+            return fake
+        module = types.SimpleNamespace(AutoTokenizer=types.SimpleNamespace(from_pretrained=load_fake))
         published = []
         def capture_publish(output, result, schema):
+            if any(key.lower() in {"path", "host", "hostname", "text", "token_ids", "tokens"}
+                   for key in MATERIALIZER._keys(result)):
+                raise ValueError("LOCAL_ONLY_CUSTODY_VIOLATION")
             MATERIALIZER.validate(schema, result)
             published.append(result)
         with tempfile.TemporaryDirectory() as directory:
@@ -78,7 +85,11 @@ class TokenizerMaterializationTests(unittest.TestCase):
                  mock.patch.dict(MATERIALIZER.sys.modules, {"transformers": module}), \
                  mock.patch.object(MATERIALIZER.os, "lstat", side_effect=selected_lstat), \
                  mock.patch.object(MATERIALIZER, "file_bytes", side_effect=file_bytes or (lambda path, metadata: Path(path).read_bytes())), \
-                 mock.patch.object(MATERIALIZER, "publish", side_effect=capture_publish):
+                 mock.patch.object(MATERIALIZER, "publish", side_effect=capture_publish), \
+                 (mock.patch.object(MATERIALIZER, "canonical", side_effect=canonical_override)
+                  if canonical_override else contextlib.nullcontext()), \
+                 (mock.patch.object(MATERIALIZER, "base_result", side_effect=base_result_override)
+                  if base_result_override else contextlib.nullcontext()):
                 code = MATERIALIZER.materialize(
                     str(ROOT / "specs/data/m4_tokenizer_materialization_request_v1.json"),
                     MATERIALIZER.HANDLE,
@@ -86,6 +97,22 @@ class TokenizerMaterializationTests(unittest.TestCase):
                 )
             self.assertTrue(published, f"materialize returned {code} without a governed result")
             return code, published[-1]
+
+    def _assert_failure(self, output, code, status, failure_code, terminal_check):
+        self.assertEqual(code, 2 if status == "BLOCKED" else 3)
+        result = self._read_result(output)
+        self.assertEqual((result["status"], result["failure_code"]), (status, failure_code))
+        terminal = MATERIALIZER.CHECKS.index(terminal_check)
+        self.assertEqual(result["checks"], [
+            {"check_id": check, "ordinal": ordinal,
+             "status": "FAIL" if ordinal == terminal else "PASS"}
+            for ordinal, check in enumerate(MATERIALIZER.CHECKS[:terminal + 1])
+        ])
+        self.assertEqual(result["arrays"], [])
+        sidecar = Path(str(output) + ".sha256")
+        self.assertTrue(sidecar.is_file())
+        self.assertEqual(sidecar.read_text(), hashlib.sha256(output.read_bytes()).hexdigest() + "  " + output.name + "\n")
+        return result
     def _runtime_negative(self, ordinal):
         cases = json.loads((ROOT / "specs/data/m4_tokenizer_runtime_validation_negative_cases_v1.json").read_text())["cases"]
         expected_rows = json.loads((ROOT / "specs/data/m4_tokenizer_runtime_validation_negative_expected_v1.json").read_text())["rows"]
@@ -286,6 +313,57 @@ class TokenizerMaterializationTests(unittest.TestCase):
             result = self._read_result(output)
             self.assertEqual((result["status"], result["failure_code"]), ("BLOCKED", "CUSTODY_HANDLE_UNRESOLVED"))
             self.assertEqual([row["status"] for row in result["checks"]], ["PASS", "FAIL"])
+
+    def test_materialize_absent_empty_and_symlink_handles(self):
+        request = str(ROOT / "specs/data/m4_tokenizer_materialization_request_v1.json")
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            real_root = root / "real-root"
+            real_root.mkdir()
+            linked_root = root / "linked-root"
+            linked_root.symlink_to(real_root, target_is_directory=True)
+            cases = (("absent", {}), ("empty", {MATERIALIZER.ENV: ""}),
+                     ("symlink", {MATERIALIZER.ENV: str(linked_root)}))
+            for name, environment in cases:
+                with self.subTest(name=name):
+                    output = root / f"{name}.json"
+                    with mock.patch.object(MATERIALIZER.sys, "orig_argv", ["python3"]), \
+                         mock.patch.dict(os.environ, environment, clear=True), \
+                         mock.patch.object(MATERIALIZER, "file_bytes",
+                                           side_effect=AssertionError("private artifact access")) as artifact_access:
+                        code = MATERIALIZER.materialize(request, MATERIALIZER.HANDLE, str(output))
+                    self._assert_failure(output, code, "BLOCKED", "CUSTODY_HANDLE_UNRESOLVED", "CUSTODY_HANDLE")
+                    artifact_access.assert_not_called()
+
+    def test_materialize_serialization_public_safety_and_runtime_negatives(self):
+        real_canonical = MATERIALIZER.canonical
+        def ambiguous_array(value):
+            if isinstance(value, list) and value and all(type(item) is int for item in value):
+                raise ValueError("synthetic noncanonical array")
+            return real_canonical(value)
+        code, result = self._synthetic_materialize(canonical_override=ambiguous_array)
+        self.assertEqual((code, result["status"], result["failure_code"], result["checks"][-1]["check_id"]),
+                         (3, "FAIL", "SERIALIZATION_MISMATCH", "PUBLIC_SAFETY"))
+        MATERIALIZER.validate(ROOT / "specs/data/m4_tokenizer_materialization_result_schema_v1.json", result)
+
+        real_base_result = MATERIALIZER.base_result
+        calls = 0
+        def forbidden_once(request):
+            nonlocal calls
+            calls += 1
+            result = real_base_result(request)
+            if calls == 1:
+                result["host"] = "forbidden"
+            return result
+        code, result = self._synthetic_materialize(base_result_override=forbidden_once)
+        self.assertEqual((code, result["status"], result["failure_code"], result["checks"][-1]["check_id"]),
+                         (3, "FAIL", "LOCAL_ONLY_CUSTODY_VIOLATION", "PUBLIC_SAFETY"))
+        MATERIALIZER.validate(ROOT / "specs/data/m4_tokenizer_materialization_result_schema_v1.json", result)
+
+        code, result = self._synthetic_materialize(loader_error=RuntimeError("alternate loader rejected"))
+        self.assertEqual((code, result["status"], result["failure_code"], result["checks"][-1]["check_id"]),
+                         (3, "FAIL", "RUNTIME_IDENTITY_MISMATCH", "TOKENIZER_COPY"))
+        MATERIALIZER.validate(ROOT / "specs/data/m4_tokenizer_materialization_result_schema_v1.json", result)
 
     def test_constructor_digest_is_checked_before_environment_lookup(self):
         with tempfile.TemporaryDirectory() as directory:

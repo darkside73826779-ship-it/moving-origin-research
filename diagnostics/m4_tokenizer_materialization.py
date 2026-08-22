@@ -279,10 +279,13 @@ def materialize(contract_path: str, custody_handle: str, output_path: str) -> in
                 file_bytes(config_copy, identity["tokenizer_config"])
             except (OSError, ValueError) as error:
                 raise GovernedFailure("TOKENIZER_COPY", "TOKENIZER_IDENTITY_MISMATCH") from error
-            from transformers import AutoTokenizer
-            tokenizer = AutoTokenizer.from_pretrained(
-                str(temporary), local_files_only=True, trust_remote_code=False, use_fast=True
-            )
+            try:
+                from transformers import AutoTokenizer
+                tokenizer = AutoTokenizer.from_pretrained(
+                    str(temporary), local_files_only=True, trust_remote_code=False, use_fast=True
+                )
+            except Exception as error:
+                raise GovernedFailure("TOKENIZER_COPY", "RUNTIME_IDENTITY_MISMATCH") from error
             config = json.loads(config_bytes.decode("utf-8"), object_pairs_hook=unique)
             require(isinstance(config.get("chat_template"), str) and tokenizer.chat_template == config["chat_template"],
                     "BASE_TEMPLATE", "TOKENIZER_CONFIG_IDENTITY_MISMATCH")
@@ -310,10 +313,14 @@ def materialize(contract_path: str, custody_handle: str, output_path: str) -> in
                 rendered = tokenizer.decode(values, skip_special_tokens=False, clean_up_tokenization_spaces=False)
                 require(tokenizer.encode(rendered, add_special_tokens=False) == values,
                         CHECKS[12 + target["ordinal"]], "ENCODE_DECODE_IDENTITY_FAILURE")
+                try:
+                    array_sha256 = sha(canonical(values))
+                except (TypeError, ValueError) as error:
+                    raise GovernedFailure("PUBLIC_SAFETY", "SERIALIZATION_MISMATCH") from error
                 rows.append({
                     "array_id": target["array_id"], "decode_reencode_equal": True,
                     "ordinal": target["ordinal"], "prompt_length": prompt_length,
-                    "sha256": sha(canonical(values)),
+                    "sha256": array_sha256,
                 })
             im_end = tokenizer.convert_tokens_to_ids("<|im_end|>")
             stops = list(dict.fromkeys([tokenizer.eos_token_id, im_end]))
@@ -338,6 +345,8 @@ def materialize(contract_path: str, custody_handle: str, output_path: str) -> in
         except ValueError as error:
             if str(error) == "ATOMIC_PUBLICATION_FAILURE":
                 return 3
+            if str(error) == "LOCAL_ONLY_CUSTODY_VIOLATION":
+                raise GovernedFailure("PUBLIC_SAFETY", "LOCAL_ONLY_CUSTODY_VIOLATION") from error
             raise
         return 0
     except GovernedFailure as failure:
