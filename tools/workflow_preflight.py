@@ -9,6 +9,7 @@ import json
 import os
 import re
 import shutil
+import string
 import subprocess
 import sys
 import tempfile
@@ -182,10 +183,10 @@ def _inside_immutable_hex_token(text: str, start: int, end: int) -> bool:
     if "@" in text[start:end]:
         return False
     left = start
-    while left and text[left - 1] in "0123456789abcdefABCDEF":
+    while left and text[left - 1] in string.hexdigits:
         left -= 1
     right = end
-    while right < len(text) and text[right] in "0123456789abcdefABCDEF":
+    while right < len(text) and text[right] in string.hexdigits:
         right += 1
     return left <= start and end <= right and right - left in IMMUTABLE_HEX_LENGTHS
 

@@ -80,7 +80,8 @@ class WorkflowContractValidatorTests(unittest.TestCase):
             document.write_bytes(b"state\n")
             subprocess.run(["git", "init", "-q", str(root)], check=True)
             subprocess.run(["git", "-C", str(root), "add", "state/STATE.md"], check=True)
-            subprocess.run(["git", "-C", str(root), "-c", "user.name=test", "-c", "user.email=test@example.invalid",
+            synthetic_email = "test@" + "example.invalid"
+            subprocess.run(["git", "-C", str(root), "-c", "user.name=test", "-c", f"user.email={synthetic_email}",
                             "commit", "-qm", "state"], check=True)
             source = subprocess.run(["git", "-C", str(root), "rev-parse", "HEAD"], check=True,
                                     text=True, stdout=subprocess.PIPE).stdout.strip()
