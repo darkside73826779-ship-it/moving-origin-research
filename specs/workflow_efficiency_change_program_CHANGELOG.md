@@ -54,3 +54,15 @@
 - Added deterministic routing, manifest/metadata/trace/rollback/JUDGE-envelope validators; immutable-checkout and complete-range preflight tooling; executable fixtures; and focused regression tests.
 - Added owner-scoped ledger/checkpoint metadata, marked the legacy checkpoint historical, enforced LF for workflow contract surfaces, and synchronized public-repository policy.
 - Preserved every scientific, scoring, seed, review-independence, custody, negative-result, and Rebecca-only gate/merge safeguard.
+
+## v1.4.1 — Focused preflight scan correction
+
+- Excluded phone-shaped digit runs only when wholly contained in a bounded 40- or 64-hex immutable SHA/digest token; genuine phone findings remain blocking.
+- Made exact append-only provenance updates scan the new suffix after byte-prefix integrity verification, while any legacy-span mutation or rewrite scans the complete result.
+- Preserved complete-content scanning for new files and all other rewritten artifacts, with focused regressions for both safe and fail-closed paths.
+
+## v1.4.2 — Contract validation and return publication hardening
+
+- Completed fail-closed common-handoff and owner-metadata validation, including exact source-commit blob binding, role extensions, duplicate-key/non-finite rejection, and immutable-checkout ref/branch parity.
+- Added `workflow_return.py publish` for guarded result/routing/manifest topology, complete raw-blob inventory, target-worktree preflights, identity-bound manual classification, atomic non-force publication, and remote-equality verification.
+- Added focused negative and topology regressions while preserving role ownership, independent review, merge, science, scoring, seed, and custody boundaries.

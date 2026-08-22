@@ -10,6 +10,7 @@ import hashlib
 import json
 import re
 import subprocess
+from datetime import date
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -17,6 +18,11 @@ from typing import Any, Iterable
 ROOT = Path(__file__).resolve().parents[1]
 SHA = re.compile(r"^[0-9a-f]{40}$")
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
+UTC_SECOND = re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$")
+WORK_ITEM = re.compile(r"^[a-z0-9][a-z0-9_-]{2,79}$")
+JUDGE_FILENAME = re.compile(r"^[a-z0-9][a-z0-9_-]{2,79}\.md$")
+REMOTE_REF = re.compile(r"refs/heads/[A-Za-z0-9._/-]+")
+WORK_BRANCH = re.compile(r"(?!-)(?!.*(?:^|/)\.\.?($|/))[A-Za-z0-9._/-]+")
 REPO_PATH = re.compile(r"^(?!/)(?![A-Za-z]:)(?!.*(?:^|/)\.\.(?:/|$))(?!.*//)(?!.*\\)[A-Za-z0-9._/-]+$")
 ROLES = {"WORKFLOW_COORDINATOR", "ARCHITECT", "CRITIC", "TASK_BUILDER", "INTEGRATOR", "RECORDER", "JUDGE", "REBECCA"}
 
@@ -59,6 +65,23 @@ def repository_bytes(repo_root: Path, path: str) -> bytes:
     raise ContractError("REPOSITORY_BLOB_MISSING")
 
 
+def repository_bytes_at(repo_root: Path, commit: str, path: str) -> bytes:
+    """Read an exact committed blob; metadata may never bind mutable checkout bytes."""
+    commit_check = subprocess.run(
+        ["git", "-C", str(repo_root), "cat-file", "-e", f"{commit}^{{commit}}"],
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+    )
+    if commit_check.returncode != 0:
+        raise ContractError("METADATA_SOURCE_COMMIT_MISSING")
+    result = subprocess.run(
+        ["git", "-C", str(repo_root), "show", f"{commit}:{path}"],
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+    )
+    if result.returncode != 0:
+        raise ContractError("METADATA_SOURCE_BLOB_MISSING")
+    return result.stdout
+
+
 def _exact_keys(value: Any, required: set[str]) -> None:
     if not isinstance(value, dict) or set(value) != required:
         raise ContractError("KEY_SET_MISMATCH")
@@ -68,6 +91,47 @@ def _repo_path(value: Any) -> str:
     if not isinstance(value, str) or not REPO_PATH.fullmatch(value):
         raise ContractError("INVALID_REPOSITORY_PATH")
     return value
+
+
+def _nonempty_string(value: Any, error: str = "STRING_INVALID") -> str:
+    if not isinstance(value, str) or not value:
+        raise ContractError(error)
+    return value
+
+
+def _enum_value(value: Any, allowed: set[str], error: str) -> str:
+    if not isinstance(value, str) or value not in allowed:
+        raise ContractError(error)
+    return value
+
+
+def _string_list(value: Any, *, nonempty: bool = False, error: str = "STRING_LIST_INVALID") -> list[str]:
+    if not isinstance(value, list) or (nonempty and not value):
+        raise ContractError(error)
+    if any(not isinstance(item, str) or not item for item in value):
+        raise ContractError(error)
+    return value
+
+
+def _date(value: Any) -> None:
+    if not isinstance(value, str):
+        raise ContractError("DATE_INVALID")
+    try:
+        if date.fromisoformat(value).isoformat() != value:
+            raise ValueError
+    except ValueError as exc:
+        raise ContractError("DATE_INVALID") from exc
+
+
+def _remote_ref(value: Any) -> None:
+    if not isinstance(value, str) or not REMOTE_REF.fullmatch(value) or ".." in value.split("/"):
+        raise ContractError("REMOTE_REF_INVALID")
+
+
+def _work_branch(value: Any) -> None:
+    if (not isinstance(value, str) or not WORK_BRANCH.fullmatch(value)
+            or value.endswith((".", "/")) or ".." in value):
+        raise ContractError("WORK_BRANCH_INVALID")
 
 
 def _artifact_paths(value: Any, parent_key: str = "") -> Iterable[str]:
@@ -97,16 +161,31 @@ def validate_handoff(value: Any, repo_root: Path | None = None) -> None:
     _exact_keys(value, required)
     if value["schema_version"] != "common-handoff-manifest-v1" or value["regime"] != "B" or value["transfer_kind"] != "FORMAL_HANDOFF":
         raise ContractError("IDENTITY_MISMATCH")
-    if value["sender_role"] not in ROLES or value["receiver_role"] not in ROLES:
+    _date(value["date"])
+    if not isinstance(value["work_item"], str) or not WORK_ITEM.fullmatch(value["work_item"]):
+        raise ContractError("WORK_ITEM_INVALID")
+    _nonempty_string(value["gate"], "GATE_INVALID")
+    if (not isinstance(value["sender_role"], str) or value["sender_role"] not in ROLES
+            or not isinstance(value["receiver_role"], str) or value["receiver_role"] not in ROLES):
         raise ContractError("ROLE_INVALID")
+    authority = value["authority_basis"]
+    if not isinstance(authority, list) or not authority:
+        raise ContractError("AUTHORITY_BASIS_INVALID")
+    for pointer in authority:
+        _exact_keys(pointer, {"path", "sha"})
+        _repo_path(pointer["path"])
+        if not isinstance(pointer["sha"], str) or not SHA.fullmatch(pointer["sha"]):
+            raise ContractError("AUTHORITY_BASIS_INVALID")
+    _remote_ref(value["remote_ref"])
+    _work_branch(value["work_branch"])
     for field in ("base_sha", "routing_ref_sha"):
         if not isinstance(value[field], str) or not SHA.fullmatch(value[field]):
             raise ContractError("SHA_INVALID")
-    if value["review_result_sha"] is not None and not SHA.fullmatch(value["review_result_sha"]):
+    if (value["review_result_sha"] is not None
+            and (not isinstance(value["review_result_sha"], str) or not SHA.fullmatch(value["review_result_sha"]))):
         raise ContractError("SHA_INVALID")
     extension = value["role_extension"]
-    if not isinstance(extension, dict) or extension.get("role") != value["sender_role"]:
-        raise ContractError("SENDER_EXTENSION_MISMATCH")
+    _validate_role_extension(value["sender_role"], extension)
     artifacts = value["artifacts"]
     if not isinstance(artifacts, dict) or not artifacts:
         raise ContractError("ARTIFACT_INVENTORY_EMPTY")
@@ -120,9 +199,72 @@ def validate_handoff(value: Any, repo_root: Path | None = None) -> None:
                 raise ContractError("ARTIFACT_BYTES_MISMATCH")
     if len(set(normalized)) != len(normalized):
         raise ContractError("ARTIFACT_PATH_DUPLICATE")
+    _string_list(value["checks_performed"], error="CHECKS_INVALID")
+    _enum_value(value["status"], {"READY", "BLOCKED", "CLEAR", "VERIFIED", "PENDING_REBECCA", "PENDING_RECORDER_CUSTODY", "UNPUBLISHED_JUDGE_RULING"}, "STATUS_INVALID")
+    if not isinstance(value["findings"], list):
+        raise ContractError("FINDINGS_INVALID")
+    for finding in value["findings"]:
+        _exact_keys(finding, {"classification", "severity", "text"})
+        if (not isinstance(finding["classification"], str)
+                or not isinstance(finding["severity"], str) or finding["severity"] not in {"blocking", "non_blocking"}
+                or not isinstance(finding["text"], str)):
+            raise ContractError("FINDINGS_INVALID")
+    scan = value["scan_attestation"]
+    _exact_keys(scan, {"base_sha", "tip_sha", "tool_status", "manual_review", "findings"})
+    if (not isinstance(scan["base_sha"], str) or not SHA.fullmatch(scan["base_sha"])
+            or not isinstance(scan["tip_sha"], str) or not SHA.fullmatch(scan["tip_sha"])
+            or not isinstance(scan["tool_status"], str) or scan["tool_status"] not in {"clean", "blocked", "error"}
+            or not isinstance(scan["manual_review"], bool)):
+        raise ContractError("SCAN_ATTESTATION_INVALID")
+    _string_list(scan["findings"], error="SCAN_ATTESTATION_INVALID")
+    _nonempty_string(value["next_event"], "NEXT_EVENT_INVALID")
+    _string_list(value["prohibited_actions"], nonempty=True, error="PROHIBITED_ACTIONS_INVALID")
     named = set(_artifact_paths(value))
     if not named.issubset(set(artifacts)):
         raise ContractError("ARTIFACT_INVENTORY_INCOMPLETE")
+
+
+def _validate_role_extension(role: str, extension: Any) -> None:
+    if not isinstance(extension, dict) or extension.get("role") != role:
+        raise ContractError("SENDER_EXTENSION_MISMATCH")
+    if role == "ARCHITECT":
+        _exact_keys(extension, {"role", "changelog_paths", "diff_self_inspection"})
+        if not isinstance(extension["changelog_paths"], list) or not isinstance(extension["diff_self_inspection"], bool):
+            raise ContractError("SENDER_EXTENSION_INVALID")
+        for path in extension["changelog_paths"]:
+            _repo_path(path)
+    elif role == "CRITIC":
+        _exact_keys(extension, {"role", "verdict", "law_fidelity", "substantive"})
+        if (not isinstance(extension["verdict"], str) or extension["verdict"] not in {"CLEAR", "BLOCK", "VERIFIED"}
+                or not isinstance(extension["law_fidelity"], str) or extension["law_fidelity"] not in {"PASS", "BLOCK", "NOT_APPLICABLE"}
+                or not isinstance(extension["substantive"], str) or extension["substantive"] not in {"CLEAR", "BLOCK", "VERIFIED"}):
+            raise ContractError("SENDER_EXTENSION_INVALID")
+    elif role == "TASK_BUILDER":
+        _exact_keys(extension, {"role", "tests", "diagnostics_executed"})
+        _string_list(extension["tests"], error="SENDER_EXTENSION_INVALID")
+        if not isinstance(extension["diagnostics_executed"], bool):
+            raise ContractError("SENDER_EXTENSION_INVALID")
+    elif role == "INTEGRATOR":
+        _exact_keys(extension, {"role", "state_sha256"})
+        if not isinstance(extension["state_sha256"], str) or not SHA256.fullmatch(extension["state_sha256"]):
+            raise ContractError("SENDER_EXTENSION_INVALID")
+    elif role == "RECORDER":
+        _exact_keys(extension, {"role", "custody_hashes"})
+        hashes = extension["custody_hashes"]
+        if not isinstance(hashes, list) or not hashes or any(not isinstance(item, str) or not SHA256.fullmatch(item) for item in hashes):
+            raise ContractError("SENDER_EXTENSION_INVALID")
+    elif role == "JUDGE":
+        _exact_keys(extension, {"role", "custody_envelope", "publication_status"})
+        if extension["publication_status"] != "PENDING_RECORDER_CUSTODY":
+            raise ContractError("SENDER_EXTENSION_INVALID")
+        validate_judge_envelope(extension["custody_envelope"])
+    elif role == "WORKFLOW_COORDINATOR":
+        _exact_keys(extension, {"role", "ball_recorded"})
+        if not isinstance(extension["ball_recorded"], bool):
+            raise ContractError("SENDER_EXTENSION_INVALID")
+    elif role == "REBECCA":
+        _exact_keys(extension, {"role", "ruling_path"})
+        _repo_path(extension["ruling_path"])
 
 
 def validate_trace(trace: Any) -> None:
@@ -184,16 +326,26 @@ def validate_disposition(disposition: Any, trace: Any, trace_bytes: bytes) -> No
 def validate_metadata(value: Any, repo_root: Path | None = None) -> None:
     required = {"schema_version", "as_of_utc", "source_commit", "document_path", "document_sha256", "supersedes_metadata_sha256", "status", "document_role", "owner_role"}
     _exact_keys(value, required)
-    if value["schema_version"] != "workflow-state-metadata-v1" or not SHA.fullmatch(value["source_commit"]):
+    if (value["schema_version"] != "workflow-state-metadata-v1"
+            or not isinstance(value["source_commit"], str) or not SHA.fullmatch(value["source_commit"])):
         raise ContractError("METADATA_IDENTITY_INVALID")
+    if not isinstance(value["as_of_utc"], str) or not UTC_SECOND.fullmatch(value["as_of_utc"]):
+        raise ContractError("METADATA_TIMESTAMP_INVALID")
     path = _repo_path(value["document_path"])
     owner_for_role = {"routing": "WORKFLOW_COORDINATOR", "checkpoint": "WORKFLOW_COORDINATOR", "durable_state": "INTEGRATOR", "custody_history": "RECORDER"}
+    if not isinstance(value["document_role"], str) or not isinstance(value["owner_role"], str):
+        raise ContractError("METADATA_OWNER_MISMATCH")
     if owner_for_role.get(value["document_role"]) != value["owner_role"]:
         raise ContractError("METADATA_OWNER_MISMATCH")
-    if not SHA256.fullmatch(value["document_sha256"]):
+    _enum_value(value["status"], {"current", "superseded", "historical"}, "METADATA_STATUS_INVALID")
+    supersedes = value["supersedes_metadata_sha256"]
+    if (not isinstance(supersedes, list) or len(supersedes) != len(set(supersedes))
+            or any(not isinstance(item, str) or not SHA256.fullmatch(item) for item in supersedes)):
+        raise ContractError("METADATA_SUPERSEDES_INVALID")
+    if not isinstance(value["document_sha256"], str) or not SHA256.fullmatch(value["document_sha256"]):
         raise ContractError("METADATA_DIGEST_INVALID")
     if repo_root is not None:
-        if sha256_bytes(repository_bytes(repo_root, path)) != value["document_sha256"]:
+        if sha256_bytes(repository_bytes_at(repo_root, value["source_commit"], path)) != value["document_sha256"]:
             raise ContractError("METADATA_DOCUMENT_MISMATCH")
 
 
@@ -202,6 +354,12 @@ def validate_judge_envelope(value: Any) -> bytes:
     _exact_keys(value, required)
     if value["schema_version"] != "judge-custody-envelope-v1" or value["media_type"] != "text/markdown; charset=utf-8" or value["encoding"] != "base64-rfc4648-no-whitespace":
         raise ContractError("JUDGE_ENVELOPE_IDENTITY_INVALID")
+    if not isinstance(value["filename"], str) or not JUDGE_FILENAME.fullmatch(value["filename"]):
+        raise ContractError("JUDGE_FILENAME_INVALID")
+    if not isinstance(value["byte_length"], int) or isinstance(value["byte_length"], bool) or not 1 <= value["byte_length"] <= 4194304:
+        raise ContractError("JUDGE_BYTE_LENGTH_INVALID")
+    if not isinstance(value["sha256"], str) or not SHA256.fullmatch(value["sha256"]):
+        raise ContractError("JUDGE_DIGEST_INVALID")
     encoded = value["content_base64"]
     if not isinstance(encoded, str) or re.search(r"\s", encoded):
         raise ContractError("JUDGE_BASE64_INVALID")
@@ -213,7 +371,10 @@ def validate_judge_envelope(value: Any) -> bytes:
         raise ContractError("JUDGE_ENVELOPE_DIGEST_MISMATCH")
     if raw.startswith(b"\xef\xbb\xbf") or b"\r" in raw or not raw.endswith(b"\n") or raw.endswith(b"\n\n"):
         raise ContractError("JUDGE_TEXT_ENCODING_INVALID")
-    raw.decode("utf-8", errors="strict")
+    try:
+        raw.decode("utf-8", errors="strict")
+    except UnicodeDecodeError as exc:
+        raise ContractError("JUDGE_TEXT_ENCODING_INVALID") from exc
     return raw
 
 
@@ -236,11 +397,25 @@ def rollback_cascade(target: str, contract: Any) -> list[str]:
     return [stage for stage in order if stage in result]
 
 
+def _reject_duplicate_pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    value: dict[str, Any] = {}
+    for key, child in pairs:
+        if key in value:
+            raise ContractError("DUPLICATE_JSON_KEY")
+        value[key] = child
+    return value
+
+
+def _reject_json_constant(value: str) -> None:
+    raise ContractError(f"NONFINITE_JSON_NUMBER:{value}")
+
+
 def _load(path: Path) -> tuple[Any, bytes]:
     raw = path.read_bytes()
     if raw.startswith(b"\xef\xbb\xbf"):
         raise ContractError("BOM_FORBIDDEN")
-    return json.loads(raw.decode("utf-8")), raw
+    return json.loads(raw.decode("utf-8"), object_pairs_hook=_reject_duplicate_pairs,
+                      parse_constant=_reject_json_constant), raw
 
 
 def main() -> int:
@@ -274,7 +449,7 @@ def main() -> int:
         else:
             trace, trace_raw = _load(args.trace)
             validate_disposition(value, trace, trace_raw)
-    except (ContractError, json.JSONDecodeError, OSError) as exc:
+    except (ContractError, json.JSONDecodeError, OSError, UnicodeError) as exc:
         print(f"BLOCKED: {exc}")
         return 2
     print("VERIFIED")

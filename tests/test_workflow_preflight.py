@@ -83,6 +83,54 @@ class WorkflowPreflightTests(unittest.TestCase):
         self.assertEqual(0, code)
         self.assertEqual([], report["findings"])
 
+    @mock.patch.object(PREFLIGHT, "_gitleaks", return_value=("test-gitleaks", 0, []))
+    def test_phone_digit_run_inside_sha_is_not_contact(self, _scanner):
+        sha1 = "a" * 11 + "2125550100" + "b" * 19
+        sha256 = "a" * 17 + "2125550100" + "b" * 37
+        self.assertEqual((40, 64), (len(sha1), len(sha256)))
+        (self.repo / "digest.txt").write_text(f"sha1={sha1}\nsha256={sha256}\n", encoding="utf-8")
+        git(self.repo, "add", "."); git(self.repo, "commit", "-qm", "public digest")
+        report, code = PREFLIGHT.build_report(self.base, git(self.repo, "rev-parse", "HEAD"))
+        self.assertEqual(0, code)
+        self.assertFalse(any(item["class"] == "personal_contact" for item in report["findings"]))
+
+    @mock.patch.object(PREFLIGHT, "_gitleaks", return_value=("test-gitleaks", 0, []))
+    def test_genuine_phone_still_blocks(self, _scanner):
+        (self.repo / "contact.txt").write_text("call 212-555-0100\n", encoding="utf-8")
+        git(self.repo, "add", "."); git(self.repo, "commit", "-qm", "contact")
+        report, code = PREFLIGHT.build_report(self.base, git(self.repo, "rev-parse", "HEAD"))
+        self.assertEqual(2, code)
+        self.assertTrue(any(item["class"] == "personal_contact" for item in report["findings"]))
+
+    @mock.patch.object(PREFLIGHT, "_gitleaks", return_value=("test-gitleaks", 0, []))
+    def test_safe_provenance_append_does_not_rescan_historical_contact(self, _scanner):
+        provenance = self.repo / "docs/rulings/provenance_log.md"
+        provenance.parent.mkdir(parents=True)
+        provenance.write_text("historical contact 212-555-0100\n", encoding="utf-8")
+        git(self.repo, "add", "."); git(self.repo, "commit", "-qm", "historical provenance")
+        append_base = git(self.repo, "rev-parse", "HEAD")
+        with provenance.open("a", encoding="utf-8", newline="") as stream:
+            stream.write("safe new attestation\n")
+        git(self.repo, "add", "."); git(self.repo, "commit", "-qm", "append provenance")
+        report, code = PREFLIGHT.build_report(append_base, git(self.repo, "rev-parse", "HEAD"))
+        self.assertEqual(0, code)
+        self.assertEqual([], report["findings"])
+
+    @mock.patch.object(PREFLIGHT, "_gitleaks", return_value=("test-gitleaks", 0, []))
+    def test_modified_provenance_legacy_span_scans_complete_result(self, _scanner):
+        provenance = self.repo / "docs/rulings/provenance_log.md"
+        provenance.parent.mkdir(parents=True)
+        provenance.write_text("historical contact 212-555-0100\nlegacy marker\n", encoding="utf-8")
+        git(self.repo, "add", "."); git(self.repo, "commit", "-qm", "historical provenance")
+        rewrite_base = git(self.repo, "rev-parse", "HEAD")
+        provenance.write_text("historical contact 212-555-0100\nchanged marker\n", encoding="utf-8")
+        git(self.repo, "add", "."); git(self.repo, "commit", "-qm", "rewrite legacy span")
+        report, code = PREFLIGHT.build_report(rewrite_base, git(self.repo, "rev-parse", "HEAD"))
+        self.assertEqual(2, code)
+        matching = [item for item in report["findings"] if item["class"] == "personal_contact"]
+        self.assertTrue(matching)
+        self.assertTrue(any(item["path"] == "docs/rulings/provenance_log.md" for item in matching))
+
     def test_invalid_equal_range_is_exit_four(self):
         with self.assertRaises(PREFLIGHT.PreflightError) as caught:
             PREFLIGHT.build_report(self.base, self.base)

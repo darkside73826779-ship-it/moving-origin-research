@@ -22,6 +22,8 @@ PATTERNS = TOOL_ROOT / "specs/data/workflow_preflight_patterns_v1.json"
 SCHEMA = TOOL_ROOT / "specs/data/workflow_preflight_report_schema_v2.json"
 SHA_RE = re.compile(r"[0-9a-f]{40}")
 STATUS_MAP = {"A": "added", "M": "modified", "D": "deleted", "R100": "renamed", "T": "type_changed"}
+APPEND_ONLY_SCAN_PATHS = frozenset({"docs/rulings/provenance_log.md"})
+IMMUTABLE_HEX_LENGTHS = frozenset({40, 64})
 
 
 class PreflightError(RuntimeError):
@@ -137,6 +139,15 @@ def _scan_units(old: str, new: str, events: list[dict[str, Any]]) -> list[tuple[
         if event["object_type"] != "deleted":
             _, _, content = _object(new, event["path"])
             assert content is not None
+            if event["path"] in APPEND_ONLY_SCAN_PATHS and event["change_type"] == "modified":
+                old_path = event["old_path"] or event["path"]
+                old_type, _, old_content = _object(old, old_path)
+                if old_type == "regular" and event["object_type"] == "regular" and old_content is not None:
+                    # Exact byte-prefix equality is the unchanged-file integrity proof.
+                    # Only a true append may exclude historical bytes from rescanning;
+                    # any legacy-span mutation falls back to the complete result.
+                    if len(content) > len(old_content) and content.startswith(old_content):
+                        content = content[len(old_content):]
             units.append((event["path"], content))
     return units
 
@@ -166,6 +177,19 @@ def _definition_literal(text: str, start: int, end: int, klass: str) -> bool:
     return False
 
 
+def _inside_immutable_hex_token(text: str, start: int, end: int) -> bool:
+    """Return true only when the complete match lies inside one SHA token."""
+    if "@" in text[start:end]:
+        return False
+    left = start
+    while left and text[left - 1] in "0123456789abcdefABCDEF":
+        left -= 1
+    right = end
+    while right < len(text) and text[right] in "0123456789abcdefABCDEF":
+        right += 1
+    return left <= start and end <= right and right - left in IMMUTABLE_HEX_LENGTHS
+
+
 def _fixed_findings(domain: str, units: Iterable[tuple[str | None, bytes]], patterns: list[dict[str, str]]) -> list[dict[str, Any]]:
     findings: list[dict[str, Any]] = []
     compiled = [(item["class"], re.compile(item["pattern"], re.ASCII | re.MULTILINE)) for item in patterns]
@@ -173,6 +197,8 @@ def _fixed_findings(domain: str, units: Iterable[tuple[str | None, bytes]], patt
         text = data.decode("utf-8", "replace")
         for klass, regex in compiled:
             for match in regex.finditer(text):
+                if klass == "personal_contact" and _inside_immutable_hex_token(text, match.start(), match.end()):
+                    continue
                 evidence = match.group(0).encode("utf-8")
                 encoded_prefix = text[:match.start()].encode("utf-8")
                 line, column = _line_column(data, len(encoded_prefix))
