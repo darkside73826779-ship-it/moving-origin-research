@@ -35,7 +35,7 @@ class ProductionPathCorrectionTests(unittest.TestCase):
  def test_candidate_warmup_zero_failure_rolls_back_resets_and_cleans(self):
   e=[];life=CrashCartLifecycle(self._role('candidate',e,('warmup',0)),self._role('peer',e),lambda r:e.append(('reset',r)),lambda:e.append(('cleanup',)))
   with self.assertRaises(CrashCartError): life.run()
-  self.assertIn(('cleanup',),e);self.assertIn(('reset','candidate'),e);self.assertIn(('reset','peer'),e);self.assertFalse(any(x[:2]==('peer','warmup') for x in e if len(x)>1))
+  self.assertIn(('cleanup',),e);self.assertIn(('reset','candidate'),e);self.assertIn(('reset','peer'),e);self.assertTrue(any(x[:2]==('peer','warmup') for x in e if len(x)>1))
  def test_symmetric_barriers_resets_rng_no_priming_and_receipt_ordinals(self):
   e=[];life=CrashCartLifecycle(self._role('candidate',e),self._role('peer',e),lambda r:e.append(('reset',r)),lambda:e.append(('cleanup',)))
   out=life.run();self.assertEqual(out['active_ordinals'],list(range(64)));self.assertEqual(out['warmup_ordinals'],list(range(4)));self.assertEqual(life.events.count('clean-barrier'),1);self.assertLess(life.events.index('clean-barrier'),life.events.index('rng-after-clean-barrier'));self.assertNotIn(-1,out['active_ordinals'])
