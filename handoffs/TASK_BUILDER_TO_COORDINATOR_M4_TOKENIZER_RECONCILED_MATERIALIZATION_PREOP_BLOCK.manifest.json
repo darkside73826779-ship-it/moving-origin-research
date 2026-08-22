@@ -66,9 +66,13 @@
   "scan_attestation": {
     "base_sha": "ed31a60b5b3f7a15591525f1ddfc3f8190a2e5e5",
     "tip_sha": "0316be0ba3e3b97f0c0cc4ab89e0fe81e726723b",
-    "tool_status": "pending",
+    "tool_status": "blocked",
     "manual_review": true,
-    "findings": []
+    "findings": [
+      "F000001-F000012 are six duplicate scan-domain pairs of the personal-contact heuristic, each match occurring wholly inside a required immutable public commit SHA or declared public artifact SHA-256 value; they are non-secret reproducibility metadata",
+      "gitleaks 8.30.1 returned zero findings",
+      "manual review found no credentials, personal contact data, private paths, custody values, model/tokenizer bytes, protected seeds, scientific output, or prohibited durable-state mutation"
+    ]
   },
   "next_event": "WORKFLOW COORDINATOR acknowledges the durable BLOCK and restores the required private host binding through authorized custody channels; the single operation remains unconsumed",
   "prohibited_actions": [
