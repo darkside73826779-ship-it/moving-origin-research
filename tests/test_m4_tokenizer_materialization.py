@@ -90,6 +90,7 @@ class TokenizerMaterializationTests(unittest.TestCase):
                  mock.patch.dict(MATERIALIZER.sys.modules, {"transformers": module}), \
                  mock.patch.object(MATERIALIZER.os, "lstat", side_effect=selected_lstat), \
                  mock.patch.object(MATERIALIZER, "file_bytes", side_effect=file_bytes or (lambda path, metadata: Path(path).read_bytes())), \
+                 mock.patch.object(MATERIALIZER, "verify_runtime_loading_identity", return_value=fake_loader), \
                  mock.patch.object(MATERIALIZER, "publish", side_effect=capture_publish), \
                  (mock.patch.object(MATERIALIZER, "canonical", side_effect=canonical_override)
                   if canonical_override else contextlib.nullcontext()), \
@@ -461,6 +462,157 @@ class TokenizerMaterializationTests(unittest.TestCase):
                 self._assert_failure(output, code, "FAIL", "RUNTIME_IDENTITY_MISMATCH", "AUTHORITY")
                 self.assertNotIn(".mor-custody-record-v1.json", loaded_paths)
                 self.assertEqual(events, expected_events)
+
+    def test_materialize_imported_loader_identity_fails_before_custody(self):
+        distribution = MATERIALIZER.importlib.metadata.distribution("transformers")
+        package_path = next(path for path in distribution.files
+                            if str(path).replace("\\", "/") == MATERIALIZER.AUTO_TOKENIZER_PATH)
+        loader_path = Path(distribution.locate_file(package_path))
+        real_import = builtins.__import__
+        real_import_module = MATERIALIZER.importlib.import_module
+        real_distribution = MATERIALIZER.importlib.metadata.distribution
+        real_runtime_bytes = MATERIALIZER.runtime_file_bytes
+        real_lstat = MATERIALIZER.os.lstat
+        real_load = MATERIALIZER.load
+        def alternate_from_pretrained(*args, **kwargs):
+            raise AssertionError("from_pretrained")
+        AlternateTokenizer = type("AutoTokenizer", (), {
+            "__module__": "transformers.models.auto.tokenization_auto",
+            "from_pretrained": staticmethod(alternate_from_pretrained),
+        })
+        WrongMetadataTokenizer = type("AutoTokenizer", (), {
+            "__module__": "alternate.tokenization_auto",
+            "from_pretrained": staticmethod(alternate_from_pretrained),
+        })
+        valid_root = lambda tokenizer: types.SimpleNamespace(
+            AutoTokenizer=tokenizer, __file__=str(loader_path.parent.parent.parent / "__init__.py"),
+            __spec__=types.SimpleNamespace(origin=str(loader_path.parent.parent.parent / "__init__.py")),
+        )
+        alternate_loader = types.SimpleNamespace(AutoTokenizer=AlternateTokenizer)
+        real_loader = real_import_module("transformers.models.auto.tokenization_auto")
+        cases = (
+            ("monkey_patched_module", types.SimpleNamespace(AutoTokenizer=real_loader.AutoTokenizer),
+             real_loader, None, ["runtime_distribution", "runtime_loader_lstat", "runtime_loader_read",
+                                 "module_import:transformers", "module_import:loader"]),
+            ("alternate_class", valid_root(AlternateTokenizer), real_loader, None,
+             ["runtime_distribution", "runtime_loader_lstat", "runtime_loader_read",
+              "module_import:transformers", "module_import:loader"]),
+            ("alternate_class_metadata", valid_root(WrongMetadataTokenizer),
+             types.SimpleNamespace(AutoTokenizer=WrongMetadataTokenizer), None,
+             ["runtime_distribution", "runtime_loader_lstat", "runtime_loader_read",
+              "module_import:transformers", "module_import:loader"]),
+            ("alternate_class_origin", valid_root(AlternateTokenizer), alternate_loader, "class_origin",
+             ["runtime_distribution", "runtime_loader_lstat", "runtime_loader_read",
+              "module_import:transformers", "module_import:loader", "class_origin", "method_origin"]),
+            ("alternate_loading_method", valid_root(AlternateTokenizer), alternate_loader, "method_origin",
+             ["runtime_distribution", "runtime_loader_lstat", "runtime_loader_read",
+              "module_import:transformers", "module_import:loader", "class_origin", "method_origin"]),
+        )
+        for name, root_module, loader_module, source_mutation, expected_events in cases:
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                output = Path(directory) / f"{name}.json"
+                events = []
+                loaded_paths = []
+                def observed_distribution(name):
+                    events.append("runtime_distribution")
+                    return real_distribution(name)
+                def observed_runtime_bytes(path):
+                    events.append("runtime_loader_read")
+                    return real_runtime_bytes(path)
+                def observed_lstat(path, *args, **kwargs):
+                    if Path(path) == loader_path:
+                        events.append("runtime_loader_lstat")
+                    elif Path(path).suffix == ".safetensors":
+                        events.append("weight_lstat")
+                        raise AssertionError("weight observation")
+                    return real_lstat(path, *args, **kwargs)
+                def observed_import_module(module_name):
+                    events.append("module_import:transformers" if module_name == "transformers"
+                                  else "module_import:loader")
+                    return root_module if module_name == "transformers" else loader_module
+                def observed_load(path, expected=None):
+                    loaded_paths.append(Path(path).name)
+                    if Path(path).name == ".mor-custody-record-v1.json":
+                        events.append("private_record_read")
+                        raise AssertionError("private record access")
+                    return real_load(path, expected)
+                def source_file(value):
+                    events.append("class_origin" if value is root_module.AutoTokenizer else "method_origin")
+                    if source_mutation == "class_origin" and value is root_module.AutoTokenizer:
+                        return str(Path(directory) / "alternate_class.py")
+                    if source_mutation == "method_origin" and value is not root_module.AutoTokenizer:
+                        return str(Path(directory) / "alternate_loader.py")
+                    return str(loader_path)
+                def forbidden(event):
+                    def reject(*args, **kwargs):
+                        events.append(event)
+                        raise AssertionError(event)
+                    return reject
+                with mock.patch.object(MATERIALIZER.sys, "orig_argv", ["python3"]), \
+                     mock.patch.object(MATERIALIZER.importlib.metadata, "distribution", side_effect=observed_distribution), \
+                     mock.patch.object(MATERIALIZER, "runtime_file_bytes", side_effect=observed_runtime_bytes), \
+                     mock.patch.object(MATERIALIZER.os, "lstat", side_effect=observed_lstat), \
+                     mock.patch.object(MATERIALIZER.importlib, "import_module", side_effect=observed_import_module), \
+                     mock.patch.object(MATERIALIZER.inspect, "getsourcefile", side_effect=source_file), \
+                     mock.patch.object(MATERIALIZER, "load", side_effect=observed_load), \
+                     mock.patch.object(MATERIALIZER.os.environ, "get", side_effect=forbidden("custody_env_lookup")), \
+                     mock.patch.object(MATERIALIZER.Path, "resolve", side_effect=forbidden("custody_root_resolution")), \
+                     mock.patch.object(MATERIALIZER, "file_bytes", side_effect=forbidden("tokenizer_config_read")), \
+                     mock.patch.object(MATERIALIZER.shutil, "copyfile", side_effect=forbidden("tokenizer_config_copy")), \
+                     mock.patch.object(AlternateTokenizer, "from_pretrained", side_effect=forbidden("from_pretrained")):
+                    code = MATERIALIZER.materialize(
+                        str(ROOT / "specs/data/m4_tokenizer_materialization_request_v1.json"),
+                        MATERIALIZER.HANDLE, str(output))
+                self._assert_failure(output, code, "FAIL", "RUNTIME_IDENTITY_MISMATCH", "AUTHORITY")
+                self.assertNotIn(".mor-custody-record-v1.json", loaded_paths)
+                self.assertNotIn("custody_env_lookup", events)
+                self.assertNotIn("custody_root_resolution", events)
+                self.assertNotIn("private_record_read", events)
+                self.assertNotIn("tokenizer_config_read", events)
+                self.assertNotIn("tokenizer_config_copy", events)
+                self.assertNotIn("from_pretrained", events)
+                self.assertEqual(events, expected_events)
+
+    def test_materialize_successful_import_origin_precedes_custody(self):
+        events = []
+        real_distribution = MATERIALIZER.importlib.metadata.distribution
+        real_runtime_bytes = MATERIALIZER.runtime_file_bytes
+        real_import_module = MATERIALIZER.importlib.import_module
+        real_import = builtins.__import__
+        real_lstat = MATERIALIZER.os.lstat
+        def observed_distribution(name):
+            events.append("runtime_distribution")
+            return real_distribution(name)
+        def observed_runtime_bytes(path):
+            events.append("runtime_loader_read")
+            return real_runtime_bytes(path)
+        def observed_lstat(path, *args, **kwargs):
+            events.append("runtime_loader_lstat" if Path(path).name == "tokenization_auto.py"
+                          else "weight_lstat")
+            if Path(path).suffix == ".safetensors":
+                raise AssertionError("weight observation")
+            return real_lstat(path, *args, **kwargs)
+        def observed_import_module(name):
+            events.append("module_import:transformers" if name == "transformers"
+                          else "module_import:loader")
+            return real_import_module(name)
+        def observed_environment(name):
+            events.append("custody_env_lookup")
+            return None
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "successful-origin.json"
+            with mock.patch.object(MATERIALIZER.sys, "orig_argv", ["python3"]), \
+                 mock.patch.object(MATERIALIZER.importlib.metadata, "distribution", side_effect=observed_distribution), \
+                 mock.patch.object(MATERIALIZER, "runtime_file_bytes", side_effect=observed_runtime_bytes), \
+                 mock.patch.object(MATERIALIZER.os, "lstat", side_effect=observed_lstat), \
+                 mock.patch.object(MATERIALIZER.importlib, "import_module", side_effect=observed_import_module), \
+                 mock.patch.object(MATERIALIZER.os.environ, "get", side_effect=observed_environment):
+                code = MATERIALIZER.materialize(
+                    str(ROOT / "specs/data/m4_tokenizer_materialization_request_v1.json"),
+                    MATERIALIZER.HANDLE, str(output))
+            self._assert_failure(output, code, "BLOCKED", "CUSTODY_HANDLE_UNRESOLVED", "CUSTODY_HANDLE")
+        self.assertEqual(events, ["runtime_distribution", "runtime_loader_lstat", "runtime_loader_read",
+                                  "module_import:transformers", "module_import:loader", "custody_env_lookup"])
 
     def test_constructor_digest_is_checked_before_environment_lookup(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib
 import importlib.metadata
+import inspect
 import json
 import os
 import shutil
@@ -162,7 +164,7 @@ def runtime_file_bytes(path: str | Path) -> bytes:
     return Path(path).read_bytes()
 
 
-def verify_runtime_loading_identity() -> None:
+def verify_runtime_loading_identity():
     try:
         distribution = importlib.metadata.distribution("transformers")
         require(distribution.version == TRANSFORMERS_VERSION,
@@ -175,6 +177,25 @@ def verify_runtime_loading_identity() -> None:
                 "AUTHORITY", "RUNTIME_IDENTITY_MISMATCH")
         require(sha(runtime_file_bytes(loader_path)) == AUTO_TOKENIZER_SHA256,
                 "AUTHORITY", "RUNTIME_IDENTITY_MISMATCH")
+        init_path = loader_path.parents[2] / "__init__.py"
+        root_module = importlib.import_module("transformers")
+        loader_module = importlib.import_module("transformers.models.auto.tokenization_auto")
+        AutoTokenizer = getattr(root_module, "AutoTokenizer", None)
+        root_origin = getattr(getattr(root_module, "__spec__", None), "origin", None)
+        require(getattr(root_module, "__file__", None) == str(init_path)
+                and root_origin == str(init_path),
+                "AUTHORITY", "RUNTIME_IDENTITY_MISMATCH")
+        require(AutoTokenizer is loader_module.AutoTokenizer,
+                "AUTHORITY", "RUNTIME_IDENTITY_MISMATCH")
+        require(AutoTokenizer.__module__ == "transformers.models.auto.tokenization_auto"
+                and AutoTokenizer.__qualname__ == "AutoTokenizer",
+                "AUTHORITY", "RUNTIME_IDENTITY_MISMATCH")
+        class_source = inspect.getsourcefile(AutoTokenizer)
+        method_source = inspect.getsourcefile(AutoTokenizer.from_pretrained)
+        require(class_source is not None and method_source is not None
+                and Path(class_source) == loader_path and Path(method_source) == loader_path,
+                "AUTHORITY", "RUNTIME_IDENTITY_MISMATCH")
+        return AutoTokenizer
     except GovernedFailure:
         raise
     except Exception as error:
@@ -248,7 +269,7 @@ def materialize(contract_path: str, custody_handle: str, output_path: str) -> in
         require(request["constructor"]["artifact_sha256"] == CONSTRUCTOR
                 and sha(constructor_path.read_bytes()) == CONSTRUCTOR,
                 "CONSTRUCTOR_IDENTITY", "CONSTRUCTOR_IDENTITY_MISMATCH")
-        verify_runtime_loading_identity()
+        AutoTokenizer = verify_runtime_loading_identity()
         raw_root = os.environ.get(ENV)
         require(bool(raw_root) and not any(character in raw_root for character in "\0\r\n"),
                 "CUSTODY_HANDLE", "CUSTODY_HANDLE_UNRESOLVED", True)
@@ -308,7 +329,6 @@ def materialize(contract_path: str, custody_handle: str, output_path: str) -> in
                 file_bytes(config_copy, identity["tokenizer_config"])
             except (OSError, ValueError) as error:
                 raise GovernedFailure("TOKENIZER_COPY", "TOKENIZER_IDENTITY_MISMATCH") from error
-            from transformers import AutoTokenizer
             tokenizer = AutoTokenizer.from_pretrained(
                 str(temporary), local_files_only=True, trust_remote_code=False, use_fast=True
             )
