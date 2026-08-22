@@ -15,7 +15,7 @@
   ],
   "remote_ref": "refs/heads/taskbuilder/m4-tokenizer-full-domain-new-operation-execution",
   "base_sha": "ec3226f9d95aae28b813abf011b2a0f3b267f9e6",
-  "routing_ref_sha": "417880caf009e33f277bd99cac56415d59ccb45d",
+  "routing_ref_sha": "73817b313cd218d4b36ec8133df029550fa4e951",
   "review_result_sha": "482bdeceea8461438c516dcb8944bbaa21e5192c",
   "work_branch": "taskbuilder/m4-tokenizer-full-domain-new-operation-execution",
   "artifacts": {
@@ -26,7 +26,7 @@
     "diagnostics/m4_tokenizer_materialization.py": "2aa18bebcfd6c8d7ffb5c65784d5e459650cd540494ae5cfc29e35372c87612b",
     "handoffs/REBECCA_M4_TOKENIZER_FULL_DOMAIN_NEW_OPERATION_RELEASE_2026-08-21.md": "29bca723ffaa9267ebd83258605fbeb15f9c37b3c06dae1768d4b2d2759acf7e",
     "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_FULL_TOKEN_ID_DOMAIN_REMEDIATION_2026-08-21.md": "1c0dc526c816c3eb9c6cdedb14f62ffb229e25866e5901d51835f50a05e024b9",
-    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_FULL_DOMAIN_NEW_OPERATION_PRIVATE_BINDING_BLOCK_2026-08-21.md": "02be1ee707ba67377358db2c026f1eba70e1d7beacecb936f1f2a6aa92998a63",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_FULL_DOMAIN_NEW_OPERATION_PRIVATE_BINDING_BLOCK_2026-08-21.md": "d3ec29ab57a98fac46b73d5ae7dd546010126e7ed0118c55848baffce79a4ee6",
     "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_MATERIALIZATION_FAIL_2026-08-21.md": "fc16d16e2471a0305bca9d65a0af36be0d1e2ff22dcb7919efa57706f88438f4",
     "specs/data/m4_context_format_probe_contract_v1.json": "eab77b9f44a4e9378f5889f5aa368eabd87959a5ddafab9ca38685228f12feec",
     "specs/data/m4_tokenizer_executable_package_v1.json": "f8e97a6ce4f0da4bb47a4b720e82cd3c909da128a41146374c9faa490c4429fa",
@@ -63,7 +63,7 @@
   ],
   "scan_attestation": {
     "base_sha": "ec3226f9d95aae28b813abf011b2a0f3b267f9e6",
-    "tip_sha": "417880caf009e33f277bd99cac56415d59ccb45d",
+    "tip_sha": "73817b313cd218d4b36ec8133df029550fa4e951",
     "tool_status": "clean",
     "manual_review": true,
     "findings": [
