@@ -1,5 +1,6 @@
 import copy
 import contextlib
+import builtins
 import hashlib
 import importlib.util
 import json
@@ -59,7 +60,11 @@ class TokenizerMaterializationTests(unittest.TestCase):
             if loader_error:
                 raise loader_error
             return fake
-        module = types.SimpleNamespace(AutoTokenizer=types.SimpleNamespace(from_pretrained=load_fake))
+        fake_loader = type("AutoTokenizer", (), {
+            "__module__": "transformers.models.auto.tokenization_auto",
+            "from_pretrained": staticmethod(load_fake),
+        })
+        module = types.SimpleNamespace(AutoTokenizer=fake_loader)
         published = []
         def capture_publish(output, result, schema):
             if any(key.lower() in {"path", "host", "hostname", "text", "token_ids", "tokens"}
@@ -362,8 +367,100 @@ class TokenizerMaterializationTests(unittest.TestCase):
 
         code, result = self._synthetic_materialize(loader_error=RuntimeError("alternate loader rejected"))
         self.assertEqual((code, result["status"], result["failure_code"], result["checks"][-1]["check_id"]),
-                         (3, "FAIL", "RUNTIME_IDENTITY_MISMATCH", "TOKENIZER_COPY"))
+                         (4, "FAIL", "INTERNAL_ERROR", "PUBLIC_SAFETY"))
         MATERIALIZER.validate(ROOT / "specs/data/m4_tokenizer_materialization_result_schema_v1.json", result)
+
+    def test_materialize_alternate_loader_identity_fails_before_custody(self):
+        class AlternateTokenizer:
+            @staticmethod
+            def from_pretrained(*args, **kwargs):
+                raise AssertionError("loader invocation")
+        alternate = types.SimpleNamespace(AutoTokenizer=AlternateTokenizer)
+        contract = str(ROOT / "specs/data/m4_tokenizer_materialization_request_v1.json")
+        real_load = MATERIALIZER.load
+        real_import = builtins.__import__
+        real_lstat = MATERIALIZER.os.lstat
+        cases = (
+            ("distribution_error", "error", (), None, ["runtime_distribution"]),
+            ("version", "0.0.0", (), None, ["runtime_distribution"]),
+            ("missing_path", MATERIALIZER.TRANSFORMERS_VERSION, (), None, ["runtime_distribution"]),
+            ("duplicate_path", MATERIALIZER.TRANSFORMERS_VERSION,
+             (MATERIALIZER.AUTO_TOKENIZER_PATH, MATERIALIZER.AUTO_TOKENIZER_PATH), None,
+             ["runtime_distribution"]),
+            ("loader_kind", MATERIALIZER.TRANSFORMERS_VERSION,
+             (MATERIALIZER.AUTO_TOKENIZER_PATH,), "kind",
+             ["runtime_distribution", "runtime_loader_lstat"]),
+            ("loader_size", MATERIALIZER.TRANSFORMERS_VERSION,
+             (MATERIALIZER.AUTO_TOKENIZER_PATH,), "size",
+             ["runtime_distribution", "runtime_loader_lstat"]),
+            ("loader_digest", MATERIALIZER.TRANSFORMERS_VERSION,
+             (MATERIALIZER.AUTO_TOKENIZER_PATH,), "digest",
+             ["runtime_distribution", "runtime_loader_lstat", "runtime_loader_read"]),
+        )
+        for name, version, files, mutation, expected_events in cases:
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                loader_path = root / "tokenization_auto.py"
+                loader_path.write_bytes(b"alternate")
+                output = root / "runtime-identity.json"
+                events = []
+                loaded_paths = []
+                def alternate_distribution(distribution_name):
+                    events.append("runtime_distribution")
+                    if version == "error":
+                        raise RuntimeError("distribution unavailable")
+                    return types.SimpleNamespace(
+                        version=version, files=files,
+                        locate_file=lambda ignored: loader_path,
+                    )
+                def observed_import(import_name, *args, **kwargs):
+                    if import_name == "transformers":
+                        events.append("loader_import")
+                        raise AssertionError("loader import")
+                    return real_import(import_name, *args, **kwargs)
+                def observed_load(path, expected=None):
+                    loaded_paths.append(Path(path).name)
+                    if Path(path).name == ".mor-custody-record-v1.json":
+                        events.append("private_record_read")
+                        raise AssertionError("private record access")
+                    return real_load(path, expected)
+                def observed_lstat(path, *args, **kwargs):
+                    candidate = Path(path)
+                    if candidate == loader_path:
+                        events.append("runtime_loader_lstat")
+                        mode = stat.S_IFDIR if mutation == "kind" else stat.S_IFREG | stat.S_IRUSR
+                        size = 1 if mutation == "size" else MATERIALIZER.AUTO_TOKENIZER_BYTES
+                        return types.SimpleNamespace(st_mode=mode, st_size=size)
+                    if candidate.suffix == ".safetensors":
+                        events.append("weight_lstat")
+                        raise AssertionError("weight observation")
+                    return real_lstat(path, *args, **kwargs)
+                def observed_runtime_bytes(path):
+                    if Path(path) == loader_path:
+                        events.append("runtime_loader_read")
+                        return b"alternate"
+                    raise AssertionError("unexpected runtime loader path")
+                def forbidden(event):
+                    def reject(*args, **kwargs):
+                        events.append(event)
+                        raise AssertionError(event)
+                    return reject
+                with mock.patch.object(MATERIALIZER.sys, "orig_argv", ["python3"]), \
+                     mock.patch.dict(MATERIALIZER.sys.modules, {"transformers": alternate}), \
+                     mock.patch.object(MATERIALIZER.importlib.metadata, "distribution", side_effect=alternate_distribution), \
+                     mock.patch.object(builtins, "__import__", side_effect=observed_import), \
+                     mock.patch.object(MATERIALIZER, "load", side_effect=observed_load), \
+                     mock.patch.object(MATERIALIZER.os.environ, "get", side_effect=forbidden("custody_env_lookup")), \
+                     mock.patch.object(MATERIALIZER.Path, "resolve", side_effect=forbidden("custody_root_resolution")), \
+                     mock.patch.object(MATERIALIZER, "runtime_file_bytes", side_effect=observed_runtime_bytes), \
+                     mock.patch.object(MATERIALIZER.os, "lstat", side_effect=observed_lstat), \
+                     mock.patch.object(MATERIALIZER, "file_bytes", side_effect=forbidden("tokenizer_config_read")), \
+                     mock.patch.object(MATERIALIZER.shutil, "copyfile", side_effect=forbidden("tokenizer_config_copy")), \
+                     mock.patch.object(AlternateTokenizer, "from_pretrained", side_effect=forbidden("from_pretrained")):
+                    code = MATERIALIZER.materialize(contract, MATERIALIZER.HANDLE, str(output))
+                self._assert_failure(output, code, "FAIL", "RUNTIME_IDENTITY_MISMATCH", "AUTHORITY")
+                self.assertNotIn(".mor-custody-record-v1.json", loaded_paths)
+                self.assertEqual(events, expected_events)
 
     def test_constructor_digest_is_checked_before_environment_lookup(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -444,9 +541,14 @@ class TokenizerMaterializationTests(unittest.TestCase):
             weight.write_bytes(b"")
             output = root / "result.json"
             fake_stat = types.SimpleNamespace(st_mode=stat.S_IFREG | stat.S_IRUSR, st_size=identity["weight"]["bytes"])
+            real_lstat = MATERIALIZER.os.lstat
+            def weight_lstat(path, *args, **kwargs):
+                if Path(path) == weight:
+                    return fake_stat
+                return real_lstat(path, *args, **kwargs)
             with mock.patch.object(MATERIALIZER.sys, "orig_argv", ["python3"]), \
                  mock.patch.dict(os.environ, {MATERIALIZER.ENV: str(root)}, clear=True), \
-                 mock.patch.object(MATERIALIZER.os, "lstat", return_value=fake_stat) as observed:
+                 mock.patch.object(MATERIALIZER.os, "lstat", side_effect=weight_lstat) as observed:
                 code = MATERIALIZER.materialize(
                     str(ROOT / "specs/data/m4_tokenizer_materialization_request_v1.json"),
                     MATERIALIZER.HANDLE,
