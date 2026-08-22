@@ -893,11 +893,46 @@ class TokenizerMaterializationTests(unittest.TestCase):
         self.assertEqual(hashlib.sha256(marker.read_bytes()).hexdigest(), marker_contract["sha256"])
         self.assertEqual(smoke["expected_exit_code"], 0)
         self.assertEqual(smoke["expected_stage_files"], [])
+        self.assertTrue(smoke["required_after_no_custody_test_wrapper"])
+        self.assertEqual(contract["failure_mapping"]["test_0"], "PROCEED_TO_CUSTODY_FREE_MOUNT_SMOKE")
+        self.assertEqual(
+            contract["failure_mapping"]["mount_smoke_0_empty_stage"],
+            "PROCEED_TO_SINGLE_MATERIALIZATION_RELEASE_CHECK",
+        )
         self.assertEqual(
             set(smoke["negative_topology_cases"]),
             {"absent_marker", "nested_output_before_repository", "nonempty_stage_after_smoke"},
         )
         self.assertTrue(all(value == "RUNTIME_IDENTITY_MISMATCH_NO_CUSTODY_NO_CONSUMPTION_STOP_NO_RETRY" for value in smoke["negative_topology_cases"].values()))
+        realizations = smoke["production_realizations"]
+        self.assertEqual(realizations["absent_marker"]["expected_engine_exit"], 125)
+        self.assertEqual(
+            realizations["nested_output_before_repository"]["command_delta"],
+            "SWAP_ONLY_REPOSITORY_AND_NESTED_OUTPUT_MOUNT_PAIRS",
+        )
+        self.assertEqual(realizations["nested_output_before_repository"]["expected_engine_exit"], "OBSERVE_EXACT_ANY")
+        self.assertEqual(realizations["nonempty_stage_after_smoke"]["expected_engine_exit"], 0)
+        self.assertEqual(realizations["nonempty_stage_after_smoke"]["fixture"]["name"], "unexpected-after-smoke.txt")
+        runner_contract = contract["topology_smoke_matrix_runner"]
+        runner = ROOT / runner_contract["path"]
+        self.assertEqual(hashlib.sha256(runner.read_bytes()).hexdigest(), runner_contract["sha256"])
+        self.assertEqual(runner_contract["git_mode"], "100755")
+        runner_text = runner.read_text()
+        for test_id in (
+            "test_mount_smoke_positive_repository_then_nested_output",
+            "mount_smoke_negative_absent_marker_engine_125",
+            "test_mount_smoke_negative_nested_output_before_repository",
+            "test_mount_smoke_negative_nonempty_stage_after_smoke",
+        ):
+            self.assertIn(test_id, runner_text)
+        self.assertNotIn("diagnostics/m4_tokenizer_materialization.py", runner_text)
+        self.assertNotIn("/run/mor-custody", runner_text)
+        self.assertFalse(runner_contract["custody_environment"])
+        self.assertFalse(runner_contract["custody_mount"])
+        self.assertFalse(runner_contract["materializer_started"])
+        self.assertFalse(runner_contract["model_tokenizer_access"])
+        self.assertFalse(runner_contract["operation_consumed"])
+        self.assertFalse(runner_contract["retry"])
         self.assertFalse(contract["materialization_launch"]["retry"])
 
     def test_strict_json_rejects_duplicate_and_noncanonical_bytes(self):

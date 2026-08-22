@@ -97,3 +97,10 @@
 - Preserved repository-read-only then nested-output-writable mount order; the empty private stage bind hides the marker and the allowed published pair remains unchanged `[PROPOSED]`.
 - Added the exact mandatory custody-free `/bin/true` mount-smoke gate using the pinned image, security/network controls, identical repository/output mounts and order, exit-zero plus empty-stage requirements, and deterministic no-consumption failure mapping `[PROPOSED]`.
 - Bound the marker and all resulting OCI/test/package raw identities, added static negative absent-marker/reordered-mount/nonempty-stage coverage, and changed no materializer science, custody construction, tokenizer construction, runtime/image identity, operation state, or held execution authority.
+
+## v1.5.1 — Wrapper-first sequence and topology-negative realizations
+
+- Reconciled every active gate-order binding to the durable wrapper-before-mount-smoke sequence: verification, exact no-custody wrapper, fail-closed stop, custody-free mount smoke, fail-closed exit/stage stop, then the separately released single-materialization check `[PROPOSED]`.
+- Added one exact Git mode `100755` custody-free production smoke-matrix runner realizing the positive topology, banked absent-marker engine-125 path, reversed mount order, and post-smoke nonempty-stage fixture with public-only evidence and deterministic cleanup `[PROPOSED]`.
+- Bound exact case IDs, commands or sole command deltas, observed/expected engine exits, stage listings, terminal mappings, and zero custody/model/tokenizer/materializer access or consumption assertions `[PROPOSED]`.
+- Preserved the banked marker, nine-entry package basis, repository-read-only then nested-writable positive mount order, hidden-marker semantics, failure mapping, no retry, scientific/runtime identities, and UNCONSUMED state.
