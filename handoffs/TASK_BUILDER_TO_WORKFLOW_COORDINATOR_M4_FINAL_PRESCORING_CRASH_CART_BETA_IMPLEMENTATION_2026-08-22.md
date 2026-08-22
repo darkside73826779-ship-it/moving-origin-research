@@ -4,6 +4,8 @@ Terminal state: **COMPLETE — IMPLEMENTATION ONLY — PENDING PERSISTENT-CRITIC
 
 The beta package adds the cleared gate/schema/launch artifacts and a custody-free, non-executing seam for exact warmup bytes, scheduling, public fixtures, staged terminal evidence, HELD-only laws, replica consumer stop, and no-start wrapper behavior.
 
+BF1–BF4 correction adds the injected synthetic lifecycle/rollback/cleanup seam, full warmup controls and reset/RNG boundary, 64-fixture inventory, stricter staged terminal semantics, and complete `.gitattributes` inventory coverage.
+
 Focused validation passed 8/8. The wrapper is deliberately `RUN_AUTHORITY_ABSENT` and starts no runtime. No model/tokenizer/OCI/WSL2/gofast workload, custody/protected input access, scoring, science, merge, publication, or gate action occurred.
 
 Public-safety preflight findings for the exact implementation/packaging range are explicitly classified `CLASSIFIED_CLEAR_FOR_REVIEW_PACKAGING` by `handoffs/WORKFLOW_COORDINATOR_M4_CRASH_CART_BETA_PREFLIGHT_CLASSIFICATION_2026-08-22.md` at `82416ec6bd40dbc4c2755d6ebb42ea5dbd664721`; no finding was suppressed.

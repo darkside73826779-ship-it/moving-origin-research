@@ -13,3 +13,5 @@ Implementation: `738878ab3618d6058f0725caa7e3f0f0388cb59f`.
 | No execution authority | `execution_guard`, wrapper | wrapper exits 2 before runtime access |
 
 Focused custody-free result: `python -I tests/run_m4_final_prescoring_crash_cart_tests.py` — 8/8 PASS. No model, tokenizer, OCI, WSL2, gofast, custody, protected input, scoring, science, or result publication occurred.
+
+BF1–BF4 correction: the injected lifecycle now binds paired warmup barriers, reset, post-clean-barrier RNG insertion, all 64 public fixtures, rollback boundary, and cleanup; `validate_terminal` rejects invalid stage/failure pairings and fabricated/incomplete staged evidence; `.gitattributes` is included in the return inventory.
