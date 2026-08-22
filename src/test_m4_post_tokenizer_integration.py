@@ -7,11 +7,15 @@ import threading
 import unittest
 from copy import deepcopy
 from pathlib import Path
+from unittest.mock import patch
 
 from src.m4_post_tokenizer_integration import (
-    AdapterFactory, CandidateAdapter, FanoutCoordinator, IntegrationError,
+    AdapterFactory, CandidateAdapter, ControlAdapter, FanoutCoordinator, IntegrationError,
     PeerAdapter, PrivateTokenView, encode_private_view, held_law_projection,
     realize_launch_command, sha256_bytes, validate_laws, validate_pair_identity, validate_state,
+    SyntheticFixtureDispatcher,
+    LAW_ALLOWED_FAILURES, LAW_FAILURE_EVIDENCE, LAW_METRIC_SCHEMAS,
+    LAW_NOT_RUN_EVIDENCE, LAW_REQUIRED_EVIDENCE,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -34,12 +38,21 @@ def thaw(value):
 
 
 class SpyBackend:
-    def __init__(self, session="candidate-session-v1", behavior=None):
+    def __init__(self, session="candidate-session-v1", behavior=None, restore_behavior="exact"):
         self.session, self.behavior, self.calls = session, behavior or {}, []
-        self.real_state = {"generation": 0, "payload": []}
+        self.restore_behavior = restore_behavior
+        self.real_state = {"generation": 0, "payload": [], "live": True}
 
     def capture_state(self): return deepcopy(self.real_state)
-    def restore_state(self, snapshot): self.real_state = deepcopy(snapshot)
+    def restore_state(self, snapshot):
+        if self.restore_behavior == "throw": raise RuntimeError("restore")
+        if self.restore_behavior == "noop": return
+        if self.restore_behavior == "partial": self.real_state["generation"] = snapshot["generation"]; return
+        if self.restore_behavior == "wrong": self.real_state = {"generation": -1, "payload": ["wrong"], "live": True}; return
+        self.real_state = deepcopy(snapshot)
+    def session_identity(self): return self.session
+    def dispose(self): self.real_state["live"] = False
+    def is_live(self): return self.real_state["live"]
 
     def _receipt(self, operation, prior, request=None):
         self.calls.append(operation)
@@ -510,15 +523,185 @@ class RemediationProductionTests(unittest.TestCase):
 
     def test_law_all_status_semantics_and_field_mutations(self):
         held=thaw(held_law_projection())
-        for status in ("PASS","FAIL","NOT_RUN"):
-            rows=deepcopy(held);row=rows[0];row["status"]=status;row["held_reason"]=None
-            if status=="PASS": row.update(claim_made=True,evidence=["candidate_manifest","peer_manifest","channel_redaction_receipt","ground_truth_receipt","candidate_auroc","candidate_ece","paired_peer_margin","empty_permuted_shuffled_rows"])
-            elif status=="FAIL": row.update(evidence=["failure-receipt"],failure_code="L7_CALIBRATION_FAIL")
-            else: row.update(evidence=["instrument-receipt"],failure_code="INSTRUMENT_FAILURE:synthetic")
-            validate_laws(rows)
-            for field,value in (("meaning_source","wrong"),("claim_made",not row["claim_made"]),("evidence",[]),("failure_code","WRONG"),("held_reason","WRONG")):
-                bad=deepcopy(rows);bad[0][field]=value
-                with self.subTest(status=status,field=field),self.assertRaisesRegex(IntegrationError,"LAW_PROJECTION_INVALID"): validate_laws(bad)
+        for index,base in enumerate(held):
+            law=base["law_id"]
+            for status in ("HELD","PASS","FAIL","NOT_RUN"):
+                rows=deepcopy(held);row=rows[index]
+                if status=="PASS":
+                    metrics={key:(True if kind is bool else 3 if kind is int else 0.5) for key,kind in LAW_METRIC_SCHEMAS[law].items()}
+                    row.update(status=status,claim_made=True,evidence=list(LAW_REQUIRED_EVIDENCE[law]),metrics=metrics,failure_code=None,held_reason=None)
+                elif status=="FAIL":
+                    row.update(status=status,claim_made=False,evidence=list(LAW_FAILURE_EVIDENCE[law]),metrics={},
+                               failure_code=sorted(LAW_ALLOWED_FAILURES[law])[0],held_reason=None)
+                elif status=="NOT_RUN":
+                    row.update(status=status,claim_made=False,evidence=list(LAW_NOT_RUN_EVIDENCE[law]),metrics={},
+                               failure_code=f"INSTRUMENT_FAILURE:{law}",held_reason=None)
+                validate_laws(rows)
+                mutations={"meaning_source":"wrong","claim_made":not row["claim_made"],"evidence":["wrong"],
+                           "metrics":{"extra":1},"failure_code":"WRONG","held_reason":"WRONG","status":"UNKNOWN"}
+                for field,value in mutations.items():
+                    bad=deepcopy(rows);bad[index][field]=value
+                    with self.subTest(law=law,status=status,field=field),self.assertRaises(IntegrationError):validate_laws(bad)
+                for field in tuple(row):
+                    bad=deepcopy(rows);bad[index].pop(field)
+                    with self.subTest(law=law,status=status,missing=field),self.assertRaises(IntegrationError):validate_laws(bad)
+                bad=deepcopy(rows);bad[index]["extra"]=1
+                with self.subTest(law=law,status=status,extra=True),self.assertRaisesRegex(IntegrationError,"LAW_PROJECTION_INVALID"):validate_laws(bad)
+                if status=="PASS":
+                    for metric,kind in LAW_METRIC_SCHEMAS[law].items():
+                        bad=deepcopy(rows);bad[index]["metrics"][metric]=False if kind is not bool else 1
+                        with self.subTest(law=law,metric=metric),self.assertRaisesRegex(IntegrationError,"LAW_PROJECTION_INVALID"):validate_laws(bad)
+                        if kind is float:
+                            bad=deepcopy(rows);bad[index]["metrics"][metric]=float("nan")
+                            with self.subTest(law=law,metric=metric,nonfinite=True),self.assertRaisesRegex(IntegrationError,"LAW_PROJECTION_INVALID"):validate_laws(bad)
+
+
+class RereviewRemediationTests(unittest.TestCase):
+    @staticmethod
+    def _pair_specs(candidate_ctor, peer_ctor, candidate_session="candidate-session-v1", peer_session="peer-session-v1"):
+        cman,pman=manifest("candidate"),manifest("peer")
+        def cfg(name,man):return {"backend_name":name,"implementation_sha256":"a"*64,"dependency_sha256":"b"*64,
+            "model_sha256":man["checkpoint_sha256"],"tokenizer_sha256":man["tokenizer_sha256"],
+            "adapter_instance_id":name,"production_path":True}
+        ccfg,pcfg=cfg("candidate-real",cman),cfg("peer-real",pman)
+        registry={"candidate-real":(candidate_ctor,"a"*64,"b"*64,sha256_bytes(canonical(ccfg))),
+                  "peer-real":(peer_ctor,"a"*64,"b"*64,sha256_bytes(canonical(pcfg)))}
+        return AdapterFactory(registry),cman,pman,ccfg,pcfg
+
+    def test_pair_prevalidation_second_half_cleanup_session_binding_and_specific_codes(self):
+        made=[]
+        def ctor(session):
+            def build():
+                backend=SpyBackend(session);made.append(backend);return backend
+            return build
+        factory,cman,pman,ccfg,pcfg=self._pair_specs(ctor("candidate-session-v1"),ctor("peer-session-v1"))
+        bad=deepcopy(pcfg);bad["dependency_sha256"]="c"*64
+        with self.assertRaisesRegex(IntegrationError,"REGISTRY_IDENTITY_MISMATCH"):
+            factory.create_pair(canonical(cman),canonical(pman),canonical(ccfg),canonical(bad),provider)
+        self.assertEqual(made,[])
+        badman=deepcopy(pman);badman["checkpoint_sha256"]="0"*64
+        badcfg={**pcfg,"model_sha256":"0"*64}
+        pair_factory,_,_,_,_=self._pair_specs(ctor("candidate-session-v1"),ctor("peer-session-v1"))
+        pair_factory._registry["peer-real"]=(ctor("peer-session-v1"),"a"*64,"b"*64,sha256_bytes(canonical(badcfg)))
+        with self.assertRaisesRegex(IntegrationError,"PAIR_IDENTITY_MISMATCH"):
+            pair_factory.create_pair(canonical(cman),canonical(badman),canonical(ccfg),canonical(badcfg),provider)
+        self.assertEqual(made,[])
+        role=deepcopy(pman);role["role"]="candidate"
+        with self.assertRaisesRegex(IntegrationError,"ROLE_ARM_MISMATCH"):
+            factory.create_pair(canonical(cman),canonical(role),canonical(ccfg),canonical(pcfg),provider)
+        channel=deepcopy(pman);channel["channel_policy"]="FULL_AUTHORIZED"
+        with self.assertRaisesRegex(IntegrationError,"PEER_CHANNEL_BYPASS"):
+            factory.create_pair(canonical(cman),canonical(channel),canonical(ccfg),canonical(pcfg),provider)
+        made.clear()
+        def peer_raises(): raise RuntimeError("constructor")
+        factory,_,_,ccfg,pcfg=self._pair_specs(ctor("candidate-session-v1"),peer_raises)
+        with self.assertRaisesRegex(RuntimeError,"constructor"):
+            factory.create_pair(canonical(cman),canonical(pman),canonical(ccfg),canonical(pcfg),provider)
+        self.assertEqual(len(made),1);self.assertFalse(made[0].is_live())
+        made.clear()
+        factory,_,_,ccfg,pcfg=self._pair_specs(ctor("candidate-session-v1"),ctor("wrong-session"))
+        with self.assertRaisesRegex(IntegrationError,"BACKEND_SESSION_MISMATCH"):
+            factory.create_pair(canonical(cman),canonical(pman),canonical(ccfg),canonical(pcfg),provider)
+        self.assertEqual(len(made),2);self.assertTrue(all(not backend.is_live() for backend in made))
+
+    def test_state_machine_cross_field_mutations_and_public_prestate_gate(self):
+        base=json.loads(adapter()[0].durable_state())
+        mutations=[]
+        for change in ({"lifecycle_state":"UNKNOWN"},{"closed":True},{"episode_id":"x"},{"episode_complete":True},
+                       {"reset_ordinal":1},{"next_request_ordinal":1},{"snapshot_ordinal":1},{"last_response_sha256":"a"*64}):
+            mutations.append({**base,**change})
+        ready_state={**base,"lifecycle_state":"EPISODE_READY","episode_id":"x","reset_ordinal":1}
+        for change in ({"episode_id":None},{"episode_complete":True},{"reset_ordinal":0},{"next_request_ordinal":1},{"last_response_sha256":"a"*64}):
+            mutations.append({**ready_state,**change})
+        stepped={**ready_state,"lifecycle_state":"STEPPED","next_request_ordinal":1,"last_response_sha256":"a"*64}
+        for change in ({"next_request_ordinal":0},{"last_response_sha256":None},{"last_response_sha256":"bad"}):
+            mutations.append({**stepped,**change})
+        mutations.extend(({**base,"lifecycle_state":"CLOSED","closed":False},
+                          {**base,"lifecycle_state":"CLOSED","closed":True,"episode_complete":True}))
+        for ordinal,state in enumerate(mutations):
+            with self.subTest(ordinal=ordinal),self.assertRaisesRegex(IntegrationError,"STATE_SEMANTIC_FAILURE"):validate_state(state)
+        fixtures=[]
+        a,b=adapter();fixtures.append((a,b,lambda x:x.describe(request("d"))))
+        a,b=adapter();a.describe(request("d"));fixtures.append((a,b,lambda x:x.initialize(request("i"))))
+        a,b=initialized();fixtures.append((a,b,lambda x:x.reset_episode(request("r",episode_id="x",reset_ordinal=1))))
+        a,b=ready();fixtures.append((a,b,lambda x:x.step(request("s",episode_id="episode-a",request_ordinal=0,context_length=1024,is_terminal_request=False),PrivateTokenView(1024,encode_private_view(provider(1024))))))
+        a,b=ready();a.step(request("s",episode_id="episode-a",request_ordinal=0,context_length=1024,is_terminal_request=False),PrivateTokenView(1024,encode_private_view(provider(1024))));fixtures.append((a,b,lambda x:x.snapshot(request("p",snapshot_ordinal=0))))
+        for a,b,invoke in fixtures:
+            a._state["closed"]=True;before=len(b.calls)
+            with self.assertRaisesRegex(IntegrationError,"STATE_SEMANTIC_FAILURE"):invoke(a)
+            self.assertEqual(len(b.calls),before)
+        a,_=adapter();bad=a.capture();bad[0]["closed"]=True
+        with self.assertRaisesRegex(IntegrationError,"STATE_SEMANTIC_FAILURE"):a.restore(bad)
+        a,b=adapter();before=(a.durable_state(),b.capture_state())
+        def reject_post(state):
+            validate_state(state)
+            if state["lifecycle_state"]=="DESCRIBED":raise IntegrationError("STATE_SEMANTIC_FAILURE")
+        with patch("src.m4_post_tokenizer_integration.validate_state",side_effect=reject_post):
+            with self.assertRaisesRegex(IntegrationError,"STATE_SEMANTIC_FAILURE"):a.describe(request("post-kill"))
+        self.assertEqual((a.durable_state(),b.capture_state()),before)
+
+    def test_rollback_identity_rejects_noop_partial_wrong_and_throwing_restorers_all_routes(self):
+        modes=("noop","partial","wrong","throw")
+        def raised(_receipt): raise RuntimeError("after-mutation")
+        for mode in modes:
+            routes=[]
+            cb=SpyBackend("candidate-session-v1",{"step":lambda r:{**r,"extra":1}},mode);c,_=ready("candidate",cb);p,_=ready("peer")
+            routes.append(lambda c=c,p=p:FanoutCoordinator(provider).step(sanitized_rows(),stop_row(),1024,FanoutTests()._req(),c,p))
+            cb=SpyBackend("candidate-session-v1",{"step":raised},mode);c,_=ready("candidate",cb);p,_=ready("peer")
+            routes.append(lambda c=c,p=p:FanoutCoordinator(provider).step(sanitized_rows(),stop_row(),1024,FanoutTests()._req(),c,p))
+            c,_=ready("candidate");pb=SpyBackend("peer-session-v1",{"step":lambda r:{**r,"extra":1}},mode);p,_=ready("peer",pb)
+            routes.append(lambda c=c,p=p:FanoutCoordinator(provider).step(sanitized_rows(),stop_row(),1024,FanoutTests()._req(),c,p))
+            cb=SpyBackend("candidate-session-v1",restore_behavior=mode);c,_=ready("candidate",cb);p,_=ready("peer")
+            routes.append(lambda c=c,p=p:FanoutCoordinator(provider,post_return_probe=lambda _c,_p:True).step(sanitized_rows(),stop_row(),1024,FanoutTests()._req(),c,p))
+            for ordinal,route in enumerate(routes):
+                with self.subTest(mode=mode,route=ordinal),self.assertRaisesRegex(IntegrationError,"BACKEND_ROLLBACK_FAILURE"):route()
+
+    def test_exact_fixture_dispatch_and_all_negative_boundaries(self):
+        fixture=json.loads((ROOT/"specs/data/m4_post_tokenizer_synthetic_integration_fixture_v1.json").read_text())
+        c,p=RemediationProductionTests()._factory_pair()
+        for a in (c,p):a.describe(request("d"));a.initialize(request("i"));a.reset_episode(request("r",episode_id="synthetic-episode-a",reset_ordinal=1))
+        ci,_=initialized();cr,_=ready("peer")
+        control_manifest=manifest("candidate");control_manifest.update(role="control",scientific_arm="empty",runtime_instance_id="control-session-v1",
+            access_policy_id="control-empty-v1",channel_policy="EMPTY_CONTROL",redaction_receipt_sha256="0"*64)
+        cs=ControlAdapter("control","empty",control_manifest,{"adapter_instance_id":"control-adapter"},provider,SpyBackend("control-session-v1"))
+        cs.describe(request("cd"));cs.initialize(request("ci"));cs.reset_episode(request("cr",episode_id="episode-a",reset_ordinal=1))
+        cs.step(request("cs",episode_id="episode-a",request_ordinal=0,context_length=1024,is_terminal_request=False),PrivateTokenView(1024,encode_private_view(provider(1024))))
+        dispatcher=SyntheticFixtureDispatcher(FanoutCoordinator(provider))
+        trace=dispatcher.dispatch(fixture,sanitized_rows(),stop_row(),c,p,{"INITIALIZED":ci,"EPISODE_READY":cr,"STEPPED":cs},
+                                  lambda:{"candidate":c.backend.calls.count("step"),"peer":p.backend.calls.count("step")})
+        self.assertEqual(thaw(trace["sequence"]),fixture["sequence"]);self.assertEqual(thaw(trace["expected"]),fixture["expected"])
+        self.assertEqual([row["role"] for row in trace["close_call_trace"]],["candidate","peer","control"])
+        realized=[]
+        for row in fixture["negative_cases"]:
+            ca,pa,cb,pb=FanoutTests()._pair();rows=sanitized_rows();stop=stop_row();fan=FanoutCoordinator(provider);req=FanoutTests()._req()
+            if row["id"]=="tampered_private_rederivation": fan=FanoutCoordinator(lambda key:([1]*key if key!="stop" else provider(key)));action=lambda:fan.step(rows,stop,1024,req,ca,pa)
+            elif row["id"]=="duplicate_or_skipped_ordinal":
+                ca.step(req,PrivateTokenView(1024,encode_private_view(provider(1024))));action=lambda:ca.step(req,PrivateTokenView(1024,encode_private_view(provider(1024))))
+            elif row["id"]=="missing_sanitized_context": action=lambda:fan.step(rows[:2],stop,1024,req,ca,pa)
+            elif row["id"]=="duplicate_sanitized_context": action=lambda:fan.step([rows[0],rows[0],rows[2]],stop,1024,req,ca,pa)
+            elif row["id"]=="reordered_sanitized_context": action=lambda:fan.step([rows[1],rows[0],rows[2]],stop,1024,req,ca,pa)
+            elif row["id"]=="wrong_sanitized_length": bad=deepcopy(rows);bad[0]["length"]-=1;action=lambda bad=bad:fan.step(bad,stop,1024,req,ca,pa)
+            elif row["id"]=="wrong_sanitized_digest": bad=deepcopy(rows);bad[0]["sha256"]="0"*64;action=lambda bad=bad:fan.step(bad,stop,1024,req,ca,pa)
+            elif row["id"]=="wrong_stop_digest": bad=deepcopy(stop);bad["sha256"]="0"*64;action=lambda bad=bad:fan.step(rows,bad,1024,req,ca,pa)
+            elif row["id"]=="created_closed_true": bad=json.loads(adapter()[0].durable_state());bad["closed"]=True;action=lambda bad=bad:validate_state(bad)
+            elif row["id"] in ("duplicate_l7","missing_l18","reordered_laws"):
+                laws=[dict(x) for x in held_law_projection()];bad=laws+[laws[0]] if row["id"]=="duplicate_l7" else laws[:-1] if row["id"]=="missing_l18" else [laws[1],laws[0],*laws[2:]];action=lambda bad=bad:validate_laws(bad)
+            else:
+                closed,_=initialized();closed.close(request("close"));action=lambda:closed.describe(request("again"))
+            identity=lambda:sha256_bytes(canonical({"candidate":json.loads(ca.durable_state()),"peer":json.loads(pa.durable_state()),"cb":cb.capture_state(),"pb":pb.capture_state()}))
+            realized.append(thaw(dispatcher.realize_negative(row,action,lambda:len(cb.calls)+len(pb.calls),identity)))
+        self.assertEqual([item["id"] for item in realized],[row["id"] for row in fixture["negative_cases"]])
+
+    def test_frozen_phase_one_evidence_prevents_nondeterministic_provider_reread(self):
+        counts={1024:0,"stop":0}
+        def nondeterministic(key):
+            if key in counts:counts[key]+=1
+            if key==1024 and counts[key]>1:raise AssertionError("private prompt reread")
+            if key=="stop" and counts[key]>1:raise AssertionError("private stop reread")
+            return provider(key)
+        c,p,_,_=FanoutTests()._pair();receipt=FanoutCoordinator(nondeterministic).step(sanitized_rows(),stop_row(),1024,FanoutTests()._req(),c,p)
+        self.assertEqual(counts,{1024:1,"stop":1});self.assertEqual(receipt["length"],1024)
+        self.assertEqual(receipt["expected_sha256"],sanitized_rows()[0]["expected_sha256"])
 
 
 if __name__ == "__main__":

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import struct
 import threading
 from pathlib import Path
@@ -55,6 +56,15 @@ LAW_ALLOWED_FAILURES = {
     "L14": frozenset(("L14_VISIBILITY_FAIL","L14_MEMORY_COUPLING_FAIL","L14_THICK_PRESENT_FAIL")),
     "L18": frozenset(("L18_ARM_MISSING","L18_CONTROL_BEHAVIOR_FAIL","L18_ORACLE_FAIL","L18_SEED_REQUIREMENT_FAIL")),
 }
+LAW_METRIC_SCHEMAS = {
+    "L7": {"candidate_auroc": float, "candidate_ece": float, "paired_peer_margin": float},
+    "L8": {"regulation_error": float, "dose_response_statistic": float, "specificity_statistic": float},
+    "L10": {"drift_primary_metric": float, "clean_secondary_metric": float, "abstention_rate": float},
+    "L14": {"self_model_visibility": float, "memory_coupling": float, "thick_present_coupling": float},
+    "L18": {"governed_seed_count": int, "arms_present": int, "controls_passed": bool},
+}
+LAW_FAILURE_EVIDENCE = {law: (f"{law.lower()}_failure_receipt",) for law in LAW_ORDER}
+LAW_NOT_RUN_EVIDENCE = {law: (f"{law.lower()}_instrument_failure_receipt",) for law in LAW_ORDER}
 REGISTERED_BACKEND_FAIL_CODES = frozenset(("SYNTHETIC_REJECTED",))
 HEX64 = frozenset("0123456789abcdef")
 COMMON_REQUEST_FIELDS = ("operation_id", "caller_session_id", "caller_thread_id")
@@ -120,6 +130,17 @@ class PrivateTokenView:
         return sha256_bytes(self.bytes_view)
 
 
+@dataclass(frozen=True)
+class VerifiedFanoutInput:
+    context_length: int
+    length: int
+    expected_sha256: str
+    stop_length: int
+    stop_sha256: str
+    candidate_view: PrivateTokenView
+    peer_view: PrivateTokenView
+
+
 def encode_private_view(items: Sequence[int]) -> bytes:
     if len(items) > 0xFFFFFFFF:
         raise IntegrationError("PRIVATE_TOKEN_LENGTH_INVALID")
@@ -134,6 +155,9 @@ def encode_private_view(items: Sequence[int]) -> bytes:
 class RealBackendProtocol(Protocol):
     def capture_state(self) -> Any: ...
     def restore_state(self, snapshot: Any) -> None: ...
+    def session_identity(self) -> str: ...
+    def dispose(self) -> None: ...
+    def is_live(self) -> bool: ...
     def describe(self, manifest: Mapping[str, Any], config: Mapping[str, Any], request: Mapping[str, Any]) -> Mapping[str, Any]: ...
     def initialize(self, description: Mapping[str, Any], session: Mapping[str, Any], request: Mapping[str, Any]) -> Mapping[str, Any]: ...
     def reset_episode(self, prior: str, request: Mapping[str, Any]) -> Mapping[str, Any]: ...
@@ -152,6 +176,12 @@ class ModelAdapterProtocol(Protocol):
 
 
 def validate_pair_identity(candidate: Mapping[str, Any], peer: Mapping[str, Any]) -> None:
+    if candidate.get("role") != "candidate" or candidate.get("scientific_arm") != "candidate":
+        raise IntegrationError("ROLE_ARM_MISMATCH")
+    if peer.get("role") != "peer" or peer.get("scientific_arm") != "peer":
+        raise IntegrationError("ROLE_ARM_MISMATCH")
+    if peer.get("channel_policy") not in ("REDACTED", "BEHAVIOR_ONLY", "OBSERVABLE_ONLY"):
+        raise IntegrationError("PEER_CHANNEL_BYPASS")
     for field in PAIR_EQUALITY_FIELDS:
         if field not in candidate or field not in peer or candidate[field] != peer[field]:
             raise IntegrationError("PAIR_IDENTITY_MISMATCH")
@@ -162,12 +192,6 @@ def validate_pair_identity(candidate: Mapping[str, Any], peer: Mapping[str, Any]
     for field in PAIR_DIFFERENCE_FIELDS:
         if field not in candidate or field not in peer or candidate[field] == peer[field]:
             raise IntegrationError("PAIR_ISOLATION_FIELD_NOT_DISTINCT")
-    if candidate.get("role") != "candidate" or candidate.get("scientific_arm") != "candidate":
-        raise IntegrationError("ROLE_ARM_MISMATCH")
-    if peer.get("role") != "peer" or peer.get("scientific_arm") != "peer":
-        raise IntegrationError("ROLE_ARM_MISMATCH")
-    if peer.get("channel_policy") not in ("REDACTED", "BEHAVIOR_ONLY", "OBSERVABLE_ONLY"):
-        raise IntegrationError("PEER_CHANNEL_BYPASS")
 
 
 def _initial_state() -> dict[str, Any]:
@@ -185,12 +209,27 @@ def validate_state(state: Mapping[str, Any]) -> None:
     if not isinstance(state, Mapping) or set(state) != expected:
         raise IntegrationError("STATE_SEMANTIC_FAILURE")
     lifecycle = state.get("lifecycle_state")
-    if (type(state.get("closed")) is not bool or type(state.get("episode_complete")) is not bool or
-            any(type(state.get(k)) is not int or state[k] < 0 for k in ("reset_ordinal","next_request_ordinal","snapshot_ordinal")) or
-            state["closed"] is not (lifecycle == "CLOSED") or
-            lifecycle in ("CREATED","DESCRIBED","INITIALIZED") and state.get("episode_id") is not None or
-            lifecycle in ("EPISODE_READY","STEPPED") and (type(state.get("episode_id")) is not str or not state["episode_id"])):
+    if lifecycle not in ("CREATED","DESCRIBED","INITIALIZED","EPISODE_READY","STEPPED","CLOSED"):
         raise IntegrationError("STATE_SEMANTIC_FAILURE")
+    if (type(state.get("closed")) is not bool or type(state.get("episode_complete")) is not bool or
+            any(type(state.get(k)) is not int or state[k] < 0 for k in ("reset_ordinal","next_request_ordinal","snapshot_ordinal"))):
+        raise IntegrationError("STATE_SEMANTIC_FAILURE")
+    early = (state["episode_id"] is None and state["episode_complete"] is False and state["reset_ordinal"] == 0 and
+             state["next_request_ordinal"] == 0 and state["snapshot_ordinal"] == 0 and state["last_response_sha256"] is None)
+    ready = (type(state["episode_id"]) is str and bool(state["episode_id"]) and state["episode_complete"] is False and
+             state["reset_ordinal"] >= 1 and state["next_request_ordinal"] == 0 and state["last_response_sha256"] is None)
+    stepped = (type(state["episode_id"]) is str and bool(state["episode_id"]) and state["reset_ordinal"] >= 1 and
+               state["next_request_ordinal"] >= 1 and type(state["last_response_sha256"]) is str and
+               len(state["last_response_sha256"]) == 64 and not (set(state["last_response_sha256"]) - HEX64))
+    valid = {
+        "CREATED": early and not state["closed"],
+        "DESCRIBED": early and not state["closed"],
+        "INITIALIZED": early and not state["closed"],
+        "EPISODE_READY": ready and not state["closed"],
+        "STEPPED": stepped and not state["closed"],
+        "CLOSED": state["closed"] and (early or ready or stepped),
+    }[lifecycle]
+    if not valid: raise IntegrationError("STATE_SEMANTIC_FAILURE")
 
 
 class BaseAdapter:
@@ -209,30 +248,47 @@ class BaseAdapter:
         self._lock = threading.Lock()
         self._active_identity: str | None = None
         self._active_operation_id: str | None = None
+        try:
+            if backend.session_identity() != self.session_id: raise IntegrationError("BACKEND_SESSION_MISMATCH")
+        except IntegrationError: raise
+        except Exception as exc: raise IntegrationError("BACKEND_SESSION_MISMATCH") from exc
 
     def durable_state(self) -> bytes:
+        validate_state(self._state)
         return canonical_bytes(self._state)
 
     def restore(self, snapshot: tuple[dict[str, Any], str, set[str]]) -> None:
-        self._state, self._backend_state, self._used_episode_ids = deepcopy(snapshot)
+        state, backend_state, used = deepcopy(snapshot)
+        validate_state(state)
+        if type(backend_state) is not str or len(backend_state) != 64 or set(backend_state) - HEX64 or type(used) is not set:
+            raise IntegrationError("STATE_SEMANTIC_FAILURE")
+        self._state, self._backend_state, self._used_episode_ids = state, backend_state, used
+        validate_state(self._state)
 
     def capture(self) -> tuple[dict[str, Any], str, set[str]]:
+        validate_state(self._state)
         return deepcopy((self._state, self._backend_state, self._used_episode_ids))
 
-    def capture_transaction(self) -> tuple[tuple[dict[str, Any], str, set[str]], Any]:
+    def capture_transaction(self) -> tuple[tuple[dict[str, Any], str, set[str]], Any, str]:
         try:
             backend = self.backend.capture_state()
+            identity = sha256_bytes(canonical_bytes(backend))
         except Exception as exc:
             raise IntegrationError("BACKEND_TRANSACTION_UNAVAILABLE") from exc
-        return self.capture(), deepcopy(backend)
+        return self.capture(), deepcopy(backend), identity
 
-    def restore_transaction(self, snapshot: tuple[tuple[dict[str, Any], str, set[str]], Any]) -> None:
-        adapter, backend = snapshot
+    def restore_transaction(self, snapshot: tuple[tuple[dict[str, Any], str, set[str]], Any, str]) -> None:
+        adapter, backend, expected_identity = snapshot
         try:
             self.backend.restore_state(deepcopy(backend))
+            actual_identity = sha256_bytes(canonical_bytes(self.backend.capture_state()))
         except Exception as exc:
             raise IntegrationError("BACKEND_ROLLBACK_FAILURE") from exc
+        if actual_identity != expected_identity: raise IntegrationError("BACKEND_ROLLBACK_FAILURE")
         self.restore(adapter)
+
+    def _validate_current(self) -> None:
+        validate_state(self._state)
 
     @staticmethod
     def _nonempty(value: Any) -> bool:
@@ -308,6 +364,12 @@ class BaseAdapter:
         new_state["lifecycle_state"] = result_state
         if mutate:
             mutate(new_state)
+        if method == "step": new_state["last_response_sha256"] = sha256_bytes(canonical_bytes(dict(receipt)))
+        try:
+            validate_state(new_state)
+        except IntegrationError:
+            self.restore_transaction(before)
+            raise
         self._backend_state = str(receipt["result_backend_state_sha256"])
         self._state = new_state
         return frozen(dict(receipt))
@@ -315,6 +377,7 @@ class BaseAdapter:
     def describe(self, request: Mapping[str, Any]) -> Mapping[str, Any]:
         self._enter(request)
         try:
+            self._validate_current()
             self._validate_request("describe", request)
             if self._state["lifecycle_state"] != "CREATED": raise IntegrationError("ADAPTER_LIFECYCLE_VIOLATION")
             return self._call("describe", (self.manifest, self.config, frozen(request)), request, "DESCRIBED")
@@ -323,6 +386,7 @@ class BaseAdapter:
     def initialize(self, request: Mapping[str, Any]) -> Mapping[str, Any]:
         self._enter(request)
         try:
+            self._validate_current()
             self._validate_request("initialize", request)
             if self._state["lifecycle_state"] != "DESCRIBED": raise IntegrationError("ADAPTER_LIFECYCLE_VIOLATION")
             session = frozen({"session_id": self.session_id, "caller_session_id": request.get("caller_session_id")})
@@ -333,6 +397,7 @@ class BaseAdapter:
     def reset_episode(self, request: Mapping[str, Any]) -> Mapping[str, Any]:
         self._enter(request)
         try:
+            self._validate_current()
             self._validate_request("reset_episode", request)
             state = self._state["lifecycle_state"]
             if state == "STEPPED" and not self._state["episode_complete"]: raise IntegrationError("EPISODE_NOT_COMPLETE")
@@ -351,6 +416,7 @@ class BaseAdapter:
     def step(self, request: Mapping[str, Any], tokens: PrivateTokenView) -> Mapping[str, Any]:
         self._enter(request)
         try:
+            self._validate_current()
             self._validate_request("step", request)
             state = self._state["lifecycle_state"]
             if state == "STEPPED" and self._state["episode_complete"]: raise IntegrationError("EPISODE_ALREADY_COMPLETE")
@@ -367,13 +433,13 @@ class BaseAdapter:
             if tokens.sha256 != before_view:
                 self.restore_transaction(before)
                 raise IntegrationError("PRIVATE_VIEW_MUTATED")
-            self._state["last_response_sha256"] = sha256_bytes(canonical_bytes(dict(receipt)))
             return receipt
         finally: self._exit()
 
     def snapshot(self, request: Mapping[str, Any]) -> Mapping[str, Any]:
         self._enter(request)
         try:
+            self._validate_current()
             self._validate_request("snapshot", request)
             if self._state["lifecycle_state"] != "STEPPED": raise IntegrationError("ADAPTER_LIFECYCLE_VIOLATION")
             if request.get("snapshot_ordinal") != self._state["snapshot_ordinal"]: raise IntegrationError("SNAPSHOT_ORDINAL_MISMATCH")
@@ -384,6 +450,7 @@ class BaseAdapter:
     def close(self, request: Mapping[str, Any]) -> Mapping[str, Any]:
         self._enter(request)
         try:
+            self._validate_current()
             self._validate_request("close", request)
             if self._state["lifecycle_state"] not in ("INITIALIZED", "EPISODE_READY", "STEPPED"):
                 raise IntegrationError("ADAPTER_LIFECYCLE_VIOLATION")
@@ -401,8 +468,8 @@ class AdapterFactory:
     def __init__(self, registry: Mapping[str, tuple[Callable[[], RealBackendProtocol], str, str, str]]):
         self._registry = dict(registry)
 
-    def create(self, role: str, scientific_arm: str, manifest_bytes: bytes,
-               backend_config_bytes: bytes, private_token_provider: Callable[[int | str], Sequence[int]]) -> BaseAdapter:
+    def _validate_spec(self, role: str, scientific_arm: str, manifest_bytes: bytes,
+                       backend_config_bytes: bytes) -> tuple[type[BaseAdapter], dict[str, Any], dict[str, Any], Callable[[], RealBackendProtocol]]:
         if role not in ROLE_ARMS or scientific_arm not in ROLE_ARMS[role]: raise IntegrationError("ROLE_ARM_MISMATCH")
         try:
             manifest, config = json.loads(manifest_bytes), json.loads(backend_config_bytes)
@@ -443,17 +510,45 @@ class AdapterFactory:
         if role == "peer" and manifest.get("channel_policy") not in ("REDACTED", "BEHAVIOR_ONLY", "OBSERVABLE_ONLY"):
             raise IntegrationError("PEER_CHANNEL_BYPASS")
         cls = {"candidate": CandidateAdapter, "peer": PeerAdapter, "control": ControlAdapter}[role]
-        return cls(role, scientific_arm, manifest, config, private_token_provider, constructor())
+        return cls, manifest, config, constructor
+
+    @staticmethod
+    def _dispose_verified(backend: RealBackendProtocol) -> None:
+        try:
+            backend.dispose()
+            if backend.is_live(): raise IntegrationError("BACKEND_ROLLBACK_FAILURE")
+        except IntegrationError: raise
+        except Exception as exc: raise IntegrationError("BACKEND_ROLLBACK_FAILURE") from exc
+
+    def _construct(self, spec: tuple[type[BaseAdapter], dict[str, Any], dict[str, Any], Callable[[], RealBackendProtocol]],
+                   role: str, scientific_arm: str,
+                   private_token_provider: Callable[[int | str], Sequence[int]]) -> BaseAdapter:
+        cls, manifest, config, constructor = spec
+        backend = constructor()
+        try:
+            if backend.session_identity() != manifest["runtime_instance_id"]:
+                raise IntegrationError("BACKEND_SESSION_MISMATCH")
+            return cls(role, scientific_arm, manifest, config, private_token_provider, backend)
+        except Exception:
+            self._dispose_verified(backend)
+            raise
+
+    def create(self, role: str, scientific_arm: str, manifest_bytes: bytes,
+               backend_config_bytes: bytes, private_token_provider: Callable[[int | str], Sequence[int]]) -> BaseAdapter:
+        spec = self._validate_spec(role, scientific_arm, manifest_bytes, backend_config_bytes)
+        return self._construct(spec, role, scientific_arm, private_token_provider)
 
     def create_pair(self, candidate_manifest_bytes: bytes, peer_manifest_bytes: bytes,
                     candidate_config_bytes: bytes, peer_config_bytes: bytes,
                     private_token_provider: Callable[[int | str], Sequence[int]]) -> tuple[BaseAdapter, BaseAdapter]:
-        candidate = self.create("candidate", "candidate", candidate_manifest_bytes, candidate_config_bytes, private_token_provider)
-        peer = self.create("peer", "peer", peer_manifest_bytes, peer_config_bytes, private_token_provider)
+        candidate_spec = self._validate_spec("candidate", "candidate", candidate_manifest_bytes, candidate_config_bytes)
+        peer_spec = self._validate_spec("peer", "peer", peer_manifest_bytes, peer_config_bytes)
+        validate_pair_identity(candidate_spec[1], peer_spec[1])
+        candidate = self._construct(candidate_spec, "candidate", "candidate", private_token_provider)
         try:
-            validate_pair_identity(candidate.manifest, peer.manifest)
-        except IntegrationError:
-            # Construction is coupled: never expose one half of an invalid pair.
+            peer = self._construct(peer_spec, "peer", "peer", private_token_provider)
+        except Exception:
+            self._dispose_verified(candidate.backend)
             raise
         return candidate, peer
 
@@ -474,14 +569,20 @@ def validate_laws(rows: Sequence[Mapping[str, Any]]) -> tuple[Mapping[str, Any],
             valid = (row.get("claim_made") is False and row.get("evidence") == [] and row.get("metrics") == {} and
                      row.get("failure_code") is None and row.get("held_reason") == HELD_REASONS[law])
         elif status == "PASS":
+            schema = LAW_METRIC_SCHEMAS[law]
+            metrics = row.get("metrics")
+            metric_valid = (type(metrics) is dict and set(metrics) == set(schema) and
+                            all(type(metrics[key]) is expected for key, expected in schema.items()) and
+                            all((math.isfinite(value) if type(value) is float else value >= 0 if type(value) is int else True)
+                                for value in metrics.values()))
             valid = (row.get("claim_made") is True and type(row.get("evidence")) is list and tuple(row["evidence"]) == LAW_REQUIRED_EVIDENCE[law] and
-                     row.get("failure_code") is None and row.get("held_reason") is None and type(row.get("metrics")) is dict)
+                     row.get("failure_code") is None and row.get("held_reason") is None and metric_valid)
         elif status == "FAIL":
-            valid = (row.get("claim_made") is False and type(row.get("evidence")) is list and bool(row["evidence"]) and
-                     row.get("failure_code") in LAW_ALLOWED_FAILURES[law] and row.get("held_reason") is None and type(row.get("metrics")) is dict)
+            valid = (row.get("claim_made") is False and type(row.get("evidence")) is list and tuple(row["evidence"]) == LAW_FAILURE_EVIDENCE[law] and
+                     row.get("failure_code") in LAW_ALLOWED_FAILURES[law] and row.get("held_reason") is None and row.get("metrics") == {})
         elif status == "NOT_RUN":
-            valid = (row.get("claim_made") is False and type(row.get("evidence")) is list and len(row["evidence"]) == 1 and
-                     type(row.get("failure_code")) is str and row["failure_code"].startswith("INSTRUMENT_FAILURE:") and row.get("held_reason") is None)
+            valid = (row.get("claim_made") is False and type(row.get("evidence")) is list and tuple(row["evidence"]) == LAW_NOT_RUN_EVIDENCE[law] and
+                     row.get("failure_code") == f"INSTRUMENT_FAILURE:{law}" and row.get("held_reason") is None and row.get("metrics") == {})
         else:
             valid = False
         if not valid: raise IntegrationError("LAW_PROJECTION_INVALID")
@@ -508,7 +609,7 @@ class FanoutCoordinator:
         self.post_return_probe = post_return_probe or (lambda _candidate, _peer: False)
 
     def _phase_one(self, rows: Sequence[Mapping[str, Any]], stop: Mapping[str, Any], context_length: int,
-                   candidate: BaseAdapter, peer: BaseAdapter, request: Mapping[str, Any]) -> tuple[PrivateTokenView, PrivateTokenView]:
+                   candidate: BaseAdapter, peer: BaseAdapter, request: Mapping[str, Any]) -> VerifiedFanoutInput:
         expected = (1024, 4096, 8192)
         contexts = tuple(row.get("context_length") for row in rows)
         if len(rows) < 3: raise IntegrationError("SANITIZED_RESULT_MISSING_CONTEXT")
@@ -540,13 +641,21 @@ class FanoutCoordinator:
         if cview.sha256 != pview.sha256: raise IntegrationError("FANOUT_RECEIVED_DIGEST_MISMATCH")
         if self.mutation_probe(cview) or self.mutation_probe(pview):
             raise IntegrationError("PRIVATE_VIEW_MUTATED")
-        return cview, pview
+        return VerifiedFanoutInput(context_length, len(prompt_items), selected["expected_sha256"],
+                                   len(stop_items), stop["sha256"], cview, pview)
 
     def step(self, rows: Sequence[Mapping[str, Any]], stop: Mapping[str, Any], context_length: int,
              request: Mapping[str, Any], candidate: BaseAdapter, peer: BaseAdapter) -> Mapping[str, Any]:
         validate_pair_identity(candidate.manifest, peer.manifest)
+        verified = self._phase_one(rows, stop, context_length, candidate, peer, request)
+        return self.step_verified(verified, request, candidate, peer)
+
+    def step_verified(self, verified: VerifiedFanoutInput, request: Mapping[str, Any],
+                      candidate: BaseAdapter, peer: BaseAdapter) -> Mapping[str, Any]:
+        validate_pair_identity(candidate.manifest, peer.manifest)
+        if request.get("context_length") != verified.context_length: raise IntegrationError("CONTEXT_REQUEST_MISMATCH")
         candidate_before, peer_before = candidate.capture_transaction(), peer.capture_transaction()
-        cview, pview = self._phase_one(rows, stop, context_length, candidate, peer, request)
+        cview, pview = verified.candidate_view, verified.peer_view
         try:
             candidate_receipt = candidate.step(request, cview)
         except IntegrationError:
@@ -560,18 +669,110 @@ class FanoutCoordinator:
             candidate.restore_transaction(candidate_before); peer.restore_transaction(peer_before)
             raise IntegrationError("PRIVATE_VIEW_MUTATED")
         request_digest = sha256_bytes(canonical_bytes(dict(request)))
-        return frozen({"status": "PASS", "context_id": str(context_length), "context_length": context_length,
-                       "length": len(self.provider(context_length)), "expected_sha256": cview.sha256,
+        return frozen({"status": "PASS", "context_id": str(verified.context_length), "context_length": verified.context_length,
+                       "length": verified.length, "expected_sha256": verified.expected_sha256,
                        "candidate_sha256": cview.sha256, "peer_sha256": pview.sha256, "equal": True,
                        "runtime_instance_ids": [candidate.session_id, peer.session_id],
-                       "request_sha256": request_digest, "stop_length": stop["length"],
-                       "stop_sha256": stop["sha256"], "candidate": candidate_receipt,
+                       "request_sha256": request_digest, "stop_length": verified.stop_length,
+                       "stop_sha256": verified.stop_sha256, "candidate": candidate_receipt,
                        "peer": peer_receipt, "laws": held_law_projection()})
+
+
+class SyntheticFixtureDispatcher:
+    """Execute the committed custody-free fixture and its negative boundaries explicitly."""
+
+    def __init__(self, coordinator: FanoutCoordinator):
+        self.coordinator = coordinator
+
+    def dispatch(self, fixture: Mapping[str, Any], rows: Sequence[Mapping[str, Any]], stop: Mapping[str, Any],
+                 candidate: BaseAdapter, peer: BaseAdapter,
+                 close_adapters: Mapping[str, BaseAdapter], event_counter: Callable[[], Mapping[str, int]]) -> Mapping[str, Any]:
+        expected_sequence = (
+            "reconcile_ordered_sanitized_result", "verify_private_token_digests",
+            "fanout_episode_a_request_0", "fanout_episode_a_request_1", "exercise_close_paths",
+            "reset_episode_b", "fanout_episode_b_request_0", "validate_exact_ordered_law_set",
+        )
+        if tuple(fixture.get("sequence", ())) != expected_sequence: raise IntegrationError("FIXTURE_SEQUENCE_MISMATCH")
+        realized: list[str] = []
+        cache: dict[int, VerifiedFanoutInput] = {}
+        receipts: list[Mapping[str, Any]] = []
+        close_trace: list[Mapping[str, str]] = []
+        for entry in expected_sequence:
+            if entry == "reconcile_ordered_sanitized_result":
+                if tuple(row.get("context_length") for row in rows) != (1024, 4096, 8192):
+                    raise IntegrationError("SANITIZED_RESULT_ORDER_MISMATCH")
+            elif entry == "verify_private_token_digests":
+                for context, ordinal, terminal in ((1024, 0, False), (4096, 1, True), (8192, 0, True)):
+                    episode = "synthetic-episode-a" if context != 8192 else "synthetic-episode-b"
+                    req = {"operation_id": f"verify-{context}", "caller_session_id": "caller-main", "caller_thread_id": "thread-0",
+                           "episode_id": episode, "request_ordinal": ordinal, "context_length": context, "is_terminal_request": terminal}
+                    cache[context] = self.coordinator._phase_one(rows, stop, context, candidate, peer, req)
+            elif entry in ("fanout_episode_a_request_0", "fanout_episode_a_request_1", "fanout_episode_b_request_0"):
+                context, episode, ordinal, terminal = {
+                    "fanout_episode_a_request_0": (1024, "synthetic-episode-a", 0, False),
+                    "fanout_episode_a_request_1": (4096, "synthetic-episode-a", 1, True),
+                    "fanout_episode_b_request_0": (8192, "synthetic-episode-b", 0, True),
+                }[entry]
+                req = {"operation_id": entry, "caller_session_id": "caller-main", "caller_thread_id": "thread-0",
+                       "episode_id": episode, "request_ordinal": ordinal, "context_length": context, "is_terminal_request": terminal}
+                receipts.append(self.coordinator.step_verified(cache[context], req, candidate, peer))
+            elif entry == "exercise_close_paths":
+                for state in fixture["expected"]["close_paths"]:
+                    adapter = close_adapters[state]
+                    adapter.close({"operation_id": f"close-{state.lower()}", "caller_session_id": "caller-main", "caller_thread_id": "thread-0"})
+                    close_trace.append({"role":adapter.role,"prior_state":state,"result_state":"CLOSED"})
+            elif entry == "reset_episode_b":
+                req = {"operation_id": "reset-b", "caller_session_id": "caller-main", "caller_thread_id": "thread-0",
+                       "episode_id": "synthetic-episode-b", "reset_ordinal": 2}
+                candidate.reset_episode(req); peer.reset_episode(req)
+            elif entry == "validate_exact_ordered_law_set":
+                laws = held_law_projection()
+                if tuple(row["law_id"] for row in laws) != LAW_ORDER: raise IntegrationError("LAW_ORDER_MISMATCH")
+            realized.append(entry)
+        realized_expected = {
+            "adapter_calls": dict(event_counter()),
+            "close_paths": [state for state in fixture["expected"]["close_paths"] if json.loads(close_adapters[state].durable_state())["closed"]],
+            "episodes": [{"episode_id":"synthetic-episode-a","request_ordinals":[0,1]},
+                         {"episode_id":"synthetic-episode-b","request_ordinals":[0]}],
+            "exact_ordered_law_ids": list(LAW_ORDER),
+            "fanout": {
+                "candidate_peer_byte_identical": all(receipt["equal"] for receipt in receipts),
+                "distinct_access_ids": candidate.manifest["access_policy_id"] != peer.manifest["access_policy_id"],
+                "distinct_runtime_instances": candidate.session_id != peer.session_id,
+                "same_checkpoint_and_training_identity": (
+                    candidate.manifest["checkpoint_sha256"] == peer.manifest["checkpoint_sha256"] and
+                    candidate.manifest["training_instance_sha256"] == peer.manifest["training_instance_sha256"]),
+            },
+            "sanitized_context_order": list(cache),
+            "terminal_state": json.loads(candidate.durable_state())["lifecycle_state"],
+        }
+        return frozen({"sequence": realized, "expected": realized_expected, "close_call_trace": close_trace,
+                       "fanout_receipts": receipts})
+
+    @staticmethod
+    def realize_negative(row: Mapping[str, Any], action: Callable[[], Any], call_counter: Callable[[], int],
+                         state_identity: Callable[[], str]) -> Mapping[str, Any]:
+        before_calls, before_state = call_counter(), state_identity()
+        try:
+            action()
+        except IntegrationError as exc:
+            code = exc.code
+        else:
+            raise IntegrationError("FIXTURE_NEGATIVE_NOT_REALIZED")
+        after_calls, after_state = call_counter(), state_identity()
+        if code != row.get("expected_code"): raise IntegrationError("FIXTURE_NEGATIVE_CODE_MISMATCH")
+        if "backend_calls" in row and after_calls - before_calls != row["backend_calls"]:
+            raise IntegrationError("FIXTURE_NEGATIVE_CALL_BOUNDARY_MISMATCH")
+        if "expected_state_mutation" in row and (after_state != before_state) is not row["expected_state_mutation"]:
+            raise IntegrationError("FIXTURE_NEGATIVE_STATE_BOUNDARY_MISMATCH")
+        return frozen({"id": row["id"], "code": code, "backend_calls": after_calls - before_calls,
+                       "state_mutation": after_state != before_state})
 
 
 __all__ = [
     "AdapterFactory", "BaseAdapter", "CandidateAdapter", "ControlAdapter", "FanoutCoordinator",
     "IntegrationError", "ModelAdapterProtocol", "PeerAdapter", "PrivateTokenView", "RealBackendProtocol",
+    "SyntheticFixtureDispatcher", "VerifiedFanoutInput",
     "canonical_bytes", "encode_private_view", "frozen", "held_law_projection", "sha256_bytes",
     "realize_launch_command", "validate_laws", "validate_pair_identity", "validate_state",
 ]
