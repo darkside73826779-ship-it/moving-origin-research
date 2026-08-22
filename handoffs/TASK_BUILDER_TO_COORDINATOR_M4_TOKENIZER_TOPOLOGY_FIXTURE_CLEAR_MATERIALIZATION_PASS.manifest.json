@@ -15,7 +15,7 @@
   ],
   "remote_ref": "refs/heads/taskbuilder/m4-tokenizer-topology-fixture-clear-execution",
   "base_sha": "7b909f452dc7c86a11979298da312b72f41a7382",
-  "routing_ref_sha": "56e6919584baf670921cbd0449c6c41e30bcfe33",
+  "routing_ref_sha": "d1f41b81642d70745fe8669d06581cadbfacabed",
   "review_result_sha": "5d5d8528005d2047751c056bfcb4c64a4092ffe2",
   "work_branch": "taskbuilder/m4-tokenizer-topology-fixture-clear-execution",
   "artifacts": {
@@ -26,7 +26,7 @@
     "diagnostics/m4_tokenizer_materialization.py": "2aa18bebcfd6c8d7ffb5c65784d5e459650cd540494ae5cfc29e35372c87612b",
     "handoffs/ARCHITECT_TO_COORDINATOR_M4_TOPOLOGY_ABSENT_MARKER_FIXTURE_RECONCILIATION_2026-08-21.md": "bdb23aef55cfcd4bb173fa5906271ad32f47758d38b3797b9858c286520acc74",
     "handoffs/REBECCA_M4_TOKENIZER_TOPOLOGY_FIXTURE_CLEAR_NEW_OPERATION_RELEASE_2026-08-21.md": "e45bbf6d587f7526a8c71fcdebbb2f052a08b07d32d2ad4a89ab77769174cd18",
-    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_TOPOLOGY_FIXTURE_CLEAR_MATERIALIZATION_PASS_2026-08-21.md": "61de09d76fd611ff7d872a0325eb62a98ef1a4ec8b9e6b6282310e23fcbf15c6",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_TOPOLOGY_FIXTURE_CLEAR_MATERIALIZATION_PASS_2026-08-21.md": "a76477ef267ad06cfbe2a9a249dfdbac856937192f65f747ecbb0a211628334b",
     "reviews/critic_m4_tokenizer_topology_absent_marker_fixture_rereview.md": "d7dee9106e15e865271ae2ba378f397fabf5409553697f58f4294ccf6a9a545e",
     "specs/data/m4_context_format_probe_contract_v1.json": "eab77b9f44a4e9378f5889f5aa368eabd87959a5ddafab9ca38685228f12feec",
     "specs/data/m4_tokenizer_executable_package_v1.json": "bf1a99cb6d3047a8dafed9a56031b7254a881b0b09bb10b0d38f1318829d672d",
@@ -51,6 +51,7 @@
     "ran the exact pinned network-disabled read-only no-custody wrapper: 37 tests passed, exit 0",
     "ran the corrected committed custody-free topology matrix: all four cases passed and cleanup completed",
     "verified the exact supplied private root and fixed record kinds without emitting or publishing a private value or path",
+    "recorded that one local orchestration string failed Bash parsing before any command or process executed, then verified a temporary non-repository wrapper with bash -n before the sole governed Docker/materializer start",
     "started the exact committed materializer command once: exit 0, no retry",
     "validated the exact two-file result as regular non-links, schema-valid canonical JSON plus one LF, matching sidecar, and public-safe sanitized content",
     "published the exact result bytes with SHA-256 19a49a9262be81d30866befda3801b2fc97ef23a8d946d3cc1e4b5de189b3158",
@@ -61,7 +62,7 @@
   "findings": [],
   "scan_attestation": {
     "base_sha": "7b909f452dc7c86a11979298da312b72f41a7382",
-    "tip_sha": "56e6919584baf670921cbd0449c6c41e30bcfe33",
+    "tip_sha": "d1f41b81642d70745fe8669d06581cadbfacabed",
     "tool_status": "blocked",
     "manual_review": true,
     "findings": [
