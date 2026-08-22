@@ -84,8 +84,65 @@ All roots must be canonical existing non-link directories. Model A and Model B m
 3. Load two independent model/runtime instances with the exact controls in the environment lock.
 4. Produce synthetic windows into a bounded FIFO with capacity eight and a 5 ms producer interval.
 5. For at least 30 seconds, submit each byte-identical prompt to both models through a two-party launch barrier.
-6. Record prompt digest, per-model start/end times, launch skew, execution overlap, queue wait, ordering, dropped windows, output agreement, peak VRAM, and post-cleanup VRAM.
+6. Record prompt digest, per-model host-call start/end times, launch skew,
+   host-call interval overlap, queue wait, ordering, dropped windows, output
+   agreement, peak VRAM, and post-cleanup VRAM. Interval overlap demonstrates
+   concurrent requests to the two resident engines; it does not claim proof of
+   overlapping device kernels.
 7. PASS requires at least 30 active seconds, zero drops, exact order, overlap for every pair, producer backpressure, and cleanup to zero reported VRAM. Output agreement is reported separately and is not a scientific score.
+
+### Exact crash-cart command
+
+The executable crash-cart is
+`tools/testbed/run_m4_wsl2_dual_model_probe.py`. It consumes Model A and Model B
+only from the process-local `MOR_TESTBED_MODEL_A` and `MOR_TESTBED_MODEL_B`
+variables. The values must not be printed, traced, or serialized. The output
+path is likewise operator-local and is never embedded in the report.
+
+From the immutable test-bed checkout, run in the locked diagnostic virtual
+environment:
+
+```bash
+python3 -I -m unittest discover -s tests -t . \
+  -p test_m4_wsl2_dual_model_probe.py
+
+VLLM_USE_V2_MODEL_RUNNER=0 \
+VLLM_USE_FLASHINFER_SAMPLER=0 \
+python3 -I tools/testbed/run_m4_wsl2_dual_model_probe.py \
+  --output "${MOR_TESTBED_REPORT_STAGE}/m4_wsl2_dual_model_probe_report_v1.json"
+```
+
+The script itself overwrites both vLLM switches with the required value before
+importing vLLM. It verifies the three public identity-bearing files in each
+independent model root without publishing either root, then uses a bounded
+eight-entry FIFO and blocking producer. Each deterministic synthetic prompt is
+fanned out byte-identically through a two-party launch barrier. Only prompt and
+output SHA-256 values are retained; prompt text, rendered model text, token
+arrays, and local paths are never serialized.
+
+The public command is a supervisor. It launches the model work in a distinct
+process group with a 300-second whole-run deadline. A hung initialization,
+inference, or shutdown is terminated with its child processes, followed by the
+same bounded cleanup-VRAM check, and is recorded as BLOCKED. The producer also
+uses cancellation-aware nonblocking enqueue attempts, so a failed consumer
+cannot strand an unbounded producer thread.
+
+Validate any prospective public report against
+`specs/data/m4_wsl2_dual_model_probe_report_schema_v1.json`. The committed
+`m4_wsl2_dual_model_probe_synthetic_fixture_v1.json` is a BLOCKED,
+construction-only zero-window fixture and must never be represented as a
+measured run. A PASS requires at least 30
+seconds of production, FIFO preservation, zero drops, observed full-queue
+backpressure, overlapping A/B execution for every window, equal output digests,
+and zero MiB reported after bounded cleanup. Any failed invariant is BLOCKED,
+not a scientific result.
+
+The sanitized measured diagnostic report is
+`artifacts/m4_wsl2_preexecution_testbed/m4_wsl2_dual_model_probe_report_2026-08-21.json`.
+It contains no local root, prompt text, rendered output, or token array. Its
+adjacent sidecar binds the exact report bytes. This is custody-free test-bed
+diagnostic evidence only: it is not authoritative scoring, a scientific claim,
+qualification evidence, or permission to use protected inputs.
 
 ## Reproducibility report
 

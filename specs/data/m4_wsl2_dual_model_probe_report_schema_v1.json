@@ -1,0 +1,435 @@
+{
+  "$id": "https://moving-origin-research.local/schemas/m4-wsl2-dual-model-probe-report-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authoritative_scoring": {
+      "const": false
+    },
+    "controls": {
+      "additionalProperties": false,
+      "properties": {
+        "active_duration_ns": {
+          "const": 30000000000
+        },
+        "disable_log_stats": {
+          "const": true
+        },
+        "gpu_memory_utilization_per_instance_ppm": {
+          "const": 360000
+        },
+        "max_model_len": {
+          "const": 2048
+        },
+        "max_num_seqs": {
+          "const": 8
+        },
+        "producer_interval_ns": {
+          "const": 5000000
+        },
+        "queue_capacity": {
+          "const": 8
+        },
+        "sampling_max_tokens": {
+          "const": 12
+        },
+        "sampling_seed": {
+          "const": 0
+        },
+        "temperature_millionths": {
+          "const": 0
+        },
+        "trust_remote_code": {
+          "const": false
+        }
+      },
+      "required": [
+        "active_duration_ns",
+        "disable_log_stats",
+        "gpu_memory_utilization_per_instance_ppm",
+        "max_model_len",
+        "max_num_seqs",
+        "producer_interval_ns",
+        "queue_capacity",
+        "sampling_max_tokens",
+        "sampling_seed",
+        "temperature_millionths",
+        "trust_remote_code"
+      ],
+      "type": "object"
+    },
+    "date": {
+      "const": "2026-08-21"
+    },
+    "failure_codes": {
+      "items": {
+        "enum": [
+          "ACTIVE_DURATION_SHORT",
+          "CHILD_PROCESS_FAILURE",
+          "CLEANUP_VRAM_NONZERO",
+          "DROPPED_WINDOWS",
+          "EXECUTIONS_DID_NOT_OVERLAP",
+          "FIFO_ORDER_MISMATCH",
+          "GPU_TELEMETRY_UNAVAILABLE",
+          "INTERNAL_PROBE_FAILURE",
+          "MODEL_FILE_IDENTITY_MISMATCH",
+          "MODEL_FILE_UNREADABLE",
+          "MODEL_ROOT_IDENTITY_MISMATCH",
+          "MODEL_ROOT_MISSING",
+          "MODEL_ROOT_UNREADABLE",
+          "MODEL_ROOTS_NOT_DISTINCT",
+          "NO_BACKPRESSURE_OBSERVED",
+          "OUTPUT_DIGEST_MISMATCH",
+          "PRODUCER_FAILURE",
+          "SUPERVISOR_TIMEOUT",
+          "SYNTHETIC_FIXTURE_ONLY"
+        ]
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "model_identity": {
+      "additionalProperties": false,
+      "properties": {
+        "quantization": {
+          "const": "OFFICIAL_QWEN_FP8_E4M3"
+        },
+        "repository_id": {
+          "const": "Qwen/Qwen3-4B-Instruct-2507-FP8"
+        },
+        "revision": {
+          "const": "8591804019c8b22094c3b5b4454e0edc05dffc98"
+        }
+      },
+      "required": [
+        "quantization",
+        "repository_id",
+        "revision"
+      ],
+      "type": "object"
+    },
+    "protected_seed_access": {
+      "const": false
+    },
+    "regime": {
+      "const": "B"
+    },
+    "run": {
+      "additionalProperties": false,
+      "properties": {
+        "active_duration_ns": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "all_executions_overlap": {
+          "type": "boolean"
+        },
+        "all_outputs_agree": {
+          "type": "boolean"
+        },
+        "cleanup_gpu_used_mib": {
+          "minimum": -1,
+          "type": "integer"
+        },
+        "dropped_windows": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "initialization_a_ns": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "initialization_b_ns": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "max_launch_skew_ns": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "order_preserved": {
+          "type": "boolean"
+        },
+        "peak_gpu_used_mib": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "producer_backpressure_observed": {
+          "type": "boolean"
+        },
+        "producer_blocked_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "windows_consumed": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "windows_produced": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "active_duration_ns",
+        "all_executions_overlap",
+        "all_outputs_agree",
+        "cleanup_gpu_used_mib",
+        "dropped_windows",
+        "initialization_a_ns",
+        "initialization_b_ns",
+        "max_launch_skew_ns",
+        "order_preserved",
+        "peak_gpu_used_mib",
+        "producer_backpressure_observed",
+        "producer_blocked_count",
+        "windows_consumed",
+        "windows_produced"
+      ],
+      "type": "object"
+    },
+    "runtime": {
+      "additionalProperties": false,
+      "properties": {
+        "VLLM_USE_FLASHINFER_SAMPLER": {
+          "const": "0"
+        },
+        "VLLM_USE_V2_MODEL_RUNNER": {
+          "const": "0"
+        },
+        "runner": {
+          "const": "V1"
+        }
+      },
+      "required": [
+        "VLLM_USE_FLASHINFER_SAMPLER",
+        "VLLM_USE_V2_MODEL_RUNNER",
+        "runner"
+      ],
+      "type": "object"
+    },
+    "schema_version": {
+      "const": "m4-wsl2-dual-model-probe-report-v1"
+    },
+    "scientific_evidence": {
+      "const": false
+    },
+    "status": {
+      "enum": [
+        "BLOCKED",
+        "PASS"
+      ]
+    },
+    "synthetic_only": {
+      "const": true
+    },
+    "windows": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "candidate": {
+            "$ref": "#/$defs/modelResult"
+          },
+          "consumption_ordinal": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "dequeued_ns": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "dropped": {
+            "const": false
+          },
+          "enqueue_ns": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "execution_overlap_ns": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "execution_overlapped": {
+            "type": "boolean"
+          },
+          "launch_skew_ns": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "ordinal": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "order_preserved": {
+            "type": "boolean"
+          },
+          "outputs_agree": {
+            "type": "boolean"
+          },
+          "peer": {
+            "$ref": "#/$defs/modelResult"
+          },
+          "producer_block_ns": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "producer_observed_full": {
+            "type": "boolean"
+          },
+          "prompt_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "queue_wait_ns": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "candidate",
+          "consumption_ordinal",
+          "dequeued_ns",
+          "dropped",
+          "enqueue_ns",
+          "execution_overlap_ns",
+          "execution_overlapped",
+          "launch_skew_ns",
+          "ordinal",
+          "order_preserved",
+          "outputs_agree",
+          "peer",
+          "producer_block_ns",
+          "producer_observed_full",
+          "prompt_sha256",
+          "queue_wait_ns"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "authoritative_scoring",
+    "controls",
+    "date",
+    "failure_codes",
+    "model_identity",
+    "protected_seed_access",
+    "regime",
+    "run",
+    "runtime",
+    "schema_version",
+    "scientific_evidence",
+    "status",
+    "synthetic_only",
+    "windows"
+  ],
+  "type": "object",
+  "$defs": {
+    "modelResult": {
+      "additionalProperties": false,
+      "properties": {
+        "completed_ns": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "output_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "output_token_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "started_ns": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "completed_ns",
+        "output_sha256",
+        "output_token_count",
+        "started_ns"
+      ],
+      "type": "object"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "PASS"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "failure_codes": {
+            "maxItems": 0
+          },
+          "run": {
+            "properties": {
+              "active_duration_ns": {
+                "minimum": 30000000000
+              },
+              "all_executions_overlap": {
+                "const": true
+              },
+              "all_outputs_agree": {
+                "const": true
+              },
+              "cleanup_gpu_used_mib": {
+                "const": 0
+              },
+              "dropped_windows": {
+                "const": 0
+              },
+              "order_preserved": {
+                "const": true
+              },
+              "producer_backpressure_observed": {
+                "const": true
+              }
+            },
+            "required": [
+              "active_duration_ns",
+              "all_executions_overlap",
+              "all_outputs_agree",
+              "cleanup_gpu_used_mib",
+              "dropped_windows",
+              "order_preserved",
+              "producer_backpressure_observed"
+            ]
+          },
+          "windows": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "BLOCKED"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "failure_codes": {
+            "minItems": 1
+          }
+        }
+      }
+    }
+  ]
+}
