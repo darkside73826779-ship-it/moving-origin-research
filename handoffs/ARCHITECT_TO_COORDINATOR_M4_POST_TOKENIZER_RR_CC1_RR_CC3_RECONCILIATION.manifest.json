@@ -1,0 +1,41 @@
+{
+  "schema_version": "common-handoff-manifest-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "transfer_kind": "FORMAL_HANDOFF",
+  "work_item": "m4_post_tokenizer_rr_cc1_rr_cc3_reconciliation",
+  "gate": "Persistent-CRITIC rereview of exact receipt, precedence, and 42-cell lifecycle design reconciliation",
+  "sender_role": "ARCHITECT",
+  "receiver_role": "WORKFLOW_COORDINATOR",
+  "authority_basis": [{"path":"handoffs/ARCHITECT_TO_COORDINATOR_M4_POST_TOKENIZER_R_CC1_R_CC6_REMEDIATION_2026-08-21.md","sha":"94c9a833fdaf872584ea863391c21927bdb704d2"}],
+  "remote_ref": "refs/heads/architect/m4-post-tokenizer-rr-cc1-rr-cc3-reconciliation",
+  "base_sha": "94c9a833fdaf872584ea863391c21927bdb704d2",
+  "routing_ref_sha": "73c8394994aa172727ffff93dc42ade4348d4823",
+  "review_result_sha": "d643b65852dbc5e32e7f11ce0e0cb15c8561ed0d",
+  "work_branch": "architect/m4-post-tokenizer-rr-cc1-rr-cc3-reconciliation",
+  "artifacts": {
+    "handoffs/ARCHITECT_M4_POST_TOKENIZER_RR_CC1_RR_CC3_ROUTING_TAIL_2026-08-21.md": "8c53115ce831bdd89a3b1fa66430aa0f1cee6a69ff20677d8f65ca6bf57a542e",
+    "handoffs/ARCHITECT_TO_COORDINATOR_M4_POST_TOKENIZER_R_CC1_R_CC6_REMEDIATION_2026-08-21.md": "fb8f97107bc45d61ca3b99b6eb1bed8f96aa25293b89b1f56173fd0e18711bdb",
+    "handoffs/ARCHITECT_TO_COORDINATOR_M4_POST_TOKENIZER_RR_CC1_RR_CC3_RECONCILIATION_2026-08-21.md": "10c58159f335ec3ab6a16a9eb5a0fb3fa9473ac6728fe9ecaae36e46aa4324f2",
+    "specs/data/m4_post_tokenizer_rr_cc1_receipt_realizations_v1.json": "74fe613c2c72830928d488132b0a784c0916024514bef08990ffab7bcfdd43bc",
+    "specs/data/m4_post_tokenizer_rr_cc1_receipt_realizations_v1.json.sha256": "820663b104fe21600acb0d43cc27591c759a58d1cb1d4000a13171154722a348",
+    "specs/data/m4_post_tokenizer_rr_cc2_precedence_map_v1.json": "f1747f4cafbec3a17412fa28aadae8315300cf35ffd8a9fb13d801752cfcccb5",
+    "specs/data/m4_post_tokenizer_rr_cc2_precedence_map_v1.json.sha256": "36c55ba376746246b3e607cc062da19fd5c1bdd852aeeff3ffeeef4508415cca",
+    "specs/data/m4_post_tokenizer_rr_cc3_lifecycle_realizations_v1.json": "49ae30c1d52aab7d7fcb8e35fdec846f42723a018c380b12187c6cb2d8d8814c",
+    "specs/data/m4_post_tokenizer_rr_cc3_lifecycle_realizations_v1.json.sha256": "321549b06fb331e940b6cd20e060480396c64fdd4610c419a81fd96794608787",
+    "specs/m4_post_tokenizer_rr_cc1_rr_cc3_reconciliation_v1.md": "5ce35914855df076f3659e94c09cf27d4d35d833a1bb24e52ed1526e1d240709"
+  },
+  "checks_performed": [
+    "read the exact authoritative persistent-CRITIC rereview and reconciled only RR-CC1 through RR-CC3",
+    "verified canonical JSON, adjacent sidecars, and 42 embedded canonical object digests",
+    "verified exactly 42 unique lifecycle cells and byte-identical zero-call invalid transitions",
+    "verified registered FAIL and missing-code derivation plus explicit active-artifact precedence and reset call counts",
+    "workflow preflight scanned the exact input-to-routing range; 228 fixed-regex findings were manually classified as immutable public digests and gitleaks returned zero"
+  ],
+  "status": "COMPLETE",
+  "findings": [],
+  "scan_attestation": {"base_sha":"94c9a833fdaf872584ea863391c21927bdb704d2","tip_sha":"73c8394994aa172727ffff93dc42ade4348d4823","tool_status":"blocked_manual_review_complete","manual_review":true,"findings":["228 duplicate-domain fixed-regex matches occur wholly inside required immutable public object, artifact, sidecar, and commit digests; all are non-contact reproducibility metadata","gitleaks 8.30.1 returned zero findings","no credential, personal contact, private path, custody value, model/tokenizer byte, token array, seed, score, or scientific output was found"]},
+  "next_event": "WORKFLOW COORDINATOR routes the exact package once to persistent CRITIC for RR-CC1 through RR-CC3 rereview",
+  "prohibited_actions": ["implementation or OCI/materializer execution","custody/model/tokenizer access","scoring, seeds, science, Q2/EF3/native-L8 work, durable-state mutation, publication, merge, or gate decision"],
+  "role_extension": {"role":"ARCHITECT","tests":["canonical sidecars and embedded digests PASS","42-cell semantic matrix PASS","git diff check PASS"],"diagnostics_executed":false}
+}
