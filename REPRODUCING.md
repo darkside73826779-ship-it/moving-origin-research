@@ -23,15 +23,25 @@ python -m pip install --upgrade pip
 python -m pip install -r src\requirements.txt
 ```
 
-## Non-scoring test suite
+## Non-scoring test suites
+
+Run the source verification suite:
 
 ```powershell
 python -m unittest discover -s src -p "test*.py"
 ```
 
-At main SHA `91b2f0fb27ff0b315987bf14d6870cf0d86d5929`, the suite contains 63 tests and passes in the prepared Python 3.11 environment.
+Run the workflow and repository-mechanics suite separately:
+
+```powershell
+python -m unittest discover -s tests -p "test*.py"
+```
+
+The unittest summaries for the checked-out commit are authoritative. Test inventories are commit-specific, so this guide does not publish a floating count. Milestone-specific packages may also bind exact identity-first wrappers; their reviewed commands and inventories remain authoritative for those packages.
 
 The harness deliberately emits an error message when a test verifies that retained instrument-failure seeds are blocked. A passing unittest summary remains the governing test result.
+
+These suites are non-scoring verification. Passing them does not authorize an experiment, protected-seed access, scoring, or reinterpretation of historical results.
 
 ## Historical M3 execution
 
