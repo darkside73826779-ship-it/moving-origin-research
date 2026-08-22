@@ -1,0 +1,73 @@
+{
+  "schema_version": "common-handoff-manifest-v1",
+  "date": "2026-08-22",
+  "regime": "B",
+  "transfer_kind": "FORMAL_HANDOFF",
+  "work_item": "m4_real_test_readiness_bf1_bf4_route_reconciliation",
+  "gate": "Persistent-CRITIC BF1-BF4 design-package rereview only",
+  "sender_role": "ARCHITECT",
+  "receiver_role": "WORKFLOW_COORDINATOR",
+  "authority_basis": [
+    {
+      "path": "reviews/critic_m4_real_test_readiness_design_review.md",
+      "sha": "845cabe416bdcf5073f14cb7fb69d13dba7743bd"
+    }
+  ],
+  "remote_ref": "refs/heads/architect/m4-real-test-readiness-bf1-bf4-route-reconciliation",
+  "base_sha": "845cabe416bdcf5073f14cb7fb69d13dba7743bd",
+  "routing_ref_sha": "3d1e1e4ad9039ce25f311367aff5798ad7fcec07",
+  "review_result_sha": "79ef7c025676e52dced8ade5698aa87754bed172",
+  "work_branch": "architect/m4-real-test-readiness-bf1-bf4-route-reconciliation",
+  "artifacts": {
+    ".gitattributes": "6ca214c93cf50de9d7b407af1f16455b94ec3f3eefd931727d7eb52d76e8a9f4",
+    "handoffs/ARCHITECT_TO_COORDINATOR_M4_REAL_TEST_READINESS_BF1_BF4_ROUTE_RECONCILIATION_2026-08-22.md": "bb5fb1e6f765a4e0626ec5a2d50727bf69f546030fa52503d76a60b74fc07fdb",
+    "reviews/critic_m4_real_test_readiness_design_review.md": "3fca2ae2b80c850922a1bd36a3b7d6b7cd40ef3c4de138c9656936deaab432fc",
+    "specs/data/m4_real_test_combined_tree_plan_v1.json": "81cbbd9e3e1443709640f8b6883887c7d1cdaf549dbe895f790b166ba220c1b3",
+    "specs/data/m4_real_test_combined_tree_plan_v1.json.sha256": "8f5c39a229ebd9e776912b297c359f53f725b1faa0fdfecaa6d23f53ff84ef53",
+    "specs/data/m4_real_test_model_ladder_overlay_inventory_v1.json": "3715841c964c1ee2c1923c2a1bfa6c76652ce91b0d57fb4630a27f6e33f27931",
+    "specs/data/m4_real_test_model_ladder_overlay_inventory_v1.json.sha256": "7c5fcd0bd70c3c64405ac615a30f293e62f3410de21d6d72d6b2ae7c1f9b09d0",
+    "specs/data/m4_real_test_readiness_contract_catalog_v1.json": "5cac37bf4a71385777e9616c5e1c3f4ad2c794ffc82d336a1576a9a5a5d4f654",
+    "specs/data/m4_real_test_readiness_contract_catalog_v1.json.sha256": "df576464207f86c0e2afa191b635bd102a85764965ccd059663c791667fe1896",
+    "specs/data/m4_real_test_readiness_gate_map_v1.json": "2eeedeccaf0fed7d119b877ee3c5a4c608bd033fcea11fc5fe294c51fba36d0e",
+    "specs/data/m4_real_test_readiness_gate_map_v1.json.sha256": "a59eb121764d601638c104821a9903acc72a692a98fe90b9b1be6cc991083e74",
+    "specs/data/m4_real_test_testbed_v1_2_overlay_inventory_v1.json": "a05e4ef226ea39139ae5bd0352ab02d3581ad6cfe226f189ec2189efc9455768",
+    "specs/data/m4_real_test_testbed_v1_2_overlay_inventory_v1.json.sha256": "8b30e54d7ae680b322f8a8ea528a8507ef27e4cd8e0b6de3495c9f0d29a66438",
+    "specs/m4_real_test_readiness_design_v1.md": "01fd0bb0720b651d1b2942892c1a2e7f53748fe23f1007c2ee18716d88895ca3"
+  },
+  "checks_performed": [
+    "banked the completed BF1-BF4 design and prior review without reopening model or scientific evidence",
+    "replayed the banked substantive commit onto the immutable prior-review commit",
+    "verified the reconciled substantive tree equals the banked routing tree after removal of its prior handoff path",
+    "verified every non-handoff artifact is present at or before the reconciled substantive result",
+    "verified the complete review-result-to-routing-head delta contains only handoffs/ paths",
+    "ran workflow_preflight.py on the exact routing delta with CLEAN status, zero findings, and gitleaks 8.30.1 exit zero",
+    "verified the canonical artifact inventory against raw LF worktree bytes",
+    "validated JSON, adjacent sidecars, LF attributes, ancestry, role identities, clean state, and remote equality"
+  ],
+  "status": "COMPLETE",
+  "findings": [],
+  "scan_attestation": {
+    "base_sha": "79ef7c025676e52dced8ade5698aa87754bed172",
+    "tip_sha": "3d1e1e4ad9039ce25f311367aff5798ad7fcec07",
+    "tool_status": "clean_manual_review_complete",
+    "manual_review": true,
+    "findings": [
+      "workflow_preflight.py reported CLEAN with zero findings for both the commit-parent and combined base-tip scan domains; manual review covered the one compact handoff",
+      "no credential, personal contact, private path, custody value, model/tokenizer byte, protected seed, score, scientific output, or prohibited state mutation was found"
+    ]
+  },
+  "next_event": "WORKFLOW COORDINATOR validates the exact identities and routes this package once to the current persistent CRITIC",
+  "prohibited_actions": [
+    "BF1-BF4 design-semantic change or banked-evidence reopening",
+    "model, WSL2 feasibility, implementation, science, scoring, custody, held-input, merge, or gate work"
+  ],
+  "role_extension": {
+    "role": "ARCHITECT",
+    "reconciliation_kind": "IDENTITY_TOPOLOGY_ONLY",
+    "banked_substantive_sha": "ae1cd578f3e5f2211480f73205a618710ba02319",
+    "banked_routing_sha": "0b5976c2651af41b2ea417c4339edfec35a6d895",
+    "banked_manifest_sha": "be7d957cd3f34ac54e870cebcc5385b71cf4229f",
+    "design_semantics_changed": false,
+    "diagnostics_executed": false
+  }
+}
