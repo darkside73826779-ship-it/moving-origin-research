@@ -1,0 +1,231 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://moving-origin-research.invalid/schemas/m4-final-prescoring-full-stack-crash-cart-report-v1",
+  "title": "M4 final pre-scoring full-stack crash-cart report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "date", "regime", "classification", "identities", "invocation", "negative_probes", "warmup", "active_window", "rows", "resource_samples", "trends", "laws", "structural_status", "structural_failures", "replica_consistency", "cleanup", "public_safety", "export"],
+  "properties": {
+    "schema_version": {"const": "m4-final-prescoring-full-stack-crash-cart-report-v1"},
+    "date": {"type": "string", "format": "date"},
+    "regime": {"const": "B"},
+    "classification": {"const": "NON_SCORING_EXPLORATORY_OBSERVATION"},
+    "identities": {"type": "object", "additionalProperties": {"type": "string"}, "minProperties": 12},
+    "invocation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["release_sha", "command_sha256", "invocation_count", "retry_count", "network", "protected_inputs_accessed", "scoring_enabled"],
+      "properties": {
+        "release_sha": {"$ref": "#/$defs/sha"}, "command_sha256": {"$ref": "#/$defs/sha256"},
+        "invocation_count": {"const": 1}, "retry_count": {"const": 0}, "network": {"const": "NONE_OS_ENFORCED"},
+        "protected_inputs_accessed": {"const": false}, "scoring_enabled": {"const": false}
+      }
+    },
+    "negative_probes": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"$ref": "#/$defs/negativeProbe"}},
+    "warmup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["classification", "rows", "sequence_start_monotonic_ns", "sequence_end_monotonic_ns", "sequence_duration_ns", "first_pair_latency_ns", "subsequent_pair_latencies_ns", "candidate_peak_gpu_bytes", "peer_peak_gpu_bytes", "barrier_start_monotonic_ns", "barrier_end_monotonic_ns", "barrier_duration_ns", "zero_active_requests", "prefix_cache_disabled", "residual_session_state", "residual_reusable_kv_state", "measured_rng_initialized_after_barrier", "status"],
+      "properties": {
+        "classification": {"const": "NON_SCORING_OPERATIONAL_WARMUP"},
+        "rows": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"$ref": "#/$defs/warmupRow"}},
+        "sequence_start_monotonic_ns": {"type": "integer", "minimum": 0}, "sequence_end_monotonic_ns": {"type": "integer", "minimum": 0},
+        "sequence_duration_ns": {"type": "integer", "minimum": 0, "maximum": 120000000000}, "first_pair_latency_ns": {"type": "integer", "minimum": 0, "maximum": 30000000000},
+        "subsequent_pair_latencies_ns": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "integer", "minimum": 0, "maximum": 30000000000}},
+        "candidate_peak_gpu_bytes": {"type": "integer", "minimum": 0}, "peer_peak_gpu_bytes": {"type": "integer", "minimum": 0},
+        "barrier_start_monotonic_ns": {"type": "integer", "minimum": 0}, "barrier_end_monotonic_ns": {"type": "integer", "minimum": 0},
+        "barrier_duration_ns": {"type": "integer", "minimum": 0, "maximum": 10000000000}, "zero_active_requests": {"const": true},
+        "prefix_cache_disabled": {"const": true}, "residual_session_state": {"const": false}, "residual_reusable_kv_state": {"const": false},
+        "measured_rng_initialized_after_barrier": {"const": true}, "status": {"enum": ["PASS", "FAIL"]}
+      }
+    },
+    "active_window": {
+      "type": "object", "additionalProperties": false,
+      "required": ["start_monotonic_ns", "end_monotonic_ns", "duration_ns", "deadline_ns", "paired_request_count", "role_request_count", "queue_capacity_pairs", "drop_count", "fifo", "producer_block_event_count", "producer_block_total_ns"],
+      "properties": {
+        "start_monotonic_ns": {"type": "integer", "minimum": 0}, "end_monotonic_ns": {"type": "integer", "minimum": 0},
+        "duration_ns": {"type": "integer", "minimum": 30000000000, "maximum": 60000000000}, "deadline_ns": {"const": 60000000000},
+        "paired_request_count": {"const": 64}, "role_request_count": {"const": 128}, "queue_capacity_pairs": {"const": 8},
+        "drop_count": {"const": 0}, "fifo": {"const": true}, "producer_block_event_count": {"type": "integer", "minimum": 1},
+        "producer_block_total_ns": {"type": "integer", "minimum": 1}
+      }
+    },
+    "rows": {"type": "array", "minItems": 64, "maxItems": 64, "items": {"$ref": "#/$defs/row"}},
+    "resource_samples": {"type": "array", "minItems": 121, "items": {"$ref": "#/$defs/resourceSample"}},
+    "trends": {"$ref": "#/$defs/trends"},
+    "laws": {"type": "array", "minItems": 5, "maxItems": 5, "items": {"$ref": "#/$defs/law"}},
+    "structural_status": {"enum": ["PASS", "BLOCKED", "INSTRUMENT_FAILURE"]},
+    "structural_failures": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "replica_consistency": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "compared_count", "agreement_count", "mismatch_count", "mismatch_ordinals", "exact_replica_consumer_stop"],
+      "properties": {
+        "status": {"enum": ["MATCH", "MISMATCH", "NOT_RUN"]}, "compared_count": {"type": "integer", "minimum": 0, "maximum": 64},
+        "agreement_count": {"type": "integer", "minimum": 0, "maximum": 64}, "mismatch_count": {"type": "integer", "minimum": 0, "maximum": 64},
+        "mismatch_ordinals": {"type": "array", "items": {"type": "integer", "minimum": 0, "maximum": 63}, "uniqueItems": true},
+        "exact_replica_consumer_stop": {"type": "boolean"}
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["candidate_engine_disposed", "peer_engine_disposed", "candidate_process_absent", "peer_process_absent", "backend_owned_gpu_allocations", "temp_file_count", "repository_clean", "terminal_sample_index", "status"],
+      "properties": {
+        "candidate_engine_disposed": {"type": "boolean"}, "peer_engine_disposed": {"type": "boolean"},
+        "candidate_process_absent": {"type": "boolean"}, "peer_process_absent": {"type": "boolean"},
+        "backend_owned_gpu_allocations": {"type": "integer", "minimum": 0}, "temp_file_count": {"type": "integer", "minimum": 0},
+        "repository_clean": {"type": "boolean"}, "terminal_sample_index": {"type": "integer", "minimum": 0},
+        "status": {"enum": ["PASS", "FAIL"]}
+      }
+    },
+    "public_safety": {
+      "type": "object", "additionalProperties": false,
+      "required": ["scanner_status", "finding_count", "classified_count", "suppressed_count", "row_deletion_count", "private_values_found", "protected_inputs_found", "token_arrays_found"],
+      "properties": {
+        "scanner_status": {"enum": ["CLEAR", "BLOCKED_PUBLIC_SAFETY"]}, "finding_count": {"type": "integer", "minimum": 0},
+        "classified_count": {"type": "integer", "minimum": 0}, "suppressed_count": {"const": 0}, "row_deletion_count": {"const": 0},
+        "private_values_found": {"const": false}, "protected_inputs_found": {"const": false}, "token_arrays_found": {"const": false}
+      }
+    },
+    "export": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "report_bytes", "report_sha256", "summary_bytes", "summary_sha256", "manifest_bytes", "manifest_sha256", "archive_bytes", "archive_sha256", "reproduction_equal"],
+      "properties": {
+        "status": {"enum": ["EXPORTED", "BLOCKED_PUBLIC_SAFETY", "NOT_RENDERED_INSTRUMENT_FAILURE"]},
+        "report_bytes": {"type": "integer", "minimum": 1}, "report_sha256": {"$ref": "#/$defs/sha256"},
+        "summary_bytes": {"type": "integer", "minimum": 1}, "summary_sha256": {"$ref": "#/$defs/sha256"},
+        "manifest_bytes": {"type": "integer", "minimum": 1}, "manifest_sha256": {"$ref": "#/$defs/sha256"},
+        "archive_bytes": {"type": ["integer", "null"], "minimum": 1}, "archive_sha256": {"anyOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]},
+        "reproduction_equal": {"type": "boolean"}
+      }
+    }
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "negativeProbe": {
+      "type": "object", "additionalProperties": false,
+      "required": ["ordinal", "id", "expected", "observed", "model_call_count", "retry_count", "pre_state_sha256", "post_state_sha256", "pre_stage_sha256", "post_stage_sha256", "status"],
+      "properties": {
+        "ordinal": {"type": "integer", "minimum": 0, "maximum": 2}, "id": {"type": "string", "minLength": 1},
+        "expected": {"type": "string", "minLength": 1}, "observed": {"type": "string", "minLength": 1},
+        "model_call_count": {"const": 0}, "retry_count": {"const": 0},
+        "pre_state_sha256": {"$ref": "#/$defs/sha256"}, "post_state_sha256": {"$ref": "#/$defs/sha256"},
+        "pre_stage_sha256": {"$ref": "#/$defs/sha256"}, "post_stage_sha256": {"$ref": "#/$defs/sha256"},
+        "status": {"enum": ["PASS", "FAIL"]}
+      }
+    },
+    "warmupRoleObservation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["role", "request_id", "receipt_id", "backend_receipt", "output_text", "output_sha256", "input_token_count", "output_token_count", "stop_reason", "start_monotonic_ns", "end_monotonic_ns", "latency_ns", "completion_status", "error_code", "retry_count"],
+      "properties": {
+        "role": {"enum": ["candidate", "peer"]}, "request_id": {"type": "string", "minLength": 1}, "receipt_id": {"type": "string", "minLength": 1},
+        "backend_receipt": {"$ref": "#/$defs/backendReceipt"},
+        "output_text": {"type": "string"}, "output_sha256": {"$ref": "#/$defs/sha256"}, "input_token_count": {"type": "integer", "minimum": 1},
+        "output_token_count": {"type": "integer", "minimum": 0}, "stop_reason": {"type": "string", "minLength": 1},
+        "start_monotonic_ns": {"type": "integer", "minimum": 0}, "end_monotonic_ns": {"type": "integer", "minimum": 0},
+        "latency_ns": {"type": "integer", "minimum": 0, "maximum": 30000000000}, "completion_status": {"enum": ["PASS", "FAIL"]},
+        "error_code": {"type": ["string", "null"]}, "retry_count": {"const": 0}
+      }
+    },
+    "warmupRow": {
+      "type": "object", "additionalProperties": false,
+      "required": ["ordinal", "payload_bytes", "max_output_tokens", "prompt_text", "prompt_bytes", "prompt_sha256", "barrier_release_monotonic_ns", "candidate", "peer", "same_prompt_and_parameters", "content_interpreted", "status"],
+      "properties": {
+        "ordinal": {"type": "integer", "minimum": 0, "maximum": 3}, "payload_bytes": {"enum": [0,32,512,1024]},
+        "max_output_tokens": {"enum": [8,16,32]}, "prompt_text": {"type": "string", "minLength": 1}, "prompt_bytes": {"enum": [94,127,608,1121]},
+        "prompt_sha256": {"$ref": "#/$defs/sha256"}, "barrier_release_monotonic_ns": {"type": "integer", "minimum": 0},
+        "candidate": {"$ref": "#/$defs/warmupRoleObservation"}, "peer": {"$ref": "#/$defs/warmupRoleObservation"},
+        "same_prompt_and_parameters": {"const": true}, "content_interpreted": {"const": false}, "status": {"enum": ["PASS", "FAIL"]}
+      }
+    },
+    "roleObservation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["role", "runtime_instance_id", "request_id", "receipt_id", "backend_receipt", "session_sha256", "pre_state_sha256", "post_state_sha256", "private_view_sha256", "output_text", "output_sha256", "input_token_count", "output_token_count", "stop_reason", "start_monotonic_ns", "end_monotonic_ns", "latency_ns", "backend_status", "error_code", "retry_count", "lifecycle_trace_sha256", "rollback_trace_sha256"],
+      "properties": {
+        "role": {"enum": ["candidate", "peer"]}, "runtime_instance_id": {"type": "string", "minLength": 1},
+        "request_id": {"type": "string", "minLength": 1}, "receipt_id": {"type": "string", "minLength": 1},
+        "backend_receipt": {"$ref": "#/$defs/backendReceipt"},
+        "session_sha256": {"$ref": "#/$defs/sha256"}, "pre_state_sha256": {"$ref": "#/$defs/sha256"}, "post_state_sha256": {"$ref": "#/$defs/sha256"},
+        "private_view_sha256": {"$ref": "#/$defs/sha256"}, "output_text": {"type": "string"}, "output_sha256": {"$ref": "#/$defs/sha256"},
+        "input_token_count": {"type": "integer", "minimum": 1}, "output_token_count": {"type": "integer", "minimum": 0},
+        "stop_reason": {"type": "string", "minLength": 1}, "start_monotonic_ns": {"type": "integer", "minimum": 0},
+        "end_monotonic_ns": {"type": "integer", "minimum": 0}, "latency_ns": {"type": "integer", "minimum": 0},
+        "backend_status": {"enum": ["PASS", "FAIL"]}, "error_code": {"type": ["string", "null"]}, "retry_count": {"const": 0},
+        "lifecycle_trace_sha256": {"$ref": "#/$defs/sha256"}, "rollback_trace_sha256": {"anyOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]}
+      }
+    },
+    "backendReceipt": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "backend_code", "session_id", "prior_backend_state_sha256", "result_backend_state_sha256", "request_sha256", "request_ordinal"],
+      "properties": {
+        "status": {"enum": ["PASS", "FAIL"]}, "backend_code": {"type": ["string", "null"]}, "session_id": {"type": "string", "minLength": 1},
+        "prior_backend_state_sha256": {"$ref": "#/$defs/sha256"}, "result_backend_state_sha256": {"$ref": "#/$defs/sha256"},
+        "request_sha256": {"$ref": "#/$defs/sha256"}, "request_ordinal": {"type": "integer", "minimum": 1}
+      }
+    },
+    "row": {
+      "type": "object", "additionalProperties": false,
+      "required": ["ordinal", "fixture_family", "fixture_repetition", "payload_bytes", "scheduled_offset_ns", "actual_enqueue_ns", "producer_block_ns", "public_prompt_text", "prompt_sha256", "candidate", "peer", "pair_completion_ordinal", "outputs_equal", "pair_status"],
+      "properties": {
+        "ordinal": {"type": "integer", "minimum": 0, "maximum": 63}, "fixture_family": {"type": "integer", "minimum": 0, "maximum": 7},
+        "fixture_repetition": {"type": "integer", "minimum": 0, "maximum": 7}, "payload_bytes": {"enum": [0,32,64,128,256,512,768,1024]},
+        "scheduled_offset_ns": {"type": "integer", "minimum": 0, "maximum": 30000000000}, "actual_enqueue_ns": {"type": "integer", "minimum": 0},
+        "producer_block_ns": {"type": "integer", "minimum": 0}, "public_prompt_text": {"type": "string", "minLength": 1},
+        "prompt_sha256": {"$ref": "#/$defs/sha256"}, "candidate": {"$ref": "#/$defs/roleObservation"}, "peer": {"$ref": "#/$defs/roleObservation"},
+        "pair_completion_ordinal": {"type": "integer", "minimum": 0, "maximum": 63}, "outputs_equal": {"type": "boolean"},
+        "pair_status": {"enum": ["COMPLETE", "FAILED_RETAINED"]}
+      }
+    },
+    "resourceSample": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sample_index", "monotonic_ns", "gpu_utilization_percent", "gpu_memory_used_bytes", "candidate_process_gpu_bytes", "peer_process_gpu_bytes", "host_ram_used_bytes", "candidate_rss_bytes", "peer_rss_bytes", "queue_depth_pairs", "producer_blocked", "completed_pair_count"],
+      "properties": {
+        "sample_index": {"type": "integer", "minimum": 0}, "monotonic_ns": {"type": "integer", "minimum": 0},
+        "gpu_utilization_percent": {"type": "number", "minimum": 0, "maximum": 100}, "gpu_memory_used_bytes": {"type": "integer", "minimum": 0},
+        "candidate_process_gpu_bytes": {"type": "integer", "minimum": 0}, "peer_process_gpu_bytes": {"type": "integer", "minimum": 0},
+        "host_ram_used_bytes": {"type": "integer", "minimum": 0}, "candidate_rss_bytes": {"type": "integer", "minimum": 0},
+        "peer_rss_bytes": {"type": "integer", "minimum": 0}, "queue_depth_pairs": {"type": "integer", "minimum": 0, "maximum": 8},
+        "producer_blocked": {"type": "boolean"}, "completed_pair_count": {"type": "integer", "minimum": 0, "maximum": 64}
+      }
+    },
+    "distribution": {
+      "type": "object", "additionalProperties": false,
+      "required": ["count", "min", "mean", "p50", "p90", "p95", "max"],
+      "properties": {"count": {"type": "integer", "minimum": 0}, "min": {"type": "number"}, "mean": {"type": "number"}, "p50": {"type": "number"}, "p90": {"type": "number"}, "p95": {"type": "number"}, "max": {"type": "number"}}
+    },
+    "trends": {
+      "type": "object", "additionalProperties": false,
+      "required": ["classification", "candidate_latency_ns", "peer_latency_ns", "candidate_output_tokens", "peer_output_tokens", "throughput_one_second_bins", "resource_sample_count", "queue_block_ns", "agreement_count", "disagreement_ordinals", "fixture_stability", "stop_counts", "error_counts", "lexical_refusal_marker_counts", "context_buckets", "decision_use"],
+      "properties": {
+        "classification": {"const": "NON_SCORING_EXPLORATORY_OBSERVATION"},
+        "candidate_latency_ns": {"$ref": "#/$defs/distribution"}, "peer_latency_ns": {"$ref": "#/$defs/distribution"},
+        "candidate_output_tokens": {"$ref": "#/$defs/distribution"}, "peer_output_tokens": {"$ref": "#/$defs/distribution"},
+        "throughput_one_second_bins": {"type": "array", "items": {"type": "integer", "minimum": 0}},
+        "resource_sample_count": {"type": "integer", "minimum": 121}, "queue_block_ns": {"$ref": "#/$defs/distribution"},
+        "agreement_count": {"type": "integer", "minimum": 0, "maximum": 64},
+        "disagreement_ordinals": {"type": "array", "items": {"type": "integer", "minimum": 0, "maximum": 63}, "uniqueItems": true},
+        "fixture_stability": {"type": "array", "minItems": 8, "maxItems": 8, "items": {"type": "object"}},
+        "stop_counts": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
+        "error_counts": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
+        "lexical_refusal_marker_counts": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
+        "context_buckets": {"type": "array", "minItems": 1, "items": {"type": "object"}},
+        "decision_use": {"const": false}
+      }
+    },
+    "law": {
+      "type": "object", "additionalProperties": false,
+      "required": ["law_id", "status", "claim_made", "meaning_source", "evidence", "metrics", "failure_code", "held_reason"],
+      "properties": {
+        "law_id": {"enum": ["L7", "L8", "L10", "L14", "L18"]}, "status": {"enum": ["HELD", "NOT_RUN"]},
+        "claim_made": {"const": false}, "meaning_source": {"type": "string"}, "evidence": {"type": "array", "maxItems": 0},
+        "metrics": {"type": "object", "maxProperties": 0}, "failure_code": {"type": "null"}, "held_reason": {"type": "string", "minLength": 1}
+      }
+    }
+  },
+  "allOf": [
+    {"if": {"properties": {"replica_consistency": {"properties": {"status": {"const": "MATCH"}}}}}, "then": {"properties": {"replica_consistency": {"properties": {"compared_count": {"const": 64}, "agreement_count": {"const": 64}, "mismatch_count": {"const": 0}, "mismatch_ordinals": {"maxItems": 0}, "exact_replica_consumer_stop": {"const": false}}}}}},
+    {"if": {"properties": {"replica_consistency": {"properties": {"status": {"const": "MISMATCH"}}}}}, "then": {"properties": {"replica_consistency": {"properties": {"mismatch_count": {"minimum": 1}, "mismatch_ordinals": {"minItems": 1}, "exact_replica_consumer_stop": {"const": true}}}}}},
+    {"if": {"properties": {"public_safety": {"properties": {"scanner_status": {"const": "BLOCKED_PUBLIC_SAFETY"}}}}}, "then": {"properties": {"export": {"properties": {"status": {"const": "BLOCKED_PUBLIC_SAFETY"}, "archive_bytes": {"type": "null"}, "archive_sha256": {"type": "null"}}}}}}
+  ],
+  "x-semantic-validator-required": true,
+  "x-classification": "NON_SCORING_EXPLORATORY_OBSERVATION",
+  "x-run-authorized": false
+}

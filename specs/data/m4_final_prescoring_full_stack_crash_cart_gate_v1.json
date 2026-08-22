@@ -1,0 +1,350 @@
+{
+  "schema_version": "m4-final-prescoring-full-stack-crash-cart-gate-v1",
+  "date": "2026-08-22",
+  "regime": "B",
+  "status": "DESIGN_ONLY_NO_RUN_AUTHORITY",
+  "classification": "NON_SCORING_EXPLORATORY_OBSERVATION",
+  "banked_authority": {
+    "readiness_route_sha": "3d1e1e4ad9039ce25f311367aff5798ad7fcec07",
+    "readiness_result_sha": "79ef7c025676e52dced8ade5698aa87754bed172",
+    "readiness_manifest_sha": "ac74281a4f39268fbddba7b92e5d5b04be2ec28f",
+    "readiness_critic_clear_sha": "7e077a716c92536ec15f1887c418e5b2f7b63896",
+    "dependency_result_sha": "4993711fa32ffe9ab3b2dabb2b5d5615182c6e90",
+    "dependency_route_sha": "6d8175edb63cf6ec03c0904d640ae6f946ebcf16",
+    "dependency_manifest_sha": "95cd17deabba6a0c84c02e26c408023b989e79bc",
+    "dependency_critic_clear_sha": "4cdb5d89945b603c20cdd19233079be14b65946b",
+    "testbed_tag": "m4-wsl2-preexecution-testbed-v1.2",
+    "testbed_tag_object": "1994709b41c8e108e0b6f9a15936681f596823af",
+    "testbed_peeled_commit": "11ea682a7f0fadfa1437a12d882402d90ffd0579"
+  },
+  "tokenizer_binding": {
+    "execution_sha": "e462e5bd61bcbad4eb03160129dec2e088de9892",
+    "result": {
+      "path": "artifacts/m4_tokenizer_materialization/tokenizer_materialization.json",
+      "mode": "100644",
+      "bytes": 2779,
+      "git_blob": "f857e75ac3d0d6c252d29fd085fa68f921da393f",
+      "sha256": "19a49a9262be81d30866befda3801b2fc97ef23a8d946d3cc1e4b5de189b3158"
+    },
+    "sidecar": {
+      "path": "artifacts/m4_tokenizer_materialization/tokenizer_materialization.json.sha256",
+      "mode": "100644",
+      "bytes": 97,
+      "git_blob": "8f1d57d5a1c6dac35cd9f560ba1441cf15ea11ac",
+      "sha256": "9ca61b765be8558551a70966eda34cba8f8978d8c6c968d62bce0e5977e026b4"
+    }
+  },
+  "model_binding": {
+    "repository_id": "Qwen/Qwen3-4B-Instruct-2507-FP8",
+    "revision": "8591804019c8b22094c3b5b4454e0edc05dffc98",
+    "quantization": "OFFICIAL_QWEN_FP8_E4M3",
+    "model_file_sha256": "b6154d74332140fd6dfbfbe70bbb3650dd6955861132bd59dda6789e6322b485",
+    "tokenizer_file_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+    "tokenizer_config_sha256": "a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+    "same_checkpoint_and_training_identity": true,
+    "distinct_runtime_instances": true,
+    "distinct_access_roots": true
+  },
+  "required_future_bindings": {
+    "final_combined_tree_sha": "UNBOUND",
+    "final_implementation_review_sha": "UNBOUND",
+    "final_judge_clear_sha": "UNBOUND",
+    "production_runner_identity": "UNBOUND",
+    "production_integration_module_identity": "UNBOUND",
+    "candidate_backend_factory_identity": "UNBOUND",
+    "peer_backend_factory_identity": "UNBOUND",
+    "final_evaluation_config_sha256": "UNBOUND",
+    "final_oci_linux_amd64_digest": "UNBOUND",
+    "final_dependency_lock_sha256": "UNBOUND",
+    "final_gofast_reconciliation_sha": "UNBOUND",
+    "final_gofast_entrypoint_identity": "UNBOUND",
+    "semantic_validator_identity": "UNBOUND",
+    "deterministic_renderer_identity": "UNBOUND",
+    "focused_implementation_test_identity": "UNBOUND",
+    "implementation_critic_clear_sha": "UNBOUND",
+    "rebecca_single_run_release_sha": "UNBOUND"
+  },
+  "topology": {
+    "production_symbols": [
+      "AdapterFactory",
+      "CandidateAdapter",
+      "PeerAdapter",
+      "FanoutCoordinator"
+    ],
+    "candidate_role": "candidate",
+    "peer_role": "peer",
+    "backend_policy": "FINAL_PRODUCTION_BACKENDS_ONLY_NO_CONTROL_BACKEND_SUBSTITUTION",
+    "gofast_policy": "PARALLEL_CPU_ONLY_NATIVE_CUDA_SHELVED_SERIAL_UNAUTHORIZED",
+    "gpu_execution_required": true,
+    "network": "OS_ENFORCED_NONE",
+    "repository_mount": "READ_ONLY",
+    "model_mounts": "TWO_DISTINCT_READ_ONLY_ROOTS",
+    "evidence_stage": "EXTERNAL_PREEXISTING_EMPTY_MODE_0700_READ_WRITE",
+    "fallback": false,
+    "retry": false
+  },
+  "negative_probes": [
+    {
+      "ordinal": 0,
+      "id": "STEP_BEFORE_INITIALIZE",
+      "model_calls": 0,
+      "expected": "ADAPTER_LIFECYCLE_VIOLATION",
+      "postcondition": "BYTE_IDENTICAL_STATE_AND_STAGE"
+    },
+    {
+      "ordinal": 1,
+      "id": "PRIVATE_VIEW_REQUEST_DIGEST_MISMATCH",
+      "model_calls": 0,
+      "expected": "PRIVATE_VIEW_MISMATCH_UPSTREAM_SUPPRESSION",
+      "postcondition": "BYTE_IDENTICAL_STATE_AND_STAGE"
+    },
+    {
+      "ordinal": 2,
+      "id": "FANOUT_RECEIPT_CORRELATION_REJECTION",
+      "model_calls": 0,
+      "expected": "FANOUT_ATOMICITY_FAILURE",
+      "postcondition": "BOTH_ROLE_STATES_AND_STAGE_BYTE_IDENTICAL"
+    }
+  ],
+  "active_schedule": {
+    "paired_request_count": 64,
+    "role_request_count": 128,
+    "queue_capacity_pairs": 8,
+    "minimum_active_window_ns": 30000000000,
+    "hard_active_window_deadline_ns": 60000000000,
+    "setup_model_load_and_warmup_excluded": true,
+    "offset_rule": "ordinal_0_through_15_equals_0; ordinal_16_through_63_equals_(ordinal-15)*625000000",
+    "final_scheduled_offset_ns": 30000000000,
+    "enqueue_policy": "BLOCK_WHEN_FULL_RECORD_WAIT_NO_DROP_NO_RETRY",
+    "fault_on_deadline": "BLOCKED_ACTIVE_WINDOW_TIMEOUT_NO_RETRY"
+  },
+  "warmup": {
+    "classification": "NON_SCORING_OPERATIONAL_WARMUP",
+    "placement": "AFTER_MODEL_RUNTIME_LOAD_AND_HEALTH_BEFORE_MEASURED_OR_SCORING_REQUEST",
+    "paired_prompt_count": 4,
+    "role_request_count": 8,
+    "ordered_prompts": [
+      {"ordinal": 0, "payload_ascii_bytes": 0, "max_output_tokens": 8, "prompt_bytes": 94, "prompt_sha256": "710a2a4732923d4296326598486190cb1d53889975fdd8b54bdae90f98287320"},
+      {"ordinal": 1, "payload_ascii_bytes": 32, "max_output_tokens": 16, "prompt_bytes": 127, "prompt_sha256": "9fbf89b42768e1460f51f12416c949d4eca65a517f7327fc22937630dc1144ef"},
+      {"ordinal": 2, "payload_ascii_bytes": 512, "max_output_tokens": 16, "prompt_bytes": 608, "prompt_sha256": "4c5e6e219b20a6c55f23df977c4bf9eb65e576dd2606958d341e74f09fac811d"},
+      {"ordinal": 3, "payload_ascii_bytes": 1024, "max_output_tokens": 32, "prompt_bytes": 1121, "prompt_sha256": "5d9b0431fca2e7dc5135ffbb51cbe960f25950df11d6caccc5f753055d79f17a"}
+    ],
+    "prompt_generator": "UTF8_LF_NO_BOM:M4_WARMUP_PUBLIC_V1\\nordinal={zero_pad_4}\\npayload_bytes={decimal}\\npayload={N lowercase x bytes}\\nRespond with the ordinal only.\\n",
+    "same_sequence_and_parameters_for_both_roles": true,
+    "synchronization_barrier_each_pair": true,
+    "generation_parameters": {
+      "temperature_millionths": 0,
+      "warmup_sampling_seed": 0,
+      "rng_domain": "M4_FINAL_CRASH_CART_WARMUP_V1",
+      "top_p_millionths": 1000000,
+      "top_k": -1,
+      "n": 1,
+      "presence_penalty_millionths": 0,
+      "frequency_penalty_millionths": 0,
+      "stop_strings": [],
+      "logprobs": false,
+      "prefix_caching": false,
+      "max_output_tokens_by_ordinal": [8, 16, 16, 32]
+    },
+    "expected_receipt": {
+      "fields": ["status", "backend_code", "session_id", "prior_backend_state_sha256", "result_backend_state_sha256", "request_sha256", "request_ordinal"],
+      "status": "PASS",
+      "backend_code": null,
+      "request_ordinals": [1, 2, 3, 4],
+      "session_rule": "BOUND_DISTINCT_ROLE_SESSION",
+      "state_rule": "EXACT_PRIOR_TO_RESULT_CHAIN",
+      "request_rule": "SHA256_CANONICAL_REQUEST"
+    },
+    "per_pair_timeout_ns": 30000000000,
+    "sequence_deadline_ns": 120000000000,
+    "clean_barrier_deadline_ns": 10000000000,
+    "prefix_caching": false,
+    "expected_answer": null,
+    "content_gates_success": false,
+    "retain_fields": ["prompt_text", "prompt_sha256", "candidate_output_text", "peer_output_text", "input_output_token_counts", "stop_reasons", "first_and_subsequent_latency_ns", "resource_peaks", "request_receipt_ids", "completion_status", "barrier_time_ns"],
+    "post_sequence_commands": ["WAIT_ZERO_ACTIVE_AND_IN_FLIGHT", "PRODUCTION_RESET_EPISODE_CANDIDATE", "PRODUCTION_RESET_EPISODE_PEER", "GPU_SYNCHRONIZE", "ASSERT_NO_REQUEST_SESSION_CONVERSATION_OR_REUSABLE_KV_STATE", "ASSERT_PREFIX_CACHE_DISABLED", "ESTABLISH_NEW_MEASURED_EPISODE", "BOTH_ROLE_CLEAN_BARRIER"],
+    "allowed_retention_after_barrier": ["COMPILED_KERNELS", "RUNTIME_ALLOCATOR_RESERVATIONS", "SANITIZED_WARMUP_EVIDENCE"],
+    "forbidden_retention_after_barrier": ["PROMPT_CONTENT_IN_RUNTIME_STATE", "SESSION_OR_CONVERSATION_STATE", "ACTIVE_OR_IN_FLIGHT_REQUEST", "REUSABLE_WARMUP_KV_PREFIX", "WARMUP_RNG_STATE"],
+    "measured_rng_initialization": "AFTER_CLEAN_BARRIER_FROM_FIXED_PUBLIC_SYNTHETIC_RUN_INPUT",
+    "future_scoring_contract_insertion_point": "POST_WARMUP_CLEAN_BARRIER_PRE_FIRST_MEASURED_REQUEST",
+    "future_scoring_rng_rule": "SEPARATE_COURIER_AUTHORIZED_INPUT_ONLY_AFTER_BARRIER_NOT_PROVIDED_BY_THIS_DESIGN",
+    "excluded_from": ["ACTIVE_WINDOW", "MEASURED_REQUEST_COUNT", "REPLICA_CONSISTENCY_AXIS", "TRENDS", "SCORING", "QUALIFICATION", "SCIENCE"]
+  },
+  "public_fixture": {
+    "fixture_family_count": 8,
+    "payload_ascii_byte_counts": [0, 32, 64, 128, 256, 512, 768, 1024],
+    "family_rule": "ordinal_mod_8",
+    "repetition_rule": "floor_ordinal_div_8",
+    "prompt_encoding": "UTF8_LF",
+    "implementation_must_bind_exact_generator_and_64_prompt_sha256_values": true,
+    "prompt_text_public": true,
+    "protected_or_scientific_seed": false,
+    "input_and_output_token_id_arrays_forbidden": true
+  },
+  "lifecycle": [
+    "CONSTRUCT",
+    "DESCRIBE",
+    "NEGATIVE_PROBES",
+    "INITIALIZE_BOTH",
+    "RESET_WARMUP_EPISODE_BOTH",
+    "GOVERNED_WARMUP_FOUR_PAIRS",
+    "WARMUP_STATE_CLEAR_AND_SYNCHRONIZED_BARRIER",
+    "INDEPENDENT_MEASURED_RNG_INITIALIZATION",
+    "ACTIVE_PAIRED_FANOUT",
+    "SNAPSHOT_BOTH",
+    "CLOSE_BOTH",
+    "DISPOSE_AND_CLEANUP",
+    "VALIDATE_RENDER_SCAN_EXPORT"
+  ],
+  "resource_sampling": {
+    "interval_ns": 250000000,
+    "start": "ACTIVE_WINDOW_START",
+    "end": "CLEANUP_TERMINAL_SAMPLE",
+    "fields": [
+      "monotonic_ns",
+      "gpu_utilization_percent",
+      "gpu_memory_used_bytes",
+      "candidate_process_gpu_bytes",
+      "peer_process_gpu_bytes",
+      "host_ram_used_bytes",
+      "candidate_rss_bytes",
+      "peer_rss_bytes",
+      "queue_depth_pairs",
+      "producer_blocked",
+      "completed_pair_count"
+    ]
+  },
+  "complete_local_evidence": {
+    "classification": "NON_SCORING_EXPLORATORY_OBSERVATION",
+    "retain_all_rows": true,
+    "retain_failures_mismatches_and_anomalies": true,
+    "row_fields": [
+      "ordinal",
+      "fixture_identity",
+      "public_prompt_text",
+      "prompt_sha256",
+      "candidate_output_text",
+      "peer_output_text",
+      "input_and_output_token_counts",
+      "stop_reasons",
+      "timestamps_and_latencies",
+      "request_receipt_session_state_and_output_digests",
+      "errors_and_ordering",
+      "retry_count",
+      "lifecycle_fanout_and_rollback_trace_refs",
+      "pair_comparison"
+    ],
+    "forbidden": [
+      "PRIVATE_CUSTODY_VALUE",
+      "PROTECTED_HOLDOUT_OR_COURIER_INPUT",
+      "CREDENTIAL",
+      "PRIVATE_PATH_OR_ENVIRONMENT_VALUE",
+      "MODEL_OR_TOKENIZER_BYTES",
+      "INPUT_OR_OUTPUT_TOKEN_ID_ARRAY",
+      "SCIENTIFIC_SCORE_OR_VERDICT"
+    ]
+  },
+  "exploratory_trends": {
+    "classification": "NON_SCORING_EXPLORATORY_OBSERVATION",
+    "required": [
+      "latency_distribution_by_role",
+      "output_length_distribution_by_role",
+      "one_second_throughput_time_series",
+      "resource_time_series_250ms",
+      "queue_depth_and_backpressure_distribution",
+      "candidate_peer_agreement_and_disagreement_ordinals",
+      "per_fixture_output_stability",
+      "stop_error_and_lexical_refusal_marker_counts",
+      "context_token_count_bucket_descriptions"
+    ],
+    "distribution_statistics": ["count", "min", "mean", "p50", "p90", "p95", "max"],
+    "decision_use": false,
+    "ranking": false,
+    "qualification": false,
+    "scientific_claim": false
+  },
+  "two_axis_status": {
+    "structural_status_values": ["PASS", "BLOCKED", "INSTRUMENT_FAILURE"],
+    "replica_consistency_status_values": ["MATCH", "MISMATCH", "NOT_RUN"],
+    "mismatch_is_separate": true,
+    "exact_replica_consumer_must_stop_on_mismatch": true,
+    "structural_pass_is_engineering_only": true
+  },
+  "held_laws": {
+    "order": ["L7", "L8", "L10", "L14", "L18"],
+    "status": "HELD",
+    "claim_made": false,
+    "row_fields": ["law_id", "status", "claim_made", "meaning_source", "evidence", "metrics", "failure_code", "held_reason"],
+    "expected_canonical_bytes": 974,
+    "expected_sha256": "bb2d5f838c54c404dd73d0c697ba6f45cd983fb7e5a7bb97a36b38570267b81f"
+  },
+  "render_and_export": {
+    "report_path": "m4_final_prescoring_crash_cart_report_v1.json",
+    "summary_path": "m4_final_prescoring_crash_cart_summary_v1.md",
+    "export_manifest_path": "m4_final_prescoring_crash_cart_export_manifest_v1.json",
+    "archive_path": "m4_final_prescoring_crash_cart_bundle_v1.tar",
+    "all_files_mode": "0600",
+    "json_encoding": "CANONICAL_COMPACT_UTF8_ONE_LF",
+    "markdown_encoding": "UTF8_LF_DETERMINISTIC_TEMPLATE",
+    "archive_encoding": "USTAR_SORTED_NAMES_MTIME_0_UID_0_GID_0_NUMERIC_MODE_0600",
+    "sidecar_format": "LOWERCASE_SHA256_TWO_SPACES_BASENAME_LF",
+    "reproduction": "BYTE_IDENTICAL_REQUIRED",
+    "export_requires_public_safety_clear": true
+  },
+  "public_safety": {
+    "scan_complete_resulting_files": true,
+    "manual_classification_required": true,
+    "silent_suppression": false,
+    "on_finding": "RETAIN_COMPLETE_LOCAL_MODE_0600_BLOCK_EXPORT_AND_SCORING",
+    "row_deletion_or_rewrite": false
+  },
+  "cleanup_postconditions": [
+    "NO_NEW_WORK",
+    "BOTH_ENGINES_DISPOSED",
+    "BOTH_RUNTIME_PROCESSES_ABSENT",
+    "NO_BACKEND_OWNED_GPU_PROCESS_OR_ALLOCATION",
+    "ALLOCATOR_REFERENCES_RELEASED",
+    "NO_TEMP_FILES",
+    "ONLY_VALIDATED_FINAL_LOCAL_EVIDENCE_REMAINS",
+    "REPOSITORY_CLEAN",
+    "POST_STATE_RECORDED"
+  ],
+  "semantic_validation": [
+    "WARMUP_EXACT_FOUR_ORDERED_EQUAL_ROLE_PROMPTS_AND_PARAMETERS",
+    "WARMUP_EVIDENCE_COMPLETE_AND_EXCLUDED_FROM_MEASURED_AGGREGATES",
+    "WARMUP_CLEAN_BARRIER_PRECEDES_MEASURED_RNG_AND_ACTIVE_WINDOW",
+    "NO_WARMUP_SESSION_KV_OR_RNG_CARRYOVER",
+    "EXACTLY_64_ROWS_ORDINALS_0_THROUGH_63_ONCE",
+    "EXACTLY_128_ROLE_ATTEMPTS",
+    "ALL_RETRY_COUNTS_ZERO",
+    "SCHEDULE_AND_ACTIVE_WINDOW_MATCH_CONTRACT",
+    "ALL_REQUEST_RECEIPT_AND_RUNTIME_IDENTITIES_UNIQUE_WHERE_REQUIRED",
+    "CANDIDATE_AND_PEER_PRIVATE_VIEW_DIGEST_EQUAL_PER_ORDINAL",
+    "NO_DROPS_AND_FIFO_ORDER",
+    "ALL_AGGREGATES_RECOMPUTE_FROM_UNFILTERED_ROWS",
+    "ALL_TRENDS_RECOMPUTE_FROM_UNFILTERED_ROWS_AND_SAMPLES",
+    "STRUCTURAL_AND_REPLICA_AXES_CROSS_FIELD_VALID",
+    "LAW_ROWS_EXACT_HELD_PROJECTION",
+    "CLEANUP_AND_EXPORT_CROSS_FIELD_VALID"
+  ],
+  "stop_conditions": [
+    "ANY_UNBOUND_REQUIRED_FUTURE_IDENTITY",
+    "MISSING_DESIGN_OR_IMPLEMENTATION_CRITIC_CLEAR",
+    "MISSING_REBECCA_EXACT_SINGLE_RUN_RELEASE",
+    "WARMUP_SKIPPED_UNEQUAL_PROTECTED_SUBSTITUTED_TIMED_OUT_ASYMMETRIC_OR_RESIDUAL",
+    "IDENTITY_TOPOLOGY_LIFECYCLE_FANOUT_ROLLBACK_EVIDENCE_OR_CLEANUP_DEFECT",
+    "PROTECTED_PRIVATE_OR_SCIENTIFIC_INPUT_REQUEST",
+    "RETRY_RERUN_FALLBACK_OR_ADAPTIVE_CHANGE",
+    "SCORING_QUALIFICATION_LAW_OR_READINESS_CLAIM",
+    "PUBLIC_SAFETY_OR_EXPORT_FAILURE"
+  ],
+  "source_classifications": [
+    {"selector": "minimum 30-second measured active window excluding setup, model load and warmup", "source": "REBECCA_USER_DIRECTIVE_2026-08-22"},
+    {"selector": "mandatory fixed warmup, post-warmup clean barrier, independent RNG insertion point and adversarial requirements", "source": "REBECCA_USER_DIRECTIVE_2026-08-22"},
+    {"selector": "64 pairs, 60-second hard deadline, queue 8, dispatch schedule, 250-ms sampling, fixture sizes, trend set and export rules", "source": "PROPOSED_ENGINEERING_CONTROL_REQUIRES_REBECCA_RELEASE"},
+    {"selector": "all scientific bars, seed rules, same-checkpoint identity, holds and banked readiness evidence", "source": "BANKED_READINESS_CLEAR_7e077a716c92536ec15f1887c418e5b2f7b63896"}
+  ],
+  "run_authorized": false,
+  "merge_authorized": false,
+  "scoring_authorized": false
+}
