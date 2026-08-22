@@ -204,15 +204,22 @@ def publish(output: str | Path, result: dict[str, object], schema: str | Path) -
 def materialize(contract_path: str, custody_handle: str, output_path: str) -> int:
     repository = Path.cwd()
     schema = repository / "specs/data/m4_tokenizer_materialization_result_schema_v1.json"
-    request: dict[str, object] | None = None
+    authority_request_path = repository / "specs/data/m4_tokenizer_materialization_request_v1.json"
+    # The committed authority request supplies only public identity fields for a
+    # governed projection when the routed request cannot itself be trusted.
+    authority_request = load(authority_request_path, REQ_SHA)
+    request: dict[str, object] = authority_request
     try:
-        request = load(contract_path, REQ_SHA)
+        try:
+            request = load(contract_path, REQ_SHA)
+        except (OSError, ValueError, KeyError, json.JSONDecodeError) as error:
+            raise GovernedFailure("AUTHORITY", "AUTHORITY_MISSING", True) from error
         require(Path(sys.orig_argv[0]).name == "python3" and custody_handle == HANDLE,
                 "AUTHORITY", "AUTHORITY_MISSING", True)
         constructor_path = repository / "specs/data/m4_context_format_probe_contract_v1.json"
         require(request["constructor"]["artifact_sha256"] == CONSTRUCTOR
                 and sha(constructor_path.read_bytes()) == CONSTRUCTOR,
-                "AUTHORITY", "CONSTRUCTOR_IDENTITY_MISMATCH", True)
+                "CONSTRUCTOR_IDENTITY", "CONSTRUCTOR_IDENTITY_MISMATCH")
         raw_root = os.environ.get(ENV)
         require(bool(raw_root) and not any(character in raw_root for character in "\0\r\n"),
                 "CUSTODY_HANDLE", "CUSTODY_HANDLE_UNRESOLVED", True)
@@ -228,13 +235,20 @@ def materialize(contract_path: str, custody_handle: str, output_path: str) -> in
                 "CUSTODY_ATTESTATION", "CUSTODY_ATTESTATION_INVALID")
         try:
             record = load(record_path)
-            validate(repository / "specs/data/m4_tokenizer_private_custody_record_schema_v1.json", record)
         except (OSError, ValueError, KeyError, json.JSONDecodeError) as error:
             raise GovernedFailure("CUSTODY_ATTESTATION", "CUSTODY_ATTESTATION_INVALID") from error
         identity = request["selected_identity"]
-        require(not any(record[key] != identity[key] for key in
-                        ("repository_id", "revision", "quantization", "weight", "tokenizer", "tokenizer_config")),
-                "CUSTODY_ATTESTATION", "CHECKPOINT_IDENTITY_MISMATCH")
+        try:
+            require(not any(record[key] != identity[key] for key in
+                            ("repository_id", "revision", "quantization", "weight")),
+                    "CUSTODY_ATTESTATION", "CHECKPOINT_IDENTITY_MISMATCH")
+            require(record["tokenizer"] == identity["tokenizer"],
+                    "CUSTODY_ATTESTATION", "TOKENIZER_IDENTITY_MISMATCH")
+            require(record["tokenizer_config"] == identity["tokenizer_config"],
+                    "CUSTODY_ATTESTATION", "TOKENIZER_CONFIG_IDENTITY_MISMATCH")
+            validate(repository / "specs/data/m4_tokenizer_private_custody_record_schema_v1.json", record)
+        except (OSError, ValueError, KeyError, json.JSONDecodeError) as error:
+            raise GovernedFailure("CUSTODY_ATTESTATION", "CUSTODY_ATTESTATION_INVALID") from error
         weight_path = root / identity["weight"]["name"]
         try:
             weight_lstat = os.lstat(weight_path)
@@ -327,26 +341,22 @@ def materialize(contract_path: str, custody_handle: str, output_path: str) -> in
             raise
         return 0
     except GovernedFailure as failure:
-        if request is None:
-            return 2 if failure.blocked else 3
         try:
             publish(output_path, failure_result(request, failure.check, failure.code, failure.blocked), schema)
         except (OSError, ValueError, KeyError, json.JSONDecodeError):
             return 3
         return 2 if failure.blocked else 3
     except (OSError, ValueError, KeyError, json.JSONDecodeError):
-        if request is not None:
-            try:
-                publish(output_path, failure_result(request, "PUBLIC_SAFETY", "INTERNAL_ERROR"), schema)
-            except Exception:
-                pass
+        try:
+            publish(output_path, failure_result(request, "PUBLIC_SAFETY", "INTERNAL_ERROR"), schema)
+        except Exception:
+            pass
         return 3
     except Exception:
-        if request is not None:
-            try:
-                publish(output_path, failure_result(request, "PUBLIC_SAFETY", "INTERNAL_ERROR"), schema)
-            except Exception:
-                pass
+        try:
+            publish(output_path, failure_result(request, "PUBLIC_SAFETY", "INTERNAL_ERROR"), schema)
+        except Exception:
+            pass
         return 4
 
 
