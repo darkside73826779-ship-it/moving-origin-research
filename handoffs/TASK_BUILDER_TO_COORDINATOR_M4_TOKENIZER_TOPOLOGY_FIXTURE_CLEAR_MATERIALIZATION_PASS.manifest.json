@@ -66,7 +66,7 @@
     "tool_status": "blocked",
     "manual_review": true,
     "findings": [
-      "the nine fixed-regex personal-contact findings are duplicate scan-domain occurrences wholly inside the contract-permitted public 4096-array SHA-256, immutable public model revision, or declared public weight SHA-256; they are public reproducibility metadata, not contact data",
+      "the 25 fixed-regex personal-contact findings comprise ten duplicate scan-domain occurrences wholly inside the contract-permitted public 4096-array SHA-256, immutable public model revision, or declared public weight SHA-256, plus 15 occurrences wholly inside required immutable Git/artifact SHA values in the canonical manifest; all are public reproducibility metadata, not contact data",
       "the six gitleaks generic-api-key findings are duplicate scan-domain occurrences of the contract-permitted public tokenizer_config_sha256 and tokenizer_sha256 values; they are public artifact identities, not credentials",
       "manual review found no credential, personal contact data, private path or binding value, custody data, model/tokenizer bytes, complete token arrays, rendered private text, protected seeds, scientific output, or prohibited durable-state mutation"
     ]
