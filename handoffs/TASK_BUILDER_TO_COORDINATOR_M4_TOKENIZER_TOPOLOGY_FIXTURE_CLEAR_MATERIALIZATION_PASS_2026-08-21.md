@@ -32,6 +32,8 @@ Every gate passed in the committed order before the materializer process started
 
 TASK BUILDER started the exact committed materializer command once. The process returned exit `0` and atomically published exactly two sanitized regular non-link files. No retry, fallback, alternate root, image, interpreter, runtime, topology, command, normalization, copying of governed inputs, synthesis, or invention occurred.
 
+Before that single start, an initial local orchestration string was rejected by Bash parsing before any command executed. It produced no private precondition check, Docker process, custody access, output stage, or materializer start and therefore did not consume the operation. TASK BUILDER replaced only the local quoting mechanism with a temporary non-repository script, verified it with `bash -n`, and then invoked the unchanged committed Docker command exactly once. The temporary script was removed after execution.
+
 The canonical result is 2,779 bytes with SHA-256 `19a49a9262be81d30866befda3801b2fc97ef23a8d946d3cc1e4b5de189b3158`. It is schema-valid canonical UTF-8 JSON plus one LF, and its adjacent sidecar matches the exact bytes.
 
 All 18 ordered governed checks passed:
