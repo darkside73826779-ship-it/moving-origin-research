@@ -45,6 +45,10 @@ This artifact approves existence, preservation, and version labeling only. It do
 - promotion to beta or v1 without the required reviews and exact identities; or
 - a crash-cart run or protected scoring release.
 
+## Public-safety classification
+
+The workflow preflight's duplicate-domain `personal_contact` heuristic is a numeric substring wholly inside the required immutable public CRITIC review commit SHA. It is public reproducibility metadata, not personal contact data. The classification is explicit, no finding is suppressed, and gitleaks reports zero findings.
+
 ## Expected next event
 
 ARCHITECT binds this exact versioning authority into the BF1–BF4 correction and labels the corrected design `v0.2-alpha`. After one authoritative persistent-CRITIC rereview, a CLEAR may permit a separate beta transition decision; a BLOCK retains the alpha artifact and routes only the exact findings for correction.
