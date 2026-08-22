@@ -2753,3 +2753,18 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **STATE.md canonical Git-blob SHA-256:** 6bd3a15929032bbdb7e332cd7739b31641c05e5967037230f72445aadbd42ac6; **STATE metadata raw SHA-256:** 2ce2ef58807acbe2267dc4ae49e0b25af0ffa27e928dca993a617be701607ccd — independently verified, schema-valid, current, owner INTEGRATOR; no STATE edit.
 - **Holds:** science, scoring, seed, model, and merge holds preserved.
 - **Next event:** provenance metadata publication and Coordinator merge custody.
+
+---
+
+## Entry 118 — M4 post-tokenizer mutation-clear readiness reconsideration JUDGE custody publication
+
+**Date:** 2026-08-22 · **Regime:** B [§5-P4] · **Actors:** JUDGE (ruling); RECORDER (exact-byte custody publication)
+
+- **Gate served:** Non-scoring implementation-readiness reconsideration custody for the corrected M4 post-tokenizer mutation apparatus package.
+- **Authority and route:** Canonical v4 route `coordinator/m4-post-tokenizer-mutation-clear-judge-route-v4` @ `3b5fbaa74668e563ea0005b7e7488473976d0b95`; canonical v4 manifest @ `b9e37b5647624e28452a1acd334e1de62528d933`; review result `e67f0538640334e1db6b5397bce808f098d2e6ac`; accepted package base `909d2a4a6b4ceafb871e11c1757d873cfa1a4c41`.
+- **Published ruling:** `docs/rulings/judge_m4_post_tokenizer_mutation_clear_readiness_reconsideration.md`; 6,787 bytes; raw SHA-256 `371c5e3b448381db1a4a02ee6aa049a02a55fec044c7101fa64fb1d2c66ec7a5`; RECORDER strictly validated the private canonical envelope, padded base64 round trip, UTF-8/LF rules, filename uniqueness, length, and digest before publishing byte-identical content.
+- **Disposition retained exactly:** **CLEAR — PRIOR INSTRUMENT FAILURE CLOSED; ENGINEERING READINESS ADEQUATE FOR RETURN TO REBECCA.** Custody publication is not an operative gate, merge authorization, qualification, scoring authorization, or publication decision.
+- **Scope and holds:** No tokenizer/materializer operation, rerun, private custody/model/tokenizer access, inference, science, scoring, protected-seed access, STATE edit, implementation change, merge, or gate decision occurred. All standing holds remain binding.
+- **Custody chain:** JUDGE private envelope → WORKFLOW COORDINATOR unchanged v4 routing → RECORDER exact-byte validation and publication → WORKFLOW COORDINATOR for Rebecca's later explicit decision.
+- **§5 custody line:** Constitution v2 SHA-256 `c96dc32f00cafeec4a6073c9f2bb8276f05ea764f34d266abae98ed84a750b4a` — unchanged.
+- **Next recipient:** WORKFLOW COORDINATOR.
