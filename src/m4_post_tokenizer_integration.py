@@ -517,7 +517,8 @@ class AdapterFactory:
     def _dispose_verified(backend: RealBackendProtocol) -> None:
         try:
             backend.dispose()
-            if backend.is_live(): raise IntegrationError("BACKEND_ROLLBACK_FAILURE")
+            live_after_disposal = backend.is_live()
+            if live_after_disposal is not False: raise IntegrationError("BACKEND_ROLLBACK_FAILURE")
         except IntegrationError: raise
         except Exception as exc: raise IntegrationError("BACKEND_ROLLBACK_FAILURE") from exc
 

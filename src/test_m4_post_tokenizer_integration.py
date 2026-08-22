@@ -791,7 +791,8 @@ class RereviewRemediationTests(unittest.TestCase):
 
     def test_factory_requires_live_attestation_and_cleans_each_role(self):
         made=[]
-        def ctor(session,mode="live",disposal="exact"):
+        unset=object()
+        def ctor(session,mode="live",disposal="exact",post_disposal_observation=unset):
             def build():
                 backend=SpyBackend(session)
                 if mode=="dead":backend.real_state["live"]=False
@@ -800,6 +801,7 @@ class RereviewRemediationTests(unittest.TestCase):
                     def probe():
                         probes["count"]+=1
                         if mode=="throw_always" or probes["count"]==1:raise RuntimeError("live probe")
+                        if post_disposal_observation is not unset:return post_disposal_observation
                         return backend.real_state["live"]
                     backend.is_live=probe
                 if disposal=="noop":backend.dispose=lambda:None
@@ -842,6 +844,22 @@ class RereviewRemediationTests(unittest.TestCase):
         with self.assertRaisesRegex(IntegrationError,"BACKEND_ROLLBACK_FAILURE"):
             control_factory.create("control","empty",canonical(control_manifest),canonical(control_config),provider)
         self.assertEqual(len(made),1);self.assertTrue(made[0].real_state["live"])
+        made.clear();factory,cman,pman,ccfg,pcfg=self._pair_specs(
+            ctor("candidate-session-v1","throw_once",post_disposal_observation=None),ctor("peer-session-v1"))
+        with self.assertRaisesRegex(IntegrationError,"BACKEND_ROLLBACK_FAILURE"):
+            factory.create_pair(canonical(cman),canonical(pman),canonical(ccfg),canonical(pcfg),provider)
+        self.assertEqual(len(made),1);self.assertIs(made[0].real_state["live"],False)
+        made.clear();factory,cman,pman,ccfg,pcfg=self._pair_specs(
+            ctor("candidate-session-v1"),ctor("peer-session-v1","throw_once",post_disposal_observation=0))
+        with self.assertRaisesRegex(IntegrationError,"BACKEND_ROLLBACK_FAILURE"):
+            factory.create_pair(canonical(cman),canonical(pman),canonical(ccfg),canonical(pcfg),provider)
+        self.assertEqual(len(made),2);self.assertTrue(all(item.real_state["live"] is False for item in made))
+        made.clear();control_factory=AdapterFactory({"control-real":(
+            ctor("control-session-v1","throw_once",post_disposal_observation=()),"a"*64,"b"*64,
+            sha256_bytes(canonical(control_config)))})
+        with self.assertRaisesRegex(IntegrationError,"BACKEND_ROLLBACK_FAILURE"):
+            control_factory.create("control","empty",canonical(control_manifest),canonical(control_config),provider)
+        self.assertEqual(len(made),1);self.assertIs(made[0].real_state["live"],False)
         made.clear();factory,cman,pman,ccfg,pcfg=self._pair_specs(ctor("candidate-session-v1"),ctor("peer-session-v1"))
         candidate,peer=factory.create_pair(canonical(cman),canonical(pman),canonical(ccfg),canonical(pcfg),provider)
         self.assertTrue(candidate.backend.is_live());self.assertTrue(peer.backend.is_live())
