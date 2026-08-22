@@ -2753,3 +2753,18 @@ M1 green certified the instrument, not the idea. E1 green is the first scored ev
 - **STATE.md canonical Git-blob SHA-256:** 6bd3a15929032bbdb7e332cd7739b31641c05e5967037230f72445aadbd42ac6; **STATE metadata raw SHA-256:** 2ce2ef58807acbe2267dc4ae49e0b25af0ffa27e928dca993a617be701607ccd — independently verified, schema-valid, current, owner INTEGRATOR; no STATE edit.
 - **Holds:** science, scoring, seed, model, and merge holds preserved.
 - **Next event:** provenance metadata publication and Coordinator merge custody.
+
+---
+
+## Entry 117 — M4 post-tokenizer implementation-readiness JUDGE ruling custody publication
+
+**Date:** 2026-08-22 · **Regime:** B [§5-P4] · **Actors:** JUDGE (ruling); RECORDER (exact-byte custody publication)
+
+- **Gate served:** Non-scoring implementation-readiness ruling custody for the exact M4 post-tokenizer integration package.
+- **Authority and route:** Rebecca authority artifact `handoffs/REBECCA_M4_POST_TOKENIZER_IMPLEMENTATION_READINESS_JUDGE_AUTHORITY_2026-08-22.md` on Coordinator routing head `2bb9e04adc73ea324c8be58f66db16c62f2aa1ba`; authoritative recovery-CRITIC result `bc1bd5a1c86f0e2cd9f316e6e0fb339278fb60f2`; named package base `909d2a4a6b4ceafb871e11c1757d873cfa1a4c41`.
+- **Published ruling:** `docs/rulings/judge_m4_post_tokenizer_implementation_readiness_ruling.md`; 5,140 bytes; Git blob `3841cfc260ff9c639e32a1119cb4d1041c0c77eb`; raw SHA-256 `ca77333e20c8a2f6accbd32d2f79b9ca3b256f8050faa7981f7f14bf10e0c5b0`. RECORDER strictly validated the private canonical envelope, standard padded base64 round trip, UTF-8/LF rules, filename uniqueness, byte length, and digest before publishing byte-identical content.
+- **Disposition retained exactly:** **BLOCK — INSTRUMENT FAILURE — mutation apparatus/test-target binding.** Publication is custody only; it is not gate approval and does not make the ruling operative.
+- **Scope and holds:** No tokenizer/materializer operation, rerun, model or private-custody access, inference, science, scoring, protected-seed access, STATE edit, implementation change, merge, or gate decision occurred. All existing holds remain binding.
+- **Custody chain:** JUDGE private envelope → WORKFLOW COORDINATOR unchanged routing → RECORDER exact-byte validation and publication → WORKFLOW COORDINATOR for Rebecca disposition and authorized remediation routing.
+- **§5 custody line:** Constitution v2 SHA-256 `c96dc32f00cafeec4a6073c9f2bb8276f05ea764f34d266abae98ed84a750b4a` — unchanged.
+- **Next recipient:** WORKFLOW COORDINATOR. Ownership transfers only after direct handoff acknowledgement.
