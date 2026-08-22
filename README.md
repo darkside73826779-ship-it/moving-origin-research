@@ -15,6 +15,22 @@ This repository does **not** claim awareness, consciousness, AGI, or machine sen
 | M1 | Is the measurement and scoring harness functioning? | **PASS** | The first scoring run delivered green. See [`runs/m1-run-1/`](runs/m1-run-1/) and the [JUDGE ruling](reviews/judge_m1_run1_ruling.md). |
 | E1 | Is the moving-origin candidate correct, operationally distinct, and load-bearing? | **PASS on five seeds** | Oracle agreement was 1.0; candidate latency remained approximately constant while the fair-naive index grew approximately 6.89×; every seed showed positive downstream degradation when the moving origin was disturbed. See [`runs/e1-run-2/`](runs/e1-run-2/) and the [JUDGE ruling](reviews/judge_e1_run2_ruling.md). |
 | M3 V4.4 | Does the candidate satisfy the M3 law battery under calibrated controls? | **Continuation evidence; overall INSTRUMENT FAILURE** | Every candidate-facing bar passed. Of 27 pre-registered stochastic control checks, 26 passed and one frozen-control calibration check failed on seed 303. Under the locked protocol, that single apparatus failure blocks an overall M3 PASS. See the [M3 JUDGE ruling](reviews/judge_m3_v44_scoring_ruling.md). |
+| M4 tokenizer materialization | Can the governed tokenizer construction be reproduced and published safely? | **Engineering PASS; evidence independently cleared** | All 18 governed checks passed through atomic publication. This validates tokenizer construction and evidence integrity, not model quality or science. See the [final execution-evidence review](https://github.com/darkside73826779-ship-it/moving-origin-research/blob/7274fbb1aef06d686efe07bb54b6828d0a5b41e2/reviews/critic_m4_tokenizer_pass_evidence_ex_pass2_final_rereview.md). |
+| M4 post-tokenizer integration | Is the post-tokenizer implementation adequately verified for a later integration decision? | **Engineering-readiness CLEAR; integration and scoring not authorized** | The corrected mutation apparatus closed the prior evidence defect without changing the accepted production implementation or its production tests. The JUDGE returned the package to Rebecca for a separate decision. See the [Recorder-published ruling](https://github.com/darkside73826779-ship-it/moving-origin-research/blob/3470ab1a032644eba30cbe6b4e361c9a9518d95e/docs/rulings/judge_m4_post_tokenizer_mutation_clear_readiness_reconsideration.md). |
+| M4 WSL2 dual-runtime diagnostic | Can the public test bed sustain the paired runtime structure? | **Structural PASS; replica MISMATCH** | The retained diagnostic compared 164 outputs: 80 agreed and 84 differed. The original v1 result remains `BLOCKED / OUTPUT_DIGEST_MISMATCH`; the reviewed two-axis projection preserves structural feasibility separately from replica consistency. See the [independent review](https://github.com/darkside73826779-ship-it/moving-origin-research/blob/4cdb5d89945b603c20cdd19233079be14b65946b/reviews/critic_m4_wsl2_two_axis_dependency_lock_bf1_bf2_rereview.md). |
+| M4 public observation backend | Is the custody-free, non-scoring observation backend implemented fail-closed? | **Repository-quality CLEAR; `run_authorized=false`** | Design and implementation review are clear, including the corrected zero-count boundary. No public-model observation run has been authorized or performed. See the [final implementation rereview](https://github.com/darkside73826779-ship-it/moving-origin-research/blob/98b8f466db2ad8499ea5abab9111a68a9bd1e861/reviews/critic_m4_public_model_observation_backend_bf1_zero_count_rereview.md). |
+| M4 final pre-scoring crash cart | Is the full-stack non-scoring dress-rehearsal design ready to implement? | **v0.2-alpha under independent review** | The blocked v0.1-alpha design is retained. Its BF1–BF4 correction is published as v0.2-alpha, but it is not yet beta, runnable, or an authorization. See the [versioned routing record](https://github.com/darkside73826779-ship-it/moving-origin-research/blob/757dc3bf3b7eec554ee15882af94fce4a6ebb006/handoffs/ARCHITECT_TO_COORDINATOR_M4_FINAL_PRESCORING_CRASH_CART_BF1_BF4_VERSIONED_ROUTING_2026-08-22.md). |
+
+### How to interpret the M4 status
+
+M4 is at an engineering and diagnostic boundary, not a scoring boundary. The tokenizer and major custody-free components have independently reviewed evidence, and the WSL2 test bed demonstrated structural feasibility while exposing unresolved replica disagreement. No protected-seed M4 scoring run, model qualification, scientific verdict, or final readiness declaration has occurred.
+
+The status labels above are intentionally narrow:
+
+- **Engineering PASS/CLEAR** means the named construction, code, or evidence package passed its bounded review.
+- **Structural PASS; replica MISMATCH** means the diagnostic structure ran, but replica outputs were not identical. It is not a scientific or model-quality result.
+- **Alpha** means a versioned design artifact exists for review. It does not authorize implementation or execution.
+- Only Rebecca may authorize integration, merge, qualification, protected-seed scoring, scientific interpretation, or result publication.
 
 ### How to interpret the M3 instrument failure
 
@@ -47,7 +63,9 @@ Open work includes:
 - resolving the M3 L3 control calibration before any newly authorized scoring design;
 - independent use of the repaired semantic reproducibility contract;
 - full independent recomputation from the retained M3 raw artifact tree;
-- later milestones, including the program’s integration and model-level tests.
+- a separate principal integration decision for the engineering-cleared M4 post-tokenizer package;
+- final review, implementation, and explicit release of the M4 pre-scoring crash cart;
+- separately reviewed and explicitly authorized model/runtime observation before any M4 qualification or scoring run.
 
 See [RESEARCH_STATUS.md](RESEARCH_STATUS.md) for a compact evidence and limitation ledger.
 
@@ -88,9 +106,10 @@ python -m venv .venv
 python -m pip install --upgrade pip
 python -m pip install -r src\requirements.txt
 python -m unittest discover -s src -p "test*.py"
+python -m unittest discover -s tests -p "test*.py"
 ```
 
-The current non-scoring suite contains 63 tests. These commands do not authorize a scoring run or reuse of protected seeds. Read [REPRODUCING.md](REPRODUCING.md) before attempting any experiment or harness execution.
+The first test command runs the source non-scoring suite. The second runs workflow and repository-mechanics tests. Their summaries for the checked-out commit are authoritative; fixed README test counts are not. Milestone-specific packages use identity-bound wrappers and may have different reviewed inventories. These commands do not authorize a scoring run or reuse of protected seeds. Read [REPRODUCING.md](REPRODUCING.md) before attempting any experiment or harness execution.
 
 ## Evidence and artifact availability
 

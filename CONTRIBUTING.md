@@ -14,8 +14,12 @@ Unless explicitly designated otherwise in writing, contributions accepted into t
 4. For code changes, run:
 
    ```powershell
+   python -m pip install -r src\requirements.txt
    python -m unittest discover -s src -p "test*.py"
+   python -m unittest discover -s tests -p "test*.py"
    ```
+
+   Python 3.11.x is required. Report the two suite summaries separately; test inventories are commit-specific.
 
 5. Identify any generated or AI-assisted material in the pull-request description.
 
