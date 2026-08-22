@@ -1,0 +1,86 @@
+{
+  "schema_version": "common-handoff-manifest-v1",
+  "date": "2026-08-21",
+  "regime": "B",
+  "transfer_kind": "FORMAL_HANDOFF",
+  "work_item": "m4_tokenizer_executable_package_identity_reconciliation",
+  "gate": "One narrow deterministic executable-package identity reconciliation before persistent-CRITIC rereview",
+  "sender_role": "ARCHITECT",
+  "receiver_role": "WORKFLOW_COORDINATOR",
+  "authority_basis": [
+    {
+      "path": "handoffs/REBECCA_M4_TOKENIZER_FINAL_MATERIALIZATION_RERELEASE_2026-08-21.md",
+      "sha": "52b3ef2e85cb585f5dd81fc845bedfde00d42072"
+    }
+  ],
+  "remote_ref": "refs/heads/architect/m4-tokenizer-executable-package-identity-reconciliation",
+  "base_sha": "e52502aa6abd6d90d1d80aeb04b3a9a6f692a945",
+  "routing_ref_sha": "bc2b82b87185d50fbdb4d77ce4482100de6feaa0",
+  "review_result_sha": "b9757e324eb2ee3f366b776fc2489dbf5a4690c1",
+  "work_branch": "architect/m4-tokenizer-executable-package-identity-reconciliation",
+  "artifacts": {
+    ".gitattributes": "68c528ede67720007d4ec15d15f6d723136a24b9a4662c94ad9cdfbbc158601d",
+    "diagnostics/m4_tokenizer_materialization.py": "90e89b5a55ff80041a8e09c0d3e96208b6d8eff5c6b39eecd6366a1afb5289af",
+    "handoffs/ARCHITECT_TO_COORDINATOR_M4_TOKENIZER_EXECUTABLE_PACKAGE_IDENTITY_RECONCILIATION_2026-08-21.md": "be8287ceb572ebbf4cb892bddfb1f5474721efdaf101f52259f8afc4113efa64",
+    "handoffs/REBECCA_M4_TOKENIZER_FINAL_MATERIALIZATION_RERELEASE_2026-08-21.md": "f785720f412ea411e4aa78a3767817744bcb9568f4cb37bcc4206e439da03348",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_FINAL_MATERIALIZATION_PREOP_BLOCK_2026-08-21.md": "927e02ea72ce0a4aa9dbf7db99f97e00ea3df351bb26cbbf677518343809ab1b",
+    "handoffs/TASK_BUILDER_TO_COORDINATOR_M4_TOKENIZER_FINAL_MATERIALIZATION_PREOP_BLOCK.manifest.json": "324ad5ce68b970190c3e2232fa4598118b6869a2b04b6afdd5bb050696d32f66",
+    "specs/data/m4_context_format_probe_contract_v1.json": "eab77b9f44a4e9378f5889f5aa368eabd87959a5ddafab9ca38685228f12feec",
+    "specs/data/m4_context_format_probe_contract_v1.json.sha256": "26a65895c5a82c99ebf91125dd5ef3b7f0075d28c2c20d746e01fd55e36ca85a",
+    "specs/data/m4_tokenizer_executable_package_v1.json": "c0025a54579ab0b51e07ac138518c7949fbb4fd276d551a978e8ee39d8ba1697",
+    "specs/data/m4_tokenizer_executable_package_v1.json.sha256": "a9ab45ae4b146f3e6ac85115208c3063423fd0b19ab8154be93f68cd76302895",
+    "specs/data/m4_tokenizer_materialization_request_v1.json": "b39061fd4b19321d58dd418eb5ecd486c0cf26662d70a5d0de4185c6dd7e9992",
+    "specs/data/m4_tokenizer_materialization_request_v1.json.sha256": "9fa903fcb29bb74bd0fcd027c2e591668e6aebcb6a77a4c2c179c96c59d8f9ea",
+    "specs/data/m4_tokenizer_materialization_result_schema_v1.json": "34179d41e980aca413496f3de9fbbea7b642532b50eeacba423faebe5f4075ca",
+    "specs/data/m4_tokenizer_materialization_result_schema_v1.json.sha256": "ca2494f505342959d43b9a6442c103f898e58a54a45279ada3088003536651f3",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json": "c166a583a0612054cea826700d8e5e2c132c283e1617727170a8bd57167bb7a0",
+    "specs/data/m4_tokenizer_materialization_test_contract_v1.json.sha256": "189405411c37f4333f2edd1339711bb316c0a26f3e7e54f01362ca7662277fd7",
+    "specs/data/m4_tokenizer_oci_launch_contract_v1.json": "0fdd5e8eed2fc3a7cc5e10512e6e01037d011f6cf51e862a2293d49255b32848",
+    "specs/data/m4_tokenizer_oci_launch_contract_v1.json.sha256": "2f274dbbacf64085bd3298aaaad6702ce2bfff700bd85d5c3773a29cb410448d",
+    "specs/m4_local_tokenizer_materialization_changelog.md": "846fdc5aa0d4c00dca2c2d063f9357a0ea8f6340abb0baec61ea446388569e2c",
+    "specs/m4_local_tokenizer_materialization_spec_v1.md": "2f60b9ecb90628028465f17d31702fe17ce037ef60fd05ef15ae4e25512ad682",
+    "tests/__init__.py": "6f56eb2128751f0c5c1ab27ff461b38565aa00a3dcd29c04ab8bd56c34f4a961",
+    "tests/run_m4_tokenizer_materialization_tests.py": "29dc1c0d83e71c850e9eb3c423cfd359a6c557956d1eab1fa5d9beb049271d1d",
+    "tests/test_m4_tokenizer_materialization.py": "964ab5b8cb5ef63627c0ab07b3f0c4c867684d7add40576c3dd61494610e8613"
+  },
+  "checks_performed": [
+    "validated the incoming canonical BLOCK manifest and distinct immutable checkout identities",
+    "independently reproduced the two named raw Git-blob byte counts and SHA-256 identities",
+    "reconciled the executable-package manifest and adjacent sidecar without changing executable behavior",
+    "verified all eight ordered executable-package entries match the released raw Git blobs",
+    "verified canonical LF manifest bytes and matching sidecar",
+    "negatively verified no superseded package identity remains in active package, specification, contract, executable, wrapper, or test inputs",
+    "inspected the complete diff and confirmed only identity metadata, sidecar, changelog, and handoff content changed",
+    "ran workflow_preflight.py hotfix cee97538893989e055f49a894f066d2083da4eb5 against the exact target worktree and complete e52502a..bc2b82b range",
+    "manually classified all 13 substantive-range scanner occurrences without suppression",
+    "obtained an independent same-role read-only reproduction of all eight bindings, package sidecar, and negative stale-identity sweep"
+  ],
+  "status": "COMPLETE",
+  "findings": [],
+  "scan_attestation": {
+    "base_sha": "e52502aa6abd6d90d1d80aeb04b3a9a6f692a945",
+    "tip_sha": "bc2b82b87185d50fbdb4d77ce4482100de6feaa0",
+    "tool_status": "blocked",
+    "manual_review": true,
+    "findings": [
+      "F000001-F000007, F000009, and F000011 are duplicate scan-domain personal-contact heuristic matches wholly inside required immutable public commit values or declared public artifact SHA-256 values and are classified non-secret public reproducibility metadata",
+      "F000008, F000010, F000012, and F000013 are duplicate scan-domain gitleaks generic-api-key heuristic matches on the literal preserved-holds phrase OCI/test/materializer and are classified non-secret policy prose, not a credential",
+      "manual review found no credentials, personal contact data, private paths, task identifiers, custody values, model/tokenizer bytes, protected seeds, scientific output, or prohibited durable-state mutation"
+    ]
+  },
+  "next_event": "WORKFLOW COORDINATOR validates remote equality and routes this exact package to persistent CRITIC for one narrow rereview",
+  "prohibited_actions": [
+    "OCI, test-wrapper, or materializer execution",
+    "custody, model, or tokenizer access, retry, inference, serving, qualification, diagnostics, scoring, or protected seeds",
+    "scientific change, STATE/provenance mutation, model/tokenizer publication, merge, or gate decision"
+  ],
+  "role_extension": {
+    "role": "ARCHITECT",
+    "specification_files_changed": [
+      "specs/data/m4_tokenizer_executable_package_v1.json"
+    ],
+    "changelog_files_changed": [
+      "specs/m4_local_tokenizer_materialization_changelog.md"
+    ]
+  }
+}
